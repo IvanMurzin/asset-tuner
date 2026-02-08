@@ -1,0 +1,36 @@
+# Dart / Flutter
+.dart_tool/
+build/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Generated
+**/*.g.dart
+**/*.freezed.dart
+**/*.gr.dart
+**/*.gen.dart
+**/*.config.dart
+
+# IDE
+.idea/
+.vscode/
+.cursor/
+AGENTS.md
+.cursorignore
+*.iml
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Secrets
+.env
+.env.*
+*.keystore
+*.jks
+*.p12
+*.pem
