@@ -18,11 +18,15 @@ class CurrencyRepository implements ICurrencyRepository {
     try {
       final dtos = await _dataSource.fetchFiatCurrencies();
       final entities = dtos.map(CurrencyMapper.toEntity).toList();
-      logger.i('CurrencyRepository.fetchFiatCurrencies success: ${entities.length}');
+      logger.i(
+        'CurrencyRepository.fetchFiatCurrencies success: ${entities.length}',
+      );
       return Success(entities);
     } catch (_) {
       logger.e('CurrencyRepository.fetchFiatCurrencies failed');
-      return const FailureResult(Failure(code: 'unknown', message: 'Unable to load currencies'));
+      return const FailureResult(
+        Failure(code: 'unknown', message: 'Unable to load currencies'),
+      );
     }
   }
 }

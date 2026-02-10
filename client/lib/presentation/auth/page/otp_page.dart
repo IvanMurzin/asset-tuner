@@ -48,11 +48,19 @@ class OtpPage extends StatelessWidget {
             appBar: DSAppBar(title: l10n.otpTitle),
             body: SafeArea(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s32),
+                padding: EdgeInsets.fromLTRB(
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s32,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    AuthHero(title: l10n.otpTitle, subtitle: l10n.otpBodyWithEmail(email)),
+                    AuthHero(
+                      title: l10n.otpTitle,
+                      subtitle: l10n.otpBodyWithEmail(email),
+                    ),
                     SizedBox(height: spacing.s24),
                     if (bannerText != null)
                       DSInlineBanner(
@@ -76,14 +84,20 @@ class OtpPage extends StatelessWidget {
                       label: l10n.verifyOtp,
                       isLoading: isLoading,
                       fullWidth: true,
-                      onPressed: isLoading ? null : context.read<OtpCubit>().verify,
+                      onPressed: isLoading
+                          ? null
+                          : context.read<OtpCubit>().verify,
                     ),
                     SizedBox(height: spacing.s12),
                     TextButton(
-                      onPressed: isLoading ? null : () => context.go(AppRoutes.signUp),
+                      onPressed: isLoading
+                          ? null
+                          : () => context.go(AppRoutes.signUp),
                       child: Text(
                         l10n.changeEmail,
-                        style: typography.body.copyWith(color: context.dsColors.primary),
+                        style: typography.body.copyWith(
+                          color: context.dsColors.primary,
+                        ),
                       ),
                     ),
                   ],

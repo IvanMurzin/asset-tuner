@@ -22,7 +22,10 @@ class DSFullScreenLoader extends StatelessWidget {
             const DSLoader(),
             if (message != null) ...[
               SizedBox(height: spacing.s12),
-              Text(message!, style: typography.caption.copyWith(color: colors.textSecondary)),
+              Text(
+                message!,
+                style: typography.caption.copyWith(color: colors.textSecondary),
+              ),
             ],
           ],
         ),

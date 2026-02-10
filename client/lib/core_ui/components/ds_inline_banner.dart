@@ -46,10 +46,17 @@ class DSInlineBanner extends StatelessWidget {
         children: [
           Text(title, style: typography.h3.copyWith(color: colors.textPrimary)),
           SizedBox(height: spacing.s4),
-          Text(message, style: typography.body.copyWith(color: colors.textSecondary)),
+          Text(
+            message,
+            style: typography.body.copyWith(color: colors.textSecondary),
+          ),
           if (actionLabel != null && onAction != null) ...[
             SizedBox(height: spacing.s12),
-            DSButton(label: actionLabel!, variant: DSButtonVariant.secondary, onPressed: onAction),
+            DSButton(
+              label: actionLabel!,
+              variant: DSButtonVariant.secondary,
+              onPressed: onAction,
+            ),
           ],
         ],
       ),

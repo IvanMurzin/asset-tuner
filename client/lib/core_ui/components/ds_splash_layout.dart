@@ -23,7 +23,10 @@ class DSSplashLayout extends StatelessWidget {
           const DSLoader(),
           if (status != null) ...[
             SizedBox(height: spacing.s12),
-            Text(status!, style: typography.caption.copyWith(color: colors.textSecondary)),
+            Text(
+              status!,
+              style: typography.caption.copyWith(color: colors.textSecondary),
+            ),
           ],
         ],
       ),

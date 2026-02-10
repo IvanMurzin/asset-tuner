@@ -72,6 +72,19 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     final catalog = await _getFiatCurrencies();
     switch (catalog) {
       case Success<List<CurrencyEntity>>(value: final currencies):
+        if (currencies.isEmpty) {
+          emit(
+            state.copyWith(
+              status: BaseCurrencySettingsStatus.error,
+              userId: session.userId,
+              currentCode: profile.baseCurrency,
+              selectedCode: profile.baseCurrency,
+              plan: profile.plan,
+              loadFailureCode: 'unknown',
+            ),
+          );
+          return;
+        }
         final next = state.copyWith(
           status: BaseCurrencySettingsStatus.ready,
           userId: session.userId,

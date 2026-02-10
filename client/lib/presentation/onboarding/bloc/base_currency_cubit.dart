@@ -70,6 +70,15 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
         );
         return;
       case Success(:final value):
+        if (value.isEmpty) {
+          emit(
+            state.copyWith(
+              status: BaseCurrencyStatus.error,
+              loadFailureCode: 'unknown',
+            ),
+          );
+          return;
+        }
         currencies = value;
     }
 

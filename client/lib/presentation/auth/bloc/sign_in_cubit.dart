@@ -31,11 +31,19 @@ class SignInCubit extends Cubit<SignInState> {
   final GetCachedSessionUseCase _getCachedSessionUseCase;
 
   void updateEmail(String value) {
-    emit(state.copyWith(email: value, emailError: null, bannerFailureCode: null));
+    emit(
+      state.copyWith(email: value, emailError: null, bannerFailureCode: null),
+    );
   }
 
   void updatePassword(String value) {
-    emit(state.copyWith(password: value, passwordError: null, bannerFailureCode: null));
+    emit(
+      state.copyWith(
+        password: value,
+        passwordError: null,
+        bannerFailureCode: null,
+      ),
+    );
   }
 
   Future<void> signIn() async {
@@ -49,10 +57,18 @@ class SignInCubit extends Cubit<SignInState> {
     }
 
     emit(state.copyWith(status: SignInStatus.loading, bannerFailureCode: null));
-    final result = await _signInWithPasswordUseCase(state.email.trim(), state.password);
+    final result = await _signInWithPasswordUseCase(
+      state.email.trim(),
+      state.password,
+    );
     switch (result) {
       case FailureResult(:final failure):
-        emit(state.copyWith(status: SignInStatus.idle, bannerFailureCode: failure.code));
+        emit(
+          state.copyWith(
+            status: SignInStatus.idle,
+            bannerFailureCode: failure.code,
+          ),
+        );
       case Success():
         await _handleSignedIn();
     }
@@ -63,7 +79,12 @@ class SignInCubit extends Cubit<SignInState> {
     final result = await _oAuthSignInUseCase(provider);
     switch (result) {
       case FailureResult(:final failure):
-        emit(state.copyWith(status: SignInStatus.idle, bannerFailureCode: failure.code));
+        emit(
+          state.copyWith(
+            status: SignInStatus.idle,
+            bannerFailureCode: failure.code,
+          ),
+        );
       case Success():
         await _handleSignedIn();
     }
@@ -76,13 +97,23 @@ class SignInCubit extends Cubit<SignInState> {
   Future<void> _handleSignedIn() async {
     final session = await _getCachedSessionUseCase();
     if (session == null) {
-      emit(state.copyWith(status: SignInStatus.idle, bannerFailureCode: 'unauthorized'));
+      emit(
+        state.copyWith(
+          status: SignInStatus.idle,
+          bannerFailureCode: 'unauthorized',
+        ),
+      );
       return;
     }
     final profileResult = await _bootstrapProfileUseCase(session.userId);
     switch (profileResult) {
       case FailureResult(:final failure):
-        emit(state.copyWith(status: SignInStatus.idle, bannerFailureCode: failure.code));
+        emit(
+          state.copyWith(
+            status: SignInStatus.idle,
+            bannerFailureCode: failure.code,
+          ),
+        );
       case Success(:final value):
         final destination = value.wasBaseCurrencyDefaulted
             ? SignInDestination.onboardingBaseCurrency
@@ -100,7 +131,9 @@ class SignInCubit extends Cubit<SignInState> {
     final providers = await _getAuthProvidersUseCase();
     emit(
       state.copyWith(
-        availableProviders: providers.where((provider) => provider != AuthProvider.email).toList(),
+        availableProviders: providers
+            .where((provider) => provider != AuthProvider.email)
+            .toList(),
       ),
     );
   }

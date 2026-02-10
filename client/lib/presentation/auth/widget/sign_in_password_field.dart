@@ -5,7 +5,12 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/presentation/auth/bloc/sign_in_cubit.dart';
 
 class SignInPasswordField extends StatefulWidget {
-  const SignInPasswordField({super.key, required this.label, required this.hint, this.errorText});
+  const SignInPasswordField({
+    super.key,
+    required this.label,
+    required this.hint,
+    this.errorText,
+  });
 
   final String label;
   final String hint;

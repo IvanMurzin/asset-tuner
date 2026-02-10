@@ -3,7 +3,13 @@ import 'package:asset_tuner/core_ui/components/ds_shimmer.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
 class DSSkeleton extends StatelessWidget {
-  const DSSkeleton({super.key, this.width, this.height, this.borderRadius, this.shimmer = true});
+  const DSSkeleton({
+    super.key,
+    this.width,
+    this.height,
+    this.borderRadius,
+    this.shimmer = true,
+  });
 
   final double? width;
   final double? height;
@@ -25,6 +31,10 @@ class DSSkeleton extends StatelessWidget {
       return box;
     }
 
-    return DSShimmer(baseColor: colors.surfaceAlt, highlightColor: colors.surface, child: box);
+    return DSShimmer(
+      baseColor: colors.surfaceAlt,
+      highlightColor: colors.surface,
+      child: box,
+    );
   }
 }

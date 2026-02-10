@@ -13,8 +13,11 @@ enum SplashDestination { signIn, onboardingBaseCurrency, overview }
 
 @injectable
 class SplashCubit extends Cubit<SplashState> {
-  SplashCubit(this._restoreSessionUseCase, this._bootstrapProfileUseCase, this._signOutUseCase)
-    : super(const SplashState.loading(stage: SplashStage.restoring)) {
+  SplashCubit(
+    this._restoreSessionUseCase,
+    this._bootstrapProfileUseCase,
+    this._signOutUseCase,
+  ) : super(const SplashState.loading(stage: SplashStage.restoring)) {
     restore();
   }
 
@@ -44,15 +47,25 @@ class SplashCubit extends Cubit<SplashState> {
           case FailureResult(:final failure):
             if (failure.code == 'unauthorized') {
               await _signOutUseCase();
-              emit(const SplashState.route(destination: SplashDestination.signIn));
+              emit(
+                const SplashState.route(destination: SplashDestination.signIn),
+              );
             } else {
               emit(SplashState.error(failureCode: failure.code));
             }
           case Success(:final value):
             if (value.wasBaseCurrencyDefaulted) {
-              emit(const SplashState.route(destination: SplashDestination.onboardingBaseCurrency));
+              emit(
+                const SplashState.route(
+                  destination: SplashDestination.onboardingBaseCurrency,
+                ),
+              );
             } else {
-              emit(const SplashState.route(destination: SplashDestination.overview));
+              emit(
+                const SplashState.route(
+                  destination: SplashDestination.overview,
+                ),
+              );
             }
         }
     }

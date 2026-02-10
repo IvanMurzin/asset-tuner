@@ -10,7 +10,8 @@ part 'otp_cubit.freezed.dart';
 
 @injectable
 class OtpCubit extends Cubit<OtpState> {
-  OtpCubit(this._verifySignUpOtpUseCase, this._bootstrapProfileUseCase) : super(const OtpState());
+  OtpCubit(this._verifySignUpOtpUseCase, this._bootstrapProfileUseCase)
+    : super(const OtpState());
 
   final VerifySignUpOtpUseCase _verifySignUpOtpUseCase;
   final BootstrapProfileUseCase _bootstrapProfileUseCase;
@@ -35,12 +36,22 @@ class OtpCubit extends Cubit<OtpState> {
 
     switch (result) {
       case FailureResult(:final failure):
-        emit(state.copyWith(status: OtpStatus.idle, bannerFailureCode: failure.code));
+        emit(
+          state.copyWith(
+            status: OtpStatus.idle,
+            bannerFailureCode: failure.code,
+          ),
+        );
       case Success(:final value):
         final profileResult = await _bootstrapProfileUseCase(value.userId);
         switch (profileResult) {
           case FailureResult(:final failure):
-            emit(state.copyWith(status: OtpStatus.idle, bannerFailureCode: failure.code));
+            emit(
+              state.copyWith(
+                status: OtpStatus.idle,
+                bannerFailureCode: failure.code,
+              ),
+            );
           case Success(:final value):
             emit(
               state.copyWith(

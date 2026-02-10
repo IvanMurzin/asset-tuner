@@ -59,3 +59,27 @@ Out of scope:
 ## Open questions (if any)
 - Should the “any base currency” entitlement allow selecting crypto as base currency? (PRD implies base currency is a currency; free-tier list is fiat. Clarify scope.)
 
+## Implementation checklist (AC → where it’s satisfied)
+- Default base currency is USD on profile creation:
+  - `client/lib/data/profile/repository/profile_repository.dart` (`ensureProfile` creates/normalizes `baseCurrency: 'USD'`)
+  - `client/lib/presentation/auth/bloc/splash_cubit.dart` (bootstraps profile before routing)
+- Free tier can save only USD/EUR/RUB in Settings → Base currency:
+  - `client/lib/presentation/settings/bloc/base_currency_settings_cubit.dart` (`freeAllowedCodes`, gating in `selectCurrency`/`save`)
+  - `client/lib/presentation/settings/page/base_currency_settings_page.dart` (picker + Save CTA)
+  - Tests: `client/test/base_currency_settings_cubit_test.dart`
+- Free tier selecting any other currency shows paywall and does not update profile:
+  - `client/lib/presentation/settings/bloc/base_currency_settings_cubit.dart` (routes to paywall instead of persisting)
+  - `client/lib/presentation/paywall/page/paywall_page.dart` + `client/lib/presentation/paywall/bloc/paywall_cubit.dart` (upgrade stub; returns `true` on upgrade)
+  - Tests: `client/test/base_currency_settings_cubit_test.dart`
+- Paid entitlement allows selecting any supported fiat currency and saving:
+  - `client/lib/presentation/paywall/bloc/paywall_cubit.dart` (`upgrade` updates `profiles.plan` → `paid`)
+  - `client/lib/presentation/settings/page/base_currency_settings_page.dart` (reload after paywall; retries selection)
+  - Tests: `client/test/base_currency_settings_cubit_test.dart`
+- Catalog load failures show retryable error state:
+  - `client/lib/presentation/settings/page/base_currency_settings_page.dart` (`DSInlineError` with retry)
+  - `client/lib/presentation/settings/bloc/base_currency_settings_cubit.dart` (maps failures to `loadFailureCode`)
+- Empty fiat catalog is treated as an error:
+  - `client/lib/presentation/settings/bloc/base_currency_settings_cubit.dart` (empty list → `error`)
+  - `client/lib/presentation/onboarding/bloc/base_currency_cubit.dart` (empty list → `error`)
+- Overview reflects base currency changes after saving:
+  - `client/lib/presentation/overview/bloc/overview_cubit.dart` + `client/lib/presentation/overview/page/overview_page.dart` (base currency chip reloads after returning)

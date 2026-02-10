@@ -12,9 +12,9 @@ import 'package:asset_tuner/core_ui/components/ds_loader.dart';
 import 'package:asset_tuner/core_ui/components/ds_search_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
-import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/settings/bloc/base_currency_settings_cubit.dart';
+import 'package:asset_tuner/presentation/settings/widget/base_currency_settings_currency_list.dart';
 
 class BaseCurrencySettingsPage extends StatelessWidget {
   const BaseCurrencySettingsPage({super.key});
@@ -181,6 +181,15 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                               ),
                               SizedBox(height: spacing.s12),
                             ],
+                            if ((state.plan ?? 'free').toLowerCase() !=
+                                'paid') ...[
+                              DSInlineBanner(
+                                title: l10n.baseCurrencySettingsTitle,
+                                message: l10n.baseCurrencySettingsPaywallHint,
+                                variant: DSInlineBannerVariant.info,
+                              ),
+                              SizedBox(height: spacing.s12),
+                            ],
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
@@ -190,7 +199,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                                   ),
                                   border: Border.all(color: colors.border),
                                 ),
-                                child: _CurrencyList(
+                                child: BaseCurrencySettingsCurrencyList(
                                   currencies: visible,
                                   selectedCode: state.selectedCode,
                                   isAllowed: (code) =>
@@ -243,163 +252,6 @@ class BaseCurrencySettingsPage extends StatelessWidget {
     }
     return BaseCurrencySettingsCubit.freeAllowedCodes.contains(
       code.toUpperCase(),
-    );
-  }
-}
-
-class _CurrencyList extends StatelessWidget {
-  const _CurrencyList({
-    required this.currencies,
-    required this.selectedCode,
-    required this.isAllowed,
-    required this.onSelect,
-  });
-
-  final List<CurrencyEntity> currencies;
-  final String? selectedCode;
-  final bool Function(String code) isAllowed;
-  final ValueChanged<String> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.dsColors;
-    final spacing = context.dsSpacing;
-    final popularSet = BaseCurrencySettingsCubit.popularCodes.toSet();
-
-    final sectionBreakIndex = currencies.indexWhere(
-      (c) => !popularSet.contains(c.code.toUpperCase()),
-    );
-
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      itemCount: currencies.length,
-      separatorBuilder: (context, index) {
-        final shouldBreak =
-            sectionBreakIndex > 0 && index == sectionBreakIndex - 1;
-        if (!shouldBreak) {
-          return Divider(height: 1, thickness: 1, color: colors.border);
-        }
-
-        return Container(
-          padding: EdgeInsets.symmetric(vertical: spacing.s8),
-          color: colors.surfaceAlt,
-          child: Divider(height: 1, thickness: 1, color: colors.border),
-        );
-      },
-      itemBuilder: (context, index) {
-        final currency = currencies[index];
-
-        final code = currency.code.toUpperCase();
-        final selected = code == selectedCode?.toUpperCase();
-        final allowed = isAllowed(code);
-
-        return _CurrencyRow(
-          code: code,
-          name: currency.name,
-          symbol: currency.symbol,
-          selected: selected,
-          locked: !allowed,
-          onTap: () => onSelect(code),
-        );
-      },
-    );
-  }
-}
-
-class _CurrencyRow extends StatelessWidget {
-  const _CurrencyRow({
-    required this.code,
-    required this.name,
-    required this.symbol,
-    required this.selected,
-    required this.locked,
-    required this.onTap,
-  });
-
-  final String code;
-  final String name;
-  final String? symbol;
-  final bool selected;
-  final bool locked;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.dsColors;
-    final spacing = context.dsSpacing;
-    final typography = context.dsTypography;
-
-    final background = selected
-        ? colors.primary.withValues(alpha: 0.08)
-        : colors.surface;
-
-    return Material(
-      color: background,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: spacing.s12,
-            vertical: spacing.s12,
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: spacing.s12,
-                  vertical: spacing.s4,
-                ),
-                decoration: BoxDecoration(
-                  color: colors.surfaceAlt,
-                  borderRadius: BorderRadius.circular(context.dsRadius.r12),
-                  border: Border.all(color: colors.border),
-                ),
-                child: Text(
-                  code,
-                  style: typography.caption.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              SizedBox(width: spacing.s12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: typography.body.copyWith(
-                        color: colors.textPrimary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (symbol != null && symbol!.trim().isNotEmpty) ...[
-                      SizedBox(height: spacing.s4),
-                      Text(
-                        symbol!,
-                        style: typography.caption.copyWith(
-                          color: colors.textSecondary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              SizedBox(width: spacing.s12),
-              if (locked)
-                Icon(Icons.lock_outline, color: colors.textTertiary)
-              else if (selected)
-                Icon(Icons.check_circle, color: colors.primary)
-              else
-                Icon(Icons.radio_button_unchecked, color: colors.textTertiary),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
