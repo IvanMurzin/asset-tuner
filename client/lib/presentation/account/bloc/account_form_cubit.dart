@@ -8,6 +8,7 @@ import 'package:asset_tuner/domain/account/usecase/get_accounts_usecase.dart';
 import 'package:asset_tuner/domain/account/usecase/update_account_usecase.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
@@ -21,6 +22,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     this._getCachedSession,
     this._getProfile,
     this._bootstrapProfile,
+    this._getEntitlementsForPlan,
     this._getAccounts,
     this._createAccount,
     this._updateAccount,
@@ -29,6 +31,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
   final GetCachedSessionUseCase _getCachedSession;
   final GetProfileUseCase _getProfile;
   final BootstrapProfileUseCase _bootstrapProfile;
+  final GetEntitlementsForPlanUseCase _getEntitlementsForPlan;
   final GetAccountsUseCase _getAccounts;
   final CreateAccountUseCase _createAccount;
   final UpdateAccountUseCase _updateAccount;
@@ -120,9 +123,9 @@ class AccountFormCubit extends Cubit<AccountFormState> {
       return;
     }
 
-    final isPaid = (state.plan ?? 'free') == 'paid';
     final isCreating = state.accountId == null;
-    if (isCreating && !isPaid && state.activeAccountCount >= 5) {
+    final entitlements = _getEntitlementsForPlan(state.plan);
+    if (isCreating && state.activeAccountCount >= entitlements.maxAccounts) {
       emit(
         state.copyWith(
           navigation: const AccountFormNavigation(

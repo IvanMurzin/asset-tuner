@@ -1,12 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_plan_usecase.dart';
+import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 
 part 'paywall_cubit.freezed.dart';
 part 'paywall_state.dart';
@@ -25,33 +27,64 @@ class PaywallCubit extends Cubit<PaywallState> {
   final BootstrapProfileUseCase _bootstrapProfile;
   final UpdatePlanUseCase _updatePlan;
 
-  Future<void> load() async {
-    emit(state.copyWith(status: PaywallStatus.loading, failureCode: null));
+  Future<void> load({PaywallReason? reason}) async {
+    emit(
+      state.copyWith(
+        status: PaywallStatus.loading,
+        loadFailureCode: null,
+        upgradeFailureCode: null,
+      ),
+    );
 
     final session = await _getCachedSession();
     if (session == null) {
       emit(
         state.copyWith(
           status: PaywallStatus.error,
-          failureCode: 'unauthorized',
+          loadFailureCode: 'unauthorized',
         ),
       );
       return;
     }
 
-    final profile = await _loadProfile(session.userId);
-    if (profile == null) {
-      emit(state.copyWith(status: PaywallStatus.error, failureCode: 'unknown'));
-      return;
+    final profileResult = await _getProfile(session.userId);
+    switch (profileResult) {
+      case Success<ProfileEntity>(value: final profile):
+        logger.i(
+          'paywall_viewed reason=${reason?.name ?? 'unknown'} entitlements=verified',
+        );
+        emit(
+          state.copyWith(
+            status: PaywallStatus.ready,
+            userId: session.userId,
+            plan: profile.plan,
+            entitlementsUnverified: false,
+            loadFailureCode: null,
+          ),
+        );
+      case FailureResult<ProfileEntity>(failure: final failure):
+        final bootstrap = await _bootstrapProfile(session.userId);
+        final bootProfile = switch (bootstrap) {
+          Success(value: final data) => data.profile,
+          FailureResult() => null,
+        };
+        logger.i(
+          'paywall_viewed reason=${reason?.name ?? 'unknown'} entitlements=unverified',
+        );
+        emit(
+          state.copyWith(
+            status: PaywallStatus.ready,
+            userId: session.userId,
+            plan: bootProfile?.plan ?? 'free',
+            entitlementsUnverified: true,
+            loadFailureCode: failure.code,
+          ),
+        );
     }
+  }
 
-    emit(
-      state.copyWith(
-        status: PaywallStatus.ready,
-        userId: session.userId,
-        plan: profile.plan,
-      ),
-    );
+  void selectPlan(PaywallPlanOption plan) {
+    emit(state.copyWith(selectedPlan: plan));
   }
 
   Future<void> upgrade() async {
@@ -59,10 +92,12 @@ class PaywallCubit extends Cubit<PaywallState> {
     if (userId == null) {
       return;
     }
-    emit(state.copyWith(isUpdating: true));
+    emit(state.copyWith(isUpdating: true, upgradeFailureCode: null));
+    logger.i('purchase_started plan=${state.selectedPlan.name}');
     final result = await _updatePlan(userId, 'paid');
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
+        logger.i('purchase_succeeded plan=${state.selectedPlan.name}');
         emit(
           state.copyWith(
             isUpdating: false,
@@ -73,27 +108,16 @@ class PaywallCubit extends Cubit<PaywallState> {
           ),
         );
       case FailureResult<ProfileEntity>(failure: final failure):
-        emit(state.copyWith(isUpdating: false, failureCode: failure.code));
+        logger.i(
+          'purchase_failed plan=${state.selectedPlan.name} code=${failure.code}',
+        );
+        emit(
+          state.copyWith(isUpdating: false, upgradeFailureCode: failure.code),
+        );
     }
   }
 
   void consumeNavigation() {
     emit(state.copyWith(navigation: null));
-  }
-
-  Future<ProfileEntity?> _loadProfile(String userId) async {
-    final result = await _getProfile(userId);
-    switch (result) {
-      case Success<ProfileEntity>(value: final profile):
-        return profile;
-      case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile(userId);
-        switch (bootstrap) {
-          case Success(value: final data):
-            return data.profile;
-          case FailureResult():
-            return null;
-        }
-    }
   }
 }

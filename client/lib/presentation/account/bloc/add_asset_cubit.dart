@@ -8,6 +8,7 @@ import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usec
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
@@ -21,6 +22,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     this._getCachedSession,
     this._getProfile,
     this._bootstrapProfile,
+    this._getEntitlementsForPlan,
     this._getAssets,
     this._getAccountAssets,
     this._countPositions,
@@ -30,6 +32,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
   final GetCachedSessionUseCase _getCachedSession;
   final GetProfileUseCase _getProfile;
   final BootstrapProfileUseCase _bootstrapProfile;
+  final GetEntitlementsForPlanUseCase _getEntitlementsForPlan;
   final GetAssetsUseCase _getAssets;
   final GetAccountAssetsUseCase _getAccountAssets;
   final CountAssetPositionsUseCase _countPositions;
@@ -153,8 +156,8 @@ class AddAssetCubit extends Cubit<AddAssetState> {
       return;
     }
 
-    final isPaid = (state.plan ?? 'free') == 'paid';
-    if (!isPaid && state.totalPositionsCount >= 20) {
+    final entitlements = _getEntitlementsForPlan(state.plan);
+    if (state.totalPositionsCount >= entitlements.maxPositions) {
       emit(
         state.copyWith(
           navigation: const AddAssetNavigation(

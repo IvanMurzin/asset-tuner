@@ -16,6 +16,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_form_cubit.dart';
+import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 
 class AccountFormPage extends StatefulWidget {
   const AccountFormPage({super.key, this.accountId});
@@ -60,7 +61,10 @@ class _AccountFormPageState extends State<AccountFormPage> {
               context.go(AppRoutes.signIn);
               break;
             case AccountFormDestination.paywall:
-              final upgraded = await context.push<bool>(AppRoutes.paywall);
+              final upgraded = await context.push<bool>(
+                AppRoutes.paywall,
+                extra: const PaywallArgs(reason: PaywallReason.accountsLimit),
+              );
               if (context.mounted && upgraded == true) {
                 await context.read<AccountFormCubit>().load(
                   accountId: widget.accountId,

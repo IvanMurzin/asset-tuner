@@ -86,3 +86,7 @@ Local logging only in MVP (no third-party per `docs/tech/integrations.md`):
 - Payments provider choice is explicitly TBD and requires an ADR (`docs/tech/dependencies.md`). Which provider do we target for MVP (e.g., `in_app_purchase` with App Store / Play Billing)?
 - Paid plan exact limits (beyond “higher limits”) are not specified. Define concrete paid caps (or “unlimited”) for MVP gating logic.
 
+**MVP decision (client-only mock):** treat `plan=paid` as effectively unlimited for gating:
+- `max_accounts = 999`
+- `max_positions = 9999`
+- `any_base_currency = true`

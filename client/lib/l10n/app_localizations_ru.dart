@@ -502,10 +502,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallTitle => 'Подписка';
 
   @override
-  String get paywallHeader => 'Откройте все валюты';
+  String get paywallHeaderTitle => 'Подписка';
 
   @override
-  String get paywallBody => 'Обновитесь, чтобы выбрать любую базовую валюту.';
+  String get paywallReasonAccounts =>
+      'Вы достигли бесплатного лимита: 5 счетов.';
+
+  @override
+  String get paywallReasonPositions =>
+      'Вы достигли бесплатного лимита: 20 отслеживаемых активов.';
+
+  @override
+  String get paywallReasonBaseCurrency => 'Откройте любую базовую валюту.';
+
+  @override
+  String get paywallEntitlementsError =>
+      'Не удалось проверить подписку. Попробуйте снова.';
 
   @override
   String get paywallDismiss => 'Позже';
@@ -514,10 +526,37 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallIncludesTitle => 'Что включено';
 
   @override
-  String get paywallFeatureCurrencies => 'Безлимитные базовые валюты';
+  String get paywallFeatureAccounts => 'Больше счетов';
+
+  @override
+  String get paywallFeaturePositions => 'Больше отслеживаемых активов';
+
+  @override
+  String get paywallFeatureCurrencies => 'Любая базовая валюта';
 
   @override
   String get paywallFeatureUpdates => 'Обновление статуса подписки';
+
+  @override
+  String get paywallPlansTitle => 'Выберите план';
+
+  @override
+  String get paywallPlanMonthlyTitle => 'Ежемесячно';
+
+  @override
+  String get paywallPlanMonthlySubtitle => 'Отмена в любой момент';
+
+  @override
+  String get paywallPlanAnnualTitle => 'Ежегодно';
+
+  @override
+  String get paywallPlanAnnualSubtitle => 'Выгоднее';
+
+  @override
+  String get paywallPlanRecommended => 'Рекомендуем';
+
+  @override
+  String get paywallUpgrade => 'Оформить подписку';
 
   @override
   String get paywallAlreadyPaid => 'У вас уже активен платный план.';

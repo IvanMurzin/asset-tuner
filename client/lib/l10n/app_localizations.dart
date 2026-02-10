@@ -1028,17 +1028,35 @@ abstract class AppLocalizations {
   /// **'Upgrade'**
   String get paywallTitle;
 
-  /// No description provided for @paywallHeader.
+  /// No description provided for @paywallHeaderTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unlock all currencies'**
-  String get paywallHeader;
+  /// **'Upgrade'**
+  String get paywallHeaderTitle;
 
-  /// No description provided for @paywallBody.
+  /// No description provided for @paywallReasonAccounts.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade to choose any base currency.'**
-  String get paywallBody;
+  /// **'You’ve reached the free limit of 5 accounts.'**
+  String get paywallReasonAccounts;
+
+  /// No description provided for @paywallReasonPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'You’ve reached the free limit of 20 tracked assets.'**
+  String get paywallReasonPositions;
+
+  /// No description provided for @paywallReasonBaseCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock any base currency.'**
+  String get paywallReasonBaseCurrency;
+
+  /// No description provided for @paywallEntitlementsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t verify subscription; try again.'**
+  String get paywallEntitlementsError;
 
   /// No description provided for @paywallDismiss.
   ///
@@ -1052,10 +1070,22 @@ abstract class AppLocalizations {
   /// **'What\'s included'**
   String get paywallIncludesTitle;
 
+  /// No description provided for @paywallFeatureAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'More accounts'**
+  String get paywallFeatureAccounts;
+
+  /// No description provided for @paywallFeaturePositions.
+  ///
+  /// In en, this message translates to:
+  /// **'More tracked assets'**
+  String get paywallFeaturePositions;
+
   /// No description provided for @paywallFeatureCurrencies.
   ///
   /// In en, this message translates to:
-  /// **'Unlimited base currencies'**
+  /// **'Any base currency'**
   String get paywallFeatureCurrencies;
 
   /// No description provided for @paywallFeatureUpdates.
@@ -1063,6 +1093,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Subscription status updates'**
   String get paywallFeatureUpdates;
+
+  /// No description provided for @paywallPlansTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a plan'**
+  String get paywallPlansTitle;
+
+  /// No description provided for @paywallPlanMonthlyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get paywallPlanMonthlyTitle;
+
+  /// No description provided for @paywallPlanMonthlySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel anytime'**
+  String get paywallPlanMonthlySubtitle;
+
+  /// No description provided for @paywallPlanAnnualTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual'**
+  String get paywallPlanAnnualTitle;
+
+  /// No description provided for @paywallPlanAnnualSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Best value'**
+  String get paywallPlanAnnualSubtitle;
+
+  /// No description provided for @paywallPlanRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get paywallPlanRecommended;
+
+  /// No description provided for @paywallUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get paywallUpgrade;
 
   /// No description provided for @paywallAlreadyPaid.
   ///

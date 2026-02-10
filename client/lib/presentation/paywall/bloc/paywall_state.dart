@@ -16,7 +16,10 @@ abstract class PaywallState with _$PaywallState {
     @Default(PaywallStatus.loading) PaywallStatus status,
     String? userId,
     String? plan,
-    String? failureCode,
+    @Default(PaywallPlanOption.annual) PaywallPlanOption selectedPlan,
+    @Default(false) bool entitlementsUnverified,
+    String? loadFailureCode,
+    String? upgradeFailureCode,
     @Default(false) bool isUpdating,
     PaywallNavigation? navigation,
   }) = _PaywallState;

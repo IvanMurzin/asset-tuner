@@ -11,6 +11,7 @@ import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
@@ -233,6 +234,7 @@ void main() {
           ),
         ),
       ),
+      GetEntitlementsForPlanUseCase(),
       GetAccountsUseCase(FakeAccountRepository([])),
       CreateAccountUseCase(FakeAccountRepository([])),
       UpdateAccountUseCase(FakeAccountRepository([])),
@@ -279,6 +281,7 @@ void main() {
       ),
       GetProfileUseCase(profileRepo),
       BootstrapProfileUseCase(profileRepo),
+      GetEntitlementsForPlanUseCase(),
       GetAccountsUseCase(accountRepo),
       CreateAccountUseCase(accountRepo),
       UpdateAccountUseCase(accountRepo),
@@ -312,6 +315,7 @@ void main() {
       ),
       GetProfileUseCase(profileRepo),
       BootstrapProfileUseCase(profileRepo),
+      GetEntitlementsForPlanUseCase(),
       GetAccountsUseCase(accountRepo),
       CreateAccountUseCase(accountRepo),
       UpdateAccountUseCase(accountRepo),

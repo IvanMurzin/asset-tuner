@@ -503,10 +503,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallTitle => 'Upgrade';
 
   @override
-  String get paywallHeader => 'Unlock all currencies';
+  String get paywallHeaderTitle => 'Upgrade';
 
   @override
-  String get paywallBody => 'Upgrade to choose any base currency.';
+  String get paywallReasonAccounts =>
+      'You’ve reached the free limit of 5 accounts.';
+
+  @override
+  String get paywallReasonPositions =>
+      'You’ve reached the free limit of 20 tracked assets.';
+
+  @override
+  String get paywallReasonBaseCurrency => 'Unlock any base currency.';
+
+  @override
+  String get paywallEntitlementsError =>
+      'Couldn\'t verify subscription; try again.';
 
   @override
   String get paywallDismiss => 'Not now';
@@ -515,10 +527,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallIncludesTitle => 'What\'s included';
 
   @override
-  String get paywallFeatureCurrencies => 'Unlimited base currencies';
+  String get paywallFeatureAccounts => 'More accounts';
+
+  @override
+  String get paywallFeaturePositions => 'More tracked assets';
+
+  @override
+  String get paywallFeatureCurrencies => 'Any base currency';
 
   @override
   String get paywallFeatureUpdates => 'Subscription status updates';
+
+  @override
+  String get paywallPlansTitle => 'Choose a plan';
+
+  @override
+  String get paywallPlanMonthlyTitle => 'Monthly';
+
+  @override
+  String get paywallPlanMonthlySubtitle => 'Cancel anytime';
+
+  @override
+  String get paywallPlanAnnualTitle => 'Annual';
+
+  @override
+  String get paywallPlanAnnualSubtitle => 'Best value';
+
+  @override
+  String get paywallPlanRecommended => 'Recommended';
+
+  @override
+  String get paywallUpgrade => 'Upgrade';
 
   @override
   String get paywallAlreadyPaid => 'You\'re already on the paid plan.';

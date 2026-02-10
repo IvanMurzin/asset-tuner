@@ -5,6 +5,7 @@ import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/domain/currency/usecase/get_fiat_currencies_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
 
@@ -17,15 +18,16 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     this._getCachedSession,
     this._bootstrapProfile,
     this._getFiatCurrencies,
+    this._getEntitlementsForPlan,
     this._updateBaseCurrency,
   ) : super(const BaseCurrencySettingsState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final BootstrapProfileUseCase _bootstrapProfile;
   final GetFiatCurrenciesUseCase _getFiatCurrencies;
+  final GetEntitlementsForPlanUseCase _getEntitlementsForPlan;
   final UpdateBaseCurrencyUseCase _updateBaseCurrency;
 
-  static const freeAllowedCodes = {'USD', 'EUR', 'RUB'};
   static const popularCodes = ['USD', 'EUR', 'RUB'];
   static const _minQueryLength = 2;
   static const _maxResults = 50;
@@ -203,11 +205,11 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
   }
 
   bool _isAllowed(String code) {
-    final plan = (state.plan ?? 'free').toLowerCase();
-    if (plan == 'paid') {
+    final entitlements = _getEntitlementsForPlan(state.plan);
+    if (entitlements.anyBaseCurrency) {
       return true;
     }
-    return freeAllowedCodes.contains(code.toUpperCase());
+    return entitlements.freeBaseCurrencyCodes.contains(code.toUpperCase());
   }
 
   BaseCurrencySettingsState _recomputeVisible(BaseCurrencySettingsState input) {

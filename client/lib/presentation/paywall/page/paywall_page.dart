@@ -8,20 +8,46 @@ import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
+import 'package:asset_tuner/core_ui/components/ds_plan_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_cubit.dart';
+import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 
 class PaywallPage extends StatelessWidget {
-  const PaywallPage({super.key});
+  const PaywallPage({super.key, required this.args});
+
+  final PaywallArgs args;
+
+  String _reasonText(AppLocalizations l10n, PaywallReason reason) {
+    return switch (reason) {
+      PaywallReason.accountsLimit => l10n.paywallReasonAccounts,
+      PaywallReason.positionsLimit => l10n.paywallReasonPositions,
+      PaywallReason.baseCurrency => l10n.paywallReasonBaseCurrency,
+    };
+  }
+
+  String _planTitle(AppLocalizations l10n, PaywallPlanOption plan) {
+    return switch (plan) {
+      PaywallPlanOption.monthly => l10n.paywallPlanMonthlyTitle,
+      PaywallPlanOption.annual => l10n.paywallPlanAnnualTitle,
+    };
+  }
+
+  String _planSubtitle(AppLocalizations l10n, PaywallPlanOption plan) {
+    return switch (plan) {
+      PaywallPlanOption.monthly => l10n.paywallPlanMonthlySubtitle,
+      PaywallPlanOption.annual => l10n.paywallPlanAnnualSubtitle,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return BlocProvider(
-      create: (_) => getIt<PaywallCubit>()..load(),
+      create: (_) => getIt<PaywallCubit>()..load(reason: args.reason),
       child: BlocConsumer<PaywallCubit, PaywallState>(
         listener: (context, state) {
           final navigation = state.navigation;
@@ -50,12 +76,16 @@ class PaywallPage extends StatelessWidget {
                 title: l10n.splashErrorTitle,
                 message: l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
-                onAction: () => context.read<PaywallCubit>().load(),
+                onAction: () =>
+                    context.read<PaywallCubit>().load(reason: args.reason),
               ),
             );
           }
 
           final isPaid = (state.plan ?? 'free') == 'paid';
+          final selectedPlan = state.selectedPlan;
+          final showEntitlementsBanner = state.entitlementsUnverified;
+          final showUpgradeError = state.upgradeFailureCode != null;
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.paywallTitle),
@@ -121,7 +151,7 @@ class PaywallPage extends StatelessWidget {
                                         SizedBox(width: spacing.s12),
                                         Expanded(
                                           child: Text(
-                                            l10n.paywallHeader,
+                                            l10n.paywallHeaderTitle,
                                             style: typography.h2,
                                           ),
                                         ),
@@ -129,7 +159,7 @@ class PaywallPage extends StatelessWidget {
                                     ),
                                     SizedBox(height: spacing.s12),
                                     Text(
-                                      l10n.paywallBody,
+                                      _reasonText(l10n, args.reason),
                                       style: typography.body.copyWith(
                                         color: colors.textSecondary,
                                       ),
@@ -138,6 +168,25 @@ class PaywallPage extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            if (showEntitlementsBanner) ...[
+                              SizedBox(height: spacing.s16),
+                              DSInlineBanner(
+                                title: l10n.paywallTitle,
+                                message: l10n.paywallEntitlementsError,
+                                variant: DSInlineBannerVariant.warning,
+                              ),
+                            ],
+                            if (showUpgradeError) ...[
+                              SizedBox(height: spacing.s16),
+                              DSInlineBanner(
+                                title: l10n.paywallTitle,
+                                message: _failureMessage(
+                                  l10n,
+                                  state.upgradeFailureCode,
+                                ),
+                                variant: DSInlineBannerVariant.danger,
+                              ),
+                            ],
                             SizedBox(height: spacing.s16 + spacing.s4),
                             DSSectionTitle(title: l10n.paywallIncludesTitle),
                             SizedBox(height: spacing.s12),
@@ -146,32 +195,65 @@ class PaywallPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _FeatureRow(
-                                    text: l10n.paywallFeatureCurrencies,
+                                    text: l10n.paywallFeatureAccounts,
                                   ),
                                   SizedBox(height: spacing.s12),
-                                  _FeatureRow(text: l10n.paywallFeatureUpdates),
+                                  _FeatureRow(
+                                    text: l10n.paywallFeaturePositions,
+                                  ),
+                                  SizedBox(height: spacing.s12),
+                                  _FeatureRow(
+                                    text: l10n.paywallFeatureCurrencies,
+                                  ),
                                 ],
                               ),
                             ),
                             SizedBox(height: spacing.s16 + spacing.s4),
-                            DSCard(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: _PlanPill(
-                                      title: l10n.settingsPlanFree,
-                                      selected: !isPaid,
-                                    ),
+                            DSSectionTitle(title: l10n.paywallPlansTitle),
+                            SizedBox(height: spacing.s12),
+                            Column(
+                              children: [
+                                DSPlanCard(
+                                  title: _planTitle(
+                                    l10n,
+                                    PaywallPlanOption.monthly,
                                   ),
-                                  SizedBox(width: spacing.s12),
-                                  Expanded(
-                                    child: _PlanPill(
-                                      title: l10n.settingsPlanPaid,
-                                      selected: isPaid,
-                                    ),
+                                  subtitle: _planSubtitle(
+                                    l10n,
+                                    PaywallPlanOption.monthly,
                                   ),
-                                ],
-                              ),
+                                  selected:
+                                      selectedPlan == PaywallPlanOption.monthly,
+                                  onTap: isPaid
+                                      ? null
+                                      : () => context
+                                            .read<PaywallCubit>()
+                                            .selectPlan(
+                                              PaywallPlanOption.monthly,
+                                            ),
+                                ),
+                                SizedBox(height: spacing.s12),
+                                DSPlanCard(
+                                  title: _planTitle(
+                                    l10n,
+                                    PaywallPlanOption.annual,
+                                  ),
+                                  subtitle: _planSubtitle(
+                                    l10n,
+                                    PaywallPlanOption.annual,
+                                  ),
+                                  badgeText: l10n.paywallPlanRecommended,
+                                  selected:
+                                      selectedPlan == PaywallPlanOption.annual,
+                                  onTap: isPaid
+                                      ? null
+                                      : () => context
+                                            .read<PaywallCubit>()
+                                            .selectPlan(
+                                              PaywallPlanOption.annual,
+                                            ),
+                                ),
+                              ],
                             ),
                             if (isPaid) ...[
                               SizedBox(height: spacing.s16),
@@ -187,7 +269,7 @@ class PaywallPage extends StatelessWidget {
                     ),
                     SizedBox(height: spacing.s16),
                     DSButton(
-                      label: l10n.subscriptionUpgrade,
+                      label: l10n.paywallUpgrade,
                       fullWidth: true,
                       isLoading: state.isUpdating,
                       onPressed: isPaid || state.isUpdating
@@ -210,6 +292,19 @@ class PaywallPage extends StatelessWidget {
       ),
     );
   }
+
+  String _failureMessage(AppLocalizations l10n, String? code) {
+    return switch (code) {
+      'network' => l10n.errorNetwork,
+      'unauthorized' => l10n.errorUnauthorized,
+      'forbidden' => l10n.errorForbidden,
+      'not_found' => l10n.errorNotFound,
+      'validation' => l10n.errorValidation,
+      'conflict' => l10n.errorConflict,
+      'rate_limited' => l10n.errorRateLimited,
+      _ => l10n.errorGeneric,
+    };
+  }
 }
 
 class _FeatureRow extends StatelessWidget {
@@ -230,60 +325,6 @@ class _FeatureRow extends StatelessWidget {
         SizedBox(width: spacing.s12),
         Expanded(child: Text(text, style: typography.body)),
       ],
-    );
-  }
-}
-
-class _PlanPill extends StatelessWidget {
-  const _PlanPill({required this.title, required this.selected});
-
-  final String title;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.dsColors;
-    final spacing = context.dsSpacing;
-    final radius = context.dsRadius;
-    final typography = context.dsTypography;
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: spacing.s12,
-        vertical: spacing.s12,
-      ),
-      decoration: BoxDecoration(
-        color: selected
-            ? colors.primary.withValues(alpha: 0.10)
-            : colors.surfaceAlt,
-        borderRadius: BorderRadius.circular(radius.r12),
-        border: Border.all(
-          color: selected
-              ? colors.primary.withValues(alpha: 0.55)
-              : colors.border,
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            selected ? Icons.check_circle : Icons.circle_outlined,
-            color: selected ? colors.primary : colors.textTertiary,
-            size: spacing.s16,
-          ),
-          SizedBox(width: spacing.s8),
-          Flexible(
-            child: Text(
-              title,
-              style: typography.button.copyWith(
-                color: selected ? colors.textPrimary : colors.textSecondary,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

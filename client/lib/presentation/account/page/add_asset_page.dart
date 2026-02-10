@@ -17,6 +17,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/add_asset_cubit.dart';
+import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 
 class AddAssetPage extends StatelessWidget {
   const AddAssetPage({super.key, required this.accountId});
@@ -41,7 +42,10 @@ class AddAssetPage extends StatelessWidget {
               context.go(AppRoutes.signIn);
               break;
             case AddAssetDestination.paywall:
-              final upgraded = await context.push<bool>(AppRoutes.paywall);
+              final upgraded = await context.push<bool>(
+                AppRoutes.paywall,
+                extra: const PaywallArgs(reason: PaywallReason.positionsLimit),
+              );
               if (context.mounted && upgraded == true) {
                 await context.read<AddAssetCubit>().load(accountId);
               }

@@ -14,6 +14,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/onboarding/bloc/base_currency_cubit.dart';
+import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 
 class BaseCurrencyPage extends StatelessWidget {
   const BaseCurrencyPage({super.key});
@@ -25,7 +26,7 @@ class BaseCurrencyPage extends StatelessWidget {
     return BlocProvider(
       create: (_) => getIt<BaseCurrencyCubit>(),
       child: BlocConsumer<BaseCurrencyCubit, BaseCurrencyState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           final navigation = state.navigation;
           if (navigation == null) {
             return;
@@ -39,7 +40,13 @@ class BaseCurrencyPage extends StatelessWidget {
               context.go(AppRoutes.overview);
               break;
             case BaseCurrencyDestination.paywall:
-              context.go(AppRoutes.paywall);
+              final upgraded = await context.push<bool>(
+                AppRoutes.paywall,
+                extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
+              );
+              if (context.mounted && upgraded == true) {
+                await context.read<BaseCurrencyCubit>().load();
+              }
               break;
           }
         },

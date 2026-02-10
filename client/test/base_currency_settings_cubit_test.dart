@@ -9,6 +9,7 @@ import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart'
 import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/domain/currency/repository/i_currency_repository.dart';
 import 'package:asset_tuner/domain/currency/usecase/get_fiat_currencies_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
@@ -171,6 +172,7 @@ void main() {
       GetCachedSessionUseCase(FakeAuthRepository()),
       BootstrapProfileUseCase(FakeProfileRepository()),
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetEntitlementsForPlanUseCase(),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -197,6 +199,7 @@ void main() {
       GetFiatCurrenciesUseCase(
         FakeCurrencyRepository(currencyResult: const Success([])),
       ),
+      GetEntitlementsForPlanUseCase(),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -233,6 +236,7 @@ void main() {
         ),
       ),
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetEntitlementsForPlanUseCase(),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -275,6 +279,7 @@ void main() {
         ),
       ),
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetEntitlementsForPlanUseCase(),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -299,6 +304,7 @@ void main() {
       ),
       BootstrapProfileUseCase(FakeProfileRepository()),
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetEntitlementsForPlanUseCase(),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -325,6 +331,7 @@ void main() {
       ),
       BootstrapProfileUseCase(profileRepo),
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetEntitlementsForPlanUseCase(),
       UpdateBaseCurrencyUseCase(profileRepo),
     );
     addTearDown(cubit.close);
@@ -358,6 +365,7 @@ void main() {
       ),
       BootstrapProfileUseCase(profileRepo),
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetEntitlementsForPlanUseCase(),
       UpdateBaseCurrencyUseCase(profileRepo),
     );
     addTearDown(cubit.close);

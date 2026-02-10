@@ -9,6 +9,7 @@ import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart'
 import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/domain/currency/repository/i_currency_repository.dart';
 import 'package:asset_tuner/domain/currency/usecase/get_fiat_currencies_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
@@ -163,6 +164,7 @@ void main() {
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
       GetProfileUseCase(FakeProfileRepository()),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
+      GetEntitlementsForPlanUseCase(),
     );
 
     await Future<void>.delayed(const Duration(milliseconds: 1));
@@ -189,6 +191,7 @@ void main() {
         ),
       ),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
+      GetEntitlementsForPlanUseCase(),
     );
 
     await Future<void>.delayed(const Duration(milliseconds: 1));
@@ -215,6 +218,7 @@ void main() {
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
       GetProfileUseCase(FakeProfileRepository()),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
+      GetEntitlementsForPlanUseCase(),
     );
 
     await Future<void>.delayed(const Duration(milliseconds: 1));

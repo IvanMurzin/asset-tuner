@@ -13,8 +13,10 @@ import 'package:asset_tuner/core_ui/components/ds_search_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/presentation/settings/bloc/base_currency_settings_cubit.dart';
 import 'package:asset_tuner/presentation/settings/widget/base_currency_settings_currency_list.dart';
+import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 
 class BaseCurrencySettingsPage extends StatelessWidget {
   const BaseCurrencySettingsPage({super.key});
@@ -40,7 +42,13 @@ class BaseCurrencySettingsPage extends StatelessWidget {
               context.go(AppRoutes.signIn);
               break;
             case BaseCurrencySettingsDestination.paywall:
-              final upgraded = await context.push<bool>(AppRoutes.paywall);
+              final upgraded = await context.push<bool>(
+                AppRoutes.paywall,
+                extra: PaywallArgs(
+                  reason: PaywallReason.baseCurrency,
+                  requestedBaseCurrencyCode: navigation.requestedCode,
+                ),
+              );
               if (context.mounted && upgraded == true) {
                 await context.read<BaseCurrencySettingsCubit>().load();
                 final requested = navigation.requestedCode;
@@ -246,12 +254,10 @@ class BaseCurrencySettingsPage extends StatelessWidget {
   }
 
   bool _isAllowedByPlan(String? plan, String code) {
-    final normalizedPlan = (plan ?? 'free').toLowerCase();
-    if (normalizedPlan == 'paid') {
+    final entitlements = GetEntitlementsForPlanUseCase()(plan);
+    if (entitlements.anyBaseCurrency) {
       return true;
     }
-    return BaseCurrencySettingsCubit.freeAllowedCodes.contains(
-      code.toUpperCase(),
-    );
+    return entitlements.freeBaseCurrencyCodes.contains(code.toUpperCase());
   }
 }

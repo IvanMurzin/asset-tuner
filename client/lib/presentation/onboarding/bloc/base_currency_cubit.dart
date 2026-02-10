@@ -5,6 +5,7 @@ import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/domain/currency/usecase/get_fiat_currencies_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
@@ -19,6 +20,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     this._getFiatCurrenciesUseCase,
     this._getProfileUseCase,
     this._updateBaseCurrencyUseCase,
+    this._getEntitlementsForPlan,
   ) : super(const BaseCurrencyState()) {
     load();
   }
@@ -27,6 +29,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
   final GetFiatCurrenciesUseCase _getFiatCurrenciesUseCase;
   final GetProfileUseCase _getProfileUseCase;
   final UpdateBaseCurrencyUseCase _updateBaseCurrencyUseCase;
+  final GetEntitlementsForPlanUseCase _getEntitlementsForPlan;
 
   Future<void> load() async {
     emit(state.copyWith(status: BaseCurrencyStatus.loading));
@@ -167,9 +170,10 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
   }
 
   bool _isAllowedForPlan(String code, String? plan) {
-    if (plan == 'paid') {
+    final entitlements = _getEntitlementsForPlan(plan);
+    if (entitlements.anyBaseCurrency) {
       return true;
     }
-    return code == 'USD' || code == 'EUR' || code == 'RUB';
+    return entitlements.freeBaseCurrencyCodes.contains(code.toUpperCase());
   }
 }
