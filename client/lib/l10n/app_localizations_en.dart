@@ -205,4 +205,335 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paywallDismiss => 'Not now';
+
+  @override
+  String get paywallIncludesTitle => 'What\'s included';
+
+  @override
+  String get paywallFeatureCurrencies => 'Unlimited base currencies';
+
+  @override
+  String get paywallFeatureUpdates => 'Subscription status updates';
+
+  @override
+  String get paywallAlreadyPaid => 'You\'re already on the paid plan.';
+
+  @override
+  String get dsPreviewTotalBalanceLabel => 'Total balance';
+
+  @override
+  String get dsPreviewMonthlyReturnLabel => 'Monthly return';
+
+  @override
+  String get dsPreviewRiskScoreLabel => 'Risk score';
+
+  @override
+  String get dsPreviewRiskLow => 'Low';
+
+  @override
+  String get dsPreviewSectionTypography => 'Typography';
+
+  @override
+  String get dsPreviewTypographyH1 => 'Heading 1';
+
+  @override
+  String get dsPreviewTypographyH2 => 'Heading 2';
+
+  @override
+  String get dsPreviewTypographyH3 => 'Heading 3';
+
+  @override
+  String get dsPreviewTypographyBody => 'Body text example';
+
+  @override
+  String get dsPreviewTypographyCaption => 'Caption text';
+
+  @override
+  String get dsPreviewSectionButtons => 'Buttons';
+
+  @override
+  String get dsPreviewButtonAddAsset => 'Add asset';
+
+  @override
+  String get dsPreviewButtonSecondary => 'Secondary';
+
+  @override
+  String get dsPreviewButtonDelete => 'Delete';
+
+  @override
+  String get dsPreviewButtonLoading => 'Loading';
+
+  @override
+  String get dsPreviewSectionInputs => 'Inputs';
+
+  @override
+  String get dsPreviewInputAccountNameLabel => 'Account name';
+
+  @override
+  String get dsPreviewInputAccountNameHint => 'e.g., Cash USD';
+
+  @override
+  String get dsPreviewInputAmountLabel => 'Amount';
+
+  @override
+  String get dsPreviewSectionCards => 'Cards';
+
+  @override
+  String get dsPreviewCardPortfolioTitle => 'Portfolio snapshot';
+
+  @override
+  String get dsPreviewCardPortfolioBody =>
+      'Diversified across 6 accounts and 19 assets.';
+
+  @override
+  String get dsPreviewCardViewReport => 'View report';
+
+  @override
+  String get dsPreviewCardRebalance => 'Rebalance';
+
+  @override
+  String get dsPreviewSectionListItems => 'List items';
+
+  @override
+  String get dsPreviewListCheckingTitle => 'Checking account';
+
+  @override
+  String get dsPreviewListBankSubtitle => 'Bank';
+
+  @override
+  String get dsPreviewListBrokerageTitle => 'Brokerage';
+
+  @override
+  String get dsPreviewListInvestmentSubtitle => 'Investment';
+
+  @override
+  String get dsPreviewListCashWalletTitle => 'Cash wallet';
+
+  @override
+  String get dsPreviewListCashSubtitle => 'Cash';
+
+  @override
+  String get dsPreviewSectionDialogs => 'Dialogs';
+
+  @override
+  String get dsPreviewDialogShowButton => 'Show dialog';
+
+  @override
+  String get dsPreviewDialogDeleteAccountTitle => 'Delete account';
+
+  @override
+  String get dsPreviewDialogDeleteAccountBody =>
+      'This action cannot be undone.';
+
+  @override
+  String get dsPreviewDialogCancel => 'Cancel';
+
+  @override
+  String get dsPreviewSectionLoaders => 'Loaders';
+
+  @override
+  String get dsPreviewSectionShimmers => 'Shimmers';
+
+  @override
+  String get dsPreviewSectionStates => 'States';
+
+  @override
+  String get dsPreviewStateEmptyTitle => 'No accounts';
+
+  @override
+  String get dsPreviewStateEmptyBody =>
+      'Create your first account to get started.';
+
+  @override
+  String get dsPreviewStateEmptyAction => 'Create account';
+
+  @override
+  String get dsPreviewStateErrorTitle => 'Something went wrong';
+
+  @override
+  String get dsPreviewStateErrorBody =>
+      'We could not load your data. Try again.';
+
+  @override
+  String dsPreviewPercentThisMonth(String percent) {
+    return '$percent this month';
+  }
+
+  @override
+  String dsPreviewUpdatedAt(String timestamp) {
+    return 'Updated at $timestamp';
+  }
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsSectionPreferences => 'Preferences';
+
+  @override
+  String get settingsBaseCurrency => 'Base currency';
+
+  @override
+  String get settingsSectionSubscription => 'Subscription';
+
+  @override
+  String get settingsPlanStatus => 'Plan status';
+
+  @override
+  String get settingsPlanFree => 'Free plan';
+
+  @override
+  String get settingsPlanPaid => 'Paid plan';
+
+  @override
+  String get settingsManageSubscription => 'Manage subscription';
+
+  @override
+  String get settingsSignOut => 'Sign out';
+
+  @override
+  String get settingsEntitlementsError =>
+      'Couldn\'t verify subscription status.';
+
+  @override
+  String get baseCurrencySettingsTitle => 'Base currency';
+
+  @override
+  String get baseCurrencySettingsCurrentTitle => 'Current selection';
+
+  @override
+  String get baseCurrencySettingsCurrentBody =>
+      'Totals will be converted to this currency.';
+
+  @override
+  String get baseCurrencySettingsPickerTitle => 'Choose currency';
+
+  @override
+  String get baseCurrencySettingsSave => 'Save';
+
+  @override
+  String get baseCurrencySettingsLoadErrorTitle => 'Couldn\'t load currencies.';
+
+  @override
+  String get baseCurrencySettingsPaywallHint =>
+      'Upgrade to unlock more base currencies.';
+
+  @override
+  String get baseCurrencySettingsSearchHint => 'Search currency';
+
+  @override
+  String get baseCurrencySettingsBrowseAll => 'Browse all currencies';
+
+  @override
+  String get baseCurrencySettingsSearchTip =>
+      'Tip: type at least 2 characters to search. Popular currencies are shown by default.';
+
+  @override
+  String get baseCurrencySettingsResultsHint =>
+      'Showing a limited set of results. Refine your search to find more.';
+
+  @override
+  String get subscriptionTitle => 'Subscription';
+
+  @override
+  String get subscriptionStatusTitle => 'Status';
+
+  @override
+  String get subscriptionManage => 'Manage subscription';
+
+  @override
+  String get subscriptionRestore => 'Restore purchases';
+
+  @override
+  String get subscriptionCancel => 'Cancel subscription';
+
+  @override
+  String get subscriptionUpgrade => 'Upgrade to paid';
+
+  @override
+  String get subscriptionFreeBody =>
+      'You\'re on the free plan. Upgrade to unlock all base currencies.';
+
+  @override
+  String get subscriptionPaidBody =>
+      'You\'re on the paid plan. Thanks for supporting Asset Tuner.';
+
+  @override
+  String get subscriptionPlaceholderBody =>
+      'Subscription management will be available in a future update.';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileSectionPreferences => 'Preferences';
+
+  @override
+  String get profileLanguage => 'Language';
+
+  @override
+  String get profileLanguageSystem => 'System';
+
+  @override
+  String get profileLanguageEnglish => 'English';
+
+  @override
+  String get profileLanguageRussian => 'Russian';
+
+  @override
+  String get profileTheme => 'Theme';
+
+  @override
+  String get profileThemeSystem => 'System';
+
+  @override
+  String get profileThemeLight => 'Light';
+
+  @override
+  String get profileThemeDark => 'Dark';
+
+  @override
+  String get profileSectionAccount => 'Account';
+
+  @override
+  String get profileAccountActionsTitle => 'Account actions';
+
+  @override
+  String get profileAccountActionsSubtitle => 'Sign out or delete account';
+
+  @override
+  String get profileDeleteAccountTitle => 'Delete account';
+
+  @override
+  String get profileDeleteAccountBody =>
+      'This will remove your local data and sign you out.';
+
+  @override
+  String get profileDeleteAccountCta => 'Delete account';
+
+  @override
+  String get profileDeleteConfirmTitle => 'Delete account?';
+
+  @override
+  String get profileDeleteConfirmBody => 'This action cannot be undone.';
+
+  @override
+  String get profileDeleteConfirmCta => 'Delete';
+
+  @override
+  String get profileDeleteConfirmCancel => 'Cancel';
+
+  @override
+  String profileHeaderSubtitle(String plan, String currency) {
+    return '$plan · Base currency: $currency';
+  }
+
+  @override
+  String get subscriptionManageSuccess => 'Subscription status updated.';
+
+  @override
+  String get subscriptionRestoreSuccess => 'Purchases restored.';
+
+  @override
+  String get subscriptionCancelSuccess => 'Subscription canceled.';
 }

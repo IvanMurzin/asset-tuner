@@ -2,10 +2,18 @@ import 'dart:math';
 
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/local_storage/auth_session_storage.dart';
+import 'package:asset_tuner/core/local_storage/profile_storage.dart';
 import 'package:asset_tuner/data/auth/dto/auth_session_dto.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 
-enum MockAuthErrorCode { network, unauthorized, rateLimited, validation, conflict, unknown }
+enum MockAuthErrorCode {
+  network,
+  unauthorized,
+  rateLimited,
+  validation,
+  conflict,
+  unknown,
+}
 
 class MockAuthException implements Exception {
   MockAuthException(this.code, this.message);
@@ -21,9 +29,10 @@ class MockAuthException implements Exception {
 
 @lazySingleton
 class AuthMockDataSource {
-  AuthMockDataSource(this._storage);
+  AuthMockDataSource(this._storage, this._profileStorage);
 
   final AuthSessionStorage _storage;
+  final ProfileStorage _profileStorage;
   final Map<String, String> _passwordsByEmail = {'demo@asset.tuner': 'demo123'};
   final Map<String, String> _pendingOtpByEmail = {};
 
@@ -48,20 +57,31 @@ class AuthMockDataSource {
       );
     }
     if (!email.contains('@')) {
-      throw MockAuthException(MockAuthErrorCode.validation, 'Invalid email address.');
+      throw MockAuthException(
+        MockAuthErrorCode.validation,
+        'Invalid email address.',
+      );
     }
     if (email.contains('offline')) {
-      throw MockAuthException(MockAuthErrorCode.network, 'Network unavailable.');
+      throw MockAuthException(
+        MockAuthErrorCode.network,
+        'Network unavailable.',
+      );
     }
   }
 
   Future<AuthSessionDto> confirmEmailOtp(String email) async {
     await Future<void>.delayed(const Duration(milliseconds: 600));
     if (email.contains('expired')) {
-      throw MockAuthException(MockAuthErrorCode.unauthorized, 'OTP expired or invalid.');
+      throw MockAuthException(
+        MockAuthErrorCode.unauthorized,
+        'OTP expired or invalid.',
+      );
     }
     final session = _createSession(email);
-    await _storage.writeSession(StoredAuthSession(userId: session.userId, email: session.email));
+    await _storage.writeSession(
+      StoredAuthSession(userId: session.userId, email: session.email),
+    );
     return session;
   }
 
@@ -69,7 +89,9 @@ class AuthMockDataSource {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     final email = _oauthEmail(provider);
     final session = _createSession(email);
-    await _storage.writeSession(StoredAuthSession(userId: session.userId, email: session.email));
+    await _storage.writeSession(
+      StoredAuthSession(userId: session.userId, email: session.email),
+    );
     return session;
   }
 
@@ -83,18 +105,29 @@ class AuthMockDataSource {
     _validatePassword(password);
     final stored = _passwordsByEmail[email];
     if (stored == null || stored != password) {
-      throw MockAuthException(MockAuthErrorCode.unauthorized, 'Invalid email or password.');
+      throw MockAuthException(
+        MockAuthErrorCode.unauthorized,
+        'Invalid email or password.',
+      );
     }
     final session = _createSession(email);
-    await _storage.writeSession(StoredAuthSession(userId: session.userId, email: session.email));
+    await _storage.writeSession(
+      StoredAuthSession(userId: session.userId, email: session.email),
+    );
   }
 
-  Future<OtpChallengeDto> signUpWithPassword(String email, String password) async {
+  Future<OtpChallengeDto> signUpWithPassword(
+    String email,
+    String password,
+  ) async {
     await Future<void>.delayed(const Duration(milliseconds: 550));
     _validateEmail(email);
     _validatePassword(password);
     if (_passwordsByEmail.containsKey(email)) {
-      throw MockAuthException(MockAuthErrorCode.conflict, 'Email already in use.');
+      throw MockAuthException(
+        MockAuthErrorCode.conflict,
+        'Email already in use.',
+      );
     }
     _passwordsByEmail[email] = password;
     final otp = _generateOtp();
@@ -106,16 +139,34 @@ class AuthMockDataSource {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     final pending = _pendingOtpByEmail[email];
     if (pending == null || pending != code) {
-      throw MockAuthException(MockAuthErrorCode.unauthorized, 'Invalid verification code.');
+      throw MockAuthException(
+        MockAuthErrorCode.unauthorized,
+        'Invalid verification code.',
+      );
     }
     _pendingOtpByEmail.remove(email);
     final session = _createSession(email);
-    await _storage.writeSession(StoredAuthSession(userId: session.userId, email: session.email));
+    await _storage.writeSession(
+      StoredAuthSession(userId: session.userId, email: session.email),
+    );
     return session;
   }
 
   Future<void> clearSession() async {
     await _storage.clear();
+  }
+
+  Future<void> deleteAccount(String userId) async {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    final stored = await _storage.readSession();
+    if (stored == null || stored.userId != userId) {
+      throw MockAuthException(
+        MockAuthErrorCode.unauthorized,
+        'Session expired or invalid.',
+      );
+    }
+    await _storage.clear();
+    await _profileStorage.deleteProfile(userId);
   }
 
   AuthSessionDto _createSession(String email) {
@@ -133,7 +184,10 @@ class AuthMockDataSource {
 
   void _validateEmail(String email) {
     if (!email.contains('@')) {
-      throw MockAuthException(MockAuthErrorCode.validation, 'Invalid email address.');
+      throw MockAuthException(
+        MockAuthErrorCode.validation,
+        'Invalid email address.',
+      );
     }
   }
 

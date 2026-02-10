@@ -23,6 +23,13 @@ class ProfileStorage {
     await prefs.setString(_key, jsonEncode(data));
   }
 
+  Future<void> deleteProfile(String userId) async {
+    final data = await _readAll();
+    data.remove(userId);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_key, jsonEncode(data));
+  }
+
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);

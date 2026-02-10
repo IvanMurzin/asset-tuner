@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
 class DSSearchField extends StatelessWidget {
-  const DSSearchField({super.key, this.hintText, this.controller, this.onChanged});
+  const DSSearchField({
+    super.key,
+    required this.hintText,
+    this.controller,
+    this.onChanged,
+  });
 
-  final String? hintText;
+  final String hintText;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
 
@@ -20,11 +25,14 @@ class DSSearchField extends StatelessWidget {
       onChanged: onChanged,
       style: typography.body.copyWith(color: colors.textPrimary),
       decoration: InputDecoration(
-        hintText: hintText ?? 'Search',
+        hintText: hintText,
         prefixIcon: Icon(Icons.search, color: colors.textTertiary),
         filled: true,
         fillColor: colors.surface,
-        contentPadding: EdgeInsets.symmetric(horizontal: spacing.s16, vertical: spacing.s12),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: spacing.s16,
+          vertical: spacing.s12,
+        ),
         hintStyle: typography.body.copyWith(color: colors.textTertiary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius.r12),

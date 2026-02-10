@@ -30,15 +30,22 @@ class DSCard extends StatelessWidget {
       DSElevationLevel.level2 => elevationTokens.e2,
     };
 
+    final borderRadius = BorderRadius.circular(radius.r12);
+
     return Container(
-      padding: padding ?? EdgeInsets.all(spacing.s16),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(radius.r12),
+        borderRadius: borderRadius,
         boxShadow: shadows,
         border: bordered ? Border.all(color: colors.border) : null,
       ),
-      child: child,
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: Padding(
+          padding: padding ?? EdgeInsets.all(spacing.s16),
+          child: child,
+        ),
+      ),
     );
   }
 }

@@ -475,6 +475,630 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not now'**
   String get paywallDismiss;
+
+  /// No description provided for @paywallIncludesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s included'**
+  String get paywallIncludesTitle;
+
+  /// No description provided for @paywallFeatureCurrencies.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited base currencies'**
+  String get paywallFeatureCurrencies;
+
+  /// No description provided for @paywallFeatureUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription status updates'**
+  String get paywallFeatureUpdates;
+
+  /// No description provided for @paywallAlreadyPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already on the paid plan.'**
+  String get paywallAlreadyPaid;
+
+  /// No description provided for @dsPreviewTotalBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total balance'**
+  String get dsPreviewTotalBalanceLabel;
+
+  /// No description provided for @dsPreviewMonthlyReturnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly return'**
+  String get dsPreviewMonthlyReturnLabel;
+
+  /// No description provided for @dsPreviewRiskScoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk score'**
+  String get dsPreviewRiskScoreLabel;
+
+  /// No description provided for @dsPreviewRiskLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get dsPreviewRiskLow;
+
+  /// No description provided for @dsPreviewSectionTypography.
+  ///
+  /// In en, this message translates to:
+  /// **'Typography'**
+  String get dsPreviewSectionTypography;
+
+  /// No description provided for @dsPreviewTypographyH1.
+  ///
+  /// In en, this message translates to:
+  /// **'Heading 1'**
+  String get dsPreviewTypographyH1;
+
+  /// No description provided for @dsPreviewTypographyH2.
+  ///
+  /// In en, this message translates to:
+  /// **'Heading 2'**
+  String get dsPreviewTypographyH2;
+
+  /// No description provided for @dsPreviewTypographyH3.
+  ///
+  /// In en, this message translates to:
+  /// **'Heading 3'**
+  String get dsPreviewTypographyH3;
+
+  /// No description provided for @dsPreviewTypographyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Body text example'**
+  String get dsPreviewTypographyBody;
+
+  /// No description provided for @dsPreviewTypographyCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Caption text'**
+  String get dsPreviewTypographyCaption;
+
+  /// No description provided for @dsPreviewSectionButtons.
+  ///
+  /// In en, this message translates to:
+  /// **'Buttons'**
+  String get dsPreviewSectionButtons;
+
+  /// No description provided for @dsPreviewButtonAddAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Add asset'**
+  String get dsPreviewButtonAddAsset;
+
+  /// No description provided for @dsPreviewButtonSecondary.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary'**
+  String get dsPreviewButtonSecondary;
+
+  /// No description provided for @dsPreviewButtonDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get dsPreviewButtonDelete;
+
+  /// No description provided for @dsPreviewButtonLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get dsPreviewButtonLoading;
+
+  /// No description provided for @dsPreviewSectionInputs.
+  ///
+  /// In en, this message translates to:
+  /// **'Inputs'**
+  String get dsPreviewSectionInputs;
+
+  /// No description provided for @dsPreviewInputAccountNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account name'**
+  String get dsPreviewInputAccountNameLabel;
+
+  /// No description provided for @dsPreviewInputAccountNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Cash USD'**
+  String get dsPreviewInputAccountNameHint;
+
+  /// No description provided for @dsPreviewInputAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get dsPreviewInputAmountLabel;
+
+  /// No description provided for @dsPreviewSectionCards.
+  ///
+  /// In en, this message translates to:
+  /// **'Cards'**
+  String get dsPreviewSectionCards;
+
+  /// No description provided for @dsPreviewCardPortfolioTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio snapshot'**
+  String get dsPreviewCardPortfolioTitle;
+
+  /// No description provided for @dsPreviewCardPortfolioBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Diversified across 6 accounts and 19 assets.'**
+  String get dsPreviewCardPortfolioBody;
+
+  /// No description provided for @dsPreviewCardViewReport.
+  ///
+  /// In en, this message translates to:
+  /// **'View report'**
+  String get dsPreviewCardViewReport;
+
+  /// No description provided for @dsPreviewCardRebalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Rebalance'**
+  String get dsPreviewCardRebalance;
+
+  /// No description provided for @dsPreviewSectionListItems.
+  ///
+  /// In en, this message translates to:
+  /// **'List items'**
+  String get dsPreviewSectionListItems;
+
+  /// No description provided for @dsPreviewListCheckingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking account'**
+  String get dsPreviewListCheckingTitle;
+
+  /// No description provided for @dsPreviewListBankSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get dsPreviewListBankSubtitle;
+
+  /// No description provided for @dsPreviewListBrokerageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Brokerage'**
+  String get dsPreviewListBrokerageTitle;
+
+  /// No description provided for @dsPreviewListInvestmentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Investment'**
+  String get dsPreviewListInvestmentSubtitle;
+
+  /// No description provided for @dsPreviewListCashWalletTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash wallet'**
+  String get dsPreviewListCashWalletTitle;
+
+  /// No description provided for @dsPreviewListCashSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get dsPreviewListCashSubtitle;
+
+  /// No description provided for @dsPreviewSectionDialogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Dialogs'**
+  String get dsPreviewSectionDialogs;
+
+  /// No description provided for @dsPreviewDialogShowButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Show dialog'**
+  String get dsPreviewDialogShowButton;
+
+  /// No description provided for @dsPreviewDialogDeleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get dsPreviewDialogDeleteAccountTitle;
+
+  /// No description provided for @dsPreviewDialogDeleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone.'**
+  String get dsPreviewDialogDeleteAccountBody;
+
+  /// No description provided for @dsPreviewDialogCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get dsPreviewDialogCancel;
+
+  /// No description provided for @dsPreviewSectionLoaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Loaders'**
+  String get dsPreviewSectionLoaders;
+
+  /// No description provided for @dsPreviewSectionShimmers.
+  ///
+  /// In en, this message translates to:
+  /// **'Shimmers'**
+  String get dsPreviewSectionShimmers;
+
+  /// No description provided for @dsPreviewSectionStates.
+  ///
+  /// In en, this message translates to:
+  /// **'States'**
+  String get dsPreviewSectionStates;
+
+  /// No description provided for @dsPreviewStateEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts'**
+  String get dsPreviewStateEmptyTitle;
+
+  /// No description provided for @dsPreviewStateEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first account to get started.'**
+  String get dsPreviewStateEmptyBody;
+
+  /// No description provided for @dsPreviewStateEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get dsPreviewStateEmptyAction;
+
+  /// No description provided for @dsPreviewStateErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get dsPreviewStateErrorTitle;
+
+  /// No description provided for @dsPreviewStateErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not load your data. Try again.'**
+  String get dsPreviewStateErrorBody;
+
+  /// Monthly performance badge in design system preview.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent} this month'**
+  String dsPreviewPercentThisMonth(String percent);
+
+  /// Timestamp label in design system preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated at {timestamp}'**
+  String dsPreviewUpdatedAt(String timestamp);
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsSectionPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get settingsSectionPreferences;
+
+  /// No description provided for @settingsBaseCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Base currency'**
+  String get settingsBaseCurrency;
+
+  /// No description provided for @settingsSectionSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription'**
+  String get settingsSectionSubscription;
+
+  /// No description provided for @settingsPlanStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan status'**
+  String get settingsPlanStatus;
+
+  /// No description provided for @settingsPlanFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan'**
+  String get settingsPlanFree;
+
+  /// No description provided for @settingsPlanPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid plan'**
+  String get settingsPlanPaid;
+
+  /// No description provided for @settingsManageSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscription'**
+  String get settingsManageSubscription;
+
+  /// No description provided for @settingsSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get settingsSignOut;
+
+  /// No description provided for @settingsEntitlementsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t verify subscription status.'**
+  String get settingsEntitlementsError;
+
+  /// No description provided for @baseCurrencySettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Base currency'**
+  String get baseCurrencySettingsTitle;
+
+  /// No description provided for @baseCurrencySettingsCurrentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Current selection'**
+  String get baseCurrencySettingsCurrentTitle;
+
+  /// No description provided for @baseCurrencySettingsCurrentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals will be converted to this currency.'**
+  String get baseCurrencySettingsCurrentBody;
+
+  /// No description provided for @baseCurrencySettingsPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose currency'**
+  String get baseCurrencySettingsPickerTitle;
+
+  /// No description provided for @baseCurrencySettingsSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get baseCurrencySettingsSave;
+
+  /// No description provided for @baseCurrencySettingsLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load currencies.'**
+  String get baseCurrencySettingsLoadErrorTitle;
+
+  /// No description provided for @baseCurrencySettingsPaywallHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to unlock more base currencies.'**
+  String get baseCurrencySettingsPaywallHint;
+
+  /// No description provided for @baseCurrencySettingsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search currency'**
+  String get baseCurrencySettingsSearchHint;
+
+  /// No description provided for @baseCurrencySettingsBrowseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse all currencies'**
+  String get baseCurrencySettingsBrowseAll;
+
+  /// No description provided for @baseCurrencySettingsSearchTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: type at least 2 characters to search. Popular currencies are shown by default.'**
+  String get baseCurrencySettingsSearchTip;
+
+  /// No description provided for @baseCurrencySettingsResultsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing a limited set of results. Refine your search to find more.'**
+  String get baseCurrencySettingsResultsHint;
+
+  /// No description provided for @subscriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription'**
+  String get subscriptionTitle;
+
+  /// No description provided for @subscriptionStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get subscriptionStatusTitle;
+
+  /// No description provided for @subscriptionManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscription'**
+  String get subscriptionManage;
+
+  /// No description provided for @subscriptionRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get subscriptionRestore;
+
+  /// No description provided for @subscriptionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel subscription'**
+  String get subscriptionCancel;
+
+  /// No description provided for @subscriptionUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to paid'**
+  String get subscriptionUpgrade;
+
+  /// No description provided for @subscriptionFreeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on the free plan. Upgrade to unlock all base currencies.'**
+  String get subscriptionFreeBody;
+
+  /// No description provided for @subscriptionPaidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on the paid plan. Thanks for supporting Asset Tuner.'**
+  String get subscriptionPaidBody;
+
+  /// No description provided for @subscriptionPlaceholderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription management will be available in a future update.'**
+  String get subscriptionPlaceholderBody;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileSectionPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get profileSectionPreferences;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileLanguageSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get profileLanguageSystem;
+
+  /// No description provided for @profileLanguageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get profileLanguageEnglish;
+
+  /// No description provided for @profileLanguageRussian.
+  ///
+  /// In en, this message translates to:
+  /// **'Russian'**
+  String get profileLanguageRussian;
+
+  /// No description provided for @profileTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get profileTheme;
+
+  /// No description provided for @profileThemeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get profileThemeSystem;
+
+  /// No description provided for @profileThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get profileThemeLight;
+
+  /// No description provided for @profileThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get profileThemeDark;
+
+  /// No description provided for @profileSectionAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get profileSectionAccount;
+
+  /// No description provided for @profileAccountActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account actions'**
+  String get profileAccountActionsTitle;
+
+  /// No description provided for @profileAccountActionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out or delete account'**
+  String get profileAccountActionsSubtitle;
+
+  /// No description provided for @profileDeleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get profileDeleteAccountTitle;
+
+  /// No description provided for @profileDeleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove your local data and sign you out.'**
+  String get profileDeleteAccountBody;
+
+  /// No description provided for @profileDeleteAccountCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get profileDeleteAccountCta;
+
+  /// No description provided for @profileDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get profileDeleteConfirmTitle;
+
+  /// No description provided for @profileDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone.'**
+  String get profileDeleteConfirmBody;
+
+  /// No description provided for @profileDeleteConfirmCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get profileDeleteConfirmCta;
+
+  /// No description provided for @profileDeleteConfirmCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileDeleteConfirmCancel;
+
+  /// Profile header subtitle showing plan and base currency.
+  ///
+  /// In en, this message translates to:
+  /// **'{plan} · Base currency: {currency}'**
+  String profileHeaderSubtitle(String plan, String currency);
+
+  /// No description provided for @subscriptionManageSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription status updated.'**
+  String get subscriptionManageSuccess;
+
+  /// No description provided for @subscriptionRestoreSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases restored.'**
+  String get subscriptionRestoreSuccess;
+
+  /// No description provided for @subscriptionCancelSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription canceled.'**
+  String get subscriptionCancelSuccess;
 }
 
 class _AppLocalizationsDelegate

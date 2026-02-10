@@ -124,6 +124,13 @@ class BaseCurrencyPage extends StatelessWidget {
                       onChanged: context.read<BaseCurrencyCubit>().updateQuery,
                     ),
                     SizedBox(height: spacing.s16),
+                    Text(
+                      l10n.baseCurrencySettingsSearchTip,
+                      style: typography.caption.copyWith(
+                        color: context.dsColors.textSecondary,
+                      ),
+                    ),
+                    SizedBox(height: spacing.s12),
                     if (bannerMessage != null)
                       DSInlineBanner(
                         title: l10n.onboardingBaseCurrencyTitle,
@@ -138,6 +145,8 @@ class BaseCurrencyPage extends StatelessWidget {
                     DSSelectList(
                       options: options,
                       selectedId: state.selectedCode,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       onSelect: (option) => context
                           .read<BaseCurrencyCubit>()
                           .selectCurrency(option.id),
@@ -172,8 +181,9 @@ class BaseCurrencyPage extends StatelessWidget {
 
   List<CurrencyEntity> _filterCurrencies(BaseCurrencyState state) {
     final query = state.query.trim().toLowerCase();
-    if (query.isEmpty) {
-      return state.currencies;
+    if (query.length < 2) {
+      const popular = {'USD', 'EUR', 'RUB'};
+      return state.currencies.where((c) => popular.contains(c.code)).toList();
     }
     return state.currencies
         .where(
@@ -181,6 +191,7 @@ class BaseCurrencyPage extends StatelessWidget {
               currency.code.toLowerCase().contains(query) ||
               currency.name.toLowerCase().contains(query),
         )
+        .take(50)
         .toList();
   }
 

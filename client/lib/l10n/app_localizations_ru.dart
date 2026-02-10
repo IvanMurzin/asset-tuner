@@ -202,4 +202,335 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get paywallDismiss => 'Позже';
+
+  @override
+  String get paywallIncludesTitle => 'Что включено';
+
+  @override
+  String get paywallFeatureCurrencies => 'Безлимитные базовые валюты';
+
+  @override
+  String get paywallFeatureUpdates => 'Обновление статуса подписки';
+
+  @override
+  String get paywallAlreadyPaid => 'У вас уже активен платный план.';
+
+  @override
+  String get dsPreviewTotalBalanceLabel => 'Общий баланс';
+
+  @override
+  String get dsPreviewMonthlyReturnLabel => 'Доходность за месяц';
+
+  @override
+  String get dsPreviewRiskScoreLabel => 'Риск';
+
+  @override
+  String get dsPreviewRiskLow => 'Низкий';
+
+  @override
+  String get dsPreviewSectionTypography => 'Типографика';
+
+  @override
+  String get dsPreviewTypographyH1 => 'Заголовок 1';
+
+  @override
+  String get dsPreviewTypographyH2 => 'Заголовок 2';
+
+  @override
+  String get dsPreviewTypographyH3 => 'Заголовок 3';
+
+  @override
+  String get dsPreviewTypographyBody => 'Пример основного текста';
+
+  @override
+  String get dsPreviewTypographyCaption => 'Подпись';
+
+  @override
+  String get dsPreviewSectionButtons => 'Кнопки';
+
+  @override
+  String get dsPreviewButtonAddAsset => 'Добавить актив';
+
+  @override
+  String get dsPreviewButtonSecondary => 'Вторичная';
+
+  @override
+  String get dsPreviewButtonDelete => 'Удалить';
+
+  @override
+  String get dsPreviewButtonLoading => 'Загрузка';
+
+  @override
+  String get dsPreviewSectionInputs => 'Поля ввода';
+
+  @override
+  String get dsPreviewInputAccountNameLabel => 'Название счета';
+
+  @override
+  String get dsPreviewInputAccountNameHint => 'например, Cash USD';
+
+  @override
+  String get dsPreviewInputAmountLabel => 'Сумма';
+
+  @override
+  String get dsPreviewSectionCards => 'Карточки';
+
+  @override
+  String get dsPreviewCardPortfolioTitle => 'Снимок портфеля';
+
+  @override
+  String get dsPreviewCardPortfolioBody =>
+      'Диверсифицировано по 6 счетам и 19 активам.';
+
+  @override
+  String get dsPreviewCardViewReport => 'Открыть отчет';
+
+  @override
+  String get dsPreviewCardRebalance => 'Ребалансировать';
+
+  @override
+  String get dsPreviewSectionListItems => 'Список';
+
+  @override
+  String get dsPreviewListCheckingTitle => 'Расчетный счет';
+
+  @override
+  String get dsPreviewListBankSubtitle => 'Банк';
+
+  @override
+  String get dsPreviewListBrokerageTitle => 'Брокерский счет';
+
+  @override
+  String get dsPreviewListInvestmentSubtitle => 'Инвестиции';
+
+  @override
+  String get dsPreviewListCashWalletTitle => 'Кошелек';
+
+  @override
+  String get dsPreviewListCashSubtitle => 'Наличные';
+
+  @override
+  String get dsPreviewSectionDialogs => 'Диалоги';
+
+  @override
+  String get dsPreviewDialogShowButton => 'Показать диалог';
+
+  @override
+  String get dsPreviewDialogDeleteAccountTitle => 'Удалить счет';
+
+  @override
+  String get dsPreviewDialogDeleteAccountBody =>
+      'Это действие нельзя отменить.';
+
+  @override
+  String get dsPreviewDialogCancel => 'Отмена';
+
+  @override
+  String get dsPreviewSectionLoaders => 'Индикаторы';
+
+  @override
+  String get dsPreviewSectionShimmers => 'Шиммеры';
+
+  @override
+  String get dsPreviewSectionStates => 'Состояния';
+
+  @override
+  String get dsPreviewStateEmptyTitle => 'Нет счетов';
+
+  @override
+  String get dsPreviewStateEmptyBody => 'Создайте первый счет, чтобы начать.';
+
+  @override
+  String get dsPreviewStateEmptyAction => 'Создать счет';
+
+  @override
+  String get dsPreviewStateErrorTitle => 'Что-то пошло не так';
+
+  @override
+  String get dsPreviewStateErrorBody =>
+      'Не удалось загрузить данные. Попробуйте снова.';
+
+  @override
+  String dsPreviewPercentThisMonth(String percent) {
+    return '$percent за месяц';
+  }
+
+  @override
+  String dsPreviewUpdatedAt(String timestamp) {
+    return 'Обновлено: $timestamp';
+  }
+
+  @override
+  String get settingsTitle => 'Настройки';
+
+  @override
+  String get settingsSectionPreferences => 'Предпочтения';
+
+  @override
+  String get settingsBaseCurrency => 'Базовая валюта';
+
+  @override
+  String get settingsSectionSubscription => 'Подписка';
+
+  @override
+  String get settingsPlanStatus => 'Тариф';
+
+  @override
+  String get settingsPlanFree => 'Бесплатный план';
+
+  @override
+  String get settingsPlanPaid => 'Платный план';
+
+  @override
+  String get settingsManageSubscription => 'Управление подпиской';
+
+  @override
+  String get settingsSignOut => 'Выйти';
+
+  @override
+  String get settingsEntitlementsError =>
+      'Не удалось проверить статус подписки.';
+
+  @override
+  String get baseCurrencySettingsTitle => 'Базовая валюта';
+
+  @override
+  String get baseCurrencySettingsCurrentTitle => 'Текущий выбор';
+
+  @override
+  String get baseCurrencySettingsCurrentBody =>
+      'Итоги будут конвертироваться в эту валюту.';
+
+  @override
+  String get baseCurrencySettingsPickerTitle => 'Выберите валюту';
+
+  @override
+  String get baseCurrencySettingsSave => 'Сохранить';
+
+  @override
+  String get baseCurrencySettingsLoadErrorTitle =>
+      'Не удалось загрузить валюты.';
+
+  @override
+  String get baseCurrencySettingsPaywallHint =>
+      'Оформите подписку, чтобы открыть больше базовых валют.';
+
+  @override
+  String get baseCurrencySettingsSearchHint => 'Поиск валюты';
+
+  @override
+  String get baseCurrencySettingsBrowseAll => 'Показать все валюты';
+
+  @override
+  String get baseCurrencySettingsSearchTip =>
+      'Подсказка: введите минимум 2 символа. По умолчанию показаны популярные валюты.';
+
+  @override
+  String get baseCurrencySettingsResultsHint =>
+      'Показана только часть результатов. Уточните запрос, чтобы найти больше.';
+
+  @override
+  String get subscriptionTitle => 'Подписка';
+
+  @override
+  String get subscriptionStatusTitle => 'Статус';
+
+  @override
+  String get subscriptionManage => 'Управление подпиской';
+
+  @override
+  String get subscriptionRestore => 'Восстановить покупки';
+
+  @override
+  String get subscriptionCancel => 'Отменить подписку';
+
+  @override
+  String get subscriptionUpgrade => 'Оформить подписку';
+
+  @override
+  String get subscriptionFreeBody =>
+      'У вас бесплатный план. Оформите подписку, чтобы открыть все базовые валюты.';
+
+  @override
+  String get subscriptionPaidBody =>
+      'У вас платный план. Спасибо за поддержку Asset Tuner.';
+
+  @override
+  String get subscriptionPlaceholderBody =>
+      'Управление подпиской появится в будущих обновлениях.';
+
+  @override
+  String get profileTitle => 'Профиль';
+
+  @override
+  String get profileSectionPreferences => 'Предпочтения';
+
+  @override
+  String get profileLanguage => 'Язык';
+
+  @override
+  String get profileLanguageSystem => 'Системный';
+
+  @override
+  String get profileLanguageEnglish => 'English';
+
+  @override
+  String get profileLanguageRussian => 'Русский';
+
+  @override
+  String get profileTheme => 'Тема';
+
+  @override
+  String get profileThemeSystem => 'Системная';
+
+  @override
+  String get profileThemeLight => 'Светлая';
+
+  @override
+  String get profileThemeDark => 'Темная';
+
+  @override
+  String get profileSectionAccount => 'Аккаунт';
+
+  @override
+  String get profileAccountActionsTitle => 'Действия аккаунта';
+
+  @override
+  String get profileAccountActionsSubtitle => 'Выход или удаление аккаунта';
+
+  @override
+  String get profileDeleteAccountTitle => 'Удалить аккаунт';
+
+  @override
+  String get profileDeleteAccountBody =>
+      'Локальные данные будут удалены, а вы выйдете из аккаунта.';
+
+  @override
+  String get profileDeleteAccountCta => 'Удалить аккаунт';
+
+  @override
+  String get profileDeleteConfirmTitle => 'Удалить аккаунт?';
+
+  @override
+  String get profileDeleteConfirmBody => 'Это действие нельзя отменить.';
+
+  @override
+  String get profileDeleteConfirmCta => 'Удалить';
+
+  @override
+  String get profileDeleteConfirmCancel => 'Отмена';
+
+  @override
+  String profileHeaderSubtitle(String plan, String currency) {
+    return '$plan · Базовая валюта: $currency';
+  }
+
+  @override
+  String get subscriptionManageSuccess => 'Статус подписки обновлен.';
+
+  @override
+  String get subscriptionRestoreSuccess => 'Покупки восстановлены.';
+
+  @override
+  String get subscriptionCancelSuccess => 'Подписка отменена.';
 }

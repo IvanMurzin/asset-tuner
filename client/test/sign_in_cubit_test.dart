@@ -47,7 +47,9 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -56,27 +58,46 @@ class FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(
+    String email,
+    String password,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(
+    String email,
+    String code,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
-    return oauthResult ?? const Success(AuthSessionEntity(userId: 'user_1', email: 'user@x.com'));
+  Future<Result<AuthSessionEntity>> signInWithOAuth(
+    AuthProvider provider,
+  ) async {
+    return oauthResult ??
+        const Success(AuthSessionEntity(userId: 'user_1', email: 'user@x.com'));
   }
 
   @override
   Future<List<AuthProvider>> getAvailableProviders() async {
-    return availableProviders ?? const [AuthProvider.google, AuthProvider.apple];
+    return availableProviders ??
+        const [AuthProvider.google, AuthProvider.apple];
   }
 
   @override
   Future<Result<void>> signOut() async {
+    return const Success(null);
+  }
+
+  @override
+  Future<Result<void>> deleteAccount(String userId) async {
     return const Success(null);
   }
 }
@@ -91,7 +112,11 @@ class FakeProfileRepository implements IProfileRepository {
     return ensureResult ??
         Success(
           ProfileBootstrapEntity(
-            profile: const ProfileEntity(userId: 'user_1', baseCurrency: 'USD', plan: 'free'),
+            profile: const ProfileEntity(
+              userId: 'user_1',
+              baseCurrency: 'USD',
+              plan: 'free',
+            ),
             isNew: true,
             wasBaseCurrencyDefaulted: true,
           ),
@@ -100,12 +125,26 @@ class FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileEntity>> getProfile(String userId) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<ProfileEntity>> updateBaseCurrency(String userId, String baseCurrency) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<ProfileEntity>> updateBaseCurrency(
+    String userId,
+    String baseCurrency,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<ProfileEntity>> updatePlan(String userId, String plan) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -173,12 +212,19 @@ void main() {
 
   test('signIn success routes to onboarding when defaulted', () async {
     final authRepo = FakeAuthRepository(
-      cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+      cachedSession: const AuthSessionEntity(
+        userId: 'user_1',
+        email: 'user@example.com',
+      ),
     );
     final profileRepo = FakeProfileRepository(
       ensureResult: Success(
         ProfileBootstrapEntity(
-          profile: const ProfileEntity(userId: 'user_1', baseCurrency: 'USD', plan: 'free'),
+          profile: const ProfileEntity(
+            userId: 'user_1',
+            baseCurrency: 'USD',
+            plan: 'free',
+          ),
           isNew: true,
           wasBaseCurrencyDefaulted: true,
         ),
@@ -198,6 +244,9 @@ void main() {
     await cubit.signIn();
 
     expect(cubit.state.navigation, isNotNull);
-    expect(cubit.state.navigation?.destination, SignInDestination.onboardingBaseCurrency);
+    expect(
+      cubit.state.navigation?.destination,
+      SignInDestination.onboardingBaseCurrency,
+    );
   });
 }

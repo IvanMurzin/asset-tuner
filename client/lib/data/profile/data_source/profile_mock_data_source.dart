@@ -13,12 +13,20 @@ class ProfileMockDataSource {
     if (stored == null) {
       return null;
     }
-    return ProfileDto(userId: stored.userId, baseCurrency: stored.baseCurrency, plan: stored.plan);
+    return ProfileDto(
+      userId: stored.userId,
+      baseCurrency: stored.baseCurrency,
+      plan: stored.plan,
+    );
   }
 
   Future<ProfileDto> upsertProfile(ProfileDto profile) async {
     await _storage.writeProfile(
-      StoredProfile(userId: profile.userId, baseCurrency: profile.baseCurrency, plan: profile.plan),
+      StoredProfile(
+        userId: profile.userId,
+        baseCurrency: profile.baseCurrency,
+        plan: profile.plan,
+      ),
     );
     return profile;
   }

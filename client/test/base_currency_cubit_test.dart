@@ -38,27 +38,43 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(provider) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<void>> signInWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(
+    String email,
+    String password,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(
+    String email,
+    String code,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -69,6 +85,11 @@ class FakeAuthRepository implements IAuthRepository {
   @override
   Future<List<AuthProvider>> getAvailableProviders() async {
     return const [AuthProvider.google, AuthProvider.apple];
+  }
+
+  @override
+  Future<Result<void>> deleteAccount(String userId) async {
+    return const Success(null);
   }
 }
 
@@ -81,18 +102,38 @@ class FakeProfileRepository implements IProfileRepository {
   @override
   Future<Result<ProfileEntity>> getProfile(String userId) async {
     return profileResult ??
-        const Success(ProfileEntity(userId: 'user_1', baseCurrency: 'USD', plan: 'free'));
+        const Success(
+          ProfileEntity(userId: 'user_1', baseCurrency: 'USD', plan: 'free'),
+        );
   }
 
   @override
-  Future<Result<ProfileEntity>> updateBaseCurrency(String userId, String baseCurrency) async {
+  Future<Result<ProfileEntity>> updateBaseCurrency(
+    String userId,
+    String baseCurrency,
+  ) async {
     return updateResult ??
-        Success(ProfileEntity(userId: userId, baseCurrency: baseCurrency, plan: 'free'));
+        Success(
+          ProfileEntity(
+            userId: userId,
+            baseCurrency: baseCurrency,
+            plan: 'free',
+          ),
+        );
   }
 
   @override
   Future<Result<ProfileBootstrapEntity>> ensureProfile(String userId) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<ProfileEntity>> updatePlan(String userId, String plan) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -105,7 +146,11 @@ class FakeCurrencyRepository implements ICurrencyRepository {
   Future<Result<List<CurrencyEntity>>> fetchFiatCurrencies() async {
     return currencyResult ??
         const Success([
-          CurrencyEntity(code: 'USD', name: 'United States Dollar', symbol: '\$'),
+          CurrencyEntity(
+            code: 'USD',
+            name: 'United States Dollar',
+            symbol: '\$',
+          ),
           CurrencyEntity(code: 'GBP', name: 'British Pound', symbol: 'GBP'),
         ]);
   }
@@ -129,7 +174,10 @@ void main() {
     final cubit = BaseCurrencyCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
         ),
       ),
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
@@ -148,14 +196,20 @@ void main() {
     cubit.selectCurrency('GBP');
     await cubit.continueNext();
 
-    expect(cubit.state.navigation?.destination, BaseCurrencyDestination.paywall);
+    expect(
+      cubit.state.navigation?.destination,
+      BaseCurrencyDestination.paywall,
+    );
   });
 
   test('continueNext saves when currency allowed', () async {
     final cubit = BaseCurrencyCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
         ),
       ),
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
@@ -168,6 +222,9 @@ void main() {
     cubit.selectCurrency('USD');
     await cubit.continueNext();
 
-    expect(cubit.state.navigation?.destination, BaseCurrencyDestination.overview);
+    expect(
+      cubit.state.navigation?.destination,
+      BaseCurrencyDestination.overview,
+    );
   });
 }

@@ -68,7 +68,9 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
+  Future<Result<AuthSessionEntity>> signInWithOAuth(
+    AuthProvider provider,
+  ) async {
     try {
       final dto = await _dataSource.signInWithOAuth(provider);
       final session = AuthSessionMapper.toEntity(dto);
@@ -95,11 +97,26 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
+  Future<Result<void>> deleteAccount(String userId) async {
+    try {
+      await _dataSource.deleteAccount(userId);
+      _cachedSession = null;
+      logger.i('AuthRepository.deleteAccount success');
+      return const Success(null);
+    } catch (error) {
+      logger.e('AuthRepository.deleteAccount failed', error: error);
+      return FailureResult(_mapFailure(error));
+    }
+  }
+
+  @override
   Future<Result<void>> signInWithPassword(String email, String password) async {
     try {
       await _dataSource.signInWithPassword(email, password);
       final session = await _dataSource.getCachedSession();
-      _cachedSession = session == null ? null : AuthSessionMapper.toEntity(session);
+      _cachedSession = session == null
+          ? null
+          : AuthSessionMapper.toEntity(session);
       logger.i('AuthRepository.signInWithPassword success');
       return const Success(null);
     } catch (error) {
@@ -109,7 +126,10 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(
+    String email,
+    String password,
+  ) async {
     try {
       final challenge = await _dataSource.signUpWithPassword(email, password);
       logger.i('AuthRepository.signUpWithPassword success');
@@ -121,7 +141,10 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(
+    String email,
+    String code,
+  ) async {
     try {
       final dto = await _dataSource.verifySignUpOtp(email, code);
       final session = AuthSessionMapper.toEntity(dto);

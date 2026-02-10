@@ -7,4 +7,10 @@ abstract final class AppRoutes {
   static const String onboardingBaseCurrency = '/onboarding/base-currency';
   static const String overview = '/overview';
   static const String paywall = '/paywall';
+  static const String settings = '/settings';
+  static const String accountActions = '/settings/account';
+  static const String baseCurrencySettings = '/settings/base-currency';
+  static const String manageSubscription = '/settings/subscription';
+  static const String language = '/settings/language';
+  static const String theme = '/settings/theme';
 }

@@ -15,17 +15,19 @@ As a user, I want to use the app in English or Russian with correctly formatted 
 Scope:
 - `en` and `ru` locales.
 - All user-visible strings sourced from generated `AppLocalizations`.
+- In-app language override (System / English / Russian), persisted locally.
 - Locale-aware formatting for:
   - money/asset amounts (decimal display),
   - dates (entry dates; “rates updated at” timestamps).
 
 Out of scope:
 - Additional locales beyond `en`/`ru`.
-- A manual in-app language toggle (use system locale in MVP unless otherwise specified).
+- Remote/persisted language preference synced across devices (local-only in MVP).
 
 ## Acceptance Criteria (BDD-style, unambiguous)
 - Given the device locale is English, when the user opens the app, then all user-visible strings are displayed in English.
 - Given the device locale is Russian, when the user opens the app, then all user-visible strings are displayed in Russian.
+- Given the user selects a language override in Profile, when the user navigates across screens or restarts the app, then the app uses the selected language instead of the system locale until the override is reset to System.
 - Given any screen displays a numeric amount or converted total, when rendered, then the displayed number formatting matches the active locale (decimal separators, grouping).
 - Given any screen displays a date (e.g., balance entry date, rates timestamp), when rendered, then it uses locale-aware formatting.
 - Given a new user-visible string is introduced, when code is reviewed/CI runs, then missing translations in either `en` or `ru` are detected (via l10n generation/build failure or a check).
@@ -44,4 +46,3 @@ Out of scope:
 
 ## Open questions (if any)
 - Should we expose a settings toggle to override system locale in MVP, or strictly follow OS locale? (Not specified in PRD/requirements.)
-

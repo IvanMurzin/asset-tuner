@@ -16,11 +16,15 @@ class DSSelectList extends StatelessWidget {
     required this.options,
     required this.selectedId,
     required this.onSelect,
+    this.shrinkWrap = false,
+    this.physics,
   });
 
   final List<DSSelectOption> options;
   final String? selectedId;
   final ValueChanged<DSSelectOption> onSelect;
+  final bool shrinkWrap;
+  final ScrollPhysics? physics;
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +37,21 @@ class DSSelectList extends StatelessWidget {
         borderRadius: BorderRadius.circular(radius.r12),
         border: Border.all(color: colors.border),
       ),
-      child: Column(
-        children: options
-            .map(
-              (option) => _DSSelectListItem(
-                option: option,
-                selected: option.id == selectedId,
-                showDivider: option != options.last,
-                onTap: () => onSelect(option),
-              ),
-            )
-            .toList(),
+      child: ListView.separated(
+        padding: EdgeInsets.zero,
+        shrinkWrap: shrinkWrap,
+        physics: physics,
+        itemCount: options.length,
+        itemBuilder: (context, index) {
+          final option = options[index];
+          return _DSSelectListItem(
+            option: option,
+            selected: option.id == selectedId,
+            onTap: () => onSelect(option),
+          );
+        },
+        separatorBuilder: (context, index) =>
+            Divider(height: 1, thickness: 1, color: colors.border),
       ),
     );
   }
@@ -53,29 +61,20 @@ class _DSSelectListItem extends StatelessWidget {
   const _DSSelectListItem({
     required this.option,
     required this.selected,
-    required this.showDivider,
     required this.onTap,
   });
 
   final DSSelectOption option;
   final bool selected;
-  final bool showDivider;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.dsColors;
-
-    return Column(
-      children: [
-        DSRadioRow(
-          title: option.title,
-          subtitle: option.subtitle,
-          selected: selected,
-          onTap: onTap,
-        ),
-        if (showDivider) Divider(height: 1, thickness: 1, color: colors.border),
-      ],
+    return DSRadioRow(
+      title: option.title,
+      subtitle: option.subtitle,
+      selected: selected,
+      onTap: onTap,
     );
   }
 }

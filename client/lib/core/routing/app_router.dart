@@ -8,19 +8,67 @@ import 'package:asset_tuner/presentation/auth/page/splash_page.dart';
 import 'package:asset_tuner/presentation/onboarding/page/base_currency_page.dart';
 import 'package:asset_tuner/presentation/overview/page/overview_page.dart';
 import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
+import 'package:asset_tuner/presentation/profile/page/account_actions_page.dart';
+import 'package:asset_tuner/presentation/profile/page/language_page.dart';
+import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
+import 'package:asset_tuner/presentation/profile/page/theme_page.dart';
+import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
+import 'package:asset_tuner/presentation/settings/page/manage_subscription_page.dart';
 
 final appRouter = GoRouter(
   routes: [
-    GoRoute(path: AppRoutes.home, builder: (context, state) => const SplashPage()),
-    GoRoute(path: AppRoutes.designSystem, builder: (context, state) => const DSPreviewPage()),
-    GoRoute(path: AppRoutes.signIn, builder: (context, state) => const SignInPage()),
-    GoRoute(path: AppRoutes.signUp, builder: (context, state) => const SignUpPage()),
+    GoRoute(
+      path: AppRoutes.home,
+      builder: (context, state) => const SplashPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.designSystem,
+      builder: (context, state) => const DSPreviewPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.signIn,
+      builder: (context, state) => const SignInPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.signUp,
+      builder: (context, state) => const SignUpPage(),
+    ),
     GoRoute(path: AppRoutes.otp, builder: (context, state) => const OtpPage()),
     GoRoute(
       path: AppRoutes.onboardingBaseCurrency,
       builder: (context, state) => const BaseCurrencyPage(),
     ),
-    GoRoute(path: AppRoutes.overview, builder: (context, state) => const OverviewPage()),
-    GoRoute(path: AppRoutes.paywall, builder: (context, state) => const PaywallPage()),
+    GoRoute(
+      path: AppRoutes.overview,
+      builder: (context, state) => const OverviewPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.paywall,
+      builder: (context, state) => const PaywallPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.settings,
+      builder: (context, state) => const ProfilePage(),
+    ),
+    GoRoute(
+      path: AppRoutes.accountActions,
+      builder: (context, state) => const AccountActionsPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.baseCurrencySettings,
+      builder: (context, state) => const BaseCurrencySettingsPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.manageSubscription,
+      builder: (context, state) => const ManageSubscriptionPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.language,
+      builder: (context, state) => const LanguagePage(),
+    ),
+    GoRoute(
+      path: AppRoutes.theme,
+      builder: (context, state) => const ThemePage(),
+    ),
   ],
 );

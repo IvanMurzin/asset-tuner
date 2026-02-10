@@ -1,0 +1,248 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
+import 'package:asset_tuner/core/types/result.dart';
+import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
+import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
+import 'package:asset_tuner/domain/currency/usecase/get_fiat_currencies_usecase.dart';
+import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
+import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
+
+part 'base_currency_settings_cubit.freezed.dart';
+part 'base_currency_settings_state.dart';
+
+@injectable
+class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
+  BaseCurrencySettingsCubit(
+    this._getCachedSession,
+    this._bootstrapProfile,
+    this._getFiatCurrencies,
+    this._updateBaseCurrency,
+  ) : super(const BaseCurrencySettingsState());
+
+  final GetCachedSessionUseCase _getCachedSession;
+  final BootstrapProfileUseCase _bootstrapProfile;
+  final GetFiatCurrenciesUseCase _getFiatCurrencies;
+  final UpdateBaseCurrencyUseCase _updateBaseCurrency;
+
+  static const freeAllowedCodes = {'USD', 'EUR', 'RUB'};
+  static const popularCodes = ['USD', 'EUR', 'RUB'];
+  static const _minQueryLength = 2;
+  static const _maxResults = 50;
+
+  Future<void> load() async {
+    emit(
+      state.copyWith(
+        status: BaseCurrencySettingsStatus.loading,
+        loadFailureCode: null,
+        bannerType: null,
+        bannerFailureCode: null,
+      ),
+    );
+
+    final session = await _getCachedSession();
+    if (session == null) {
+      emit(
+        state.copyWith(
+          status: BaseCurrencySettingsStatus.error,
+          loadFailureCode: 'unauthorized',
+          navigation: const BaseCurrencySettingsNavigation(
+            destination: BaseCurrencySettingsDestination.signIn,
+          ),
+        ),
+      );
+      return;
+    }
+
+    final bootstrap = await _bootstrapProfile(session.userId);
+    final profile = switch (bootstrap) {
+      Success(value: final data) => data.profile,
+      FailureResult() => null,
+    };
+    if (profile == null) {
+      emit(
+        state.copyWith(
+          status: BaseCurrencySettingsStatus.error,
+          loadFailureCode: 'unknown',
+        ),
+      );
+      return;
+    }
+
+    final catalog = await _getFiatCurrencies();
+    switch (catalog) {
+      case Success<List<CurrencyEntity>>(value: final currencies):
+        final next = state.copyWith(
+          status: BaseCurrencySettingsStatus.ready,
+          userId: session.userId,
+          currentCode: profile.baseCurrency,
+          selectedCode: profile.baseCurrency,
+          plan: profile.plan,
+          currencies: currencies,
+        );
+        emit(_recomputeVisible(next));
+      case FailureResult<List<CurrencyEntity>>(failure: final failure):
+        emit(
+          state.copyWith(
+            status: BaseCurrencySettingsStatus.error,
+            userId: session.userId,
+            currentCode: profile.baseCurrency,
+            selectedCode: profile.baseCurrency,
+            plan: profile.plan,
+            loadFailureCode: failure.code,
+          ),
+        );
+    }
+  }
+
+  void updateQuery(String query) {
+    emit(_recomputeVisible(state.copyWith(query: query, showAll: false)));
+  }
+
+  void showAll() {
+    emit(_recomputeVisible(state.copyWith(showAll: true)));
+  }
+
+  void selectCurrency(String code) {
+    if (_isAllowed(code)) {
+      emit(
+        state.copyWith(
+          selectedCode: code,
+          bannerType: null,
+          bannerFailureCode: null,
+        ),
+      );
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        navigation: BaseCurrencySettingsNavigation(
+          destination: BaseCurrencySettingsDestination.paywall,
+          requestedCode: code,
+        ),
+      ),
+    );
+  }
+
+  void consumeNavigation() {
+    emit(state.copyWith(navigation: null));
+  }
+
+  Future<void> save() async {
+    final userId = state.userId;
+    final selected = state.selectedCode;
+    final current = state.currentCode;
+
+    if (userId == null || selected == null || current == null) {
+      return;
+    }
+
+    if (selected == current) {
+      emit(
+        state.copyWith(
+          navigation: const BaseCurrencySettingsNavigation(
+            destination: BaseCurrencySettingsDestination.back,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (!_isAllowed(selected)) {
+      emit(
+        state.copyWith(
+          navigation: BaseCurrencySettingsNavigation(
+            destination: BaseCurrencySettingsDestination.paywall,
+            requestedCode: selected,
+          ),
+        ),
+      );
+      return;
+    }
+
+    emit(
+      state.copyWith(isSaving: true, bannerType: null, bannerFailureCode: null),
+    );
+
+    final result = await _updateBaseCurrency(userId, selected);
+    switch (result) {
+      case Success(value: final profile):
+        emit(
+          state.copyWith(
+            isSaving: false,
+            currentCode: profile.baseCurrency,
+            selectedCode: profile.baseCurrency,
+            navigation: const BaseCurrencySettingsNavigation(
+              destination: BaseCurrencySettingsDestination.back,
+            ),
+          ),
+        );
+      case FailureResult(failure: final failure):
+        emit(
+          state.copyWith(
+            isSaving: false,
+            bannerType: BaseCurrencySettingsBannerType.saveFailure,
+            bannerFailureCode: failure.code,
+          ),
+        );
+    }
+  }
+
+  bool _isAllowed(String code) {
+    final plan = (state.plan ?? 'free').toLowerCase();
+    if (plan == 'paid') {
+      return true;
+    }
+    return freeAllowedCodes.contains(code.toUpperCase());
+  }
+
+  BaseCurrencySettingsState _recomputeVisible(BaseCurrencySettingsState input) {
+    final query = input.query.trim().toLowerCase();
+    final currencies = input.currencies;
+
+    if (currencies.isEmpty) {
+      return input.copyWith(visibleCurrencies: const [], hasMoreResults: false);
+    }
+
+    final popular = popularCodes
+        .map(
+          (code) =>
+              currencies.where((c) => c.code.toUpperCase() == code).toList(),
+        )
+        .expand((list) => list)
+        .toList();
+    final popularSet = popularCodes.map((e) => e.toUpperCase()).toSet();
+
+    if (input.showAll) {
+      final all = [
+        ...popular,
+        ...currencies.where((c) => !popularSet.contains(c.code.toUpperCase())),
+      ];
+      final visible = all.take(_maxResults).toList();
+      return input.copyWith(
+        visibleCurrencies: visible,
+        hasMoreResults: all.length > visible.length,
+      );
+    }
+
+    if (query.length < _minQueryLength) {
+      return input.copyWith(visibleCurrencies: popular, hasMoreResults: false);
+    }
+
+    final matched = currencies.where((currency) {
+      return currency.code.toLowerCase().contains(query) ||
+          currency.name.toLowerCase().contains(query);
+    });
+    final restMatched = matched.where(
+      (c) => !popularSet.contains(c.code.toUpperCase()),
+    );
+    final remainingLimit = (_maxResults - popular.length).clamp(0, _maxResults);
+    final limitedRest = restMatched.take(remainingLimit).toList();
+    final limited = [...popular, ...limitedRest];
+    return input.copyWith(
+      visibleCurrencies: limited,
+      hasMoreResults: restMatched.length > limitedRest.length,
+    );
+  }
+}
