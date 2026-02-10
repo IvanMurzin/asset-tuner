@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:template/core_ui/components/ds_text_field.dart';
+import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 
 class DSDecimalField extends StatelessWidget {
   const DSDecimalField({

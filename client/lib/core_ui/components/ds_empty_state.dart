@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:template/core_ui/components/ds_button.dart';
-import 'package:template/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
 class DSEmptyState extends StatelessWidget {
   const DSEmptyState({

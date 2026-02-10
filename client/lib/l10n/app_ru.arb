@@ -1,0 +1,81 @@
+{
+  "appTitle": "Asset Tuner",
+  "homeTitle": "Главная",
+  "designSystemPreview": "Дизайн-система",
+  "signInTitle": "Вход",
+  "signInBody": "Отслеживайте активы на всех устройствах.",
+  "signUpTitle": "Создать аккаунт",
+  "signUpBody": "Присоединяйтесь к Asset Tuner для синхронизации портфеля.",
+  "emailLabel": "Электронная почта",
+  "emailHint": "name@example.com",
+  "passwordLabel": "Пароль",
+  "passwordHint": "Минимум 6 символов",
+  "confirmPasswordLabel": "Подтвердите пароль",
+  "confirmPasswordHint": "Повторите пароль",
+  "otpTitle": "Подтвердите почту",
+  "otpBodyWithEmail": "Введите 6-значный код, отправленный на {email}.",
+  "@otpBodyWithEmail": {
+    "description": "OTP instruction with email.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "otpCodeLabel": "Код подтверждения",
+  "otpCodeHint": "123456",
+  "signInPrimary": "Войти",
+  "signUpPrimary": "Создать аккаунт",
+  "sendOtp": "Отправить код",
+  "verifyOtp": "Подтвердить",
+  "resendOtp": "Отправить снова",
+  "changeEmail": "Изменить почту",
+  "forgotPassword": "Забыли пароль?",
+  "signInWith": "Или продолжить с",
+  "continueWithGoogle": "Продолжить с Google",
+  "continueWithApple": "Продолжить с Apple",
+  "switchToSignUp": "Нет аккаунта? Создать",
+  "switchToSignIn": "Уже есть аккаунт? Войти",
+  "validationInvalidEmail": "Введите корректный email.",
+  "validationPasswordRule": "Минимум 6 символов, буквы и цифры.",
+  "validationPasswordMismatch": "Пароли не совпадают.",
+  "validationOtpLength": "Введите 6-значный код.",
+  "bannerSignInError": "Не удалось войти.",
+  "bannerSignUpError": "Не удалось создать аккаунт.",
+  "bannerOtpError": "Не удалось подтвердить код.",
+  "bannerOtpSuccessTitle": "Проверьте почту",
+  "bannerOtpSuccessBodyWithEmail": "Мы отправили код подтверждения на {email}.",
+  "@bannerOtpSuccessBodyWithEmail": {
+    "description": "OTP success message with email.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGeneric": "Что-то пошло не так. Попробуйте снова.",
+  "errorNetwork": "Нет сети. Попробуйте снова.",
+  "errorUnauthorized": "Сессия истекла. Войдите снова.",
+  "errorConflict": "Этот email уже используется.",
+  "errorRateLimited": "Слишком много попыток. Попробуйте позже.",
+  "splashRestoring": "Восстанавливаем сессию...",
+  "splashPreparingProfile": "Готовим профиль...",
+  "splashErrorTitle": "Что-то пошло не так.",
+  "splashRetry": "Попробовать снова",
+  "onboardingBaseCurrencyTitle": "Выберите базовую валюту",
+  "onboardingBaseCurrencyBody": "Итоги будут в этой валюте.",
+  "onboardingSearchHint": "Поиск валюты",
+  "onboardingContinue": "Продолжить",
+  "onboardingUseUsd": "Пока использовать USD",
+  "onboardingLoadError": "Не удалось загрузить валюты.",
+  "onboardingSelectCurrency": "Выберите валюту, чтобы продолжить.",
+  "onboardingUpgradeRequired": "Нужна подписка для выбора этой валюты.",
+  "overviewTitle": "Обзор",
+  "overviewTotalLabel": "Итого",
+  "notAvailable": "Н/Д",
+  "overviewEmptyBody": "Данные появятся после добавления счетов.",
+  "paywallTitle": "Подписка",
+  "paywallHeader": "Откройте все валюты",
+  "paywallBody": "Обновитесь, чтобы выбрать любую базовую валюту.",
+  "paywallDismiss": "Позже"
+}

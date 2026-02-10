@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:template/core_ui/components/ds_button.dart';
-import 'package:template/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
 class DSErrorState extends StatelessWidget {
   const DSErrorState({
@@ -27,11 +27,7 @@ class DSErrorState extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon ?? Icons.error_outline,
-          size: spacing.s32,
-          color: colors.danger,
-        ),
+        Icon(icon ?? Icons.error_outline, size: spacing.s32, color: colors.danger),
         SizedBox(height: spacing.s12),
         Text(
           title,
@@ -46,11 +42,7 @@ class DSErrorState extends StatelessWidget {
         ),
         if (actionLabel != null && onAction != null) ...[
           SizedBox(height: spacing.s16),
-          DSButton(
-            label: actionLabel!,
-            variant: DSButtonVariant.secondary,
-            onPressed: onAction,
-          ),
+          DSButton(label: actionLabel!, variant: DSButtonVariant.secondary, onPressed: onAction),
         ],
       ],
     );

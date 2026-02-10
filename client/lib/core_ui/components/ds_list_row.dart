@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:template/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
 class DSListRow extends StatelessWidget {
   const DSListRow({
@@ -27,23 +27,16 @@ class DSListRow extends StatelessWidget {
     final spacing = context.dsSpacing;
     final typography = context.dsTypography;
 
-    final background = selected
-        ? colors.primary.withValues(alpha: 0.08)
-        : colors.surface;
+    final background = selected ? colors.primary.withValues(alpha: 0.08) : colors.surface;
 
     return Material(
       color: background,
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: spacing.s16,
-            vertical: spacing.s12,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: spacing.s16, vertical: spacing.s12),
           decoration: BoxDecoration(
-            border: showDivider
-                ? Border(bottom: BorderSide(color: colors.border))
-                : null,
+            border: showDivider ? Border(bottom: BorderSide(color: colors.border)) : null,
           ),
           child: Row(
             children: [
@@ -52,28 +45,18 @@ class DSListRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: typography.body.copyWith(
-                        color: colors.textPrimary,
-                      ),
-                    ),
+                    Text(title, style: typography.body.copyWith(color: colors.textPrimary)),
                     if (subtitle != null) ...[
                       SizedBox(height: spacing.s4),
                       Text(
                         subtitle!,
-                        style: typography.caption.copyWith(
-                          color: colors.textSecondary,
-                        ),
+                        style: typography.caption.copyWith(color: colors.textSecondary),
                       ),
                     ],
                   ],
                 ),
               ),
-              if (trailing != null) ...[
-                SizedBox(width: spacing.s12),
-                trailing!,
-              ],
+              if (trailing != null) ...[SizedBox(width: spacing.s12), trailing!],
             ],
           ),
         ),

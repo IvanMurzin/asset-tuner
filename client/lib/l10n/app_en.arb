@@ -1,0 +1,81 @@
+{
+  "appTitle": "Asset Tuner",
+  "homeTitle": "Home",
+  "designSystemPreview": "Design system preview",
+  "signInTitle": "Sign in",
+  "signInBody": "Track your assets across devices.",
+  "signUpTitle": "Create account",
+  "signUpBody": "Join Asset Tuner to sync your portfolio.",
+  "emailLabel": "Email",
+  "emailHint": "name@example.com",
+  "passwordLabel": "Password",
+  "passwordHint": "At least 6 characters",
+  "confirmPasswordLabel": "Confirm password",
+  "confirmPasswordHint": "Re-enter password",
+  "otpTitle": "Verify your email",
+  "otpBodyWithEmail": "Enter the 6-digit code we sent to {email}.",
+  "@otpBodyWithEmail": {
+    "description": "OTP instruction with email.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "otpCodeLabel": "Verification code",
+  "otpCodeHint": "123456",
+  "signInPrimary": "Sign in",
+  "signUpPrimary": "Create account",
+  "sendOtp": "Send code",
+  "verifyOtp": "Verify",
+  "resendOtp": "Resend",
+  "changeEmail": "Change email",
+  "forgotPassword": "Forgot password?",
+  "signInWith": "Or continue with",
+  "continueWithGoogle": "Continue with Google",
+  "continueWithApple": "Continue with Apple",
+  "switchToSignUp": "New here? Create account",
+  "switchToSignIn": "Already have an account? Sign in",
+  "validationInvalidEmail": "Enter a valid email.",
+  "validationPasswordRule": "Use at least 6 characters with letters and numbers.",
+  "validationPasswordMismatch": "Passwords do not match.",
+  "validationOtpLength": "Enter the 6-digit code.",
+  "bannerSignInError": "Couldn't sign in.",
+  "bannerSignUpError": "Couldn't create account.",
+  "bannerOtpError": "Couldn't verify the code.",
+  "bannerOtpSuccessTitle": "Check your email",
+  "bannerOtpSuccessBodyWithEmail": "We sent a verification code to {email}.",
+  "@bannerOtpSuccessBodyWithEmail": {
+    "description": "OTP success message with email.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGeneric": "Something went wrong. Try again.",
+  "errorNetwork": "Network unavailable. Try again.",
+  "errorUnauthorized": "Session expired. Please sign in again.",
+  "errorConflict": "This email is already in use.",
+  "errorRateLimited": "Too many attempts. Please wait and try again.",
+  "splashRestoring": "Restoring session...",
+  "splashPreparingProfile": "Preparing your profile...",
+  "splashErrorTitle": "Something went wrong.",
+  "splashRetry": "Try again",
+  "onboardingBaseCurrencyTitle": "Choose your base currency",
+  "onboardingBaseCurrencyBody": "Totals will be converted to this currency.",
+  "onboardingSearchHint": "Search currency",
+  "onboardingContinue": "Continue",
+  "onboardingUseUsd": "Use USD for now",
+  "onboardingLoadError": "Couldn't load currencies.",
+  "onboardingSelectCurrency": "Select a currency to continue.",
+  "onboardingUpgradeRequired": "Upgrade required to select this currency.",
+  "overviewTitle": "Overview",
+  "overviewTotalLabel": "Total",
+  "notAvailable": "N/A",
+  "overviewEmptyBody": "Overview content will appear here once accounts are added.",
+  "paywallTitle": "Upgrade",
+  "paywallHeader": "Unlock all currencies",
+  "paywallBody": "Upgrade to choose any base currency.",
+  "paywallDismiss": "Not now"
+}

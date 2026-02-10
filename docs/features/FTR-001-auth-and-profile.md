@@ -1,7 +1,7 @@
 # FTR-001: Authentication and profile bootstrap
 
 ## Summary
-Enable sign-in and a persisted session, and ensure every user has a `profiles` row used for base currency and entitlements.
+Enable sign-in and sign-up with a persisted session, and ensure every user has a `profiles` row used for base currency and entitlements.
 
 Source references:
 - Product: `docs/prd/prd.md`, `docs/prd/requirements.md` (FR-001..FR-004, FR-010), `docs/prd/success_metrics.md` (activation funnel)
@@ -13,7 +13,8 @@ As a user, I want to sign in quickly and stay signed in, so that my accounts and
 
 ## Scope / Out of scope
 Scope:
-- Email OTP sign-in via Supabase.
+- Email + password sign-in.
+- Email + password sign-up with OTP verification (email confirmation).
 - OAuth sign-in via Google and Apple (if configured).
 - Session persistence across app restarts.
 - First-run profile bootstrap:
@@ -26,7 +27,8 @@ Out of scope:
 
 ## Acceptance Criteria (BDD-style, unambiguous)
 - Given the app is launched and the user is not authenticated, when the user opens the app, then they are shown the Sign-in screen.
-- Given the user requests an email OTP, when they provide a valid email address, then the app requests an OTP via Supabase and shows a “check your email” state.
+- Given the user signs in with email and password, when the credentials are valid, then the app establishes a session and navigates to the next onboarding step or the Overview screen (depending on profile completeness).
+- Given the user signs up with email and password, when the credentials are valid, then the app requests an OTP and shows a “check your email” state.
 - Given the user completes OTP verification successfully, when the auth session is established, then the app navigates to the next onboarding step or the Overview screen (depending on profile completeness).
 - Given Google/Apple sign-in is configured, when the user signs in with Google/Apple successfully, then the app establishes a Supabase session and proceeds identically to OTP sign-in.
 - Given the user is authenticated, when the app is killed and restarted, then the session is restored and the user is not asked to sign in again (unless the session is expired/invalid).
@@ -36,7 +38,9 @@ Out of scope:
 - Given the app receives an auth/HTTP failure, when the data layer maps the error, then it yields a normalized `Failure { code, message }` using the codes in `docs/tech/api_assumptions.md`.
 
 ## UX references (which screens it touches; placeholders ok)
-- Screen: Sign-in (OTP email + optional “Continue with Google/Apple”)
+- Screen: Sign-in (email + password + optional “Continue with Google/Apple”)
+- Screen: Sign-up (email + password + confirm password)
+- Screen: OTP verification
 - Screen: Loading/splash (session restore)
 - Screen: Post-sign-in router (decides whether to show base currency selection or Overview)
 
@@ -64,5 +68,4 @@ Optional local event logging (see logging guidance in `docs/adr/ADR-0002-edge-fu
 - `auth_session_restored { result }`
 
 ## Open questions (if any)
-- Should onboarding force base currency selection immediately, or accept default USD and let the user change it later? (PRD implies “choose base currency” during onboarding; see `docs/prd/prd.md` flow.)
-
+- Resolved for MVP: if the profile bootstrap defaults `base_currency` to USD, route to `SCR-003` so the user can confirm or change it immediately. The screen includes “Use USD for now” to skip selection and continue.

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:template/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
 class DSAppBar extends StatelessWidget implements PreferredSizeWidget {
   const DSAppBar({
@@ -21,10 +21,7 @@ class DSAppBar extends StatelessWidget implements PreferredSizeWidget {
     final typography = context.dsTypography;
 
     return AppBar(
-      title: Text(
-        title,
-        style: typography.h2.copyWith(color: colors.textPrimary),
-      ),
+      title: Text(title, style: typography.h2.copyWith(color: colors.textPrimary)),
       backgroundColor: colors.background,
       foregroundColor: colors.textPrimary,
       centerTitle: centerTitle,

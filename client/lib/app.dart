@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:template/core/di/get_it.dart';
-import 'package:template/core/routing/app_router.dart';
-import 'package:template/core_ui/theme/app_theme.dart';
-import 'package:template/core_ui/theme/theme_mode_cubit.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core/routing/app_router.dart';
+import 'package:asset_tuner/core_ui/theme/app_theme.dart';
+import 'package:asset_tuner/core_ui/theme/theme_mode_cubit.dart';
+import 'package:asset_tuner/l10n/app_localizations.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -19,6 +21,13 @@ class App extends StatelessWidget {
             darkTheme: darkTheme,
             themeMode: themeMode,
             routerConfig: appRouter,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
             debugShowCheckedModeBanner: false,
           );
         },

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:template/core_ui/components/ds_app_bar.dart';
-import 'package:template/core_ui/components/ds_button.dart';
-import 'package:template/core_ui/components/ds_card.dart';
-import 'package:template/core_ui/components/ds_decimal_field.dart';
-import 'package:template/core_ui/components/ds_dialog.dart';
-import 'package:template/core_ui/components/ds_empty_state.dart';
-import 'package:template/core_ui/components/ds_error_state.dart';
-import 'package:template/core_ui/components/ds_list_row.dart';
-import 'package:template/core_ui/components/ds_loader.dart';
-import 'package:template/core_ui/components/ds_skeleton.dart';
-import 'package:template/core_ui/components/ds_text_field.dart';
-import 'package:template/core_ui/theme/ds_theme.dart';
-import 'package:template/core_ui/theme/theme_mode_cubit.dart';
+import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
+import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/components/ds_card.dart';
+import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
+import 'package:asset_tuner/core_ui/components/ds_dialog.dart';
+import 'package:asset_tuner/core_ui/components/ds_empty_state.dart';
+import 'package:asset_tuner/core_ui/components/ds_error_state.dart';
+import 'package:asset_tuner/core_ui/components/ds_list_row.dart';
+import 'package:asset_tuner/core_ui/components/ds_loader.dart';
+import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
+import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/core_ui/theme/theme_mode_cubit.dart';
 
 class DSPreviewPage extends StatelessWidget {
   const DSPreviewPage({super.key});
@@ -35,12 +35,7 @@ class DSPreviewPage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(
-          spacing.s16,
-          spacing.s16,
-          spacing.s16,
-          spacing.s32,
-        ),
+        padding: EdgeInsets.fromLTRB(spacing.s16, spacing.s16, spacing.s16, spacing.s32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -97,11 +92,7 @@ class DSPreviewPage extends StatelessWidget {
                 spacing: spacing.s12,
                 runSpacing: spacing.s12,
                 children: [
-                  DSButton(
-                    label: 'Add asset',
-                    leadingIcon: Icons.add,
-                    onPressed: () {},
-                  ),
+                  DSButton(label: 'Add asset', leadingIcon: Icons.add, onPressed: () {}),
                   DSButton(
                     label: 'Secondary',
                     variant: DSButtonVariant.secondary,
@@ -123,10 +114,7 @@ class DSPreviewPage extends StatelessWidget {
               child: DSCard(
                 child: Column(
                   children: [
-                    const DSTextField(
-                      label: 'Account name',
-                      hintText: 'e.g., Cash USD',
-                    ),
+                    const DSTextField(label: 'Account name', hintText: 'e.g., Cash USD'),
                     SizedBox(height: spacing.s12),
                     const DSDecimalField(label: 'Amount', hintText: '0.00'),
                   ],
@@ -144,9 +132,7 @@ class DSPreviewPage extends StatelessWidget {
                     SizedBox(height: spacing.s8),
                     Text(
                       'Diversified across 6 accounts and 19 assets.',
-                      style: typography.body.copyWith(
-                        color: colors.textSecondary,
-                      ),
+                      style: typography.body.copyWith(color: colors.textSecondary),
                     ),
                     SizedBox(height: spacing.s12),
                     Row(
@@ -230,10 +216,7 @@ class DSPreviewPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DSSkeleton(
-                      height: 120,
-                      borderRadius: BorderRadius.circular(radius.r16),
-                    ),
+                    DSSkeleton(height: 120, borderRadius: BorderRadius.circular(radius.r16)),
                     SizedBox(height: spacing.s16),
                     Row(
                       children: [
@@ -317,9 +300,7 @@ class DSThemeSwitcher extends StatelessWidget {
             Switch(
               value: isDark,
               onChanged: (value) {
-                context.read<ThemeModeCubit>().set(
-                  value ? ThemeMode.dark : ThemeMode.light,
-                );
+                context.read<ThemeModeCubit>().set(value ? ThemeMode.dark : ThemeMode.light);
               },
               activeThumbColor: colors.onPrimary,
               activeTrackColor: colors.primary,
@@ -389,23 +370,15 @@ class DSPreviewHeroCard extends StatelessWidget {
         children: [
           Text(
             'Total balance',
-            style: typography.caption.copyWith(
-              color: colors.onPrimary.withValues(alpha: 0.85),
-            ),
+            style: typography.caption.copyWith(color: colors.onPrimary.withValues(alpha: 0.85)),
           ),
           SizedBox(height: spacing.s8),
-          Text(
-            '€128,940.32',
-            style: typography.totalNumeric.copyWith(color: colors.onPrimary),
-          ),
+          Text('€128,940.32', style: typography.totalNumeric.copyWith(color: colors.onPrimary)),
           SizedBox(height: spacing.s12),
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: spacing.s8,
-                  vertical: spacing.s4,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s4),
                 decoration: BoxDecoration(
                   color: colors.onPrimary.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(radius.r8),
@@ -418,9 +391,7 @@ class DSPreviewHeroCard extends StatelessWidget {
               SizedBox(width: spacing.s12),
               Text(
                 'Updated 2m ago',
-                style: typography.caption.copyWith(
-                  color: colors.onPrimary.withValues(alpha: 0.75),
-                ),
+                style: typography.caption.copyWith(color: colors.onPrimary.withValues(alpha: 0.75)),
               ),
             ],
           ),
@@ -468,12 +439,7 @@ class DSPreviewStatCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: typography.caption.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
+                Text(label, style: typography.caption.copyWith(color: colors.textSecondary)),
                 SizedBox(height: spacing.s4),
                 Text(value, style: typography.h3),
               ],

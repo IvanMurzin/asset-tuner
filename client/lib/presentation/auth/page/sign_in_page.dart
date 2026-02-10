@@ -1,0 +1,137 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
+import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/presentation/auth/bloc/sign_in_cubit.dart';
+import 'package:asset_tuner/presentation/auth/widget/auth_hero.dart';
+import 'package:asset_tuner/presentation/auth/widget/oauth_section.dart';
+import 'package:asset_tuner/presentation/auth/widget/sign_in_email_field.dart';
+import 'package:asset_tuner/presentation/auth/widget/sign_in_password_field.dart';
+
+class SignInPage extends StatelessWidget {
+  const SignInPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return BlocProvider(
+      create: (_) => getIt<SignInCubit>(),
+      child: BlocConsumer<SignInCubit, SignInState>(
+        listener: (context, state) {
+          final navigation = state.navigation;
+          if (navigation == null) {
+            return;
+          }
+          switch (navigation.destination) {
+            case SignInDestination.onboardingBaseCurrency:
+              context.go(AppRoutes.onboardingBaseCurrency);
+            case SignInDestination.overview:
+              context.go(AppRoutes.overview);
+          }
+          context.read<SignInCubit>().consumeNavigation();
+        },
+        builder: (context, state) {
+          final spacing = context.dsSpacing;
+          final typography = context.dsTypography;
+          final isLoading = state.status == SignInStatus.loading;
+          final providers = state.availableProviders;
+          final bannerText = _bannerText(l10n, state.bannerFailureCode);
+
+          return Scaffold(
+            appBar: DSAppBar(title: l10n.signInTitle),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AuthHero(title: l10n.signInTitle, subtitle: l10n.signInBody),
+                    SizedBox(height: spacing.s24),
+                    if (bannerText != null)
+                      DSInlineBanner(
+                        title: l10n.bannerSignInError,
+                        message: bannerText,
+                        variant: DSInlineBannerVariant.danger,
+                      ),
+                    if (bannerText != null) SizedBox(height: spacing.s16),
+                    SignInEmailField(
+                      label: l10n.emailLabel,
+                      hint: l10n.emailHint,
+                      errorText: _emailErrorText(l10n, state.emailError),
+                    ),
+                    SizedBox(height: spacing.s16),
+                    SignInPasswordField(
+                      label: l10n.passwordLabel,
+                      hint: l10n.passwordHint,
+                      errorText: _passwordErrorText(l10n, state.passwordError),
+                    ),
+                    SizedBox(height: spacing.s24),
+                    DSButton(
+                      label: l10n.signInPrimary,
+                      isLoading: isLoading,
+                      fullWidth: true,
+                      onPressed: isLoading ? null : context.read<SignInCubit>().signIn,
+                    ),
+                    SizedBox(height: spacing.s16),
+                    TextButton(
+                      onPressed: isLoading ? null : () => context.go(AppRoutes.signUp),
+                      child: Text(
+                        l10n.switchToSignUp,
+                        style: typography.body.copyWith(color: context.dsColors.primary),
+                      ),
+                    ),
+                    if (providers.isNotEmpty) ...[
+                      SizedBox(height: spacing.s24),
+                      Text(l10n.signInWith, style: typography.caption),
+                      SizedBox(height: spacing.s12),
+                      OAuthSection(
+                        isLoading: isLoading,
+                        providers: providers,
+                        googleLabel: l10n.continueWithGoogle,
+                        appleLabel: l10n.continueWithApple,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  String? _emailErrorText(AppLocalizations l10n, SignInFieldError? error) {
+    return switch (error) {
+      SignInFieldError.invalidEmail => l10n.validationInvalidEmail,
+      _ => null,
+    };
+  }
+
+  String? _passwordErrorText(AppLocalizations l10n, SignInFieldError? error) {
+    return switch (error) {
+      SignInFieldError.weakPassword => l10n.validationPasswordRule,
+      _ => null,
+    };
+  }
+
+  String? _bannerText(AppLocalizations l10n, String? code) {
+    if (code == null) {
+      return null;
+    }
+    return switch (code) {
+      'rate_limited' => l10n.errorRateLimited,
+      'network' => l10n.errorNetwork,
+      'unauthorized' => l10n.errorUnauthorized,
+      'conflict' => l10n.errorConflict,
+      _ => l10n.errorGeneric,
+    };
+  }
+}

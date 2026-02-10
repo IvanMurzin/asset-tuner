@@ -1,44 +1,40 @@
 # SCR-002: Sign-in
 
 ## Purpose
-Authenticate the user via Supabase email OTP, with optional Google/Apple sign-in if configured.
+Authenticate the user via email + password, with optional Google/Apple sign-in if configured.
 
 ## Layout sections
-- App bar (optional; minimal)
+- App bar (minimal)
 - Content
-  - Title + short explanation
+  - Hero title + short explanation
   - Email input
-  - Primary CTA: “Send code” / “Send link”
+  - Password input
+  - Primary CTA: “Sign in”
   - Secondary: OAuth buttons (if available)
-  - Support text (privacy / terms links optional; non-blocking)
+  - Text link to “Create account”
 
 ## Components
-- DS: `DSTextField` (email)
+- DS: `DSTextField` (email + password)
 - DS: `DSButton` (primary + secondary + text variants)
 - needs component: `DSOAuthButton` (Google/Apple branded buttons)
 - needs component: `DSInlineBanner` (non-blocking info/error messages)
-- needs component: `DSFullScreenLoader` (blocking loading state, if required)
 
 ## Actions & navigation
-- Submit email OTP request:
-  - Validate email format client-side (basic).
-  - Call Supabase OTP request.
-  - On success → show “Check your email” success state (no navigation required).
-- Complete verification:
-  - If using magic link: app receives link → establishes session → navigate to `SCR-003` or `SCR-004`.
-  - If using code entry: needs component/screen for code entry (out of scope unless OTP requires it).
+- Submit sign-in:
+  - Validate email + password format client-side.
+  - Call sign-in endpoint.
+  - On success → navigate to `SCR-003` or `SCR-004`.
 - OAuth:
   - If configured, tapping Google/Apple starts provider flow.
-  - On success → same post-auth routing as OTP.
+  - On success → same post-auth routing as email/password.
+- Secondary:
+  - “Create account” → `SCR-015`.
 
 ## States
 - Default:
-  - Email entry enabled; OAuth buttons visible if configured.
+  - Email + password entry enabled; OAuth buttons visible if configured.
 - Loading:
   - Disable inputs; show progress in primary button.
-- Success (“Check your email”):
-  - Keep the email field (read-only or editable) and show guidance.
-  - Provide “Resend” (rate-limited) and “Change email”.
 - Error:
   - Network/rate limited: show retry guidance.
   - Unknown: safe message + retry.
@@ -48,20 +44,18 @@ Authenticate the user via Supabase email OTP, with optional Google/Apple sign-in
 - Body: “Track your assets across devices.”
 - Email label: “Email”
 - Email hint: “name@example.com”
-- Primary CTA: “Send code”
-- Success title: “Check your email”
-- Success body: “We sent a sign-in link to {email}.”
-- Resend: “Resend”
-- Change email: “Change email”
+- Password label: “Password”
+- Password hint: “At least 6 characters”
+- Primary CTA: “Sign in”
 - OAuth: “Continue with Google”, “Continue with Apple”
 - Error (generic): “Couldn’t sign in. Try again.”
 - Error (rate limited): “Too many attempts. Please wait and try again.”
+- Secondary: “New here? Create account”
 
 ## Edge cases
 - OAuth not configured:
   - Hide OAuth section entirely (avoid disabled buttons).
-- Deep link already consumed/expired:
-  - Show error banner and return user to default state.
+- Invalid credentials:
+  - Show safe error banner; keep inputs editable.
 - Keyboard + safe area:
   - Ensure primary CTA remains reachable (scroll content).
-

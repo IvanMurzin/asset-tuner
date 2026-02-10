@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:template/core_ui/components/ds_loader.dart';
-import 'package:template/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/core_ui/components/ds_loader.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
 enum DSButtonVariant { primary, secondary, danger }
 
@@ -42,11 +42,7 @@ class DSButton extends StatelessWidget {
 
     Widget content;
     if (isLoading) {
-      content = DSLoader(
-        size: spacing.s16,
-        strokeWidth: 2,
-        color: baseForeground,
-      );
+      content = DSLoader(size: spacing.s16, strokeWidth: 2, color: baseForeground);
     } else if (leadingIcon != null) {
       content = Row(
         mainAxisSize: MainAxisSize.min,
@@ -69,6 +65,7 @@ class DSButton extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [colors.primary, colors.primaryHover],
+              stops: const [0.0, 1.0],
             )
           : null,
       borderRadius: BorderRadius.circular(radius.r12),
@@ -93,15 +90,10 @@ class DSButton extends StatelessWidget {
             onTap: isInteractive ? onPressed : null,
             borderRadius: BorderRadius.circular(radius.r12),
             overlayColor: WidgetStateProperty.resolveWith(
-              (states) => states.contains(WidgetState.pressed)
-                  ? overlayColor
-                  : Colors.transparent,
+              (states) => states.contains(WidgetState.pressed) ? overlayColor : Colors.transparent,
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: spacing.s16,
-                vertical: spacing.s8,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: spacing.s16, vertical: spacing.s12),
               child: Row(
                 mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,

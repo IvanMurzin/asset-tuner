@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:template/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
 class DSTextField extends StatelessWidget {
   const DSTextField({
@@ -58,10 +58,7 @@ class DSTextField extends StatelessWidget {
         errorText: errorText,
         filled: true,
         fillColor: fillColor,
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: spacing.s16,
-          vertical: spacing.s12,
-        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: spacing.s16, vertical: spacing.s12),
         labelStyle: typography.label.copyWith(color: colors.textSecondary),
         hintStyle: typography.body.copyWith(color: colors.textTertiary),
         errorStyle: typography.caption.copyWith(color: colors.danger),
