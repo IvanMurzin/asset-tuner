@@ -344,6 +344,24 @@ abstract class AppLocalizations {
   /// **'Session expired. Please sign in again.'**
   String get errorUnauthorized;
 
+  /// No description provided for @errorForbidden.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission to do that.'**
+  String get errorForbidden;
+
+  /// No description provided for @errorNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find what you were looking for.'**
+  String get errorNotFound;
+
+  /// No description provided for @errorValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your input and try again.'**
+  String get errorValidation;
+
   /// No description provided for @errorConflict.
   ///
   /// In en, this message translates to:
@@ -355,6 +373,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Too many attempts. Please wait and try again.'**
   String get errorRateLimited;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 
   /// No description provided for @splashRestoring.
   ///
@@ -451,6 +481,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Overview content will appear here once accounts are added.'**
   String get overviewEmptyBody;
+
+  /// No description provided for @accountsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts'**
+  String get accountsTitle;
+
+  /// No description provided for @accountsAddAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Add account'**
+  String get accountsAddAccount;
+
+  /// No description provided for @accountsActiveSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts'**
+  String get accountsActiveSection;
+
+  /// No description provided for @accountsArchivedSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get accountsArchivedSection;
+
+  /// No description provided for @accountsOnlyArchivedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only archived accounts are shown.'**
+  String get accountsOnlyArchivedHint;
+
+  /// No description provided for @accountsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts yet'**
+  String get accountsEmptyTitle;
+
+  /// No description provided for @accountsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account to start tracking assets.'**
+  String get accountsEmptyBody;
+
+  /// No description provided for @accountsCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get accountsCreateAccount;
+
+  /// No description provided for @accountsNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New account'**
+  String get accountsNewTitle;
+
+  /// No description provided for @accountsEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit account'**
+  String get accountsEditTitle;
+
+  /// No description provided for @accountsNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account name'**
+  String get accountsNameLabel;
+
+  /// No description provided for @accountsNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Cash USD'**
+  String get accountsNameHint;
+
+  /// No description provided for @accountsNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get accountsNameRequired;
+
+  /// No description provided for @accountsTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get accountsTypeLabel;
+
+  /// No description provided for @accountsTypeBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get accountsTypeBank;
+
+  /// No description provided for @accountsTypeCryptoWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto wallet'**
+  String get accountsTypeCryptoWallet;
+
+  /// No description provided for @accountsTypeCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get accountsTypeCash;
+
+  /// No description provided for @accountsTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get accountsTypeOther;
+
+  /// No description provided for @accountsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get accountsEdit;
+
+  /// No description provided for @accountsArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get accountsArchive;
+
+  /// No description provided for @accountsUnarchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive'**
+  String get accountsUnarchive;
+
+  /// No description provided for @accountsDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get accountsDelete;
+
+  /// No description provided for @accountsArchiveConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive account?'**
+  String get accountsArchiveConfirmTitle;
+
+  /// No description provided for @accountsArchiveConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This account will be hidden from totals.'**
+  String get accountsArchiveConfirmBody;
+
+  /// No description provided for @accountsUnarchiveConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive account?'**
+  String get accountsUnarchiveConfirmTitle;
+
+  /// No description provided for @accountsDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get accountsDeleteConfirmTitle;
+
+  /// No description provided for @accountsDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will delete all assets and balance history in this account.'**
+  String get accountsDeleteConfirmBody;
 
   /// No description provided for @paywallTitle.
   ///
@@ -967,6 +1159,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preferences'**
   String get profileSectionPreferences;
+
+  /// No description provided for @profileSectionPortfolio.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio'**
+  String get profileSectionPortfolio;
+
+  /// No description provided for @profileAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts'**
+  String get profileAccounts;
 
   /// No description provided for @profileLanguage.
   ///

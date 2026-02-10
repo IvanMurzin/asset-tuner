@@ -137,11 +137,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorUnauthorized => 'Session expired. Please sign in again.';
 
   @override
+  String get errorForbidden => 'You don\'t have permission to do that.';
+
+  @override
+  String get errorNotFound => 'We couldn\'t find what you were looking for.';
+
+  @override
+  String get errorValidation => 'Check your input and try again.';
+
+  @override
   String get errorConflict => 'This email is already in use.';
 
   @override
   String get errorRateLimited =>
       'Too many attempts. Please wait and try again.';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get cancel => 'Cancel';
 
   @override
   String get splashRestoring => 'Restoring session...';
@@ -193,6 +208,89 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get overviewEmptyBody =>
       'Overview content will appear here once accounts are added.';
+
+  @override
+  String get accountsTitle => 'Accounts';
+
+  @override
+  String get accountsAddAccount => 'Add account';
+
+  @override
+  String get accountsActiveSection => 'Accounts';
+
+  @override
+  String get accountsArchivedSection => 'Archived';
+
+  @override
+  String get accountsOnlyArchivedHint => 'Only archived accounts are shown.';
+
+  @override
+  String get accountsEmptyTitle => 'No accounts yet';
+
+  @override
+  String get accountsEmptyBody => 'Create an account to start tracking assets.';
+
+  @override
+  String get accountsCreateAccount => 'Create account';
+
+  @override
+  String get accountsNewTitle => 'New account';
+
+  @override
+  String get accountsEditTitle => 'Edit account';
+
+  @override
+  String get accountsNameLabel => 'Account name';
+
+  @override
+  String get accountsNameHint => 'e.g., Cash USD';
+
+  @override
+  String get accountsNameRequired => 'Name is required';
+
+  @override
+  String get accountsTypeLabel => 'Type';
+
+  @override
+  String get accountsTypeBank => 'Bank';
+
+  @override
+  String get accountsTypeCryptoWallet => 'Crypto wallet';
+
+  @override
+  String get accountsTypeCash => 'Cash';
+
+  @override
+  String get accountsTypeOther => 'Other';
+
+  @override
+  String get accountsEdit => 'Edit';
+
+  @override
+  String get accountsArchive => 'Archive';
+
+  @override
+  String get accountsUnarchive => 'Unarchive';
+
+  @override
+  String get accountsDelete => 'Delete';
+
+  @override
+  String get accountsArchiveConfirmTitle => 'Archive account?';
+
+  @override
+  String get accountsArchiveConfirmBody =>
+      'This account will be hidden from totals.';
+
+  @override
+  String get accountsUnarchiveConfirmTitle => 'Unarchive account?';
+
+  @override
+  String get accountsDeleteConfirmTitle => 'Delete account?';
+
+  @override
+  String get accountsDeleteConfirmBody =>
+      'This will delete all assets and balance history in this account.';
 
   @override
   String get paywallTitle => 'Upgrade';
@@ -467,6 +565,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSectionPreferences => 'Preferences';
+
+  @override
+  String get profileSectionPortfolio => 'Portfolio';
+
+  @override
+  String get profileAccounts => 'Accounts';
 
   @override
   String get profileLanguage => 'Language';

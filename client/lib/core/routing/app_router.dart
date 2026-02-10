@@ -7,6 +7,8 @@ import 'package:asset_tuner/presentation/auth/page/sign_up_page.dart';
 import 'package:asset_tuner/presentation/auth/page/splash_page.dart';
 import 'package:asset_tuner/presentation/onboarding/page/base_currency_page.dart';
 import 'package:asset_tuner/presentation/overview/page/overview_page.dart';
+import 'package:asset_tuner/presentation/account/page/accounts_list_page.dart';
+import 'package:asset_tuner/presentation/account/page/account_form_page.dart';
 import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
 import 'package:asset_tuner/presentation/profile/page/account_actions_page.dart';
 import 'package:asset_tuner/presentation/profile/page/language_page.dart';
@@ -41,6 +43,19 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.overview,
       builder: (context, state) => const OverviewPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.accounts,
+      builder: (context, state) => const AccountsListPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.accountNew,
+      builder: (context, state) => const AccountFormPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.accountEdit,
+      builder: (context, state) =>
+          AccountFormPage(accountId: state.pathParameters['id']),
     ),
     GoRoute(
       path: AppRoutes.paywall,

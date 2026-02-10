@@ -137,10 +137,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String get errorUnauthorized => 'Сессия истекла. Войдите снова.';
 
   @override
+  String get errorForbidden => 'Недостаточно прав для выполнения действия.';
+
+  @override
+  String get errorNotFound => 'Не удалось найти запрошенные данные.';
+
+  @override
+  String get errorValidation =>
+      'Проверьте введенные данные и попробуйте снова.';
+
+  @override
   String get errorConflict => 'Этот email уже используется.';
 
   @override
   String get errorRateLimited => 'Слишком много попыток. Попробуйте позже.';
+
+  @override
+  String get save => 'Сохранить';
+
+  @override
+  String get cancel => 'Отмена';
 
   @override
   String get splashRestoring => 'Восстанавливаем сессию...';
@@ -190,6 +206,89 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get overviewEmptyBody => 'Данные появятся после добавления счетов.';
+
+  @override
+  String get accountsTitle => 'Счета';
+
+  @override
+  String get accountsAddAccount => 'Добавить счет';
+
+  @override
+  String get accountsActiveSection => 'Счета';
+
+  @override
+  String get accountsArchivedSection => 'Архив';
+
+  @override
+  String get accountsOnlyArchivedHint => 'Показаны только архивные счета.';
+
+  @override
+  String get accountsEmptyTitle => 'Пока нет счетов';
+
+  @override
+  String get accountsEmptyBody =>
+      'Создайте счет, чтобы начать отслеживать активы.';
+
+  @override
+  String get accountsCreateAccount => 'Создать счет';
+
+  @override
+  String get accountsNewTitle => 'Новый счет';
+
+  @override
+  String get accountsEditTitle => 'Редактировать счет';
+
+  @override
+  String get accountsNameLabel => 'Название счета';
+
+  @override
+  String get accountsNameHint => 'например, Cash USD';
+
+  @override
+  String get accountsNameRequired => 'Название обязательно';
+
+  @override
+  String get accountsTypeLabel => 'Тип';
+
+  @override
+  String get accountsTypeBank => 'Банк';
+
+  @override
+  String get accountsTypeCryptoWallet => 'Криптокошелек';
+
+  @override
+  String get accountsTypeCash => 'Наличные';
+
+  @override
+  String get accountsTypeOther => 'Другое';
+
+  @override
+  String get accountsEdit => 'Редактировать';
+
+  @override
+  String get accountsArchive => 'В архив';
+
+  @override
+  String get accountsUnarchive => 'Из архива';
+
+  @override
+  String get accountsDelete => 'Удалить';
+
+  @override
+  String get accountsArchiveConfirmTitle => 'Отправить счет в архив?';
+
+  @override
+  String get accountsArchiveConfirmBody => 'Этот счет будет скрыт из итогов.';
+
+  @override
+  String get accountsUnarchiveConfirmTitle => 'Вернуть счет из архива?';
+
+  @override
+  String get accountsDeleteConfirmTitle => 'Удалить счет?';
+
+  @override
+  String get accountsDeleteConfirmBody =>
+      'Будут удалены все активы и история балансов в этом счете.';
 
   @override
   String get paywallTitle => 'Подписка';
@@ -464,6 +563,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileSectionPreferences => 'Предпочтения';
+
+  @override
+  String get profileSectionPortfolio => 'Портфель';
+
+  @override
+  String get profileAccounts => 'Счета';
 
   @override
   String get profileLanguage => 'Язык';

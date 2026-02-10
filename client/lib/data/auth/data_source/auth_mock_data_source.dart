@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:injectable/injectable.dart';
+import 'package:asset_tuner/core/local_storage/account_storage.dart';
 import 'package:asset_tuner/core/local_storage/auth_session_storage.dart';
 import 'package:asset_tuner/core/local_storage/profile_storage.dart';
 import 'package:asset_tuner/data/auth/dto/auth_session_dto.dart';
@@ -29,10 +30,11 @@ class MockAuthException implements Exception {
 
 @lazySingleton
 class AuthMockDataSource {
-  AuthMockDataSource(this._storage, this._profileStorage);
+  AuthMockDataSource(this._storage, this._profileStorage, this._accountStorage);
 
   final AuthSessionStorage _storage;
   final ProfileStorage _profileStorage;
+  final AccountStorage _accountStorage;
   final Map<String, String> _passwordsByEmail = {'demo@asset.tuner': 'demo123'};
   final Map<String, String> _pendingOtpByEmail = {};
 
@@ -167,6 +169,7 @@ class AuthMockDataSource {
     }
     await _storage.clear();
     await _profileStorage.deleteProfile(userId);
+    await _accountStorage.deleteAllForUser(userId);
   }
 
   AuthSessionDto _createSession(String email) {

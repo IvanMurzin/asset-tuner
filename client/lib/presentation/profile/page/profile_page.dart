@@ -196,6 +196,24 @@ class ProfilePage extends StatelessWidget {
                               },
                             ),
                             SizedBox(height: spacing.s24),
+                            DSSectionTitle(title: l10n.profileSectionPortfolio),
+                            SizedBox(height: spacing.s12),
+                            DSCard(
+                              padding: EdgeInsets.zero,
+                              child: DSListRow(
+                                title: l10n.profileAccounts,
+                                leading: Icon(
+                                  Icons.account_balance_outlined,
+                                  color: context.dsColors.textTertiary,
+                                ),
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: context.dsColors.textTertiary,
+                                ),
+                                onTap: () => context.push(AppRoutes.accounts),
+                              ),
+                            ),
+                            SizedBox(height: spacing.s24),
                             DSSectionTitle(
                               title: l10n.settingsSectionSubscription,
                             ),
