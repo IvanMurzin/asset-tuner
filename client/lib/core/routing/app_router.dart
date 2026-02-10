@@ -11,6 +11,8 @@ import 'package:asset_tuner/presentation/account/page/accounts_list_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_form_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_detail_page.dart';
 import 'package:asset_tuner/presentation/account/page/add_asset_page.dart';
+import 'package:asset_tuner/presentation/balance/page/asset_position_detail_page.dart';
+import 'package:asset_tuner/presentation/balance/page/add_balance_page.dart';
 import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
 import 'package:asset_tuner/presentation/profile/page/account_actions_page.dart';
 import 'package:asset_tuner/presentation/profile/page/language_page.dart';
@@ -68,6 +70,21 @@ final appRouter = GoRouter(
       path: AppRoutes.accountAddAsset,
       builder: (context, state) =>
           AddAssetPage(accountId: state.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: AppRoutes.assetPositionDetail,
+      builder: (context, state) => AssetPositionDetailPage(
+        accountId: state.pathParameters['accountId']!,
+        assetId: state.pathParameters['assetId']!,
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.addBalance,
+      builder: (context, state) => AddBalancePage(
+        accountId: state.pathParameters['accountId']!,
+        assetId: state.pathParameters['assetId']!,
+        initialDate: state.extra is DateTime ? state.extra as DateTime : null,
+      ),
     ),
     GoRoute(
       path: AppRoutes.paywall,

@@ -346,6 +346,72 @@ class AppLocalizationsRu extends AppLocalizations {
       'Актив будет удален из этого счета вместе с историей балансов.';
 
   @override
+  String get positionCurrentBalanceLabel => 'Текущий баланс';
+
+  @override
+  String get positionAddBalance => 'Добавить баланс';
+
+  @override
+  String get positionUpdateThisMonth => 'Обновить за этот месяц';
+
+  @override
+  String get positionHistoryTitle => 'История';
+
+  @override
+  String get positionHistoryEmptyTitle => 'Пока нет истории балансов';
+
+  @override
+  String get positionHistoryEmptyBody =>
+      'Добавьте снимок или изменение, чтобы начать отслеживать.';
+
+  @override
+  String get positionHistoryEmptyCta => 'Добавить первый баланс';
+
+  @override
+  String get positionLoadMore => 'Загрузить еще';
+
+  @override
+  String get balanceEntrySnapshot => 'Снимок';
+
+  @override
+  String get balanceEntryDelta => 'Изменение';
+
+  @override
+  String get balanceEntryImpliedDeltaLabel => 'Расчетное изменение';
+
+  @override
+  String get addBalanceTitle => 'Добавить баланс';
+
+  @override
+  String get addBalanceEntryTypeLabel => 'Тип записи';
+
+  @override
+  String get addBalanceTypeSnapshot => 'Снимок';
+
+  @override
+  String get addBalanceTypeDelta => 'Изменение';
+
+  @override
+  String get addBalanceDateLabel => 'Дата';
+
+  @override
+  String get addBalanceAmountLabel => 'Сумма';
+
+  @override
+  String get addBalanceHelperSnapshot =>
+      'Снимок — это ваш баланс на выбранную дату.';
+
+  @override
+  String get addBalanceHelperDelta =>
+      'Изменение — насколько он вырос или уменьшился.';
+
+  @override
+  String get addBalanceValidationAmount => 'Введите сумму';
+
+  @override
+  String get addBalanceValidationDate => 'Выберите дату';
+
+  @override
   String get paywallTitle => 'Подписка';
 
   @override

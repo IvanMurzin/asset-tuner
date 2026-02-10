@@ -347,6 +347,72 @@ class AppLocalizationsEn extends AppLocalizations {
       'This will remove the asset and delete its balance history.';
 
   @override
+  String get positionCurrentBalanceLabel => 'Current balance';
+
+  @override
+  String get positionAddBalance => 'Add balance';
+
+  @override
+  String get positionUpdateThisMonth => 'Update for this month';
+
+  @override
+  String get positionHistoryTitle => 'History';
+
+  @override
+  String get positionHistoryEmptyTitle => 'No balance history yet';
+
+  @override
+  String get positionHistoryEmptyBody =>
+      'Add a snapshot or change to start tracking.';
+
+  @override
+  String get positionHistoryEmptyCta => 'Add your first balance';
+
+  @override
+  String get positionLoadMore => 'Load more';
+
+  @override
+  String get balanceEntrySnapshot => 'Snapshot';
+
+  @override
+  String get balanceEntryDelta => 'Change';
+
+  @override
+  String get balanceEntryImpliedDeltaLabel => 'Implied change';
+
+  @override
+  String get addBalanceTitle => 'Add balance';
+
+  @override
+  String get addBalanceEntryTypeLabel => 'Entry type';
+
+  @override
+  String get addBalanceTypeSnapshot => 'Snapshot';
+
+  @override
+  String get addBalanceTypeDelta => 'Change';
+
+  @override
+  String get addBalanceDateLabel => 'Date';
+
+  @override
+  String get addBalanceAmountLabel => 'Amount';
+
+  @override
+  String get addBalanceHelperSnapshot =>
+      'A snapshot is your balance on that date.';
+
+  @override
+  String get addBalanceHelperDelta =>
+      'A change is how much it increased or decreased.';
+
+  @override
+  String get addBalanceValidationAmount => 'Enter an amount';
+
+  @override
+  String get addBalanceValidationDate => 'Choose a date';
+
+  @override
   String get paywallTitle => 'Upgrade';
 
   @override

@@ -77,5 +77,7 @@ Out of scope:
 - `balance_history_viewed { account_asset_id }`
 
 ## Open questions (if any)
-- Do we allow multiple entries on the same `entry_date` for the same asset position? If yes, how do we define “current balance” for that day (latest created_at)? If no, enforce uniqueness server-side.
-
+- Multiple entries on the same `entry_date`:
+  - **MVP decision:** allowed.
+  - Ordering: `entry_date desc, created_at desc` for history.
+  - “Current balance” is computed by applying entries in chronological order (`entry_date asc, created_at asc`), where snapshots set the balance and deltas add/subtract.

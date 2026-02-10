@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/local_storage/account_storage.dart';
 import 'package:asset_tuner/core/local_storage/account_asset_storage.dart';
+import 'package:asset_tuner/core/local_storage/balance_entry_storage.dart';
 import 'package:asset_tuner/core/local_storage/auth_session_storage.dart';
 import 'package:asset_tuner/core/local_storage/profile_storage.dart';
 import 'package:asset_tuner/data/auth/dto/auth_session_dto.dart';
@@ -36,12 +37,14 @@ class AuthMockDataSource {
     this._profileStorage,
     this._accountStorage,
     this._accountAssetStorage,
+    this._balanceEntryStorage,
   );
 
   final AuthSessionStorage _storage;
   final ProfileStorage _profileStorage;
   final AccountStorage _accountStorage;
   final AccountAssetStorage _accountAssetStorage;
+  final BalanceEntryStorage _balanceEntryStorage;
   final Map<String, String> _passwordsByEmail = {'demo@asset.tuner': 'demo123'};
   final Map<String, String> _pendingOtpByEmail = {};
 
@@ -178,6 +181,7 @@ class AuthMockDataSource {
     await _profileStorage.deleteProfile(userId);
     await _accountStorage.deleteAllForUser(userId);
     await _accountAssetStorage.deleteAllForUser(userId);
+    await _balanceEntryStorage.deleteAllForUser(userId);
   }
 
   AuthSessionDto _createSession(String email) {

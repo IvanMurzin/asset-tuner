@@ -11,6 +11,10 @@ abstract final class AppRoutes {
   static const String accountDetail = '/accounts/:id';
   static const String accountEdit = '/accounts/:id/edit';
   static const String accountAddAsset = '/accounts/:id/add-asset';
+  static const String assetPositionDetail =
+      '/accounts/:accountId/assets/:assetId';
+  static const String addBalance =
+      '/accounts/:accountId/assets/:assetId/add-balance';
   static const String paywall = '/paywall';
   static const String settings = '/settings';
   static const String accountActions = '/settings/account';

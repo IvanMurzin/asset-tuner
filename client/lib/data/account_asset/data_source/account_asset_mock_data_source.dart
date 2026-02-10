@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/local_storage/account_asset_storage.dart';
+import 'package:asset_tuner/core/local_storage/balance_entry_storage.dart';
 
 enum MockAccountAssetErrorCode {
   network,
@@ -25,9 +26,10 @@ class MockAccountAssetException implements Exception {
 
 @lazySingleton
 class AccountAssetMockDataSource {
-  AccountAssetMockDataSource(this._storage);
+  AccountAssetMockDataSource(this._storage, this._balanceStorage);
 
   final AccountAssetStorage _storage;
+  final BalanceEntryStorage _balanceStorage;
 
   Future<List<StoredAccountAsset>> fetchPositions(String userId) async {
     await Future<void>.delayed(const Duration(milliseconds: 220));
@@ -101,6 +103,17 @@ class AccountAssetMockDataSource {
       );
     }
     await _storage.writeAccountAssets(userId, next);
+
+    final removed = all
+        .where((p) => p.accountId == accountId && p.assetId == assetId)
+        .firstOrNull;
+    if (removed != null) {
+      final entries = await _balanceStorage.readEntries(userId);
+      final filtered = entries
+          .where((e) => e.accountAssetId != removed.id)
+          .toList();
+      await _balanceStorage.writeEntries(userId, filtered);
+    }
   }
 
   List<StoredAccountAsset> _seed(String userId) {
@@ -119,5 +132,14 @@ class AccountAssetMockDataSource {
         createdAtIso: now,
       ),
     ];
+  }
+}
+
+extension on Iterable<StoredAccountAsset> {
+  StoredAccountAsset? get firstOrNull {
+    for (final item in this) {
+      return item;
+    }
+    return null;
   }
 }

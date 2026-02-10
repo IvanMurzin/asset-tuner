@@ -746,6 +746,132 @@ abstract class AppLocalizations {
   /// **'This will remove the asset and delete its balance history.'**
   String get assetRemoveConfirmBody;
 
+  /// No description provided for @positionCurrentBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current balance'**
+  String get positionCurrentBalanceLabel;
+
+  /// No description provided for @positionAddBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Add balance'**
+  String get positionAddBalance;
+
+  /// No description provided for @positionUpdateThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Update for this month'**
+  String get positionUpdateThisMonth;
+
+  /// No description provided for @positionHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get positionHistoryTitle;
+
+  /// No description provided for @positionHistoryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No balance history yet'**
+  String get positionHistoryEmptyTitle;
+
+  /// No description provided for @positionHistoryEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a snapshot or change to start tracking.'**
+  String get positionHistoryEmptyBody;
+
+  /// No description provided for @positionHistoryEmptyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first balance'**
+  String get positionHistoryEmptyCta;
+
+  /// No description provided for @positionLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get positionLoadMore;
+
+  /// No description provided for @balanceEntrySnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Snapshot'**
+  String get balanceEntrySnapshot;
+
+  /// No description provided for @balanceEntryDelta.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get balanceEntryDelta;
+
+  /// No description provided for @balanceEntryImpliedDeltaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Implied change'**
+  String get balanceEntryImpliedDeltaLabel;
+
+  /// No description provided for @addBalanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add balance'**
+  String get addBalanceTitle;
+
+  /// No description provided for @addBalanceEntryTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry type'**
+  String get addBalanceEntryTypeLabel;
+
+  /// No description provided for @addBalanceTypeSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Snapshot'**
+  String get addBalanceTypeSnapshot;
+
+  /// No description provided for @addBalanceTypeDelta.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get addBalanceTypeDelta;
+
+  /// No description provided for @addBalanceDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get addBalanceDateLabel;
+
+  /// No description provided for @addBalanceAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get addBalanceAmountLabel;
+
+  /// No description provided for @addBalanceHelperSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'A snapshot is your balance on that date.'**
+  String get addBalanceHelperSnapshot;
+
+  /// No description provided for @addBalanceHelperDelta.
+  ///
+  /// In en, this message translates to:
+  /// **'A change is how much it increased or decreased.'**
+  String get addBalanceHelperDelta;
+
+  /// No description provided for @addBalanceValidationAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount'**
+  String get addBalanceValidationAmount;
+
+  /// No description provided for @addBalanceValidationDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a date'**
+  String get addBalanceValidationDate;
+
   /// No description provided for @paywallTitle.
   ///
   /// In en, this message translates to:

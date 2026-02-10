@@ -348,6 +348,11 @@ class _PositionsContent extends StatelessWidget {
                       ),
                     ],
                   ),
+                  onTap: () => context.push(
+                    AppRoutes.assetPositionDetail
+                        .replaceFirst(':accountId', accountId)
+                        .replaceFirst(':assetId', item.assetId),
+                  ),
                 );
               },
             ),

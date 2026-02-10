@@ -17,6 +17,7 @@ class DSTextField extends StatelessWidget {
     this.readOnly = false,
     this.onChanged,
     this.maxLines = 1,
+    this.onTap,
   });
 
   final String? label;
@@ -31,6 +32,7 @@ class DSTextField extends StatelessWidget {
   final bool readOnly;
   final ValueChanged<String>? onChanged;
   final int maxLines;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,7 @@ class DSTextField extends StatelessWidget {
       readOnly: readOnly,
       onChanged: onChanged,
       maxLines: maxLines,
+      onTap: onTap,
       style: typography.body.copyWith(color: colors.textPrimary),
       decoration: InputDecoration(
         labelText: label,
