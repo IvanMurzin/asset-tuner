@@ -8,7 +8,9 @@ abstract final class AppRoutes {
   static const String overview = '/overview';
   static const String accounts = '/accounts';
   static const String accountNew = '/accounts/new';
+  static const String accountDetail = '/accounts/:id';
   static const String accountEdit = '/accounts/:id/edit';
+  static const String accountAddAsset = '/accounts/:id/add-asset';
   static const String paywall = '/paywall';
   static const String settings = '/settings';
   static const String accountActions = '/settings/account';

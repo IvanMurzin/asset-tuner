@@ -91,6 +91,17 @@ class AccountsListPage extends StatelessWidget {
                           active: state.activeAccounts,
                           archived: state.archivedAccounts,
                           isBusy: (id) => state.busyAccountIds.contains(id),
+                          onOpen: (account) async {
+                            await context.push<String>(
+                              AppRoutes.accountDetail.replaceFirst(
+                                ':id',
+                                account.id,
+                              ),
+                            );
+                            if (context.mounted) {
+                              await context.read<AccountsCubit>().load();
+                            }
+                          },
                           onEdit: (account) async {
                             await context.push<String>(
                               AppRoutes.accountEdit.replaceFirst(
@@ -236,6 +247,7 @@ class _AccountsContent extends StatelessWidget {
     required this.active,
     required this.archived,
     required this.isBusy,
+    required this.onOpen,
     required this.onEdit,
     required this.onArchive,
     required this.onDelete,
@@ -244,6 +256,7 @@ class _AccountsContent extends StatelessWidget {
   final List<AccountEntity> active;
   final List<AccountEntity> archived;
   final bool Function(String id) isBusy;
+  final Future<void> Function(AccountEntity account) onOpen;
   final Future<void> Function(AccountEntity account) onEdit;
   final Future<void> Function(AccountEntity account) onArchive;
   final Future<void> Function(AccountEntity account) onDelete;
@@ -281,6 +294,7 @@ class _AccountsContent extends StatelessWidget {
                     account: active[i],
                     showDivider: i != active.length - 1,
                     busy: isBusy(active[i].id),
+                    onOpen: () => onOpen(active[i]),
                     onEdit: () => onEdit(active[i]),
                     onArchive: () => onArchive(active[i]),
                     onDelete: () => onDelete(active[i]),
@@ -301,6 +315,7 @@ class _AccountsContent extends StatelessWidget {
                       account: archived[i],
                       showDivider: i != archived.length - 1,
                       busy: isBusy(archived[i].id),
+                      onOpen: () => onOpen(archived[i]),
                       onEdit: () => onEdit(archived[i]),
                       onArchive: () => onArchive(archived[i]),
                       onDelete: () => onDelete(archived[i]),
@@ -323,6 +338,7 @@ class _AccountRow extends StatelessWidget {
   const _AccountRow({
     required this.account,
     required this.busy,
+    required this.onOpen,
     required this.onEdit,
     required this.onArchive,
     required this.onDelete,
@@ -331,6 +347,7 @@ class _AccountRow extends StatelessWidget {
 
   final AccountEntity account;
   final bool busy;
+  final VoidCallback onOpen;
   final VoidCallback onEdit;
   final VoidCallback onArchive;
   final VoidCallback onDelete;
@@ -369,7 +386,7 @@ class _AccountRow extends StatelessWidget {
         ],
       ),
       showDivider: showDivider,
-      onTap: onEdit,
+      onTap: onOpen,
     );
   }
 

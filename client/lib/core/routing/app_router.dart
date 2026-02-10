@@ -9,6 +9,8 @@ import 'package:asset_tuner/presentation/onboarding/page/base_currency_page.dart
 import 'package:asset_tuner/presentation/overview/page/overview_page.dart';
 import 'package:asset_tuner/presentation/account/page/accounts_list_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_form_page.dart';
+import 'package:asset_tuner/presentation/account/page/account_detail_page.dart';
+import 'package:asset_tuner/presentation/account/page/add_asset_page.dart';
 import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
 import 'package:asset_tuner/presentation/profile/page/account_actions_page.dart';
 import 'package:asset_tuner/presentation/profile/page/language_page.dart';
@@ -53,9 +55,19 @@ final appRouter = GoRouter(
       builder: (context, state) => const AccountFormPage(),
     ),
     GoRoute(
+      path: AppRoutes.accountDetail,
+      builder: (context, state) =>
+          AccountDetailPage(accountId: state.pathParameters['id']!),
+    ),
+    GoRoute(
       path: AppRoutes.accountEdit,
       builder: (context, state) =>
           AccountFormPage(accountId: state.pathParameters['id']),
+    ),
+    GoRoute(
+      path: AppRoutes.accountAddAsset,
+      builder: (context, state) =>
+          AddAssetPage(accountId: state.pathParameters['id']!),
     ),
     GoRoute(
       path: AppRoutes.paywall,

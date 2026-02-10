@@ -644,6 +644,108 @@ abstract class AppLocalizations {
   /// **'This will delete all assets and balance history in this account.'**
   String get accountsDeleteConfirmBody;
 
+  /// No description provided for @accountDetailAssetsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets'**
+  String get accountDetailAssetsTitle;
+
+  /// No description provided for @accountDetailEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No assets in this account'**
+  String get accountDetailEmptyTitle;
+
+  /// No description provided for @accountDetailEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the currencies or tokens you hold here.'**
+  String get accountDetailEmptyBody;
+
+  /// No description provided for @accountDetailArchivedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived — hidden from totals by default.'**
+  String get accountDetailArchivedHint;
+
+  /// No description provided for @assetAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add asset'**
+  String get assetAddTitle;
+
+  /// No description provided for @assetSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by code or name'**
+  String get assetSearchHint;
+
+  /// No description provided for @assetAddCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get assetAddCta;
+
+  /// No description provided for @assetDuplicateError.
+  ///
+  /// In en, this message translates to:
+  /// **'This asset is already in the account.'**
+  String get assetDuplicateError;
+
+  /// No description provided for @assetNoMatchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches'**
+  String get assetNoMatchesTitle;
+
+  /// No description provided for @assetNoMatchesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search.'**
+  String get assetNoMatchesBody;
+
+  /// No description provided for @assetPaywallHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to add more tracked assets.'**
+  String get assetPaywallHint;
+
+  /// No description provided for @assetAlreadyAddedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get assetAlreadyAddedLabel;
+
+  /// No description provided for @assetKindFiat.
+  ///
+  /// In en, this message translates to:
+  /// **'Fiat'**
+  String get assetKindFiat;
+
+  /// No description provided for @assetKindCrypto.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto'**
+  String get assetKindCrypto;
+
+  /// No description provided for @assetRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get assetRemove;
+
+  /// No description provided for @assetRemoveConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove asset?'**
+  String get assetRemoveConfirmTitle;
+
+  /// No description provided for @assetRemoveConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove the asset and delete its balance history.'**
+  String get assetRemoveConfirmBody;
+
   /// No description provided for @paywallTitle.
   ///
   /// In en, this message translates to:

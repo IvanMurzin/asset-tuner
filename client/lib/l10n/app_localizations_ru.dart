@@ -291,6 +291,61 @@ class AppLocalizationsRu extends AppLocalizations {
       'Будут удалены все активы и история балансов в этом счете.';
 
   @override
+  String get accountDetailAssetsTitle => 'Активы';
+
+  @override
+  String get accountDetailEmptyTitle => 'В этом счете нет активов';
+
+  @override
+  String get accountDetailEmptyBody =>
+      'Добавьте валюты или токены, которые вы держите здесь.';
+
+  @override
+  String get accountDetailArchivedHint =>
+      'Архив — по умолчанию скрыт из итогов.';
+
+  @override
+  String get assetAddTitle => 'Добавить актив';
+
+  @override
+  String get assetSearchHint => 'Поиск по коду или названию';
+
+  @override
+  String get assetAddCta => 'Добавить';
+
+  @override
+  String get assetDuplicateError => 'Этот актив уже добавлен в счет.';
+
+  @override
+  String get assetNoMatchesTitle => 'Ничего не найдено';
+
+  @override
+  String get assetNoMatchesBody => 'Попробуйте изменить запрос.';
+
+  @override
+  String get assetPaywallHint =>
+      'Оформите подписку, чтобы отслеживать больше активов.';
+
+  @override
+  String get assetAlreadyAddedLabel => 'Добавлено';
+
+  @override
+  String get assetKindFiat => 'Фиат';
+
+  @override
+  String get assetKindCrypto => 'Крипто';
+
+  @override
+  String get assetRemove => 'Удалить';
+
+  @override
+  String get assetRemoveConfirmTitle => 'Удалить актив?';
+
+  @override
+  String get assetRemoveConfirmBody =>
+      'Актив будет удален из этого счета вместе с историей балансов.';
+
+  @override
   String get paywallTitle => 'Подписка';
 
   @override

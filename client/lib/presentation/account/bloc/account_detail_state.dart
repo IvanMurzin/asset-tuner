@@ -1,0 +1,28 @@
+part of 'account_detail_cubit.dart';
+
+enum AccountDetailStatus { loading, ready, error }
+
+enum AccountDetailDestination { signIn, backDeleted }
+
+@freezed
+abstract class AccountDetailNavigation with _$AccountDetailNavigation {
+  const factory AccountDetailNavigation({
+    required AccountDetailDestination destination,
+  }) = _AccountDetailNavigation;
+}
+
+@freezed
+abstract class AccountDetailState with _$AccountDetailState {
+  const factory AccountDetailState({
+    @Default(AccountDetailStatus.loading) AccountDetailStatus status,
+    String? userId,
+    AccountEntity? account,
+    @Default([]) List<AccountAssetViewItem> items,
+    @Default(<String>{}) Set<String> busyAssetIds,
+    @Default(false) bool isAccountActionBusy,
+    @Default(false) bool isAccountArchived,
+    String? failureCode,
+    String? bannerFailureCode,
+    AccountDetailNavigation? navigation,
+  }) = _AccountDetailState;
+}

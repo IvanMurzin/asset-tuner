@@ -293,6 +293,60 @@ class AppLocalizationsEn extends AppLocalizations {
       'This will delete all assets and balance history in this account.';
 
   @override
+  String get accountDetailAssetsTitle => 'Assets';
+
+  @override
+  String get accountDetailEmptyTitle => 'No assets in this account';
+
+  @override
+  String get accountDetailEmptyBody =>
+      'Add the currencies or tokens you hold here.';
+
+  @override
+  String get accountDetailArchivedHint =>
+      'Archived — hidden from totals by default.';
+
+  @override
+  String get assetAddTitle => 'Add asset';
+
+  @override
+  String get assetSearchHint => 'Search by code or name';
+
+  @override
+  String get assetAddCta => 'Add';
+
+  @override
+  String get assetDuplicateError => 'This asset is already in the account.';
+
+  @override
+  String get assetNoMatchesTitle => 'No matches';
+
+  @override
+  String get assetNoMatchesBody => 'Try a different search.';
+
+  @override
+  String get assetPaywallHint => 'Upgrade to add more tracked assets.';
+
+  @override
+  String get assetAlreadyAddedLabel => 'Added';
+
+  @override
+  String get assetKindFiat => 'Fiat';
+
+  @override
+  String get assetKindCrypto => 'Crypto';
+
+  @override
+  String get assetRemove => 'Remove';
+
+  @override
+  String get assetRemoveConfirmTitle => 'Remove asset?';
+
+  @override
+  String get assetRemoveConfirmBody =>
+      'This will remove the asset and delete its balance history.';
+
+  @override
   String get paywallTitle => 'Upgrade';
 
   @override

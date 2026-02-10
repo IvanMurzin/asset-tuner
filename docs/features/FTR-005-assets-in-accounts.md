@@ -64,5 +64,4 @@ Out of scope:
 - `asset_add_blocked_by_limit { limit_type="positions" }`
 
 ## Open questions (if any)
-- Removal semantics: if an asset has `balance_entries`, do we (a) cascade delete its history on removal, (b) block removal until history is deleted, or (c) auto-archive the position? (`docs/tech/api_assumptions.md` suggests server-side cascades for account deletion, but not for position removal.)
-
+- Removal semantics: **MVP decision:** (a) cascade delete its history on removal. The client must confirm removal with copy that makes this clear, and the backend write should be handled via an Edge Function once implemented (similar to `DELETE /account`).
