@@ -4,7 +4,6 @@ import 'package:asset_tuner/data/currency/dto/currency_dto.dart';
 @lazySingleton
 class CurrencyMockDataSource {
   Future<List<CurrencyDto>> fetchFiatCurrencies() async {
-    await Future<void>.delayed(const Duration(milliseconds: 300));
     return const [
       CurrencyDto(code: 'USD', name: 'United States Dollar', symbol: 'USD'),
       CurrencyDto(code: 'EUR', name: 'Euro', symbol: 'EUR'),

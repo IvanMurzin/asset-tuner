@@ -2,7 +2,7 @@ part of 'base_currency_cubit.dart';
 
 enum BaseCurrencyStatus { loading, ready, error }
 
-enum BaseCurrencyBannerType { selectCurrency, upgradeRequired, saveFailure }
+enum BaseCurrencyBannerType { selectCurrency, saveFailure }
 
 enum BaseCurrencyDestination { overview, signIn, paywall }
 

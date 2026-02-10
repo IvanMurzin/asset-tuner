@@ -34,8 +34,9 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     if (session == null) {
       emit(
         state.copyWith(
-          status: BaseCurrencyStatus.error,
-          navigation: const BaseCurrencyNavigation(destination: BaseCurrencyDestination.signIn),
+          navigation: const BaseCurrencyNavigation(
+            destination: BaseCurrencyDestination.signIn,
+          ),
         ),
       );
       return;
@@ -47,7 +48,12 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     late final ProfileEntity profile;
     switch (profileResult) {
       case FailureResult(:final failure):
-        emit(state.copyWith(status: BaseCurrencyStatus.error, loadFailureCode: failure.code));
+        emit(
+          state.copyWith(
+            status: BaseCurrencyStatus.error,
+            loadFailureCode: failure.code,
+          ),
+        );
         return;
       case Success(:final value):
         profile = value;
@@ -56,7 +62,12 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     late final List<CurrencyEntity> currencies;
     switch (currenciesResult) {
       case FailureResult(:final failure):
-        emit(state.copyWith(status: BaseCurrencyStatus.error, loadFailureCode: failure.code));
+        emit(
+          state.copyWith(
+            status: BaseCurrencyStatus.error,
+            loadFailureCode: failure.code,
+          ),
+        );
         return;
       case Success(:final value):
         currencies = value;
@@ -90,8 +101,9 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     if (!_isAllowedForPlan(selected, state.plan)) {
       emit(
         state.copyWith(
-          bannerType: BaseCurrencyBannerType.upgradeRequired,
-          navigation: const BaseCurrencyNavigation(destination: BaseCurrencyDestination.paywall),
+          navigation: const BaseCurrencyNavigation(
+            destination: BaseCurrencyDestination.paywall,
+          ),
         ),
       );
       return;
@@ -115,7 +127,9 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
       emit(
         state.copyWith(
           isSaving: false,
-          navigation: const BaseCurrencyNavigation(destination: BaseCurrencyDestination.signIn),
+          navigation: const BaseCurrencyNavigation(
+            destination: BaseCurrencyDestination.signIn,
+          ),
         ),
       );
       return;
@@ -135,7 +149,9 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
         emit(
           state.copyWith(
             isSaving: false,
-            navigation: const BaseCurrencyNavigation(destination: BaseCurrencyDestination.overview),
+            navigation: const BaseCurrencyNavigation(
+              destination: BaseCurrencyDestination.overview,
+            ),
           ),
         );
     }

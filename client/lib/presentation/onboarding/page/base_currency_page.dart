@@ -30,15 +30,18 @@ class BaseCurrencyPage extends StatelessWidget {
           if (navigation == null) {
             return;
           }
+          context.read<BaseCurrencyCubit>().consumeNavigation();
           switch (navigation.destination) {
             case BaseCurrencyDestination.signIn:
               context.go(AppRoutes.signIn);
+              break;
             case BaseCurrencyDestination.overview:
               context.go(AppRoutes.overview);
+              break;
             case BaseCurrencyDestination.paywall:
               context.go(AppRoutes.paywall);
+              break;
           }
-          context.read<BaseCurrencyCubit>().consumeNavigation();
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
@@ -55,7 +58,7 @@ class BaseCurrencyPage extends StatelessWidget {
                 title: l10n.onboardingLoadError,
                 message: _failureMessage(l10n, state.loadFailureCode),
                 actionLabel: l10n.splashRetry,
-                onAction: context.read<BaseCurrencyCubit>().load,
+                onAction: () => context.read<BaseCurrencyCubit>().load(),
               ),
             );
           }
@@ -76,7 +79,12 @@ class BaseCurrencyPage extends StatelessWidget {
             appBar: DSAppBar(title: l10n.onboardingBaseCurrencyTitle),
             body: SafeArea(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s32),
+                padding: EdgeInsets.fromLTRB(
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s32,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -85,18 +93,27 @@ class BaseCurrencyPage extends StatelessWidget {
                       padding: EdgeInsets.all(spacing.s24),
                       decoration: BoxDecoration(
                         color: context.dsColors.surface,
-                        borderRadius: BorderRadius.circular(context.dsRadius.r16),
-                        border: Border.all(color: context.dsColors.border.withValues(alpha: 0.7)),
+                        borderRadius: BorderRadius.circular(
+                          context.dsRadius.r16,
+                        ),
+                        border: Border.all(
+                          color: context.dsColors.border.withValues(alpha: 0.7),
+                        ),
                         boxShadow: context.dsElevation.e1,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(l10n.onboardingBaseCurrencyTitle, style: typography.h2),
+                          Text(
+                            l10n.onboardingBaseCurrencyTitle,
+                            style: typography.h2,
+                          ),
                           SizedBox(height: spacing.s8),
                           Text(
                             l10n.onboardingBaseCurrencyBody,
-                            style: typography.body.copyWith(color: context.dsColors.textSecondary),
+                            style: typography.body.copyWith(
+                              color: context.dsColors.textSecondary,
+                            ),
                           ),
                         ],
                       ),
@@ -111,7 +128,9 @@ class BaseCurrencyPage extends StatelessWidget {
                       DSInlineBanner(
                         title: l10n.onboardingBaseCurrencyTitle,
                         message: bannerMessage,
-                        variant: state.bannerType == BaseCurrencyBannerType.saveFailure
+                        variant:
+                            state.bannerType ==
+                                BaseCurrencyBannerType.saveFailure
                             ? DSInlineBannerVariant.danger
                             : DSInlineBannerVariant.info,
                       ),
@@ -119,8 +138,9 @@ class BaseCurrencyPage extends StatelessWidget {
                     DSSelectList(
                       options: options,
                       selectedId: state.selectedCode,
-                      onSelect: (option) =>
-                          context.read<BaseCurrencyCubit>().selectCurrency(option.id),
+                      onSelect: (option) => context
+                          .read<BaseCurrencyCubit>()
+                          .selectCurrency(option.id),
                     ),
                     SizedBox(height: spacing.s24),
                     DSButton(
@@ -177,8 +197,10 @@ class BaseCurrencyPage extends StatelessWidget {
   String? _bannerMessage(AppLocalizations l10n, BaseCurrencyState state) {
     return switch (state.bannerType) {
       BaseCurrencyBannerType.selectCurrency => l10n.onboardingSelectCurrency,
-      BaseCurrencyBannerType.upgradeRequired => l10n.onboardingUpgradeRequired,
-      BaseCurrencyBannerType.saveFailure => _failureMessage(l10n, state.bannerFailureCode),
+      BaseCurrencyBannerType.saveFailure => _failureMessage(
+        l10n,
+        state.bannerFailureCode,
+      ),
       null => null,
     };
   }
