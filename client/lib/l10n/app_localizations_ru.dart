@@ -205,7 +205,68 @@ class AppLocalizationsRu extends AppLocalizations {
   String get notAvailable => 'Н/Д';
 
   @override
+  String get unpriced => 'Без цены';
+
+  @override
   String get overviewEmptyBody => 'Данные появятся после добавления счетов.';
+
+  @override
+  String get overviewEmptyNoAccountsTitle => 'Создайте первый счет';
+
+  @override
+  String get overviewEmptyNoAccountsBody =>
+      'Добавьте счет, чтобы начать отслеживать активы и итоги.';
+
+  @override
+  String get overviewEmptyNoAccountsCta => 'Создать счет';
+
+  @override
+  String get overviewEmptyNoAssetsTitle => 'Добавьте первый актив';
+
+  @override
+  String get overviewEmptyNoAssetsBody =>
+      'Добавьте валюты или токены в один из счетов.';
+
+  @override
+  String get overviewEmptyNoAssetsCta => 'Добавить актив';
+
+  @override
+  String get overviewEmptyNoBalancesTitle => 'Добавьте первый баланс';
+
+  @override
+  String get overviewEmptyNoBalancesBody =>
+      'Добавьте снимок или изменение, чтобы увидеть итоги.';
+
+  @override
+  String get overviewEmptyNoBalancesCta => 'Добавить баланс';
+
+  @override
+  String get overviewPricedTotalLabel => 'Итого по оцененным';
+
+  @override
+  String get overviewMissingRatesTitle =>
+      'Некоторые активы сейчас нельзя оценить.';
+
+  @override
+  String get overviewMissingRatesBody =>
+      'Итоги не включают активы без цены, пока курсы не обновятся.';
+
+  @override
+  String get overviewUnpricedHoldingsTitle => 'Активы без цены';
+
+  @override
+  String get overviewPartialHint => 'Частично';
+
+  @override
+  String get offlineTitle => 'Офлайн';
+
+  @override
+  String offlineShowingLastSaved(String time) {
+    return 'Показаны последние сохраненные итоги от $time.';
+  }
+
+  @override
+  String get pullToRefreshHint => 'Потяните, чтобы обновить';
 
   @override
   String overviewRatesUpdatedAt(String time) {
@@ -313,6 +374,17 @@ class AppLocalizationsRu extends AppLocalizations {
       'Архив — по умолчанию скрыт из итогов.';
 
   @override
+  String get accountDetailTotalLabel => 'Итого';
+
+  @override
+  String get accountDetailMissingRatesTitle =>
+      'Некоторые активы сейчас нельзя оценить.';
+
+  @override
+  String get accountDetailMissingRatesBody =>
+      'Активы без цены не включены в итог по оцененным.';
+
+  @override
   String get assetAddTitle => 'Добавить актив';
 
   @override
@@ -355,6 +427,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get positionCurrentBalanceLabel => 'Текущий баланс';
+
+  @override
+  String get positionConvertedValueLabel => 'Стоимость';
+
+  @override
+  String get positionUnpricedHint =>
+      'Стоимость недоступна до обновления курсов.';
 
   @override
   String get positionAddBalance => 'Добавить баланс';

@@ -1,11 +1,26 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
+import 'package:asset_tuner/core/local_storage/overview_cache_storage.dart';
+import 'package:asset_tuner/domain/account/entity/account_entity.dart';
+import 'package:asset_tuner/domain/account/repository/i_account_repository.dart';
+import 'package:asset_tuner/domain/account/usecase/get_accounts_usecase.dart';
+import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
+import 'package:asset_tuner/domain/account_asset/repository/i_account_asset_repository.dart';
+import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
+import 'package:asset_tuner/domain/asset/repository/i_asset_repository.dart';
+import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
+import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
+import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.dart';
+import 'package:asset_tuner/domain/balance/repository/i_balance_repository.dart';
+import 'package:asset_tuner/domain/balance/usecase/get_current_balances_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
@@ -149,6 +164,158 @@ class FakeRateRepository implements IRateRepository {
   }
 }
 
+class FakeAccountRepository implements IAccountRepository {
+  FakeAccountRepository(this.accountsResult);
+
+  final Result<List<AccountEntity>> accountsResult;
+
+  @override
+  Future<Result<List<AccountEntity>>> fetchAccounts(String userId) async {
+    return accountsResult;
+  }
+
+  @override
+  Future<Result<AccountEntity>> createAccount({
+    required String userId,
+    required String name,
+    required AccountType type,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<AccountEntity>> updateAccount({
+    required String userId,
+    required String accountId,
+    required String name,
+    required AccountType type,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<AccountEntity>> setArchived({
+    required String userId,
+    required String accountId,
+    required bool archived,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<void>> deleteAccount({
+    required String userId,
+    required String accountId,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+}
+
+class FakeAccountAssetRepository implements IAccountAssetRepository {
+  @override
+  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
+    required String userId,
+    required String accountId,
+  }) async {
+    return const Success(<AccountAssetEntity>[]);
+  }
+
+  @override
+  Future<Result<int>> countAssetPositions(String userId) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<AccountAssetEntity>> addAssetToAccount({
+    required String userId,
+    required String accountId,
+    required String assetId,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<void>> removeAssetFromAccount({
+    required String userId,
+    required String accountId,
+    required String assetId,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+}
+
+class FakeAssetRepository implements IAssetRepository {
+  @override
+  Future<Result<List<AssetEntity>>> fetchAssets() async {
+    return const Success(<AssetEntity>[]);
+  }
+}
+
+class FakeBalanceRepository implements IBalanceRepository {
+  @override
+  Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
+    required String userId,
+    required Set<String> accountAssetIds,
+  }) async {
+    return const Success(<String, Decimal>{});
+  }
+
+  @override
+  Future<Result<BalanceHistoryPageEntity>> fetchHistory({
+    required String userId,
+    required String accountAssetId,
+    required int limit,
+    int? offset,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<BalanceEntryEntity>> updateBalance({
+    required String userId,
+    required String accountAssetId,
+    required DateTime entryDate,
+    Decimal? snapshotAmount,
+    Decimal? deltaAmount,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+}
+
+class FakeOverviewCacheStorage extends OverviewCacheStorage {
+  @override
+  Future<StoredOverviewSnapshot?> readSnapshot(String userId) async {
+    return null;
+  }
+
+  @override
+  Future<void> writeSnapshot(
+    String userId,
+    StoredOverviewSnapshot snapshot,
+  ) async {}
+
+  @override
+  Future<void> deleteSnapshot(String userId) async {}
+}
+
 void main() {
   test('load sets ratesAsOf when rates available', () async {
     final asOf = DateTime(2026, 2, 10, 12, 0);
@@ -179,11 +346,18 @@ void main() {
           ),
         ),
       ),
+      GetAccountsUseCase(
+        FakeAccountRepository(const Success(<AccountEntity>[])),
+      ),
+      GetAccountAssetsUseCase(FakeAccountAssetRepository()),
+      GetAssetsUseCase(FakeAssetRepository()),
+      GetCurrentBalancesUseCase(FakeBalanceRepository()),
       GetLatestUsdRatesUseCase(
         FakeRateRepository(
           Success(RatesSnapshotEntity(usdPriceByAssetId: const {}, asOf: asOf)),
         ),
       ),
+      FakeOverviewCacheStorage(),
     );
 
     await cubit.load();
@@ -219,7 +393,14 @@ void main() {
           ),
         ),
       ),
+      GetAccountsUseCase(
+        FakeAccountRepository(const Success(<AccountEntity>[])),
+      ),
+      GetAccountAssetsUseCase(FakeAccountAssetRepository()),
+      GetAssetsUseCase(FakeAssetRepository()),
+      GetCurrentBalancesUseCase(FakeBalanceRepository()),
       GetLatestUsdRatesUseCase(FakeRateRepository(const Success(null))),
+      FakeOverviewCacheStorage(),
     );
 
     await cubit.load();

@@ -85,6 +85,56 @@ class BalanceRepository implements IBalanceRepository {
     }
   }
 
+  @override
+  Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
+    required String userId,
+    required Set<String> accountAssetIds,
+  }) async {
+    try {
+      if (accountAssetIds.isEmpty) {
+        return const Success(<String, Decimal>{});
+      }
+      final allStored = await _storage.readEntries(userId);
+      final relevant = allStored
+          .where((e) => accountAssetIds.contains(e.accountAssetId))
+          .toList();
+      final byPosition = <String, List<StoredBalanceEntry>>{};
+      for (final entry in relevant) {
+        (byPosition[entry.accountAssetId] ??= []).add(entry);
+      }
+
+      final result = <String, Decimal>{};
+      for (final positionId in byPosition.keys) {
+        final entries = byPosition[positionId]!..sort(_sortAscStored);
+        var balance = Decimal.zero;
+        for (final stored in entries) {
+          final type = stored.entryType;
+          if (type == 'snapshot') {
+            if (stored.snapshotAmount != null) {
+              balance = Decimal.parse(stored.snapshotAmount!);
+            }
+            continue;
+          }
+          if (type == 'delta') {
+            if (stored.deltaAmount != null) {
+              balance += Decimal.parse(stored.deltaAmount!);
+            }
+          }
+        }
+        result[positionId] = balance;
+      }
+      logger.i(
+        'BalanceRepository.fetchCurrentBalances success: ${result.length}',
+      );
+      return Success(result);
+    } catch (_) {
+      logger.e('BalanceRepository.fetchCurrentBalances failed');
+      return const FailureResult(
+        Failure(code: 'unknown', message: 'Unable to compute balances'),
+      );
+    }
+  }
+
   Failure _mapMockFailure(MockBalanceException e) {
     final code = switch (e.code) {
       MockBalanceErrorCode.network => 'network',
@@ -106,5 +156,17 @@ class BalanceRepository implements IBalanceRepository {
     return DateTime.parse(
       b.createdAtIso,
     ).compareTo(DateTime.parse(a.createdAtIso));
+  }
+
+  int _sortAscStored(StoredBalanceEntry a, StoredBalanceEntry b) {
+    final dateCmp = DateTime.parse(
+      a.entryDateIso,
+    ).compareTo(DateTime.parse(b.entryDateIso));
+    if (dateCmp != 0) {
+      return dateCmp;
+    }
+    return DateTime.parse(
+      a.createdAtIso,
+    ).compareTo(DateTime.parse(b.createdAtIso));
   }
 }

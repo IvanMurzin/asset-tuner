@@ -18,4 +18,9 @@ abstract interface class IBalanceRepository {
     Decimal? snapshotAmount,
     Decimal? deltaAmount,
   });
+
+  Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
+    required String userId,
+    required Set<String> accountAssetIds,
+  });
 }

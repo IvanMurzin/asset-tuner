@@ -206,8 +206,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notAvailable => 'N/A';
 
   @override
+  String get unpriced => 'Unpriced';
+
+  @override
   String get overviewEmptyBody =>
       'Overview content will appear here once accounts are added.';
+
+  @override
+  String get overviewEmptyNoAccountsTitle => 'Create your first account';
+
+  @override
+  String get overviewEmptyNoAccountsBody =>
+      'Add an account to start tracking assets and totals.';
+
+  @override
+  String get overviewEmptyNoAccountsCta => 'Create account';
+
+  @override
+  String get overviewEmptyNoAssetsTitle => 'Add your first asset';
+
+  @override
+  String get overviewEmptyNoAssetsBody =>
+      'Add currencies or tokens you hold to an account.';
+
+  @override
+  String get overviewEmptyNoAssetsCta => 'Add asset';
+
+  @override
+  String get overviewEmptyNoBalancesTitle => 'Add your first balance';
+
+  @override
+  String get overviewEmptyNoBalancesBody =>
+      'Add a snapshot or change to start tracking totals.';
+
+  @override
+  String get overviewEmptyNoBalancesCta => 'Add balance';
+
+  @override
+  String get overviewPricedTotalLabel => 'Priced total';
+
+  @override
+  String get overviewMissingRatesTitle =>
+      'Some holdings can’t be priced right now.';
+
+  @override
+  String get overviewMissingRatesBody =>
+      'Totals exclude unpriced holdings until rates are available.';
+
+  @override
+  String get overviewUnpricedHoldingsTitle => 'Unpriced holdings';
+
+  @override
+  String get overviewPartialHint => 'Partial';
+
+  @override
+  String get offlineTitle => 'Offline';
+
+  @override
+  String offlineShowingLastSaved(String time) {
+    return 'Showing last saved totals from $time.';
+  }
+
+  @override
+  String get pullToRefreshHint => 'Pull to refresh';
 
   @override
   String overviewRatesUpdatedAt(String time) {
@@ -315,6 +376,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Archived — hidden from totals by default.';
 
   @override
+  String get accountDetailTotalLabel => 'Total';
+
+  @override
+  String get accountDetailMissingRatesTitle =>
+      'Some assets can’t be priced right now.';
+
+  @override
+  String get accountDetailMissingRatesBody =>
+      'Unpriced assets are excluded from the priced total.';
+
+  @override
   String get assetAddTitle => 'Add asset';
 
   @override
@@ -356,6 +428,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get positionCurrentBalanceLabel => 'Current balance';
+
+  @override
+  String get positionConvertedValueLabel => 'Value';
+
+  @override
+  String get positionUnpricedHint =>
+      'Converted value isn’t available until rates are updated.';
 
   @override
   String get positionAddBalance => 'Add balance';

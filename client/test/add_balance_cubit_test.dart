@@ -146,6 +146,14 @@ class FakeBalanceRepository implements IBalanceRepository {
   FakeBalanceRepository();
 
   @override
+  Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
+    required String userId,
+    required Set<String> accountAssetIds,
+  }) async {
+    return const Success(<String, Decimal>{});
+  }
+
+  @override
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
     required String userId,
     required String accountAssetId,

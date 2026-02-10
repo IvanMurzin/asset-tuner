@@ -20,6 +20,14 @@ import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.dart';
 import 'package:asset_tuner/domain/balance/repository/i_balance_repository.dart';
 import 'package:asset_tuner/domain/balance/usecase/get_balance_history_usecase.dart';
+import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
+import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
+import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
+import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
+import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
+import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
+import 'package:asset_tuner/domain/rate/repository/i_rate_repository.dart';
+import 'package:asset_tuner/domain/rate/usecase/get_latest_usd_rates_usecase.dart';
 import 'package:asset_tuner/presentation/balance/bloc/asset_position_detail_cubit.dart';
 
 class FakeAuthRepository implements IAuthRepository {
@@ -220,6 +228,14 @@ class FakeBalanceRepository implements IBalanceRepository {
   final Map<String, List<BalanceEntryEntity>> entriesByPosition;
 
   @override
+  Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
+    required String userId,
+    required Set<String> accountAssetIds,
+  }) async {
+    return const Success(<String, Decimal>{});
+  }
+
+  @override
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
     required String userId,
     required String accountAssetId,
@@ -255,14 +271,83 @@ class FakeBalanceRepository implements IBalanceRepository {
   }
 }
 
+class FakeProfileRepository implements IProfileRepository {
+  FakeProfileRepository(this.profile);
+
+  final ProfileEntity profile;
+
+  @override
+  Future<Result<ProfileBootstrapEntity>> ensureProfile(String userId) async {
+    return Success(
+      ProfileBootstrapEntity(
+        profile: profile,
+        isNew: false,
+        wasBaseCurrencyDefaulted: false,
+      ),
+    );
+  }
+
+  @override
+  Future<Result<ProfileEntity>> getProfile(String userId) async {
+    return Success(profile);
+  }
+
+  @override
+  Future<Result<ProfileEntity>> updateBaseCurrency(
+    String userId,
+    String baseCurrency,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<ProfileEntity>> updatePlan(String userId, String plan) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+}
+
+class FakeRateRepository implements IRateRepository {
+  FakeRateRepository(this.result);
+
+  final Result<RatesSnapshotEntity?> result;
+
+  @override
+  Future<Result<RatesSnapshotEntity?>> fetchLatestUsdRates() async {
+    return result;
+  }
+}
+
 void main() {
   test('load navigates to sign-in when session missing', () async {
     final cubit = AssetPositionDetailCubit(
       GetCachedSessionUseCase(FakeAuthRepository()),
+      GetProfileUseCase(
+        FakeProfileRepository(
+          const ProfileEntity(
+            userId: 'user_1',
+            baseCurrency: 'USD',
+            plan: 'free',
+          ),
+        ),
+      ),
+      BootstrapProfileUseCase(
+        FakeProfileRepository(
+          const ProfileEntity(
+            userId: 'user_1',
+            baseCurrency: 'USD',
+            plan: 'free',
+          ),
+        ),
+      ),
       GetAccountsUseCase(FakeAccountRepository([])),
       GetAccountAssetsUseCase(FakeAccountAssetRepository(const {})),
       GetAssetsUseCase(FakeAssetRepository(const [])),
       GetBalanceHistoryUseCase(FakeBalanceRepository(const {})),
+      GetLatestUsdRatesUseCase(FakeRateRepository(const Success(null))),
     );
 
     await cubit.load(accountId: 'acc_1', assetId: 'asset_usd');
@@ -344,17 +429,31 @@ void main() {
       ],
     };
 
+    final profile = const ProfileEntity(
+      userId: 'user_1',
+      baseCurrency: 'USD',
+      plan: 'free',
+    );
+    final rates = RatesSnapshotEntity(
+      usdPriceByAssetId: {'asset_usd': Decimal.one},
+      asOf: DateTime(2026, 2, 10, 12, 0),
+    );
+
     final cubit = AssetPositionDetailCubit(
       GetCachedSessionUseCase(FakeAuthRepository(cachedSession: user)),
+      GetProfileUseCase(FakeProfileRepository(profile)),
+      BootstrapProfileUseCase(FakeProfileRepository(profile)),
       GetAccountsUseCase(FakeAccountRepository(accounts)),
       GetAccountAssetsUseCase(FakeAccountAssetRepository(positions)),
       GetAssetsUseCase(FakeAssetRepository(assets)),
       GetBalanceHistoryUseCase(FakeBalanceRepository(entries)),
+      GetLatestUsdRatesUseCase(FakeRateRepository(Success(rates))),
     );
 
     await cubit.load(accountId: 'acc_1', assetId: 'asset_usd');
 
     expect(cubit.state.currentBalance, Decimal.parse('60'));
+    expect(cubit.state.convertedValue, Decimal.parse('60'));
     expect(cubit.state.entries, isNotEmpty);
   });
 }

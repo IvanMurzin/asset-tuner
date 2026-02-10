@@ -476,11 +476,119 @@ abstract class AppLocalizations {
   /// **'N/A'**
   String get notAvailable;
 
+  /// No description provided for @unpriced.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpriced'**
+  String get unpriced;
+
   /// No description provided for @overviewEmptyBody.
   ///
   /// In en, this message translates to:
   /// **'Overview content will appear here once accounts are added.'**
   String get overviewEmptyBody;
+
+  /// No description provided for @overviewEmptyNoAccountsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first account'**
+  String get overviewEmptyNoAccountsTitle;
+
+  /// No description provided for @overviewEmptyNoAccountsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an account to start tracking assets and totals.'**
+  String get overviewEmptyNoAccountsBody;
+
+  /// No description provided for @overviewEmptyNoAccountsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get overviewEmptyNoAccountsCta;
+
+  /// No description provided for @overviewEmptyNoAssetsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first asset'**
+  String get overviewEmptyNoAssetsTitle;
+
+  /// No description provided for @overviewEmptyNoAssetsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add currencies or tokens you hold to an account.'**
+  String get overviewEmptyNoAssetsBody;
+
+  /// No description provided for @overviewEmptyNoAssetsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add asset'**
+  String get overviewEmptyNoAssetsCta;
+
+  /// No description provided for @overviewEmptyNoBalancesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first balance'**
+  String get overviewEmptyNoBalancesTitle;
+
+  /// No description provided for @overviewEmptyNoBalancesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a snapshot or change to start tracking totals.'**
+  String get overviewEmptyNoBalancesBody;
+
+  /// No description provided for @overviewEmptyNoBalancesCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add balance'**
+  String get overviewEmptyNoBalancesCta;
+
+  /// No description provided for @overviewPricedTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Priced total'**
+  String get overviewPricedTotalLabel;
+
+  /// No description provided for @overviewMissingRatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Some holdings can’t be priced right now.'**
+  String get overviewMissingRatesTitle;
+
+  /// No description provided for @overviewMissingRatesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals exclude unpriced holdings until rates are available.'**
+  String get overviewMissingRatesBody;
+
+  /// No description provided for @overviewUnpricedHoldingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpriced holdings'**
+  String get overviewUnpricedHoldingsTitle;
+
+  /// No description provided for @overviewPartialHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial'**
+  String get overviewPartialHint;
+
+  /// No description provided for @offlineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get offlineTitle;
+
+  /// Offline banner message with last cached timestamp.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing last saved totals from {time}.'**
+  String offlineShowingLastSaved(String time);
+
+  /// No description provided for @pullToRefreshHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull to refresh'**
+  String get pullToRefreshHint;
 
   /// Overview rates timestamp line.
   ///
@@ -680,6 +788,24 @@ abstract class AppLocalizations {
   /// **'Archived — hidden from totals by default.'**
   String get accountDetailArchivedHint;
 
+  /// No description provided for @accountDetailTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get accountDetailTotalLabel;
+
+  /// No description provided for @accountDetailMissingRatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Some assets can’t be priced right now.'**
+  String get accountDetailMissingRatesTitle;
+
+  /// No description provided for @accountDetailMissingRatesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpriced assets are excluded from the priced total.'**
+  String get accountDetailMissingRatesBody;
+
   /// No description provided for @assetAddTitle.
   ///
   /// In en, this message translates to:
@@ -763,6 +889,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Current balance'**
   String get positionCurrentBalanceLabel;
+
+  /// No description provided for @positionConvertedValueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get positionConvertedValueLabel;
+
+  /// No description provided for @positionUnpricedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Converted value isn’t available until rates are updated.'**
+  String get positionUnpricedHint;
 
   /// No description provided for @positionAddBalance.
   ///

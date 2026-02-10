@@ -78,7 +78,33 @@
   "overviewTitle": "Обзор",
   "overviewTotalLabel": "Итого",
   "notAvailable": "Н/Д",
+  "unpriced": "Без цены",
   "overviewEmptyBody": "Данные появятся после добавления счетов.",
+  "overviewEmptyNoAccountsTitle": "Создайте первый счет",
+  "overviewEmptyNoAccountsBody": "Добавьте счет, чтобы начать отслеживать активы и итоги.",
+  "overviewEmptyNoAccountsCta": "Создать счет",
+  "overviewEmptyNoAssetsTitle": "Добавьте первый актив",
+  "overviewEmptyNoAssetsBody": "Добавьте валюты или токены в один из счетов.",
+  "overviewEmptyNoAssetsCta": "Добавить актив",
+  "overviewEmptyNoBalancesTitle": "Добавьте первый баланс",
+  "overviewEmptyNoBalancesBody": "Добавьте снимок или изменение, чтобы увидеть итоги.",
+  "overviewEmptyNoBalancesCta": "Добавить баланс",
+  "overviewPricedTotalLabel": "Итого по оцененным",
+  "overviewMissingRatesTitle": "Некоторые активы сейчас нельзя оценить.",
+  "overviewMissingRatesBody": "Итоги не включают активы без цены, пока курсы не обновятся.",
+  "overviewUnpricedHoldingsTitle": "Активы без цены",
+  "overviewPartialHint": "Частично",
+  "offlineTitle": "Офлайн",
+  "offlineShowingLastSaved": "Показаны последние сохраненные итоги от {time}.",
+  "@offlineShowingLastSaved": {
+    "description": "Offline banner message with last cached timestamp.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pullToRefreshHint": "Потяните, чтобы обновить",
   "overviewRatesUpdatedAt": "Курсы обновлены: {time}",
   "@overviewRatesUpdatedAt": {
     "description": "Overview rates timestamp line.",
@@ -120,6 +146,9 @@
   "accountDetailEmptyTitle": "В этом счете нет активов",
   "accountDetailEmptyBody": "Добавьте валюты или токены, которые вы держите здесь.",
   "accountDetailArchivedHint": "Архив — по умолчанию скрыт из итогов.",
+  "accountDetailTotalLabel": "Итого",
+  "accountDetailMissingRatesTitle": "Некоторые активы сейчас нельзя оценить.",
+  "accountDetailMissingRatesBody": "Активы без цены не включены в итог по оцененным.",
   "assetAddTitle": "Добавить актив",
   "assetSearchHint": "Поиск по коду или названию",
   "assetAddCta": "Добавить",
@@ -134,6 +163,8 @@
   "assetRemoveConfirmTitle": "Удалить актив?",
   "assetRemoveConfirmBody": "Актив будет удален из этого счета вместе с историей балансов.",
   "positionCurrentBalanceLabel": "Текущий баланс",
+  "positionConvertedValueLabel": "Стоимость",
+  "positionUnpricedHint": "Стоимость недоступна до обновления курсов.",
   "positionAddBalance": "Добавить баланс",
   "positionUpdateThisMonth": "Обновить за этот месяц",
   "positionHistoryTitle": "История",

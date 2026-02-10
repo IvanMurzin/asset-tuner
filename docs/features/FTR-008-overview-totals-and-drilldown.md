@@ -90,5 +90,8 @@ Local cache (client):
 - `drilldown_account_opened { account_id }`
 
 ## Open questions (if any)
-- “Current balance” derivation: do we compute it by replaying deltas since last snapshot, or treat the latest snapshot as authoritative and show deltas as changes? PRD emphasizes snapshots with implied deltas, but the exact “current balance” derivation rule should be made explicit for consistent totals.
-
+- “Current balance” derivation:
+  - **MVP decision:** compute current balance by applying entries in chronological order (`entry_date asc, created_at asc`):
+    - Snapshot sets the balance to `snapshot_amount`.
+    - Delta adds `delta_amount`.
+  - History display remains sorted by `entry_date desc, created_at desc`.

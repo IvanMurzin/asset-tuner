@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ import 'package:asset_tuner/core_ui/components/ds_list_row.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
 import 'package:asset_tuner/core_ui/components/ds_overflow_menu.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
+import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
@@ -69,6 +71,7 @@ class AccountDetailPage extends StatelessWidget {
 
           final account = state.account!;
           final actionsEnabled = !state.isAccountActionBusy;
+          final baseCurrency = state.baseCurrency ?? 'USD';
 
           return Scaffold(
             appBar: DSAppBar(
@@ -158,6 +161,23 @@ class AccountDetailPage extends StatelessWidget {
                       ),
                       SizedBox(height: spacing.s16),
                     ],
+                    if (state.hasUnpricedHoldings) ...[
+                      DSInlineBanner(
+                        title: l10n.accountDetailMissingRatesTitle,
+                        message: l10n.accountDetailMissingRatesBody,
+                        variant: DSInlineBannerVariant.warning,
+                      ),
+                      SizedBox(height: spacing.s16),
+                    ],
+                    DSCard(
+                      child: _AccountSummary(
+                        baseCurrency: baseCurrency,
+                        total: state.total,
+                        pricedTotal: state.pricedTotal,
+                        ratesAsOf: state.ratesAsOf,
+                      ),
+                    ),
+                    SizedBox(height: spacing.s24),
                     Expanded(
                       child: switch (state.status) {
                         AccountDetailStatus.error => DSInlineError(
@@ -186,6 +206,7 @@ class AccountDetailPage extends StatelessWidget {
                               );
                             }
                           },
+                          baseCurrency: baseCurrency,
                           onRemove: (item) async {
                             final confirmed = await _confirmRemove(
                               context,
@@ -293,6 +314,7 @@ class _PositionsContent extends StatelessWidget {
     required this.items,
     required this.isBusy,
     required this.onAddAsset,
+    required this.baseCurrency,
     required this.onRemove,
   });
 
@@ -300,6 +322,7 @@ class _PositionsContent extends StatelessWidget {
   final List<AccountAssetViewItem> items;
   final bool Function(String assetId) isBusy;
   final VoidCallback onAddAsset;
+  final String baseCurrency;
   final Future<void> Function(AccountAssetViewItem item) onRemove;
 
   @override
@@ -336,17 +359,12 @@ class _PositionsContent extends StatelessWidget {
                 return DSListRow(
                   title: item.assetCode,
                   subtitle:
-                      '${item.assetName} · ${_kindLabel(l10n, item.assetKind)}',
-                  trailing: DSOverflowMenu(
-                    enabled: !busy,
-                    items: [
-                      DSOverflowMenuItem(
-                        label: l10n.assetRemove,
-                        icon: Icons.remove_circle_outline,
-                        isDestructive: true,
-                        onTap: () => onRemove(item),
-                      ),
-                    ],
+                      '${item.assetName} · ${_kindLabel(l10n, item.assetKind)} · ${_originalAmountText(context, item)}',
+                  trailing: _AssetRowTrailing(
+                    item: item,
+                    baseCurrency: baseCurrency,
+                    isBusy: busy,
+                    onRemove: () => onRemove(item),
                   ),
                   onTap: () => context.push(
                     AppRoutes.assetPositionDetail
@@ -373,5 +391,127 @@ class _PositionsContent extends StatelessWidget {
       AssetKind.fiat => l10n.assetKindFiat,
       AssetKind.crypto => l10n.assetKindCrypto,
     };
+  }
+
+  String _originalAmountText(BuildContext context, AccountAssetViewItem item) {
+    final value = context.dsFormatters.formatDecimalFromDecimal(
+      item.originalAmount,
+      maximumFractionDigits: 8,
+    );
+    return '$value ${item.assetCode}';
+  }
+}
+
+class _AssetRowTrailing extends StatelessWidget {
+  const _AssetRowTrailing({
+    required this.item,
+    required this.baseCurrency,
+    required this.isBusy,
+    required this.onRemove,
+  });
+
+  final AccountAssetViewItem item;
+  final String baseCurrency;
+  final bool isBusy;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final spacing = context.dsSpacing;
+    final typography = context.dsTypography;
+    final colors = context.dsColors;
+
+    final amountText = item.isPriced
+        ? '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(item.convertedAmount!, maximumFractionDigits: 2)}'
+        : l10n.unpriced;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          amountText,
+          style: typography.body.copyWith(
+            fontWeight: FontWeight.w700,
+            color: colors.textPrimary,
+          ),
+        ),
+        SizedBox(width: spacing.s8),
+        DSOverflowMenu(
+          enabled: !isBusy,
+          items: [
+            DSOverflowMenuItem(
+              label: l10n.assetRemove,
+              icon: Icons.remove_circle_outline,
+              isDestructive: true,
+              onTap: onRemove,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _AccountSummary extends StatelessWidget {
+  const _AccountSummary({
+    required this.baseCurrency,
+    required this.total,
+    required this.pricedTotal,
+    required this.ratesAsOf,
+  });
+
+  final String baseCurrency;
+  final Decimal? total;
+  final Decimal? pricedTotal;
+  final DateTime? ratesAsOf;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final spacing = context.dsSpacing;
+    final typography = context.dsTypography;
+    final colors = context.dsColors;
+
+    final totalText = total == null
+        ? l10n.notAvailable
+        : '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(total!, maximumFractionDigits: 2)}';
+
+    final pricedText = pricedTotal == null
+        ? null
+        : '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(pricedTotal!, maximumFractionDigits: 2)}';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.accountDetailTotalLabel, style: typography.caption),
+        SizedBox(height: spacing.s8),
+        Text(
+          totalText,
+          style: typography.h2.copyWith(color: colors.textPrimary),
+        ),
+        if (pricedText != null) ...[
+          SizedBox(height: spacing.s12),
+          Text(
+            l10n.overviewPricedTotalLabel,
+            style: typography.caption.copyWith(color: colors.textSecondary),
+          ),
+          SizedBox(height: spacing.s4),
+          Text(
+            pricedText,
+            style: typography.h3.copyWith(color: colors.textPrimary),
+          ),
+        ],
+        if (ratesAsOf != null) ...[
+          SizedBox(height: spacing.s12),
+          Text(
+            l10n.overviewRatesUpdatedAt(
+              context.dsFormatters.formatDateTime(ratesAsOf!),
+            ),
+            style: typography.caption.copyWith(color: colors.textSecondary),
+          ),
+        ],
+      ],
+    );
   }
 }

@@ -1,6 +1,13 @@
 part of 'overview_cubit.dart';
 
-enum OverviewStatus { loading, ready, error }
+enum OverviewStatus {
+  loading,
+  ready,
+  emptyNoAccounts,
+  emptyNoAssets,
+  emptyNoBalances,
+  error,
+}
 
 @freezed
 abstract class OverviewNavigation with _$OverviewNavigation {
@@ -9,15 +16,38 @@ abstract class OverviewNavigation with _$OverviewNavigation {
 }
 
 @freezed
+abstract class OverviewAccountItem with _$OverviewAccountItem {
+  const factory OverviewAccountItem({
+    required String accountId,
+    required String accountName,
+    required Decimal total,
+    required bool hasUnpricedHoldings,
+  }) = _OverviewAccountItem;
+}
+
+@freezed
+abstract class OverviewUnpricedHolding with _$OverviewUnpricedHolding {
+  const factory OverviewUnpricedHolding({
+    required String assetCode,
+    required Decimal amount,
+  }) = _OverviewUnpricedHolding;
+}
+
+@freezed
 abstract class OverviewState with _$OverviewState {
   const factory OverviewState({
     @Default(OverviewStatus.loading) OverviewStatus status,
     String? userId,
     String? baseCurrency,
-    String? plan,
-    String? failureCode,
     DateTime? ratesAsOf,
-    String? ratesFailureCode,
+    Decimal? fullTotal,
+    Decimal? pricedTotal,
+    @Default(false) bool hasUnpricedHoldings,
+    @Default([]) List<OverviewAccountItem> accounts,
+    @Default([]) List<OverviewUnpricedHolding> unpricedHoldings,
+    @Default(false) bool isOffline,
+    DateTime? offlineCachedAt,
+    String? failureCode,
     OverviewNavigation? navigation,
   }) = _OverviewState;
 }

@@ -82,6 +82,11 @@ class AssetPositionDetailPage extends StatelessWidget {
             current,
             maximumFractionDigits: 8,
           );
+          final baseCurrency = state.baseCurrency ?? 'USD';
+          final convertedValue = state.convertedValue;
+          final convertedText = convertedValue == null
+              ? l10n.unpriced
+              : '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(convertedValue, maximumFractionDigits: 2)}';
 
           final canLoadMore = state.nextOffset != null && !state.isLoadingMore;
 
@@ -121,6 +126,20 @@ class AssetPositionDetailPage extends StatelessWidget {
                               color: colors.textPrimary,
                             ),
                           ),
+                          SizedBox(height: spacing.s12),
+                          Text(
+                            l10n.positionConvertedValueLabel,
+                            style: typography.caption.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                          SizedBox(height: spacing.s4),
+                          Text(
+                            convertedText,
+                            style: typography.h3.copyWith(
+                              color: colors.textPrimary,
+                            ),
+                          ),
                           if (state.accountName != null) ...[
                             SizedBox(height: spacing.s8),
                             Text(
@@ -133,6 +152,14 @@ class AssetPositionDetailPage extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (state.isUnpriced) ...[
+                      SizedBox(height: spacing.s16),
+                      DSInlineBanner(
+                        title: l10n.unpriced,
+                        message: l10n.positionUnpricedHint,
+                        variant: DSInlineBannerVariant.warning,
+                      ),
+                    ],
                     SizedBox(height: spacing.s24),
                     Row(
                       children: [

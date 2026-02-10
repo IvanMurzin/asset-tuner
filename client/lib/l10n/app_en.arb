@@ -78,7 +78,33 @@
   "overviewTitle": "Overview",
   "overviewTotalLabel": "Total",
   "notAvailable": "N/A",
+  "unpriced": "Unpriced",
   "overviewEmptyBody": "Overview content will appear here once accounts are added.",
+  "overviewEmptyNoAccountsTitle": "Create your first account",
+  "overviewEmptyNoAccountsBody": "Add an account to start tracking assets and totals.",
+  "overviewEmptyNoAccountsCta": "Create account",
+  "overviewEmptyNoAssetsTitle": "Add your first asset",
+  "overviewEmptyNoAssetsBody": "Add currencies or tokens you hold to an account.",
+  "overviewEmptyNoAssetsCta": "Add asset",
+  "overviewEmptyNoBalancesTitle": "Add your first balance",
+  "overviewEmptyNoBalancesBody": "Add a snapshot or change to start tracking totals.",
+  "overviewEmptyNoBalancesCta": "Add balance",
+  "overviewPricedTotalLabel": "Priced total",
+  "overviewMissingRatesTitle": "Some holdings can’t be priced right now.",
+  "overviewMissingRatesBody": "Totals exclude unpriced holdings until rates are available.",
+  "overviewUnpricedHoldingsTitle": "Unpriced holdings",
+  "overviewPartialHint": "Partial",
+  "offlineTitle": "Offline",
+  "offlineShowingLastSaved": "Showing last saved totals from {time}.",
+  "@offlineShowingLastSaved": {
+    "description": "Offline banner message with last cached timestamp.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pullToRefreshHint": "Pull to refresh",
   "overviewRatesUpdatedAt": "Rates updated at {time}",
   "@overviewRatesUpdatedAt": {
     "description": "Overview rates timestamp line.",
@@ -120,6 +146,9 @@
   "accountDetailEmptyTitle": "No assets in this account",
   "accountDetailEmptyBody": "Add the currencies or tokens you hold here.",
   "accountDetailArchivedHint": "Archived — hidden from totals by default.",
+  "accountDetailTotalLabel": "Total",
+  "accountDetailMissingRatesTitle": "Some assets can’t be priced right now.",
+  "accountDetailMissingRatesBody": "Unpriced assets are excluded from the priced total.",
   "assetAddTitle": "Add asset",
   "assetSearchHint": "Search by code or name",
   "assetAddCta": "Add",
@@ -134,6 +163,8 @@
   "assetRemoveConfirmTitle": "Remove asset?",
   "assetRemoveConfirmBody": "This will remove the asset and delete its balance history.",
   "positionCurrentBalanceLabel": "Current balance",
+  "positionConvertedValueLabel": "Value",
+  "positionUnpricedHint": "Converted value isn’t available until rates are updated.",
   "positionAddBalance": "Add balance",
   "positionUpdateThisMonth": "Update for this month",
   "positionHistoryTitle": "History",
