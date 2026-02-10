@@ -1,0 +1,5 @@
+.config.dev.json
+.config.prod.json
+
+.vscode/.history/
+

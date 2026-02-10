@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Asset Tuner (dev)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "client",
+      "flutterMode": "debug",
+      "toolArgs": ["--dart-define-from-file=../.config.dev.json"]
+    },
+    {
+      "name": "Asset Tuner (prod)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "client",
+      "flutterMode": "debug",
+      "toolArgs": ["--dart-define-from-file=../.config.prod.json"]
+    }
+  ]
+}
+
