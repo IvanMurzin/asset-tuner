@@ -79,6 +79,16 @@
   "overviewTotalLabel": "Итого",
   "notAvailable": "Н/Д",
   "overviewEmptyBody": "Данные появятся после добавления счетов.",
+  "overviewRatesUpdatedAt": "Курсы обновлены: {time}",
+  "@overviewRatesUpdatedAt": {
+    "description": "Overview rates timestamp line.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "overviewRatesUnavailable": "Курсы недоступны",
   "accountsTitle": "Счета",
   "accountsAddAccount": "Добавить счет",
   "accountsActiveSection": "Счета",

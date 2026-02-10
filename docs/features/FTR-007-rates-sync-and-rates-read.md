@@ -57,5 +57,6 @@ Local logging only (no third-party in MVP per `docs/tech/integrations.md`):
 - `rates_missing {}`
 
 ## Open questions (if any)
-- Do we store historical rates (time series) in MVP, or only “latest” rates? (PRD describes storing and serving cached rates; historical rates are not required for MVP totals.)
-
+- Historical rates:
+  - **MVP decision:** store **latest only** (one `asset_rates_usd` row per asset) with `as_of` timestamp.
+  - Time series rates can be added post-MVP if needed for reporting.

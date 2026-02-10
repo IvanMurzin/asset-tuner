@@ -482,6 +482,18 @@ abstract class AppLocalizations {
   /// **'Overview content will appear here once accounts are added.'**
   String get overviewEmptyBody;
 
+  /// Overview rates timestamp line.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates updated at {time}'**
+  String overviewRatesUpdatedAt(String time);
+
+  /// No description provided for @overviewRatesUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates unavailable'**
+  String get overviewRatesUnavailable;
+
   /// No description provided for @accountsTitle.
   ///
   /// In en, this message translates to:

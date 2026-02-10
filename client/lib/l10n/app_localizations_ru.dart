@@ -208,6 +208,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get overviewEmptyBody => 'Данные появятся после добавления счетов.';
 
   @override
+  String overviewRatesUpdatedAt(String time) {
+    return 'Курсы обновлены: $time';
+  }
+
+  @override
+  String get overviewRatesUnavailable => 'Курсы недоступны';
+
+  @override
   String get accountsTitle => 'Счета';
 
   @override

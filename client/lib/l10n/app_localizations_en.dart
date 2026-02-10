@@ -210,6 +210,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Overview content will appear here once accounts are added.';
 
   @override
+  String overviewRatesUpdatedAt(String time) {
+    return 'Rates updated at $time';
+  }
+
+  @override
+  String get overviewRatesUnavailable => 'Rates unavailable';
+
+  @override
   String get accountsTitle => 'Accounts';
 
   @override

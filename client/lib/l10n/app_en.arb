@@ -79,6 +79,16 @@
   "overviewTotalLabel": "Total",
   "notAvailable": "N/A",
   "overviewEmptyBody": "Overview content will appear here once accounts are added.",
+  "overviewRatesUpdatedAt": "Rates updated at {time}",
+  "@overviewRatesUpdatedAt": {
+    "description": "Overview rates timestamp line.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "overviewRatesUnavailable": "Rates unavailable",
   "accountsTitle": "Accounts",
   "accountsAddAccount": "Add account",
   "accountsActiveSection": "Accounts",

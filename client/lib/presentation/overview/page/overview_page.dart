@@ -6,12 +6,26 @@ import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_chip.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 
 class OverviewPage extends StatelessWidget {
   const OverviewPage({super.key});
+
+  String _ratesText(
+    BuildContext context,
+    AppLocalizations l10n,
+    DateTime? asOf,
+  ) {
+    if (asOf == null) {
+      return l10n.overviewRatesUnavailable;
+    }
+    return l10n.overviewRatesUpdatedAt(
+      context.dsFormatters.formatDateTime(asOf),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +108,13 @@ class OverviewPage extends StatelessWidget {
                         Text(
                           l10n.notAvailable,
                           style: typography.totalNumeric.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                        SizedBox(height: spacing.s12),
+                        Text(
+                          _ratesText(context, l10n, state.ratesAsOf),
+                          style: typography.caption.copyWith(
                             color: colors.textSecondary,
                           ),
                         ),

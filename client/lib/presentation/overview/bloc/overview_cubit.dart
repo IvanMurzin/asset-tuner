@@ -6,6 +6,8 @@ import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart'
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
+import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
+import 'package:asset_tuner/domain/rate/usecase/get_latest_usd_rates_usecase.dart';
 
 part 'overview_cubit.freezed.dart';
 part 'overview_state.dart';
@@ -18,11 +20,13 @@ class OverviewCubit extends Cubit<OverviewState> {
     this._getCachedSession,
     this._getProfile,
     this._bootstrapProfile,
+    this._getLatestUsdRates,
   ) : super(const OverviewState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final GetProfileUseCase _getProfile;
   final BootstrapProfileUseCase _bootstrapProfile;
+  final GetLatestUsdRatesUseCase _getLatestUsdRates;
 
   Future<void> load() async {
     emit(state.copyWith(status: OverviewStatus.loading, failureCode: null));
@@ -49,12 +53,25 @@ class OverviewCubit extends Cubit<OverviewState> {
       return;
     }
 
+    final rates = await _getLatestUsdRates();
+    final asOf = switch (rates) {
+      Success<RatesSnapshotEntity?>(value: final snapshot) => snapshot?.asOf,
+      FailureResult<RatesSnapshotEntity?>() => null,
+    };
+    final ratesFailure = switch (rates) {
+      Success<RatesSnapshotEntity?>() => null,
+      FailureResult<RatesSnapshotEntity?>(failure: final failure) =>
+        failure.code,
+    };
+
     emit(
       state.copyWith(
         status: OverviewStatus.ready,
         userId: session.userId,
         baseCurrency: profile.baseCurrency,
         plan: profile.plan,
+        ratesAsOf: asOf,
+        ratesFailureCode: ratesFailure,
       ),
     );
   }

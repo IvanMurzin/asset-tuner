@@ -16,6 +16,8 @@ abstract class OverviewState with _$OverviewState {
     String? baseCurrency,
     String? plan,
     String? failureCode,
+    DateTime? ratesAsOf,
+    String? ratesFailureCode,
     OverviewNavigation? navigation,
   }) = _OverviewState;
 }
