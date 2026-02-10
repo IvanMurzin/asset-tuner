@@ -7,7 +7,7 @@ Asset Tuner is a Flutter (iOS/Android) client backed by Supabase (Auth + Postgre
 
 ## Client (Flutter)
 ### Architecture (must follow)
-Source of truth: `/Users/ivanmurzin/Projects/pets/asset_tuner/client/AGENTS.md`.
+Source of truth: `client/AGENTS.md`.
 
 - Layered modules under `client/lib/`:
   - `core/` infra only (DI, routing, logging, config)

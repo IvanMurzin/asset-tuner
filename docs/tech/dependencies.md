@@ -3,7 +3,7 @@
 **Last updated:** 2026-02-10
 
 ## Policy
-- Prefer the existing template stack first (see `/Users/ivanmurzin/Projects/pets/asset_tuner/client/AGENTS.md`).
+- Prefer the existing template stack first (see `client/AGENTS.md`).
 - Any new dependency or key decision requires an ADR in `docs/adr/`.
 
 ## Client (current, from `client/pubspec.yaml`)
