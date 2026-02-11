@@ -8,7 +8,6 @@ enum AccountType { bank, cryptoWallet, cash, other }
 abstract class AccountEntity with _$AccountEntity {
   const factory AccountEntity({
     required String id,
-    required String userId,
     required String name,
     required AccountType type,
     required bool archived,

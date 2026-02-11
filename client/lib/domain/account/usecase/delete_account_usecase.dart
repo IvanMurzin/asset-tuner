@@ -8,10 +8,7 @@ class DeleteAccountUseCase {
 
   final IAccountRepository _repository;
 
-  Future<Result<void>> call({
-    required String userId,
-    required String accountId,
-  }) {
-    return _repository.deleteAccount(userId: userId, accountId: accountId);
+  Future<Result<void>> call({required String accountId}) {
+    return _repository.deleteAccount(accountId: accountId);
   }
 }

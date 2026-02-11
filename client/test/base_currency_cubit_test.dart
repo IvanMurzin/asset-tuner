@@ -9,13 +9,13 @@ import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart'
 import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/domain/currency/repository/i_currency_repository.dart';
 import 'package:asset_tuner/domain/currency/usecase/get_fiat_currencies_usecase.dart';
-import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
 import 'package:asset_tuner/presentation/onboarding/bloc/base_currency_cubit.dart';
+import 'test_fixtures.dart';
 
 class FakeAuthRepository implements IAuthRepository {
   FakeAuthRepository({this.cachedSession});
@@ -89,7 +89,7 @@ class FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount(String userId) async {
+  Future<Result<void>> deleteAccount() async {
     return const Success(null);
   }
 }
@@ -101,37 +101,25 @@ class FakeProfileRepository implements IProfileRepository {
   final Result<ProfileEntity>? updateResult;
 
   @override
-  Future<Result<ProfileEntity>> getProfile(String userId) async {
-    return profileResult ??
-        const Success(
-          ProfileEntity(userId: 'user_1', baseCurrency: 'USD', plan: 'free'),
-        );
+  Future<Result<ProfileEntity>> getProfile() async {
+    return profileResult ?? Success(freeProfile());
   }
 
   @override
-  Future<Result<ProfileEntity>> updateBaseCurrency(
-    String userId,
-    String baseCurrency,
-  ) async {
+  Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
     return updateResult ??
-        Success(
-          ProfileEntity(
-            userId: userId,
-            baseCurrency: baseCurrency,
-            plan: 'free',
-          ),
-        );
+        Success(freeProfile(baseCurrency: baseCurrency));
   }
 
   @override
-  Future<Result<ProfileBootstrapEntity>> ensureProfile(String userId) async {
+  Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
   }
 
   @override
-  Future<Result<ProfileEntity>> updatePlan(String userId, String plan) async {
+  Future<Result<ProfileEntity>> updatePlan(String plan) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -164,7 +152,6 @@ void main() {
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
       GetProfileUseCase(FakeProfileRepository()),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
-      GetEntitlementsForPlanUseCase(),
     );
 
     await Future<void>.delayed(const Duration(milliseconds: 1));
@@ -186,12 +173,15 @@ void main() {
       GetProfileUseCase(
         FakeProfileRepository(
           profileResult: const Success(
-            ProfileEntity(userId: 'user_1', baseCurrency: 'USD', plan: 'free'),
+            ProfileEntity(
+              baseCurrency: 'USD',
+              plan: 'free',
+              entitlements: freeEntitlements,
+            ),
           ),
         ),
       ),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
-      GetEntitlementsForPlanUseCase(),
     );
 
     await Future<void>.delayed(const Duration(milliseconds: 1));
@@ -218,7 +208,6 @@ void main() {
       GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
       GetProfileUseCase(FakeProfileRepository()),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
-      GetEntitlementsForPlanUseCase(),
     );
 
     await Future<void>.delayed(const Duration(milliseconds: 1));

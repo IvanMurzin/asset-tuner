@@ -42,7 +42,7 @@ class SplashCubit extends Cubit<SplashState> {
           return;
         }
         emit(const SplashState.loading(stage: SplashStage.preparingProfile));
-        final profileResult = await _bootstrapProfileUseCase(value.userId);
+        final profileResult = await _bootstrapProfileUseCase();
         switch (profileResult) {
           case FailureResult(:final failure):
             if (failure.code == 'unauthorized') {

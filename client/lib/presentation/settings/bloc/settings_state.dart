@@ -14,7 +14,6 @@ abstract class SettingsNavigation with _$SettingsNavigation {
 abstract class SettingsState with _$SettingsState {
   const factory SettingsState({
     @Default(SettingsStatus.loading) SettingsStatus status,
-    String? userId,
     String? email,
     String? baseCurrency,
     String? plan,

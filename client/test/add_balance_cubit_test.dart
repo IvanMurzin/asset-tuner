@@ -92,7 +92,7 @@ class FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount(String userId) async {
+  Future<Result<void>> deleteAccount() async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -106,14 +106,13 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
-    required String userId,
     required String accountId,
   }) async {
     return Success(positionsByAccount[accountId] ?? []);
   }
 
   @override
-  Future<Result<int>> countAssetPositions(String userId) async {
+  Future<Result<int>> countAssetPositions() async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -121,7 +120,6 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<AccountAssetEntity>> addAssetToAccount({
-    required String userId,
     required String accountId,
     required String assetId,
   }) async {
@@ -132,7 +130,6 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<void>> removeAssetFromAccount({
-    required String userId,
     required String accountId,
     required String assetId,
   }) async {
@@ -147,7 +144,6 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
-    required String userId,
     required Set<String> accountAssetIds,
   }) async {
     return const Success(<String, Decimal>{});
@@ -155,7 +151,6 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
-    required String userId,
     required String accountAssetId,
     required int limit,
     int? offset,
@@ -167,7 +162,6 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<BalanceEntryEntity>> updateBalance({
-    required String userId,
     required String accountAssetId,
     required DateTime entryDate,
     Decimal? snapshotAmount,

@@ -83,7 +83,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
             return const Scaffold(body: Center(child: DSLoader()));
           }
 
-          if (state.status == AccountFormStatus.error && state.userId == null) {
+          if (state.status == AccountFormStatus.error) {
             return Scaffold(
               appBar: DSAppBar(title: l10n.accountsTitle),
               body: DSInlineError(

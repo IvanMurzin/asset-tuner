@@ -74,7 +74,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       return;
     }
 
-    final profile = await _loadProfile(session.userId);
+    final profile = await _loadProfile();
     if (profile == null) {
       emit(
         state.copyWith(
@@ -91,7 +91,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       FailureResult<RatesSnapshotEntity?>() => null,
     };
 
-    final accounts = await _getAccounts(session.userId);
+    final accounts = await _getAccounts();
     final account = switch (accounts) {
       Success<List<AccountEntity>>(value: final list) =>
         list.where((a) => a.id == accountId).firstOrNull,
@@ -125,7 +125,6 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     }
 
     final positions = await _getAccountAssets(
-      userId: session.userId,
       accountId: accountId,
     );
     final position = switch (positions) {
@@ -144,7 +143,6 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     }
 
     final firstPage = await _getHistory(
-      userId: session.userId,
       accountAssetId: position.id,
       limit: 50,
       offset: 0,
@@ -153,7 +151,6 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     switch (firstPage) {
       case Success<BalanceHistoryPageEntity>(value: final page):
         final current = await _computeCurrentBalance(
-          userId: session.userId,
           accountAssetId: position.id,
         );
         final converted = _toConvertedValue(
@@ -166,7 +163,6 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
         emit(
           state.copyWith(
             status: AssetPositionDetailStatus.ready,
-            userId: session.userId,
             accountId: accountId,
             assetId: assetId,
             accountName: account.name,
@@ -187,7 +183,6 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
           state.copyWith(
             status: AssetPositionDetailStatus.error,
             failureCode: failure.code,
-            userId: session.userId,
             accountId: accountId,
             assetId: assetId,
             accountName: account.name,
@@ -206,10 +201,9 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
   }
 
   Future<void> loadMore() async {
-    final userId = state.userId;
     final accountAssetId = state.accountAssetId;
     final nextOffset = state.nextOffset;
-    if (userId == null || accountAssetId == null || nextOffset == null) {
+    if (accountAssetId == null || nextOffset == null) {
       return;
     }
     if (state.isLoadingMore) {
@@ -218,7 +212,6 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
 
     emit(state.copyWith(isLoadingMore: true, bannerFailureCode: null));
     final result = await _getHistory(
-      userId: userId,
       accountAssetId: accountAssetId,
       limit: 50,
       offset: nextOffset,
@@ -241,14 +234,12 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
   }
 
   Future<Decimal> _computeCurrentBalance({
-    required String userId,
     required String accountAssetId,
   }) async {
     var offset = 0;
     final all = <BalanceEntryEntity>[];
     while (true) {
       final page = await _getHistory(
-        userId: userId,
         accountAssetId: accountAssetId,
         limit: 200,
         offset: offset,
@@ -295,13 +286,13 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     return a.createdAt.compareTo(b.createdAt);
   }
 
-  Future<ProfileEntity?> _loadProfile(String userId) async {
-    final result = await _getProfile(userId);
+  Future<ProfileEntity?> _loadProfile() async {
+    final result = await _getProfile();
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         return profile;
       case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile(userId);
+        final bootstrap = await _bootstrapProfile();
         switch (bootstrap) {
           case Success(value: final data):
             return data.profile;

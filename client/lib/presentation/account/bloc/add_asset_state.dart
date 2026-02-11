@@ -14,9 +14,9 @@ abstract class AddAssetNavigation with _$AddAssetNavigation {
 abstract class AddAssetState with _$AddAssetState {
   const factory AddAssetState({
     @Default(AddAssetStatus.loading) AddAssetStatus status,
-    String? userId,
     String? accountId,
     String? plan,
+    EntitlementsEntity? entitlements,
     @Default([]) List<AssetEntity> assets,
     @Default([]) List<AssetEntity> visibleAssets,
     @Default('') String query,

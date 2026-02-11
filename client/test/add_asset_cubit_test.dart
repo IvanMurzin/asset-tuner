@@ -14,13 +14,13 @@ import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
-import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/presentation/account/bloc/add_asset_cubit.dart';
+import 'test_fixtures.dart';
 
 class FakeAuthRepository implements IAuthRepository {
   FakeAuthRepository({this.cachedSession});
@@ -98,7 +98,7 @@ class FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount(String userId) async {
+  Future<Result<void>> deleteAccount() async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -111,7 +111,7 @@ class FakeProfileRepository implements IProfileRepository {
   final ProfileEntity profile;
 
   @override
-  Future<Result<ProfileBootstrapEntity>> ensureProfile(String userId) async {
+  Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return Success(
       ProfileBootstrapEntity(
         profile: profile,
@@ -122,22 +122,19 @@ class FakeProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Result<ProfileEntity>> getProfile(String userId) async {
+  Future<Result<ProfileEntity>> getProfile() async {
     return Success(profile);
   }
 
   @override
-  Future<Result<ProfileEntity>> updateBaseCurrency(
-    String userId,
-    String baseCurrency,
-  ) async {
+  Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
   }
 
   @override
-  Future<Result<ProfileEntity>> updatePlan(String userId, String plan) async {
+  Future<Result<ProfileEntity>> updatePlan(String plan) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -166,20 +163,18 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
-    required String userId,
     required String accountId,
   }) async {
     return Success(positionsByAccount[accountId] ?? []);
   }
 
   @override
-  Future<Result<int>> countAssetPositions(String userId) async {
+  Future<Result<int>> countAssetPositions() async {
     return Success(totalPositionsCount);
   }
 
   @override
   Future<Result<AccountAssetEntity>> addAssetToAccount({
-    required String userId,
     required String accountId,
     required String assetId,
   }) async {
@@ -201,7 +196,6 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<void>> removeAssetFromAccount({
-    required String userId,
     required String accountId,
     required String assetId,
   }) async {
@@ -215,25 +209,8 @@ void main() {
   test('load navigates to sign-in when session missing', () async {
     final cubit = AddAssetCubit(
       GetCachedSessionUseCase(FakeAuthRepository()),
-      GetProfileUseCase(
-        FakeProfileRepository(
-          profile: const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'free',
-          ),
-        ),
-      ),
-      BootstrapProfileUseCase(
-        FakeProfileRepository(
-          profile: const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'free',
-          ),
-        ),
-      ),
-      GetEntitlementsForPlanUseCase(),
+      GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
+      BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
       GetAssetsUseCase(
         FakeAssetRepository(const [
           AssetEntity(
@@ -293,25 +270,8 @@ void main() {
           ),
         ),
       ),
-      GetProfileUseCase(
-        FakeProfileRepository(
-          profile: const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'free',
-          ),
-        ),
-      ),
-      BootstrapProfileUseCase(
-        FakeProfileRepository(
-          profile: const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'free',
-          ),
-        ),
-      ),
-      GetEntitlementsForPlanUseCase(),
+      GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
+      BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
       GetAssetsUseCase(
         FakeAssetRepository(const [
           AssetEntity(
@@ -350,25 +310,8 @@ void main() {
             ),
           ),
         ),
-        GetProfileUseCase(
-          FakeProfileRepository(
-            profile: const ProfileEntity(
-              userId: 'user_1',
-              baseCurrency: 'USD',
-              plan: 'free',
-            ),
-          ),
-        ),
-        BootstrapProfileUseCase(
-          FakeProfileRepository(
-            profile: const ProfileEntity(
-              userId: 'user_1',
-              baseCurrency: 'USD',
-              plan: 'free',
-            ),
-          ),
-        ),
-        GetEntitlementsForPlanUseCase(),
+        GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
+        BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
         GetAssetsUseCase(
           FakeAssetRepository(const [
             AssetEntity(
@@ -407,25 +350,8 @@ void main() {
           ),
         ),
       ),
-      GetProfileUseCase(
-        FakeProfileRepository(
-          profile: const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'paid',
-          ),
-        ),
-      ),
-      BootstrapProfileUseCase(
-        FakeProfileRepository(
-          profile: const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'paid',
-          ),
-        ),
-      ),
-      GetEntitlementsForPlanUseCase(),
+      GetProfileUseCase(FakeProfileRepository(profile: paidProfile())),
+      BootstrapProfileUseCase(FakeProfileRepository(profile: paidProfile())),
       GetAssetsUseCase(
         FakeAssetRepository(const [
           AssetEntity(

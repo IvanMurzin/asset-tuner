@@ -17,5 +17,5 @@ abstract interface class IAuthRepository {
   Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider);
   Future<List<AuthProvider>> getAvailableProviders();
   Future<Result<void>> signOut();
-  Future<Result<void>> deleteAccount(String userId);
+  Future<Result<void>> deleteAccount();
 }

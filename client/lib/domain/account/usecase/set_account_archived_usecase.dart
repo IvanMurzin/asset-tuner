@@ -10,12 +10,10 @@ class SetAccountArchivedUseCase {
   final IAccountRepository _repository;
 
   Future<Result<AccountEntity>> call({
-    required String userId,
     required String accountId,
     required bool archived,
   }) {
     return _repository.setArchived(
-      userId: userId,
       accountId: accountId,
       archived: archived,
     );

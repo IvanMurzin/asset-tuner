@@ -105,7 +105,7 @@ class SignInCubit extends Cubit<SignInState> {
       );
       return;
     }
-    final profileResult = await _bootstrapProfileUseCase(session.userId);
+    final profileResult = await _bootstrapProfileUseCase();
     switch (profileResult) {
       case FailureResult(:final failure):
         emit(

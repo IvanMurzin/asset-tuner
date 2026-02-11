@@ -76,13 +76,12 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
       return;
     }
 
-    final profile = await _loadProfile(session.userId);
+    final profile = await _loadProfile();
     if (profile == null) {
       emit(
         state.copyWith(
           status: AccountDetailStatus.error,
           failureCode: 'unknown',
-          userId: session.userId,
         ),
       );
       return;
@@ -94,7 +93,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
       FailureResult<RatesSnapshotEntity?>() => null,
     };
 
-    final accounts = await _getAccounts(session.userId);
+    final accounts = await _getAccounts();
     final account = switch (accounts) {
       Success<List<AccountEntity>>(value: final list) =>
         list.where((a) => a.id == accountId).firstOrNull,
@@ -121,7 +120,6 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
         .firstOrNull;
 
     final positions = await _getAccountAssets(
-      userId: session.userId,
       accountId: accountId,
     );
 
@@ -129,7 +127,6 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
       case Success<List<AccountAssetEntity>>(value: final list):
         final positionIds = list.map((p) => p.id).toSet();
         final balances = await _getCurrentBalances(
-          userId: session.userId,
           accountAssetIds: positionIds,
         );
         final currentByPosition = switch (balances) {
@@ -175,7 +172,6 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
         emit(
           state.copyWith(
             status: AccountDetailStatus.ready,
-            userId: session.userId,
             account: account,
             baseCurrency: profile.baseCurrency,
             total: hasUnpriced ? null : pricedTotal,
@@ -191,7 +187,6 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
           state.copyWith(
             status: AccountDetailStatus.error,
             failureCode: failure.code,
-            userId: session.userId,
             account: account,
             baseCurrency: profile.baseCurrency,
             ratesAsOf: ratesSnapshot?.asOf,
@@ -209,8 +204,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     required String accountId,
     required String assetId,
   }) async {
-    final userId = state.userId;
-    if (userId == null) {
+    if (state.status != AccountDetailStatus.ready) {
       return;
     }
 
@@ -222,7 +216,6 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     );
 
     final result = await _removeAssetFromAccount(
-      userId: userId,
       accountId: accountId,
       assetId: assetId,
     );
@@ -249,14 +242,12 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     required String accountId,
     required bool archived,
   }) async {
-    final userId = state.userId;
-    if (userId == null) {
+    if (state.status != AccountDetailStatus.ready) {
       return;
     }
 
     emit(state.copyWith(isAccountActionBusy: true, bannerFailureCode: null));
     final result = await _setArchived(
-      userId: userId,
       accountId: accountId,
       archived: archived,
     );
@@ -281,13 +272,12 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
   }
 
   Future<void> deleteAccount(String accountId) async {
-    final userId = state.userId;
-    if (userId == null) {
+    if (state.status != AccountDetailStatus.ready) {
       return;
     }
 
     emit(state.copyWith(isAccountActionBusy: true, bannerFailureCode: null));
-    final result = await _deleteAccount(userId: userId, accountId: accountId);
+    final result = await _deleteAccount(accountId: accountId);
     switch (result) {
       case Success<void>():
         emit(
@@ -341,13 +331,13 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     );
   }
 
-  Future<ProfileEntity?> _loadProfile(String userId) async {
-    final result = await _getProfile(userId);
+  Future<ProfileEntity?> _loadProfile() async {
+    final result = await _getProfile();
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         return profile;
       case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile(userId);
+        final bootstrap = await _bootstrapProfile();
         switch (bootstrap) {
           case Success(value: final data):
             return data.profile;

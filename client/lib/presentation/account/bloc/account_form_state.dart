@@ -16,8 +16,8 @@ abstract class AccountFormNavigation with _$AccountFormNavigation {
 abstract class AccountFormState with _$AccountFormState {
   const factory AccountFormState({
     @Default(AccountFormStatus.loading) AccountFormStatus status,
-    String? userId,
     String? plan,
+    EntitlementsEntity? entitlements,
     @Default(0) int activeAccountCount,
     String? accountId,
     String? initialName,

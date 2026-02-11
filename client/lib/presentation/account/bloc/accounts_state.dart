@@ -14,7 +14,6 @@ abstract class AccountsNavigation with _$AccountsNavigation {
 abstract class AccountsState with _$AccountsState {
   const factory AccountsState({
     @Default(AccountsStatus.loading) AccountsStatus status,
-    String? userId,
     @Default([]) List<AccountEntity> activeAccounts,
     @Default([]) List<AccountEntity> archivedAccounts,
     @Default(<String>{}) Set<String> busyAccountIds,

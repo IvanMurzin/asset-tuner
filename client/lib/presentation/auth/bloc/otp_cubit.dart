@@ -42,8 +42,8 @@ class OtpCubit extends Cubit<OtpState> {
             bannerFailureCode: failure.code,
           ),
         );
-      case Success(:final value):
-        final profileResult = await _bootstrapProfileUseCase(value.userId);
+      case Success():
+        final profileResult = await _bootstrapProfileUseCase();
         switch (profileResult) {
           case FailureResult(:final failure):
             emit(

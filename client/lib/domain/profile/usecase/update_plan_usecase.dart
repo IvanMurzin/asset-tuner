@@ -9,7 +9,7 @@ class UpdatePlanUseCase {
 
   final IProfileRepository _repository;
 
-  Future<Result<ProfileEntity>> call(String userId, String plan) {
-    return _repository.updatePlan(userId, plan);
+  Future<Result<ProfileEntity>> call(String plan) {
+    return _repository.updatePlan(plan);
   }
 }

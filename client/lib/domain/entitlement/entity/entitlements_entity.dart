@@ -9,5 +9,6 @@ abstract class EntitlementsEntity with _$EntitlementsEntity {
     required int maxPositions,
     required bool anyBaseCurrency,
     required Set<String> freeBaseCurrencyCodes,
+    DateTime? expiresAt,
   }) = _EntitlementsEntity;
 }

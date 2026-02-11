@@ -9,7 +9,7 @@ class UpdateBaseCurrencyUseCase {
 
   final IProfileRepository _repository;
 
-  Future<Result<ProfileEntity>> call(String userId, String baseCurrency) {
-    return _repository.updateBaseCurrency(userId, baseCurrency);
+  Future<Result<ProfileEntity>> call(String baseCurrency) {
+    return _repository.updateBaseCurrency(baseCurrency);
   }
 }

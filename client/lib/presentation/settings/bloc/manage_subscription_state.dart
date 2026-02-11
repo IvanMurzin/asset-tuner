@@ -13,7 +13,6 @@ enum ManageSubscriptionBanner {
 abstract class ManageSubscriptionState with _$ManageSubscriptionState {
   const factory ManageSubscriptionState({
     @Default(ManageSubscriptionStatus.loading) ManageSubscriptionStatus status,
-    String? userId,
     String? plan,
     String? failureCode,
     @Default(false) bool isUpdating,

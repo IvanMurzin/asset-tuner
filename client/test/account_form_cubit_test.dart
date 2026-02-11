@@ -11,13 +11,13 @@ import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
-import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_form_cubit.dart';
+import 'test_fixtures.dart';
 
 class FakeAuthRepository implements IAuthRepository {
   FakeAuthRepository({this.cachedSession});
@@ -95,7 +95,7 @@ class FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount(String userId) async {
+  Future<Result<void>> deleteAccount() async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -108,7 +108,7 @@ class FakeProfileRepository implements IProfileRepository {
   final ProfileEntity profile;
 
   @override
-  Future<Result<ProfileBootstrapEntity>> ensureProfile(String userId) async {
+  Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return Success(
       ProfileBootstrapEntity(
         profile: profile,
@@ -119,22 +119,19 @@ class FakeProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Result<ProfileEntity>> getProfile(String userId) async {
+  Future<Result<ProfileEntity>> getProfile() async {
     return Success(profile);
   }
 
   @override
-  Future<Result<ProfileEntity>> updateBaseCurrency(
-    String userId,
-    String baseCurrency,
-  ) async {
+  Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
   }
 
   @override
-  Future<Result<ProfileEntity>> updatePlan(String userId, String plan) async {
+  Future<Result<ProfileEntity>> updatePlan(String plan) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -147,20 +144,18 @@ class FakeAccountRepository implements IAccountRepository {
   final List<AccountEntity> _accounts;
 
   @override
-  Future<Result<List<AccountEntity>>> fetchAccounts(String userId) async {
-    return Success(_accounts.where((a) => a.userId == userId).toList());
+  Future<Result<List<AccountEntity>>> fetchAccounts() async {
+    return Success(_accounts);
   }
 
   @override
   Future<Result<AccountEntity>> createAccount({
-    required String userId,
     required String name,
     required AccountType type,
   }) async {
     final now = DateTime(2026, 2, 10);
     final created = AccountEntity(
       id: 'new_1',
-      userId: userId,
       name: name,
       type: type,
       archived: false,
@@ -173,7 +168,6 @@ class FakeAccountRepository implements IAccountRepository {
 
   @override
   Future<Result<AccountEntity>> updateAccount({
-    required String userId,
     required String accountId,
     required String name,
     required AccountType type,
@@ -185,7 +179,6 @@ class FakeAccountRepository implements IAccountRepository {
 
   @override
   Future<Result<AccountEntity>> setArchived({
-    required String userId,
     required String accountId,
     required bool archived,
   }) async {
@@ -196,7 +189,6 @@ class FakeAccountRepository implements IAccountRepository {
 
   @override
   Future<Result<void>> deleteAccount({
-    required String userId,
     required String accountId,
   }) async {
     return const FailureResult(
@@ -216,25 +208,8 @@ void main() {
           ),
         ),
       ),
-      GetProfileUseCase(
-        FakeProfileRepository(
-          profile: const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'free',
-          ),
-        ),
-      ),
-      BootstrapProfileUseCase(
-        FakeProfileRepository(
-          profile: const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'free',
-          ),
-        ),
-      ),
-      GetEntitlementsForPlanUseCase(),
+      GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
+      BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
       GetAccountsUseCase(FakeAccountRepository([])),
       CreateAccountUseCase(FakeAccountRepository([])),
       UpdateAccountUseCase(FakeAccountRepository([])),
@@ -253,7 +228,6 @@ void main() {
       5,
       (i) => AccountEntity(
         id: 'a$i',
-        userId: 'user_1',
         name: 'Acc $i',
         type: AccountType.bank,
         archived: false,
@@ -262,13 +236,7 @@ void main() {
       ),
     );
     final accountRepo = FakeAccountRepository(accounts);
-    final profileRepo = FakeProfileRepository(
-      profile: const ProfileEntity(
-        userId: 'user_1',
-        baseCurrency: 'USD',
-        plan: 'free',
-      ),
-    );
+    final profileRepo = FakeProfileRepository(profile: freeProfile());
 
     final cubit = AccountFormCubit(
       GetCachedSessionUseCase(
@@ -281,7 +249,6 @@ void main() {
       ),
       GetProfileUseCase(profileRepo),
       BootstrapProfileUseCase(profileRepo),
-      GetEntitlementsForPlanUseCase(),
       GetAccountsUseCase(accountRepo),
       CreateAccountUseCase(accountRepo),
       UpdateAccountUseCase(accountRepo),
@@ -296,13 +263,7 @@ void main() {
 
   test('create navigates backSaved on success', () async {
     final accountRepo = FakeAccountRepository([]);
-    final profileRepo = FakeProfileRepository(
-      profile: const ProfileEntity(
-        userId: 'user_1',
-        baseCurrency: 'USD',
-        plan: 'paid',
-      ),
-    );
+    final profileRepo = FakeProfileRepository(profile: paidProfile());
 
     final cubit = AccountFormCubit(
       GetCachedSessionUseCase(
@@ -315,7 +276,6 @@ void main() {
       ),
       GetProfileUseCase(profileRepo),
       BootstrapProfileUseCase(profileRepo),
-      GetEntitlementsForPlanUseCase(),
       GetAccountsUseCase(accountRepo),
       CreateAccountUseCase(accountRepo),
       UpdateAccountUseCase(accountRepo),

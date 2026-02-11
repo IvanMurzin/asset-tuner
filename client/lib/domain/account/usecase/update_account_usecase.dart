@@ -10,13 +10,11 @@ class UpdateAccountUseCase {
   final IAccountRepository _repository;
 
   Future<Result<AccountEntity>> call({
-    required String userId,
     required String accountId,
     required String name,
     required AccountType type,
   }) {
     return _repository.updateAccount(
-      userId: userId,
       accountId: accountId,
       name: name,
       type: type,

@@ -11,14 +11,12 @@ class UpdateBalanceUseCase {
   final IBalanceRepository _repository;
 
   Future<Result<BalanceEntryEntity>> call({
-    required String userId,
     required String accountAssetId,
     required DateTime entryDate,
     Decimal? snapshotAmount,
     Decimal? deltaAmount,
   }) {
     return _repository.updateBalance(
-      userId: userId,
       accountAssetId: accountAssetId,
       entryDate: entryDate,
       snapshotAmount: snapshotAmount,

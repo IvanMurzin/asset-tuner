@@ -8,7 +8,7 @@ import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usec
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
-import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
@@ -22,7 +22,6 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     this._getCachedSession,
     this._getProfile,
     this._bootstrapProfile,
-    this._getEntitlementsForPlan,
     this._getAssets,
     this._getAccountAssets,
     this._countPositions,
@@ -32,7 +31,6 @@ class AddAssetCubit extends Cubit<AddAssetState> {
   final GetCachedSessionUseCase _getCachedSession;
   final GetProfileUseCase _getProfile;
   final BootstrapProfileUseCase _bootstrapProfile;
-  final GetEntitlementsForPlanUseCase _getEntitlementsForPlan;
   final GetAssetsUseCase _getAssets;
   final GetAccountAssetsUseCase _getAccountAssets;
   final CountAssetPositionsUseCase _countPositions;
@@ -64,7 +62,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
       return;
     }
 
-    final profile = await _loadProfile(session.userId);
+    final profile = await _loadProfile();
     if (profile == null) {
       emit(
         state.copyWith(status: AddAssetStatus.error, failureCode: 'unknown'),
@@ -74,10 +72,9 @@ class AddAssetCubit extends Cubit<AddAssetState> {
 
     final assets = await _getAssets();
     final existing = await _getAccountAssets(
-      userId: session.userId,
       accountId: accountId,
     );
-    final positionCount = await _countPositions(session.userId);
+    final positionCount = await _countPositions();
 
     final assetList = switch (assets) {
       Success<List<AssetEntity>>(value: final list) => list,
@@ -97,7 +94,6 @@ class AddAssetCubit extends Cubit<AddAssetState> {
         state.copyWith(
           status: AddAssetStatus.error,
           failureCode: 'unknown',
-          userId: session.userId,
         ),
       );
       return;
@@ -108,9 +104,9 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     emit(
       state.copyWith(
         status: AddAssetStatus.ready,
-        userId: session.userId,
         accountId: accountId,
         plan: profile.plan,
+        entitlements: profile.entitlements,
         assets: sortedAssets,
         visibleAssets: sortedAssets,
         existingAssetIds: existingAssetIds,
@@ -144,10 +140,11 @@ class AddAssetCubit extends Cubit<AddAssetState> {
   }
 
   Future<void> addSelected() async {
-    final userId = state.userId;
     final accountId = state.accountId;
     final assetId = state.selectedAssetId;
-    if (userId == null || accountId == null || assetId == null) {
+    if (state.status != AddAssetStatus.ready ||
+        accountId == null ||
+        assetId == null) {
       return;
     }
 
@@ -156,8 +153,9 @@ class AddAssetCubit extends Cubit<AddAssetState> {
       return;
     }
 
-    final entitlements = _getEntitlementsForPlan(state.plan);
-    if (state.totalPositionsCount >= entitlements.maxPositions) {
+    final entitlements = state.entitlements;
+    if (entitlements != null &&
+        state.totalPositionsCount >= entitlements.maxPositions) {
       emit(
         state.copyWith(
           navigation: const AddAssetNavigation(
@@ -170,7 +168,6 @@ class AddAssetCubit extends Cubit<AddAssetState> {
 
     emit(state.copyWith(isSaving: true, failureCode: null));
     final result = await _addAssetToAccount(
-      userId: userId,
       accountId: accountId,
       assetId: assetId,
     );
@@ -190,13 +187,13 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     }
   }
 
-  Future<ProfileEntity?> _loadProfile(String userId) async {
-    final result = await _getProfile(userId);
+  Future<ProfileEntity?> _loadProfile() async {
+    final result = await _getProfile();
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         return profile;
       case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile(userId);
+        final bootstrap = await _bootstrapProfile();
         switch (bootstrap) {
           case Success(value: final data):
             return data.profile;

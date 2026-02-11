@@ -9,12 +9,10 @@ class RemoveAssetFromAccountUseCase {
   final IAccountAssetRepository _repository;
 
   Future<Result<void>> call({
-    required String userId,
     required String accountId,
     required String assetId,
   }) {
     return _repository.removeAssetFromAccount(
-      userId: userId,
       accountId: accountId,
       assetId: assetId,
     );

@@ -49,13 +49,12 @@ class AccountsCubit extends Cubit<AccountsState> {
       return;
     }
 
-    final result = await _getAccounts(session.userId);
+    final result = await _getAccounts();
     switch (result) {
       case Success<List<AccountEntity>>(value: final accounts):
         emit(
           state.copyWith(
             status: AccountsStatus.ready,
-            userId: session.userId,
             activeAccounts: accounts.where((a) => !a.archived).toList(),
             archivedAccounts: accounts.where((a) => a.archived).toList(),
           ),
@@ -65,7 +64,6 @@ class AccountsCubit extends Cubit<AccountsState> {
           state.copyWith(
             status: AccountsStatus.error,
             failureCode: failure.code,
-            userId: session.userId,
           ),
         );
     }
@@ -79,8 +77,7 @@ class AccountsCubit extends Cubit<AccountsState> {
     required String accountId,
     required bool archived,
   }) async {
-    final userId = state.userId;
-    if (userId == null) {
+    if (state.status != AccountsStatus.ready) {
       return;
     }
 
@@ -93,7 +90,6 @@ class AccountsCubit extends Cubit<AccountsState> {
     );
 
     final result = await _setArchived(
-      userId: userId,
       accountId: accountId,
       archived: archived,
     );
@@ -126,8 +122,7 @@ class AccountsCubit extends Cubit<AccountsState> {
   }
 
   Future<void> deleteAccount(String accountId) async {
-    final userId = state.userId;
-    if (userId == null) {
+    if (state.status != AccountsStatus.ready) {
       return;
     }
 
@@ -139,7 +134,7 @@ class AccountsCubit extends Cubit<AccountsState> {
       ),
     );
 
-    final result = await _deleteAccount(userId: userId, accountId: accountId);
+    final result = await _deleteAccount(accountId: accountId);
     switch (result) {
       case Success<void>():
         emit(

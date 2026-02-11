@@ -4,7 +4,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/core_ui/components/ds_dialog.dart';
-import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/delete_account_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_out_usecase.dart';
@@ -49,7 +48,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       return;
     }
 
-    final profile = await _loadProfile(session);
+    final profile = await _loadProfile();
     if (profile == null) {
       emit(state.copyWith(status: ProfileStatus.error, failureCode: 'unknown'));
       return;
@@ -58,7 +57,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(
       state.copyWith(
         status: ProfileStatus.ready,
-        userId: session.userId,
         email: session.email,
         baseCurrency: profile.baseCurrency,
         plan: profile.plan,
@@ -128,12 +126,8 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> deleteAccount() async {
-    final userId = state.userId;
-    if (userId == null) {
-      return;
-    }
     emit(state.copyWith(isDeletingAccount: true));
-    final result = await _deleteAccount(userId);
+    final result = await _deleteAccount();
     switch (result) {
       case Success<void>():
         emit(
@@ -155,13 +149,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<ProfileEntity?> _loadProfile(AuthSessionEntity session) async {
-    final result = await _getProfile(session.userId);
+  Future<ProfileEntity?> _loadProfile() async {
+    final result = await _getProfile();
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         return profile;
       case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile(session.userId);
+        final bootstrap = await _bootstrapProfile();
         switch (bootstrap) {
           case Success(value: final data):
             return data.profile;

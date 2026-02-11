@@ -9,7 +9,7 @@ class BootstrapProfileUseCase {
 
   final IProfileRepository _repository;
 
-  Future<Result<ProfileBootstrapEntity>> call(String userId) {
-    return _repository.ensureProfile(userId);
+  Future<Result<ProfileBootstrapEntity>> call() {
+    return _repository.ensureProfile();
   }
 }

@@ -47,7 +47,7 @@ class PaywallCubit extends Cubit<PaywallState> {
       return;
     }
 
-    final profileResult = await _getProfile(session.userId);
+    final profileResult = await _getProfile();
     switch (profileResult) {
       case Success<ProfileEntity>(value: final profile):
         logger.i(
@@ -56,14 +56,13 @@ class PaywallCubit extends Cubit<PaywallState> {
         emit(
           state.copyWith(
             status: PaywallStatus.ready,
-            userId: session.userId,
             plan: profile.plan,
             entitlementsUnverified: false,
             loadFailureCode: null,
           ),
         );
       case FailureResult<ProfileEntity>(failure: final failure):
-        final bootstrap = await _bootstrapProfile(session.userId);
+        final bootstrap = await _bootstrapProfile();
         final bootProfile = switch (bootstrap) {
           Success(value: final data) => data.profile,
           FailureResult() => null,
@@ -74,7 +73,6 @@ class PaywallCubit extends Cubit<PaywallState> {
         emit(
           state.copyWith(
             status: PaywallStatus.ready,
-            userId: session.userId,
             plan: bootProfile?.plan ?? 'free',
             entitlementsUnverified: true,
             loadFailureCode: failure.code,
@@ -88,13 +86,12 @@ class PaywallCubit extends Cubit<PaywallState> {
   }
 
   Future<void> upgrade() async {
-    final userId = state.userId;
-    if (userId == null) {
+    if (state.status != PaywallStatus.ready) {
       return;
     }
     emit(state.copyWith(isUpdating: true, upgradeFailureCode: null));
     logger.i('purchase_started plan=${state.selectedPlan.name}');
-    final result = await _updatePlan(userId, 'paid');
+    final result = await _updatePlan('paid');
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         logger.i('purchase_succeeded plan=${state.selectedPlan.name}');

@@ -13,7 +13,7 @@ import 'package:asset_tuner/core_ui/components/ds_search_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
-import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
 import 'package:asset_tuner/presentation/settings/bloc/base_currency_settings_cubit.dart';
 import 'package:asset_tuner/presentation/settings/widget/base_currency_settings_currency_list.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
@@ -189,8 +189,8 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                               ),
                               SizedBox(height: spacing.s12),
                             ],
-                            if ((state.plan ?? 'free').toLowerCase() !=
-                                'paid') ...[
+                            if (!(state.entitlements?.anyBaseCurrency ??
+                                false)) ...[
                               DSInlineBanner(
                                 title: l10n.baseCurrencySettingsTitle,
                                 message: l10n.baseCurrencySettingsPaywallHint,
@@ -211,7 +211,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                                   currencies: visible,
                                   selectedCode: state.selectedCode,
                                   isAllowed: (code) =>
-                                      _isAllowedByPlan(state.plan, code),
+                                      _isAllowed(state.entitlements, code),
                                   onSelect: (code) => context
                                       .read<BaseCurrencySettingsCubit>()
                                       .selectCurrency(code),
@@ -253,8 +253,10 @@ class BaseCurrencySettingsPage extends StatelessWidget {
     };
   }
 
-  bool _isAllowedByPlan(String? plan, String code) {
-    final entitlements = GetEntitlementsForPlanUseCase()(plan);
+  bool _isAllowed(EntitlementsEntity? entitlements, String code) {
+    if (entitlements == null) {
+      return false;
+    }
     if (entitlements.anyBaseCurrency) {
       return true;
     }

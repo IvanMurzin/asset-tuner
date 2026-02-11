@@ -14,7 +14,6 @@ abstract class PaywallNavigation with _$PaywallNavigation {
 abstract class PaywallState with _$PaywallState {
   const factory PaywallState({
     @Default(PaywallStatus.loading) PaywallStatus status,
-    String? userId,
     String? plan,
     @Default(PaywallPlanOption.annual) PaywallPlanOption selectedPlan,
     @Default(false) bool entitlementsUnverified,

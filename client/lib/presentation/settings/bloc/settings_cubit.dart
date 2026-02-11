@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
-import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_out_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
@@ -43,7 +42,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     }
 
-    final profile = await _loadProfile(session);
+    final profile = await _loadProfile();
     if (profile == null) {
       emit(
         state.copyWith(status: SettingsStatus.error, failureCode: 'unknown'),
@@ -54,7 +53,6 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(
       state.copyWith(
         status: SettingsStatus.ready,
-        userId: session.userId,
         email: session.email,
         baseCurrency: profile.baseCurrency,
         plan: profile.plan,
@@ -90,13 +88,13 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
   }
 
-  Future<ProfileEntity?> _loadProfile(AuthSessionEntity session) async {
-    final result = await _getProfile(session.userId);
+  Future<ProfileEntity?> _loadProfile() async {
+    final result = await _getProfile();
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         return profile;
       case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile(session.userId);
+        final bootstrap = await _bootstrapProfile();
         switch (bootstrap) {
           case Success(value: final data):
             return data.profile;

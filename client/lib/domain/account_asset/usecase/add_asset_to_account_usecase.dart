@@ -10,12 +10,10 @@ class AddAssetToAccountUseCase {
   final IAccountAssetRepository _repository;
 
   Future<Result<AccountAssetEntity>> call({
-    required String userId,
     required String accountId,
     required String assetId,
   }) {
     return _repository.addAssetToAccount(
-      userId: userId,
       accountId: accountId,
       assetId: assetId,
     );

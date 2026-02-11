@@ -1,72 +1,63 @@
 import 'package:decimal/decimal.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
-import 'package:asset_tuner/core/local_storage/balance_entry_storage.dart';
-import 'package:asset_tuner/core/types/failure.dart';
+import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
 import 'package:asset_tuner/core/types/result.dart';
+import 'package:asset_tuner/data/balance/data_source/supabase_balance_data_source.dart';
 import 'package:asset_tuner/data/balance/dto/balance_entry_dto.dart';
 import 'package:asset_tuner/data/balance/mapper/balance_entry_mapper.dart';
-import 'package:asset_tuner/data/balance/service/i_update_balance_edge_function_service.dart';
-import 'package:asset_tuner/data/balance/service/mock_update_balance_edge_function_service.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.dart';
 import 'package:asset_tuner/domain/balance/repository/i_balance_repository.dart';
 
 @LazySingleton(as: IBalanceRepository)
 class BalanceRepository implements IBalanceRepository {
-  BalanceRepository(this._storage, this._edgeFunctions);
+  BalanceRepository(this._dataSource);
 
-  final BalanceEntryStorage _storage;
-  final IUpdateBalanceEdgeFunctionService _edgeFunctions;
+  final SupabaseBalanceDataSource _dataSource;
 
   @override
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
-    required String userId,
     required String accountAssetId,
     required int limit,
     int? offset,
   }) async {
     try {
-      final allStored = await _storage.readEntries(userId);
-      final allDtos =
-          allStored
-              .map(BalanceEntryMapper.toDto)
-              .where((e) => e.accountAssetId == accountAssetId)
-              .toList()
-            ..sort(_sortDesc);
-
       final start = offset ?? 0;
-      final page = allDtos.skip(start).take(limit).toList();
-      final nextOffset = start + page.length < allDtos.length
-          ? start + page.length
-          : null;
+      final pageDtos = await _dataSource.fetchHistory(
+        accountAssetId: accountAssetId,
+        limit: limit,
+        offset: start,
+      );
+      final nextOffset = pageDtos.length == limit ? start + limit : null;
 
-      logger.i('BalanceRepository.fetchHistory success: ${page.length}');
+      logger.i('BalanceRepository.fetchHistory success: ${pageDtos.length}');
       return Success(
         BalanceHistoryPageEntity(
-          entries: page.map(BalanceEntryMapper.toEntity).toList(),
+          entries: pageDtos.map(BalanceEntryMapper.toEntity).toList(),
           nextOffset: nextOffset,
         ),
       );
-    } catch (_) {
-      logger.e('BalanceRepository.fetchHistory failed');
-      return const FailureResult(
-        Failure(code: 'unknown', message: 'Unable to load history'),
+    } catch (error) {
+      logger.e('BalanceRepository.fetchHistory failed', error: error);
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to load history',
+        ),
       );
     }
   }
 
   @override
   Future<Result<BalanceEntryEntity>> updateBalance({
-    required String userId,
     required String accountAssetId,
     required DateTime entryDate,
     Decimal? snapshotAmount,
     Decimal? deltaAmount,
   }) async {
     try {
-      final dto = await _edgeFunctions.updateBalance(
-        userId: userId,
+      final dto = await _dataSource.updateBalance(
         accountAssetId: accountAssetId,
         entryDate: entryDate,
         snapshotAmount: snapshotAmount,
@@ -74,50 +65,46 @@ class BalanceRepository implements IBalanceRepository {
       );
       logger.i('BalanceRepository.updateBalance success');
       return Success(BalanceEntryMapper.toEntity(dto));
-    } on MockBalanceException catch (e) {
-      logger.w('BalanceRepository.updateBalance failed: ${e.code}');
-      return FailureResult(_mapMockFailure(e));
-    } catch (_) {
-      logger.e('BalanceRepository.updateBalance failed');
-      return const FailureResult(
-        Failure(code: 'unknown', message: 'Unable to save balance'),
+    } catch (error) {
+      logger.e('BalanceRepository.updateBalance failed', error: error);
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to save balance',
+        ),
       );
     }
   }
 
   @override
   Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
-    required String userId,
     required Set<String> accountAssetIds,
   }) async {
     try {
       if (accountAssetIds.isEmpty) {
         return const Success(<String, Decimal>{});
       }
-      final allStored = await _storage.readEntries(userId);
-      final relevant = allStored
-          .where((e) => accountAssetIds.contains(e.accountAssetId))
-          .toList();
-      final byPosition = <String, List<StoredBalanceEntry>>{};
-      for (final entry in relevant) {
-        (byPosition[entry.accountAssetId] ??= []).add(entry);
+      final dtos = await _dataSource.fetchEntriesForPositions(accountAssetIds);
+
+      final byPosition = <String, List<BalanceEntryDto>>{};
+      for (final dto in dtos) {
+        (byPosition[dto.accountAssetId] ??= []).add(dto);
       }
 
       final result = <String, Decimal>{};
-      for (final positionId in byPosition.keys) {
-        final entries = byPosition[positionId]!..sort(_sortAscStored);
+      for (final positionId in accountAssetIds) {
+        final entries = byPosition[positionId] ?? const <BalanceEntryDto>[];
         var balance = Decimal.zero;
-        for (final stored in entries) {
-          final type = stored.entryType;
-          if (type == 'snapshot') {
-            if (stored.snapshotAmount != null) {
-              balance = Decimal.parse(stored.snapshotAmount!);
+        for (final dto in entries) {
+          if (dto.entryType == 'snapshot') {
+            if (dto.snapshotAmount != null) {
+              balance = Decimal.parse(dto.snapshotAmount!);
             }
             continue;
           }
-          if (type == 'delta') {
-            if (stored.deltaAmount != null) {
-              balance += Decimal.parse(stored.deltaAmount!);
+          if (dto.entryType == 'delta') {
+            if (dto.deltaAmount != null) {
+              balance += Decimal.parse(dto.deltaAmount!);
             }
           }
         }
@@ -127,46 +114,14 @@ class BalanceRepository implements IBalanceRepository {
         'BalanceRepository.fetchCurrentBalances success: ${result.length}',
       );
       return Success(result);
-    } catch (_) {
-      logger.e('BalanceRepository.fetchCurrentBalances failed');
-      return const FailureResult(
-        Failure(code: 'unknown', message: 'Unable to compute balances'),
+    } catch (error) {
+      logger.e('BalanceRepository.fetchCurrentBalances failed', error: error);
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to compute balances',
+        ),
       );
     }
-  }
-
-  Failure _mapMockFailure(MockBalanceException e) {
-    final code = switch (e.code) {
-      MockBalanceErrorCode.network => 'network',
-      MockBalanceErrorCode.unauthorized => 'unauthorized',
-      MockBalanceErrorCode.validation => 'validation',
-      MockBalanceErrorCode.conflict => 'conflict',
-      MockBalanceErrorCode.unknown => 'unknown',
-    };
-    return Failure(code: code, message: e.message);
-  }
-
-  int _sortDesc(BalanceEntryDto a, BalanceEntryDto b) {
-    final dateCmp = DateTime.parse(
-      b.entryDateIso,
-    ).compareTo(DateTime.parse(a.entryDateIso));
-    if (dateCmp != 0) {
-      return dateCmp;
-    }
-    return DateTime.parse(
-      b.createdAtIso,
-    ).compareTo(DateTime.parse(a.createdAtIso));
-  }
-
-  int _sortAscStored(StoredBalanceEntry a, StoredBalanceEntry b) {
-    final dateCmp = DateTime.parse(
-      a.entryDateIso,
-    ).compareTo(DateTime.parse(b.entryDateIso));
-    if (dateCmp != 0) {
-      return dateCmp;
-    }
-    return DateTime.parse(
-      a.createdAtIso,
-    ).compareTo(DateTime.parse(b.createdAtIso));
   }
 }

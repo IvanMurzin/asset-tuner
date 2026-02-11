@@ -8,7 +8,7 @@ class CountAssetPositionsUseCase {
 
   final IAccountAssetRepository _repository;
 
-  Future<Result<int>> call(String userId) {
-    return _repository.countAssetPositions(userId);
+  Future<Result<int>> call() {
+    return _repository.countAssetPositions();
   }
 }

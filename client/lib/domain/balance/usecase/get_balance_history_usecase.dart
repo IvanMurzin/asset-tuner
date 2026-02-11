@@ -10,13 +10,11 @@ class GetBalanceHistoryUseCase {
   final IBalanceRepository _repository;
 
   Future<Result<BalanceHistoryPageEntity>> call({
-    required String userId,
     required String accountAssetId,
     int limit = 50,
     int? offset,
   }) {
     return _repository.fetchHistory(
-      userId: userId,
       accountAssetId: accountAssetId,
       limit: limit,
       offset: offset,

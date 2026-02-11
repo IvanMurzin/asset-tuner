@@ -9,7 +9,7 @@ class GetProfileUseCase {
 
   final IProfileRepository _repository;
 
-  Future<Result<ProfileEntity>> call(String userId) {
-    return _repository.getProfile(userId);
+  Future<Result<ProfileEntity>> call() {
+    return _repository.getProfile();
   }
 }

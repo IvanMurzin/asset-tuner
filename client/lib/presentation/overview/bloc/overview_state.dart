@@ -37,7 +37,6 @@ abstract class OverviewUnpricedHolding with _$OverviewUnpricedHolding {
 abstract class OverviewState with _$OverviewState {
   const factory OverviewState({
     @Default(OverviewStatus.loading) OverviewStatus status,
-    String? userId,
     String? baseCurrency,
     DateTime? ratesAsOf,
     Decimal? fullTotal,

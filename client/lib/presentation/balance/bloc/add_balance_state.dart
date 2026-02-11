@@ -15,7 +15,6 @@ abstract class AddBalanceNavigation with _$AddBalanceNavigation {
 abstract class AddBalanceState with _$AddBalanceState {
   const factory AddBalanceState({
     @Default(AddBalanceStatus.loading) AddBalanceStatus status,
-    String? userId,
     String? accountAssetId,
     BalanceEntryType? entryType,
     DateTime? entryDate,

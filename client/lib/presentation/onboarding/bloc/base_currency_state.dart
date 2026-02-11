@@ -25,6 +25,7 @@ abstract class BaseCurrencyState with _$BaseCurrencyState {
     String? bannerFailureCode,
     @Default(false) bool isSaving,
     String? plan,
+    EntitlementsEntity? entitlements,
     BaseCurrencyNavigation? navigation,
   }) = _BaseCurrencyState;
 }

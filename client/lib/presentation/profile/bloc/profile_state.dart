@@ -14,7 +14,6 @@ abstract class ProfileNavigation with _$ProfileNavigation {
 abstract class ProfileState with _$ProfileState {
   const factory ProfileState({
     @Default(ProfileStatus.loading) ProfileStatus status,
-    String? userId,
     String? email,
     String? baseCurrency,
     String? plan,

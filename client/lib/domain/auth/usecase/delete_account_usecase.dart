@@ -8,7 +8,7 @@ class DeleteAccountUseCase {
 
   final IAuthRepository _repository;
 
-  Future<Result<void>> call(String userId) {
-    return _repository.deleteAccount(userId);
+  Future<Result<void>> call() {
+    return _repository.deleteAccount();
   }
 }

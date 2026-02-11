@@ -89,7 +89,7 @@ class FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount(String userId) async {
+  Future<Result<void>> deleteAccount() async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -102,13 +102,12 @@ class FakeAccountRepository implements IAccountRepository {
   final List<AccountEntity> _accounts;
 
   @override
-  Future<Result<List<AccountEntity>>> fetchAccounts(String userId) async {
-    return Success(_accounts.where((a) => a.userId == userId).toList());
+  Future<Result<List<AccountEntity>>> fetchAccounts() async {
+    return Success(_accounts);
   }
 
   @override
   Future<Result<AccountEntity>> createAccount({
-    required String userId,
     required String name,
     required AccountType type,
   }) async {
@@ -119,7 +118,6 @@ class FakeAccountRepository implements IAccountRepository {
 
   @override
   Future<Result<AccountEntity>> updateAccount({
-    required String userId,
     required String accountId,
     required String name,
     required AccountType type,
@@ -131,7 +129,6 @@ class FakeAccountRepository implements IAccountRepository {
 
   @override
   Future<Result<AccountEntity>> setArchived({
-    required String userId,
     required String accountId,
     required bool archived,
   }) async {
@@ -149,7 +146,6 @@ class FakeAccountRepository implements IAccountRepository {
 
   @override
   Future<Result<void>> deleteAccount({
-    required String userId,
     required String accountId,
   }) async {
     _accounts.removeWhere((a) => a.id == accountId);
@@ -176,7 +172,6 @@ void main() {
     final accounts = [
       AccountEntity(
         id: 'a1',
-        userId: 'user_1',
         name: 'Cash',
         type: AccountType.cash,
         archived: false,
@@ -185,7 +180,6 @@ void main() {
       ),
       AccountEntity(
         id: 'a2',
-        userId: 'user_1',
         name: 'Bank',
         type: AccountType.bank,
         archived: true,
@@ -222,7 +216,6 @@ void main() {
     final accounts = [
       AccountEntity(
         id: 'a1',
-        userId: 'user_1',
         name: 'Cash',
         type: AccountType.cash,
         archived: false,

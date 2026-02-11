@@ -1,14 +1,14 @@
-import 'package:asset_tuner/core/local_storage/account_asset_storage.dart';
+import 'package:asset_tuner/data/account_asset/dto/account_asset_dto.dart';
 import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
 
 abstract final class AccountAssetMapper {
-  static AccountAssetEntity toEntity(StoredAccountAsset stored) {
+  static AccountAssetEntity toEntity(AccountAssetDto dto) {
     return AccountAssetEntity(
-      id: stored.id,
-      accountId: stored.accountId,
-      assetId: stored.assetId,
-      sortOrder: stored.sortOrder,
-      createdAt: DateTime.parse(stored.createdAtIso),
+      id: dto.id,
+      accountId: dto.accountId,
+      assetId: dto.assetId,
+      sortOrder: dto.sortOrder,
+      createdAt: DateTime.parse(dto.createdAtIso),
     );
   }
 }

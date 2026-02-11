@@ -5,7 +5,7 @@ import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/domain/currency/usecase/get_fiat_currencies_usecase.dart';
-import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
@@ -20,7 +20,6 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     this._getFiatCurrenciesUseCase,
     this._getProfileUseCase,
     this._updateBaseCurrencyUseCase,
-    this._getEntitlementsForPlan,
   ) : super(const BaseCurrencyState()) {
     load();
   }
@@ -29,7 +28,6 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
   final GetFiatCurrenciesUseCase _getFiatCurrenciesUseCase;
   final GetProfileUseCase _getProfileUseCase;
   final UpdateBaseCurrencyUseCase _updateBaseCurrencyUseCase;
-  final GetEntitlementsForPlanUseCase _getEntitlementsForPlan;
 
   Future<void> load() async {
     emit(state.copyWith(status: BaseCurrencyStatus.loading));
@@ -45,7 +43,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
       return;
     }
 
-    final profileResult = await _getProfileUseCase(session.userId);
+    final profileResult = await _getProfileUseCase();
     final currenciesResult = await _getFiatCurrenciesUseCase();
 
     late final ProfileEntity profile;
@@ -91,6 +89,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
         currencies: currencies,
         selectedCode: profile.baseCurrency,
         plan: profile.plan,
+        entitlements: profile.entitlements,
       ),
     );
   }
@@ -110,7 +109,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
       return;
     }
 
-    if (!_isAllowedForPlan(selected, state.plan)) {
+    if (!_isAllowedForEntitlements(selected, state.entitlements)) {
       emit(
         state.copyWith(
           navigation: const BaseCurrencyNavigation(
@@ -147,7 +146,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
       return;
     }
 
-    final result = await _updateBaseCurrencyUseCase(session.userId, code);
+    final result = await _updateBaseCurrencyUseCase(code);
     switch (result) {
       case FailureResult(:final failure):
         emit(
@@ -169,8 +168,13 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     }
   }
 
-  bool _isAllowedForPlan(String code, String? plan) {
-    final entitlements = _getEntitlementsForPlan(plan);
+  bool _isAllowedForEntitlements(
+    String code,
+    EntitlementsEntity? entitlements,
+  ) {
+    if (entitlements == null) {
+      return false;
+    }
     if (entitlements.anyBaseCurrency) {
       return true;
     }

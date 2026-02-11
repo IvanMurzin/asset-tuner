@@ -29,6 +29,7 @@ import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
 import 'package:asset_tuner/domain/rate/repository/i_rate_repository.dart';
 import 'package:asset_tuner/domain/rate/usecase/get_latest_usd_rates_usecase.dart';
 import 'package:asset_tuner/presentation/balance/bloc/asset_position_detail_cubit.dart';
+import 'test_fixtures.dart';
 
 class FakeAuthRepository implements IAuthRepository {
   FakeAuthRepository({this.cachedSession});
@@ -106,7 +107,7 @@ class FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount(String userId) async {
+  Future<Result<void>> deleteAccount() async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -119,13 +120,12 @@ class FakeAccountRepository implements IAccountRepository {
   final List<AccountEntity> accounts;
 
   @override
-  Future<Result<List<AccountEntity>>> fetchAccounts(String userId) async {
-    return Success(accounts.where((a) => a.userId == userId).toList());
+  Future<Result<List<AccountEntity>>> fetchAccounts() async {
+    return Success(accounts);
   }
 
   @override
   Future<Result<AccountEntity>> createAccount({
-    required String userId,
     required String name,
     required AccountType type,
   }) async {
@@ -136,7 +136,6 @@ class FakeAccountRepository implements IAccountRepository {
 
   @override
   Future<Result<AccountEntity>> updateAccount({
-    required String userId,
     required String accountId,
     required String name,
     required AccountType type,
@@ -148,7 +147,6 @@ class FakeAccountRepository implements IAccountRepository {
 
   @override
   Future<Result<AccountEntity>> setArchived({
-    required String userId,
     required String accountId,
     required bool archived,
   }) async {
@@ -159,7 +157,6 @@ class FakeAccountRepository implements IAccountRepository {
 
   @override
   Future<Result<void>> deleteAccount({
-    required String userId,
     required String accountId,
   }) async {
     return const FailureResult(
@@ -175,14 +172,13 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
-    required String userId,
     required String accountId,
   }) async {
     return Success(positionsByAccount[accountId] ?? []);
   }
 
   @override
-  Future<Result<int>> countAssetPositions(String userId) async {
+  Future<Result<int>> countAssetPositions() async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -190,7 +186,6 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<AccountAssetEntity>> addAssetToAccount({
-    required String userId,
     required String accountId,
     required String assetId,
   }) async {
@@ -201,7 +196,6 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<void>> removeAssetFromAccount({
-    required String userId,
     required String accountId,
     required String assetId,
   }) async {
@@ -229,7 +223,6 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
-    required String userId,
     required Set<String> accountAssetIds,
   }) async {
     return const Success(<String, Decimal>{});
@@ -237,7 +230,6 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
-    required String userId,
     required String accountAssetId,
     required int limit,
     int? offset,
@@ -259,7 +251,6 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<BalanceEntryEntity>> updateBalance({
-    required String userId,
     required String accountAssetId,
     required DateTime entryDate,
     Decimal? snapshotAmount,
@@ -277,7 +268,7 @@ class FakeProfileRepository implements IProfileRepository {
   final ProfileEntity profile;
 
   @override
-  Future<Result<ProfileBootstrapEntity>> ensureProfile(String userId) async {
+  Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return Success(
       ProfileBootstrapEntity(
         profile: profile,
@@ -288,22 +279,19 @@ class FakeProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Result<ProfileEntity>> getProfile(String userId) async {
+  Future<Result<ProfileEntity>> getProfile() async {
     return Success(profile);
   }
 
   @override
-  Future<Result<ProfileEntity>> updateBaseCurrency(
-    String userId,
-    String baseCurrency,
-  ) async {
+  Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
   }
 
   @override
-  Future<Result<ProfileEntity>> updatePlan(String userId, String plan) async {
+  Future<Result<ProfileEntity>> updatePlan(String plan) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -325,24 +313,8 @@ void main() {
   test('load navigates to sign-in when session missing', () async {
     final cubit = AssetPositionDetailCubit(
       GetCachedSessionUseCase(FakeAuthRepository()),
-      GetProfileUseCase(
-        FakeProfileRepository(
-          const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'free',
-          ),
-        ),
-      ),
-      BootstrapProfileUseCase(
-        FakeProfileRepository(
-          const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'free',
-          ),
-        ),
-      ),
+      GetProfileUseCase(FakeProfileRepository(freeProfile())),
+      BootstrapProfileUseCase(FakeProfileRepository(freeProfile())),
       GetAccountsUseCase(FakeAccountRepository([])),
       GetAccountAssetsUseCase(FakeAccountAssetRepository(const {})),
       GetAssetsUseCase(FakeAssetRepository(const [])),
@@ -365,7 +337,6 @@ void main() {
     final accounts = [
       AccountEntity(
         id: 'acc_1',
-        userId: 'user_1',
         name: 'Cash',
         type: AccountType.cash,
         archived: false,
@@ -429,11 +400,7 @@ void main() {
       ],
     };
 
-    final profile = const ProfileEntity(
-      userId: 'user_1',
-      baseCurrency: 'USD',
-      plan: 'free',
-    );
+    final profile = freeProfile();
     final rates = RatesSnapshotEntity(
       usdPriceByAssetId: {'asset_usd': Decimal.one},
       asOf: DateTime(2026, 2, 10, 12, 0),

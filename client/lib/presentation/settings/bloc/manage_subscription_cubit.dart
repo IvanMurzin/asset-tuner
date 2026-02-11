@@ -45,7 +45,7 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
       return;
     }
 
-    final profile = await _loadProfile(session.userId);
+    final profile = await _loadProfile();
     if (profile == null) {
       emit(
         state.copyWith(
@@ -59,7 +59,6 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
     emit(
       state.copyWith(
         status: ManageSubscriptionStatus.ready,
-        userId: session.userId,
         plan: profile.plan,
       ),
     );
@@ -85,12 +84,11 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
     String plan, {
     required ManageSubscriptionBanner banner,
   }) async {
-    final userId = state.userId;
-    if (userId == null) {
+    if (state.status != ManageSubscriptionStatus.ready) {
       return;
     }
     emit(state.copyWith(isUpdating: true, banner: null));
-    final result = await _updatePlan(userId, plan);
+    final result = await _updatePlan(plan);
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         emit(
@@ -113,13 +111,13 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
     }
   }
 
-  Future<ProfileEntity?> _loadProfile(String userId) async {
-    final result = await _getProfile(userId);
+  Future<ProfileEntity?> _loadProfile() async {
+    final result = await _getProfile();
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         return profile;
       case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile(userId);
+        final bootstrap = await _bootstrapProfile();
         switch (bootstrap) {
           case Success(value: final data):
             return data.profile;

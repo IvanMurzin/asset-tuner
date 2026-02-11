@@ -15,7 +15,6 @@ abstract class AccountDetailNavigation with _$AccountDetailNavigation {
 abstract class AccountDetailState with _$AccountDetailState {
   const factory AccountDetailState({
     @Default(AccountDetailStatus.loading) AccountDetailStatus status,
-    String? userId,
     AccountEntity? account,
     String? baseCurrency,
     DateTime? ratesAsOf,

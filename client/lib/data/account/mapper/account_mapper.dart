@@ -5,7 +5,6 @@ abstract final class AccountMapper {
   static AccountEntity toEntity(AccountDto dto) {
     return AccountEntity(
       id: dto.id,
-      userId: dto.userId,
       name: dto.name,
       type: _typeFromWire(dto.type),
       archived: dto.archived,
@@ -17,7 +16,6 @@ abstract final class AccountMapper {
   static AccountDto toDto(AccountEntity entity) {
     return AccountDto(
       id: entity.id,
-      userId: entity.userId,
       name: entity.name,
       type: _typeToWire(entity.type),
       archived: entity.archived,

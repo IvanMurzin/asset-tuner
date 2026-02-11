@@ -17,7 +17,6 @@ abstract class AssetPositionDetailState with _$AssetPositionDetailState {
   const factory AssetPositionDetailState({
     @Default(AssetPositionDetailStatus.loading)
     AssetPositionDetailStatus status,
-    String? userId,
     String? accountId,
     String? assetId,
     String? accountAssetId,

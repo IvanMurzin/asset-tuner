@@ -9,10 +9,7 @@ class GetAccountAssetsUseCase {
 
   final IAccountAssetRepository _repository;
 
-  Future<Result<List<AccountAssetEntity>>> call({
-    required String userId,
-    required String accountId,
-  }) {
-    return _repository.fetchAccountAssets(userId: userId, accountId: accountId);
+  Future<Result<List<AccountAssetEntity>>> call({required String accountId}) {
+    return _repository.fetchAccountAssets(accountId: accountId);
   }
 }

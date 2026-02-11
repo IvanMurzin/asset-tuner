@@ -6,9 +6,8 @@ import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/account/usecase/create_account_usecase.dart';
 import 'package:asset_tuner/domain/account/usecase/get_accounts_usecase.dart';
 import 'package:asset_tuner/domain/account/usecase/update_account_usecase.dart';
-import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
-import 'package:asset_tuner/domain/entitlement/usecase/get_entitlements_for_plan_usecase.dart';
+import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
@@ -22,7 +21,6 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     this._getCachedSession,
     this._getProfile,
     this._bootstrapProfile,
-    this._getEntitlementsForPlan,
     this._getAccounts,
     this._createAccount,
     this._updateAccount,
@@ -31,7 +29,6 @@ class AccountFormCubit extends Cubit<AccountFormState> {
   final GetCachedSessionUseCase _getCachedSession;
   final GetProfileUseCase _getProfile;
   final BootstrapProfileUseCase _bootstrapProfile;
-  final GetEntitlementsForPlanUseCase _getEntitlementsForPlan;
   final GetAccountsUseCase _getAccounts;
   final CreateAccountUseCase _createAccount;
   final UpdateAccountUseCase _updateAccount;
@@ -60,7 +57,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
       return;
     }
 
-    final profile = await _loadProfile(session);
+    final profile = await _loadProfile();
     if (profile == null) {
       emit(
         state.copyWith(status: AccountFormStatus.error, failureCode: 'unknown'),
@@ -68,7 +65,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
       return;
     }
 
-    final accounts = await _getAccounts(session.userId);
+    final accounts = await _getAccounts();
     final activeCount = switch (accounts) {
       Success<List<AccountEntity>>(value: final list) =>
         list.where((a) => !a.archived).length,
@@ -87,8 +84,8 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     emit(
       state.copyWith(
         status: AccountFormStatus.ready,
-        userId: session.userId,
         plan: profile.plan,
+        entitlements: profile.entitlements,
         activeAccountCount: activeCount,
         accountId: existing?.id ?? accountId,
         initialName: existing?.name,
@@ -111,9 +108,8 @@ class AccountFormCubit extends Cubit<AccountFormState> {
   }
 
   Future<void> save() async {
-    final userId = state.userId;
     final type = state.type;
-    if (userId == null || type == null) {
+    if (state.status != AccountFormStatus.ready || type == null) {
       return;
     }
 
@@ -124,8 +120,10 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     }
 
     final isCreating = state.accountId == null;
-    final entitlements = _getEntitlementsForPlan(state.plan);
-    if (isCreating && state.activeAccountCount >= entitlements.maxAccounts) {
+    final entitlements = state.entitlements;
+    if (isCreating &&
+        entitlements != null &&
+        state.activeAccountCount >= entitlements.maxAccounts) {
       emit(
         state.copyWith(
           navigation: const AccountFormNavigation(
@@ -139,9 +137,8 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     emit(state.copyWith(isSaving: true, failureCode: null));
 
     final result = isCreating
-        ? await _createAccount(userId: userId, name: normalized, type: type)
+        ? await _createAccount(name: normalized, type: type)
         : await _updateAccount(
-            userId: userId,
             accountId: state.accountId!,
             name: normalized,
             type: type,
@@ -163,13 +160,13 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     }
   }
 
-  Future<ProfileEntity?> _loadProfile(AuthSessionEntity session) async {
-    final result = await _getProfile(session.userId);
+  Future<ProfileEntity?> _loadProfile() async {
+    final result = await _getProfile();
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         return profile;
       case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile(session.userId);
+        final bootstrap = await _bootstrapProfile();
         switch (bootstrap) {
           case Success(value: final data):
             return data.profile;

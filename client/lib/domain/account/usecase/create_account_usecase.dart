@@ -10,10 +10,9 @@ class CreateAccountUseCase {
   final IAccountRepository _repository;
 
   Future<Result<AccountEntity>> call({
-    required String userId,
     required String name,
     required AccountType type,
   }) {
-    return _repository.createAccount(userId: userId, name: name, type: type);
+    return _repository.createAccount(name: name, type: type);
   }
 }

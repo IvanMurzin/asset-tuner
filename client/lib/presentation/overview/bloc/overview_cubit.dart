@@ -65,7 +65,7 @@ class OverviewCubit extends Cubit<OverviewState> {
       return;
     }
 
-    final profile = await _loadProfile(session.userId);
+    final profile = await _loadProfile();
     if (profile == null) {
       await _tryUseCache(session.userId);
       return;
@@ -77,7 +77,7 @@ class OverviewCubit extends Cubit<OverviewState> {
       FailureResult<RatesSnapshotEntity?>() => null,
     };
 
-    final accounts = await _getAccounts(session.userId);
+    final accounts = await _getAccounts();
     final accountsList = switch (accounts) {
       Success<List<AccountEntity>>(value: final list) => list,
       FailureResult<List<AccountEntity>>() => null,
@@ -94,7 +94,6 @@ class OverviewCubit extends Cubit<OverviewState> {
       emit(
         state.copyWith(
           status: OverviewStatus.emptyNoAccounts,
-          userId: session.userId,
           baseCurrency: profile.baseCurrency,
           ratesAsOf: ratesSnapshot?.asOf,
         ),
@@ -121,7 +120,6 @@ class OverviewCubit extends Cubit<OverviewState> {
     final positionsByAccount = <String, List<AccountAssetEntity>>{};
     for (final account in activeAccounts) {
       final positions = await _getAccountAssets(
-        userId: session.userId,
         accountId: account.id,
       );
       switch (positions) {
@@ -140,7 +138,6 @@ class OverviewCubit extends Cubit<OverviewState> {
       emit(
         state.copyWith(
           status: OverviewStatus.emptyNoAssets,
-          userId: session.userId,
           baseCurrency: profile.baseCurrency,
           ratesAsOf: ratesSnapshot?.asOf,
         ),
@@ -149,7 +146,6 @@ class OverviewCubit extends Cubit<OverviewState> {
     }
 
     final balances = await _getCurrentBalances(
-      userId: session.userId,
       accountAssetIds: allPositionIds,
     );
     final currentByPosition = switch (balances) {
@@ -166,7 +162,6 @@ class OverviewCubit extends Cubit<OverviewState> {
       emit(
         state.copyWith(
           status: OverviewStatus.emptyNoBalances,
-          userId: session.userId,
           baseCurrency: profile.baseCurrency,
           ratesAsOf: ratesSnapshot?.asOf,
         ),
@@ -261,7 +256,6 @@ class OverviewCubit extends Cubit<OverviewState> {
     emit(
       state.copyWith(
         status: OverviewStatus.ready,
-        userId: session.userId,
         baseCurrency: profile.baseCurrency,
         ratesAsOf: ratesSnapshot?.asOf,
         fullTotal: globalFullTotal,
@@ -280,13 +274,13 @@ class OverviewCubit extends Cubit<OverviewState> {
     emit(state.copyWith(navigation: null));
   }
 
-  Future<ProfileEntity?> _loadProfile(String userId) async {
-    final result = await _getProfile(userId);
+  Future<ProfileEntity?> _loadProfile() async {
+    final result = await _getProfile();
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         return profile;
       case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile(userId);
+        final bootstrap = await _bootstrapProfile();
         switch (bootstrap) {
           case Success(value: final data):
             return data.profile;
@@ -311,7 +305,6 @@ class OverviewCubit extends Cubit<OverviewState> {
     emit(
       state.copyWith(
         status: OverviewStatus.ready,
-        userId: userId,
         baseCurrency: cached.baseCurrencyCode,
         ratesAsOf: cached.ratesAsOf,
         fullTotal: cached.fullTotalDecimal,

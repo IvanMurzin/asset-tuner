@@ -14,6 +14,7 @@ import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/presentation/auth/bloc/sign_in_cubit.dart';
+import 'test_fixtures.dart';
 
 class FakeAuthRepository implements IAuthRepository {
   FakeAuthRepository({
@@ -97,7 +98,7 @@ class FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount(String userId) async {
+  Future<Result<void>> deleteAccount() async {
     return const Success(null);
   }
 }
@@ -108,15 +109,11 @@ class FakeProfileRepository implements IProfileRepository {
   final Result<ProfileBootstrapEntity>? ensureResult;
 
   @override
-  Future<Result<ProfileBootstrapEntity>> ensureProfile(String userId) async {
+  Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return ensureResult ??
         Success(
           ProfileBootstrapEntity(
-            profile: const ProfileEntity(
-              userId: 'user_1',
-              baseCurrency: 'USD',
-              plan: 'free',
-            ),
+            profile: freeProfile(),
             isNew: true,
             wasBaseCurrencyDefaulted: true,
           ),
@@ -124,24 +121,21 @@ class FakeProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Result<ProfileEntity>> getProfile(String userId) async {
+  Future<Result<ProfileEntity>> getProfile() async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
   }
 
   @override
-  Future<Result<ProfileEntity>> updateBaseCurrency(
-    String userId,
-    String baseCurrency,
-  ) async {
+  Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
   }
 
   @override
-  Future<Result<ProfileEntity>> updatePlan(String userId, String plan) async {
+  Future<Result<ProfileEntity>> updatePlan(String plan) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -220,11 +214,7 @@ void main() {
     final profileRepo = FakeProfileRepository(
       ensureResult: Success(
         ProfileBootstrapEntity(
-          profile: const ProfileEntity(
-            userId: 'user_1',
-            baseCurrency: 'USD',
-            plan: 'free',
-          ),
+          profile: freeProfile(),
           isNew: true,
           wasBaseCurrencyDefaulted: true,
         ),

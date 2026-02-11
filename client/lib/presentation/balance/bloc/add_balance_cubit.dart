@@ -55,7 +55,6 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
     }
 
     final positions = await _getAccountAssets(
-      userId: session.userId,
       accountId: accountId,
     );
     final position = switch (positions) {
@@ -76,7 +75,6 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
     emit(
       state.copyWith(
         status: AddBalanceStatus.ready,
-        userId: session.userId,
         accountAssetId: position.id,
         entryType: BalanceEntryType.snapshot,
         entryDate: initialDate ?? DateTime.now(),
@@ -101,11 +99,10 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
   }
 
   Future<void> save() async {
-    final userId = state.userId;
     final accountAssetId = state.accountAssetId;
     final date = state.entryDate;
     final type = state.entryType;
-    if (userId == null ||
+    if (state.status != AddBalanceStatus.ready ||
         accountAssetId == null ||
         date == null ||
         type == null) {
@@ -126,7 +123,6 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
 
     emit(state.copyWith(isSaving: true, failureCode: null));
     final result = await _updateBalance(
-      userId: userId,
       accountAssetId: accountAssetId,
       entryDate: date,
       snapshotAmount: type == BalanceEntryType.snapshot ? parsed : null,

@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
-import 'package:asset_tuner/core/types/failure.dart';
+import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
 import 'package:asset_tuner/core/types/result.dart';
-import 'package:asset_tuner/data/account_asset/data_source/account_asset_mock_data_source.dart';
+import 'package:asset_tuner/data/account_asset/data_source/supabase_account_asset_data_source.dart';
 import 'package:asset_tuner/data/account_asset/mapper/account_asset_mapper.dart';
 import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
 import 'package:asset_tuner/domain/account_asset/repository/i_account_asset_repository.dart';
@@ -11,105 +11,96 @@ import 'package:asset_tuner/domain/account_asset/repository/i_account_asset_repo
 class AccountAssetRepository implements IAccountAssetRepository {
   AccountAssetRepository(this._dataSource);
 
-  final AccountAssetMockDataSource _dataSource;
+  final SupabaseAccountAssetDataSource _dataSource;
 
   @override
   Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
-    required String userId,
     required String accountId,
   }) async {
     try {
-      final stored = await _dataSource.fetchAccountPositions(
-        userId: userId,
-        accountId: accountId,
-      );
+      final dtos = await _dataSource.fetchAccountAssets(accountId: accountId);
       logger.i('AccountAssetRepository.fetchAccountAssets success');
-      return Success(stored.map(AccountAssetMapper.toEntity).toList());
-    } catch (_) {
-      logger.e('AccountAssetRepository.fetchAccountAssets failed');
-      return const FailureResult(
-        Failure(code: 'unknown', message: 'Unable to load account assets'),
+      return Success(dtos.map(AccountAssetMapper.toEntity).toList());
+    } catch (error) {
+      logger.e(
+        'AccountAssetRepository.fetchAccountAssets failed',
+        error: error,
+      );
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to load account assets',
+        ),
       );
     }
   }
 
   @override
-  Future<Result<int>> countAssetPositions(String userId) async {
+  Future<Result<int>> countAssetPositions() async {
     try {
-      final count = await _dataSource.countPositions(userId);
+      final count = await _dataSource.countAssetPositions();
       logger.i('AccountAssetRepository.countAssetPositions success: $count');
       return Success(count);
-    } catch (_) {
-      logger.e('AccountAssetRepository.countAssetPositions failed');
-      return const FailureResult(
-        Failure(code: 'unknown', message: 'Unable to count positions'),
+    } catch (error) {
+      logger.e(
+        'AccountAssetRepository.countAssetPositions failed',
+        error: error,
+      );
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to count positions',
+        ),
       );
     }
   }
 
   @override
   Future<Result<AccountAssetEntity>> addAssetToAccount({
-    required String userId,
     required String accountId,
     required String assetId,
   }) async {
     try {
-      final stored = await _dataSource.addPosition(
-        userId: userId,
+      final dto = await _dataSource.addAssetToAccount(
         accountId: accountId,
         assetId: assetId,
       );
       logger.i('AccountAssetRepository.addAssetToAccount success');
-      return Success(AccountAssetMapper.toEntity(stored));
-    } on MockAccountAssetException catch (e) {
-      logger.w('AccountAssetRepository.addAssetToAccount failed: ${e.code}');
-      return FailureResult(_mapMockFailure(e));
-    } catch (_) {
-      logger.e('AccountAssetRepository.addAssetToAccount failed');
-      return const FailureResult(
-        Failure(code: 'unknown', message: 'Unable to add asset to account'),
+      return Success(AccountAssetMapper.toEntity(dto));
+    } catch (error) {
+      logger.e('AccountAssetRepository.addAssetToAccount failed', error: error);
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to add asset to account',
+        ),
       );
     }
   }
 
   @override
   Future<Result<void>> removeAssetFromAccount({
-    required String userId,
     required String accountId,
     required String assetId,
   }) async {
     try {
-      await _dataSource.removePosition(
-        userId: userId,
+      await _dataSource.removeAssetFromAccount(
         accountId: accountId,
         assetId: assetId,
       );
       logger.i('AccountAssetRepository.removeAssetFromAccount success');
       return const Success(null);
-    } on MockAccountAssetException catch (e) {
-      logger.w(
-        'AccountAssetRepository.removeAssetFromAccount failed: ${e.code}',
+    } catch (error) {
+      logger.e(
+        'AccountAssetRepository.removeAssetFromAccount failed',
+        error: error,
       );
-      return FailureResult(_mapMockFailure(e));
-    } catch (_) {
-      logger.e('AccountAssetRepository.removeAssetFromAccount failed');
-      return const FailureResult(
-        Failure(
-          code: 'unknown',
-          message: 'Unable to remove asset from account',
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to remove asset from account',
         ),
       );
     }
-  }
-
-  Failure _mapMockFailure(MockAccountAssetException e) {
-    final code = switch (e.code) {
-      MockAccountAssetErrorCode.network => 'network',
-      MockAccountAssetErrorCode.unauthorized => 'unauthorized',
-      MockAccountAssetErrorCode.notFound => 'not_found',
-      MockAccountAssetErrorCode.validation => 'validation',
-      MockAccountAssetErrorCode.unknown => 'unknown',
-    };
-    return Failure(code: code, message: e.message);
   }
 }

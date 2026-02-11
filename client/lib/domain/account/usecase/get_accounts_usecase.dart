@@ -9,7 +9,7 @@ class GetAccountsUseCase {
 
   final IAccountRepository _repository;
 
-  Future<Result<List<AccountEntity>>> call(String userId) {
-    return _repository.fetchAccounts(userId);
+  Future<Result<List<AccountEntity>>> call() {
+    return _repository.fetchAccounts();
   }
 }

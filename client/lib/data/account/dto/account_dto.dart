@@ -8,7 +8,6 @@ part 'account_dto.g.dart';
 abstract class AccountDto with _$AccountDto {
   const factory AccountDto({
     required String id,
-    @JsonName('user_id') required String userId,
     required String name,
     required String type,
     required bool archived,
