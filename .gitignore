@@ -3,3 +3,10 @@
 
 .vscode/.history/
 
+# Supabase CLI (backend)
+backend/supabase/.temp/
+backend/supabase/.branches/
+backend/supabase/.cache/
+backend/supabase/.env
+backend/supabase/.env.dev
+backend/supabase/.env.prod

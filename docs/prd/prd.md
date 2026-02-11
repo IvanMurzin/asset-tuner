@@ -104,7 +104,7 @@ MVP includes free tier + paid upgrade.
 ### Rates (Backend/API)
 **Sources:**
 - Fiat FX: OpenExchangeRates (free tier).
-- Crypto USD prices: CoinGecko (free tier).
+- Crypto USD prices: CoinGecko (API key via `COINGEKO_API_KEY`).
 
 **Update strategy:**
 - Supabase scheduled job runs **hourly** to fetch provider data and store rates in DB.

@@ -24,6 +24,7 @@ Used for:
 
 ### CoinGecko (crypto USD)
 - Pulled hourly by a scheduled job
+- Uses API key secret `COINGEKO_API_KEY`
 - Stored in Supabase DB and served to clients from DB only
 
 ## Monetization (MVP)
@@ -33,4 +34,3 @@ Used for:
 ## Observability (MVP)
 - Client: structured app logging via `client/lib/core/logger` (log important app + API events)
 - Crash reporting/analytics: **not in MVP** (planned next iteration)
-

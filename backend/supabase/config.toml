@@ -1,0 +1,42 @@
+project_id = "asset_tuner"
+
+[api]
+enabled = true
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+major_version = 17
+
+[studio]
+enabled = true
+
+[functions]
+  [functions.bootstrap_profile]
+  verify_jwt = true
+
+  [functions.create_account]
+  verify_jwt = true
+
+  [functions.account]
+  verify_jwt = true
+
+  [functions.add_asset_to_account]
+  verify_jwt = true
+
+  [functions.remove_asset_from_account]
+  verify_jwt = true
+
+  [functions.update_base_currency]
+  verify_jwt = true
+
+  [functions.update_balance]
+  verify_jwt = true
+
+  [functions.update_plan]
+  verify_jwt = true
+
+  [functions.rates_sync]
+  verify_jwt = false
+
