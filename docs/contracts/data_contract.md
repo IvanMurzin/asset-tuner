@@ -136,6 +136,10 @@ Fields:
 Constraints:
 - `usd_price > 0`
 
+Client notes:
+- The client should cache the latest snapshot in-memory and avoid frequent reads (many rows).
+- Server refresh cadence is hourly; client conversions should be computed locally from the cached USD-pivot snapshot.
+
 ## Storage (buckets)
 
 ### `asset_icons` (public read)
@@ -146,4 +150,3 @@ Object key convention:
 - `assets/{asset_id}.svg`
 
 The client must treat icons as optional and fall back to a generic glyph.
-

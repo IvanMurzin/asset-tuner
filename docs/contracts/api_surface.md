@@ -87,6 +87,10 @@ Contract notes:
 ### `asset_rates_usd`
 - `GET latest rates snapshot`:
   - query: `asset_rates_usd?select=asset_id,usd_price,as_of`
+  - client caching:
+    - Treat this read as **expensive** (many rows) and avoid calling it frequently.
+    - Cache the latest snapshot in-memory app-wide and persist last-known snapshot for offline start.
+    - Refresh at most once per minute (soft TTL). Server updates rates hourly; the client should recalculate conversions locally using the cached USD-pivot snapshot.
 
 ## PostgREST writes (tables)
 

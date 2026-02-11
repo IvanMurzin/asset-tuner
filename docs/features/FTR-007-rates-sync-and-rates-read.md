@@ -42,6 +42,13 @@ Out of scope:
 - Error: network/unauthorized/unknown while reading rates → show retry.
 - Success: rates loaded with timestamp.
 
+## Client caching / refresh policy (MVP)
+Rates update server-side hourly, but the client may need to read them from multiple screens. To avoid expensive repeated reads:
+- Keep the latest rates snapshot in a shared in-memory cache (app-wide singleton).
+- Persist the last-known snapshot locally for offline/poor-network starts.
+- Refresh from Supabase **no more than once per minute** (soft TTL), and reuse the cached snapshot for all conversions.
+- If a refresh fails, keep using the last-known snapshot (and show its `as_of` timestamp).
+
 ## Data needs (entities + fields)
 - Read-only `asset_rates_usd`
   - `asset_id: uuid`

@@ -7,6 +7,7 @@ import 'package:asset_tuner/core/routing/app_router.dart';
 import 'package:asset_tuner/core_ui/theme/app_theme.dart';
 import 'package:asset_tuner/core_ui/theme/theme_mode_cubit.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/presentation/rate/bloc/usd_rates_cubit.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -17,6 +18,7 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => getIt<ThemeModeCubit>()),
         BlocProvider(create: (_) => getIt<LocaleCubit>()..load()),
+        BlocProvider(create: (_) => getIt<UsdRatesCubit>()),
       ],
       child: BlocBuilder<ThemeModeCubit, ThemeMode>(
         builder: (context, themeMode) {
