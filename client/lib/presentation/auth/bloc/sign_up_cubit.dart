@@ -47,6 +47,9 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 
   Future<void> submit() async {
+    if (state.status == SignUpStatus.loading) {
+      return;
+    }
     final validation = _validate();
     if (!validation) {
       return;
