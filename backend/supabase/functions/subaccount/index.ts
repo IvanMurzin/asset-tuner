@@ -10,35 +10,32 @@ Deno.serve(async (req) => {
     return cors;
   }
 
+  if (req.method !== 'DELETE') {
+    return jsonError('validation', 'Method not allowed', 405);
+  }
+
   try {
     const user = await requireAuthUser(req);
     const body = await req.json().catch(() => ({})) as Record<string, unknown>;
+    const subaccountId = body.subaccount_id;
 
-    const accountId = body.account_id;
-    const assetId = body.asset_id;
-
-    if (!isUuid(accountId)) {
-      return jsonError('validation', 'Invalid account_id', 400, { field: 'account_id' });
-    }
-    if (!isUuid(assetId)) {
-      return jsonError('validation', 'Invalid asset_id', 400, { field: 'asset_id' });
+    if (!isUuid(subaccountId)) {
+      return jsonError('validation', 'Invalid subaccount_id', 400, { field: 'subaccount_id' });
     }
 
     const service = getServiceClient();
-
     const { error, count } = await service
-      .from('account_assets')
+      .from('subaccounts')
       .delete({ count: 'exact' })
       .eq('user_id', user.id)
-      .eq('account_id', accountId)
-      .eq('asset_id', assetId);
+      .eq('id', subaccountId);
 
     if (error) {
-      return jsonError('unknown', 'Failed to remove asset from account', 500);
+      return jsonError('unknown', 'Failed to delete subaccount', 500);
     }
 
     if ((count ?? 0) === 0) {
-      return jsonError('not_found', 'Position not found', 404);
+      return jsonError('not_found', 'Subaccount not found', 404);
     }
 
     return json({ ok: true });
@@ -50,4 +47,3 @@ Deno.serve(async (req) => {
     return jsonError('unknown', 'Unexpected error', 500);
   }
 });
-

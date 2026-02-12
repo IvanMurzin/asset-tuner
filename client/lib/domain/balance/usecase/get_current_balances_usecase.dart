@@ -10,10 +10,8 @@ class GetCurrentBalancesUseCase {
   final IBalanceRepository _repository;
 
   Future<Result<Map<String, Decimal>>> call({
-    required Set<String> accountAssetIds,
+    required Set<String> subaccountIds,
   }) {
-    return _repository.fetchCurrentBalances(
-      accountAssetIds: accountAssetIds,
-    );
+    return _repository.fetchCurrentBalances(subaccountIds: subaccountIds);
   }
 }

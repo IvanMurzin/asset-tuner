@@ -200,6 +200,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewTitle => 'Overview';
 
   @override
+  String get mainTitle => 'Main';
+
+  @override
+  String get mainAddAccount => 'Add account';
+
+  @override
+  String get analyticsTitle => 'Analytics';
+
+  @override
+  String get analyticsBreakdownTitle => 'Breakdown';
+
+  @override
+  String get analyticsUpdatesTitle => 'Updates';
+
+  @override
+  String get analyticsEmptyTitle => 'No analytics yet';
+
+  @override
+  String get analyticsEmptyBody =>
+      'Add accounts and balances to see breakdown and updates.';
+
+  @override
+  String get actionsTitle => 'Actions';
+
+  @override
   String get overviewTotalLabel => 'Total';
 
   @override
@@ -327,6 +352,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsTypeCryptoWallet => 'Crypto wallet';
 
   @override
+  String get accountsTypeExchange => 'Exchange';
+
+  @override
   String get accountsTypeCash => 'Cash';
 
   @override
@@ -415,6 +443,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetKindCrypto => 'Crypto';
+
+  @override
+  String get subaccountsCountLabel => 'subaccounts';
+
+  @override
+  String get subaccountCreateTitle => 'Add subaccount';
+
+  @override
+  String get subaccountCreateCta => 'Add subaccount';
+
+  @override
+  String get subaccountCurrencyLabel => 'Currency';
+
+  @override
+  String get subaccountNameHint => 'e.g., USDT (TRC20)';
+
+  @override
+  String get subaccountEmptyTitle => 'No subaccounts yet';
+
+  @override
+  String get subaccountEmptyBody =>
+      'Add the holdings you have in this account.';
+
+  @override
+  String get subaccountListTitle => 'Subaccounts';
+
+  @override
+  String get subaccountUpdateBalanceCta => 'Update balance';
+
+  @override
+  String get subaccountRenameCta => 'Rename';
+
+  @override
+  String get subaccountRenameTitle => 'Rename subaccount';
+
+  @override
+  String get subaccountDeleteCta => 'Delete';
+
+  @override
+  String get subaccountDeleteConfirmTitle => 'Delete subaccount?';
+
+  @override
+  String get subaccountDeleteConfirmBody =>
+      'This will delete its balance history.';
 
   @override
   String get assetRemove => 'Remove';
@@ -510,8 +582,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'You’ve reached the free limit of 5 accounts.';
 
   @override
-  String get paywallReasonPositions =>
-      'You’ve reached the free limit of 20 tracked assets.';
+  String get paywallReasonSubaccounts =>
+      'You’ve reached the free limit of 20 subaccounts.';
 
   @override
   String get paywallReasonBaseCurrency => 'Unlock any base currency.';
@@ -530,7 +602,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallFeatureAccounts => 'More accounts';
 
   @override
-  String get paywallFeaturePositions => 'More tracked assets';
+  String get paywallFeatureSubaccounts => 'More subaccounts';
 
   @override
   String get paywallFeatureCurrencies => 'Any base currency';

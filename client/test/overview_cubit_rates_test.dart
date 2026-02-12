@@ -204,9 +204,7 @@ class FakeAccountRepository implements IAccountRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount({
-    required String accountId,
-  }) async {
+  Future<Result<void>> deleteAccount({required String accountId}) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -231,7 +229,10 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
   @override
   Future<Result<AccountAssetEntity>> addAssetToAccount({
     required String accountId,
+    required String name,
     required String assetId,
+    required Decimal snapshotAmount,
+    required DateTime entryDate,
   }) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
@@ -240,8 +241,17 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<void>> removeAssetFromAccount({
-    required String accountId,
-    required String assetId,
+    required String subaccountId,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<AccountAssetEntity>> renameSubaccount({
+    required String subaccountId,
+    required String name,
   }) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
@@ -259,14 +269,14 @@ class FakeAssetRepository implements IAssetRepository {
 class FakeBalanceRepository implements IBalanceRepository {
   @override
   Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
-    required Set<String> accountAssetIds,
+    required Set<String> subaccountIds,
   }) async {
     return const Success(<String, Decimal>{});
   }
 
   @override
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
-    required String accountAssetId,
+    required String subaccountId,
     required int limit,
     int? offset,
   }) async {
@@ -277,10 +287,9 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<BalanceEntryEntity>> updateBalance({
-    required String accountAssetId,
+    required String subaccountId,
     required DateTime entryDate,
-    Decimal? snapshotAmount,
-    Decimal? deltaAmount,
+    required Decimal snapshotAmount,
   }) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),

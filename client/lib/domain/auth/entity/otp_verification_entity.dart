@@ -4,7 +4,6 @@ part 'otp_verification_entity.freezed.dart';
 
 @freezed
 abstract class OtpVerificationEntity with _$OtpVerificationEntity {
-  const factory OtpVerificationEntity({
-    required String email,
-  }) = _OtpVerificationEntity;
+  const factory OtpVerificationEntity({required String email}) =
+      _OtpVerificationEntity;
 }

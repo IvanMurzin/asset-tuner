@@ -33,7 +33,7 @@ class SignInPage extends StatelessWidget {
             case SignInDestination.onboardingBaseCurrency:
               context.go(AppRoutes.onboardingBaseCurrency);
             case SignInDestination.overview:
-              context.go(AppRoutes.overview);
+              context.go(AppRoutes.main);
           }
           context.read<SignInCubit>().consumeNavigation();
         },

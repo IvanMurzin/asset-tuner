@@ -8,6 +8,8 @@ import 'package:asset_tuner/domain/account/usecase/get_accounts_usecase.dart';
 import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
 import 'package:asset_tuner/domain/account_asset/repository/i_account_asset_repository.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
+import 'package:asset_tuner/domain/account_asset/usecase/remove_asset_from_account_usecase.dart';
+import 'package:asset_tuner/domain/account_asset/usecase/rename_subaccount_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/asset/repository/i_asset_repository.dart';
 import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
@@ -156,9 +158,7 @@ class FakeAccountRepository implements IAccountRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount({
-    required String accountId,
-  }) async {
+  Future<Result<void>> deleteAccount({required String accountId}) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
     );
@@ -187,7 +187,10 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
   @override
   Future<Result<AccountAssetEntity>> addAssetToAccount({
     required String accountId,
+    required String name,
     required String assetId,
+    required Decimal snapshotAmount,
+    required DateTime entryDate,
   }) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
@@ -196,8 +199,17 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<void>> removeAssetFromAccount({
-    required String accountId,
-    required String assetId,
+    required String subaccountId,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<AccountAssetEntity>> renameSubaccount({
+    required String subaccountId,
+    required String name,
   }) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
@@ -223,21 +235,20 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
-    required Set<String> accountAssetIds,
+    required Set<String> subaccountIds,
   }) async {
     return const Success(<String, Decimal>{});
   }
 
   @override
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
-    required String accountAssetId,
+    required String subaccountId,
     required int limit,
     int? offset,
   }) async {
     final all =
         <BalanceEntryEntity>[
-          ...(entriesByPosition[accountAssetId] ??
-              const <BalanceEntryEntity>[]),
+          ...(entriesByPosition[subaccountId] ?? const <BalanceEntryEntity>[]),
         ]..sort((a, b) {
           final dateCmp = b.entryDate.compareTo(a.entryDate);
           if (dateCmp != 0) return dateCmp;
@@ -251,10 +262,9 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<BalanceEntryEntity>> updateBalance({
-    required String accountAssetId,
+    required String subaccountId,
     required DateTime entryDate,
-    Decimal? snapshotAmount,
-    Decimal? deltaAmount,
+    required Decimal snapshotAmount,
   }) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
@@ -320,9 +330,11 @@ void main() {
       GetAssetsUseCase(FakeAssetRepository(const [])),
       GetBalanceHistoryUseCase(FakeBalanceRepository(const {})),
       GetLatestUsdRatesUseCase(FakeRateRepository(const Success(null))),
+      RemoveAssetFromAccountUseCase(FakeAccountAssetRepository(const {})),
+      RenameSubaccountUseCase(FakeAccountAssetRepository(const {})),
     );
 
-    await cubit.load(accountId: 'acc_1', assetId: 'asset_usd');
+    await cubit.load(subaccountId: 'sub_1');
 
     expect(
       cubit.state.navigation?.destination,
@@ -350,7 +362,10 @@ void main() {
           id: 'pos_1',
           accountId: 'acc_1',
           assetId: 'asset_usd',
+          name: 'USD Cash',
+          archived: false,
           createdAt: now,
+          updatedAt: now,
         ),
       ],
     };
@@ -367,34 +382,34 @@ void main() {
       'pos_1': [
         BalanceEntryEntity(
           id: 'e1',
-          accountAssetId: 'pos_1',
+          subaccountId: 'pos_1',
           entryDate: DateTime(2026, 2, 1),
-          entryType: BalanceEntryType.snapshot,
           snapshotAmount: Decimal.parse('100'),
+          diffAmount: Decimal.zero,
           createdAt: DateTime(2026, 2, 1, 10, 0),
         ),
         BalanceEntryEntity(
           id: 'e2',
-          accountAssetId: 'pos_1',
+          subaccountId: 'pos_1',
           entryDate: DateTime(2026, 2, 5),
-          entryType: BalanceEntryType.delta,
-          deltaAmount: Decimal.parse('-20'),
+          snapshotAmount: Decimal.parse('80'),
+          diffAmount: Decimal.parse('-20'),
           createdAt: DateTime(2026, 2, 5, 11, 0),
         ),
         BalanceEntryEntity(
           id: 'e3',
-          accountAssetId: 'pos_1',
+          subaccountId: 'pos_1',
           entryDate: DateTime(2026, 2, 7),
-          entryType: BalanceEntryType.snapshot,
           snapshotAmount: Decimal.parse('50'),
+          diffAmount: Decimal.parse('-30'),
           createdAt: DateTime(2026, 2, 7, 9, 0),
         ),
         BalanceEntryEntity(
           id: 'e4',
-          accountAssetId: 'pos_1',
+          subaccountId: 'pos_1',
           entryDate: DateTime(2026, 2, 8),
-          entryType: BalanceEntryType.delta,
-          deltaAmount: Decimal.parse('10'),
+          snapshotAmount: Decimal.parse('60'),
+          diffAmount: Decimal.parse('10'),
           createdAt: DateTime(2026, 2, 8, 12, 0),
         ),
       ],
@@ -415,9 +430,11 @@ void main() {
       GetAssetsUseCase(FakeAssetRepository(assets)),
       GetBalanceHistoryUseCase(FakeBalanceRepository(entries)),
       GetLatestUsdRatesUseCase(FakeRateRepository(Success(rates))),
+      RemoveAssetFromAccountUseCase(FakeAccountAssetRepository(positions)),
+      RenameSubaccountUseCase(FakeAccountAssetRepository(positions)),
     );
 
-    await cubit.load(accountId: 'acc_1', assetId: 'asset_usd');
+    await cubit.load(subaccountId: 'pos_1');
 
     expect(cubit.state.currentBalance, Decimal.parse('60'));
     expect(cubit.state.convertedValue, Decimal.parse('60'));

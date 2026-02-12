@@ -18,14 +18,14 @@ class BalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
-    required String accountAssetId,
+    required String subaccountId,
     required int limit,
     int? offset,
   }) async {
     try {
       final start = offset ?? 0;
       final pageDtos = await _dataSource.fetchHistory(
-        accountAssetId: accountAssetId,
+        subaccountId: subaccountId,
         limit: limit,
         offset: start,
       );
@@ -51,17 +51,15 @@ class BalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<BalanceEntryEntity>> updateBalance({
-    required String accountAssetId,
+    required String subaccountId,
     required DateTime entryDate,
-    Decimal? snapshotAmount,
-    Decimal? deltaAmount,
+    required Decimal snapshotAmount,
   }) async {
     try {
       final dto = await _dataSource.updateBalance(
-        accountAssetId: accountAssetId,
+        subaccountId: subaccountId,
         entryDate: entryDate,
         snapshotAmount: snapshotAmount,
-        deltaAmount: deltaAmount,
       );
       logger.i('BalanceRepository.updateBalance success');
       return Success(BalanceEntryMapper.toEntity(dto));
@@ -78,37 +76,28 @@ class BalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
-    required Set<String> accountAssetIds,
+    required Set<String> subaccountIds,
   }) async {
     try {
-      if (accountAssetIds.isEmpty) {
+      if (subaccountIds.isEmpty) {
         return const Success(<String, Decimal>{});
       }
-      final dtos = await _dataSource.fetchEntriesForPositions(accountAssetIds);
+      final dtos = await _dataSource.fetchEntriesForPositions(subaccountIds);
 
-      final byPosition = <String, List<BalanceEntryDto>>{};
+      final bySubaccount = <String, List<BalanceEntryDto>>{};
       for (final dto in dtos) {
-        (byPosition[dto.accountAssetId] ??= []).add(dto);
+        (bySubaccount[dto.subaccountId] ??= []).add(dto);
       }
 
       final result = <String, Decimal>{};
-      for (final positionId in accountAssetIds) {
-        final entries = byPosition[positionId] ?? const <BalanceEntryDto>[];
-        var balance = Decimal.zero;
-        for (final dto in entries) {
-          if (dto.entryType == 'snapshot') {
-            if (dto.snapshotAmount != null) {
-              balance = Decimal.parse(dto.snapshotAmount!);
-            }
-            continue;
-          }
-          if (dto.entryType == 'delta') {
-            if (dto.deltaAmount != null) {
-              balance += Decimal.parse(dto.deltaAmount!);
-            }
-          }
+      for (final subaccountId in subaccountIds) {
+        final entries = bySubaccount[subaccountId] ?? const <BalanceEntryDto>[];
+        if (entries.isEmpty) {
+          result[subaccountId] = Decimal.zero;
+          continue;
         }
-        result[positionId] = balance;
+        final latest = entries.last;
+        result[subaccountId] = Decimal.parse(latest.snapshotAmount);
       }
       logger.i(
         'BalanceRepository.fetchCurrentBalances success: ${result.length}',

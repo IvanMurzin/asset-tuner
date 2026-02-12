@@ -20,7 +20,5 @@ abstract interface class IAccountRepository {
     required bool archived,
   });
 
-  Future<Result<void>> deleteAccount({
-    required String accountId,
-  });
+  Future<Result<void>> deleteAccount({required String accountId});
 }

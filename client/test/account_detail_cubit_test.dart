@@ -164,9 +164,7 @@ class FakeAccountRepository implements IAccountRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount({
-    required String accountId,
-  }) async {
+  Future<Result<void>> deleteAccount({required String accountId}) async {
     accounts.removeWhere((a) => a.id == accountId);
     return const Success(null);
   }
@@ -205,7 +203,10 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
   @override
   Future<Result<AccountAssetEntity>> addAssetToAccount({
     required String accountId,
+    required String name,
     required String assetId,
+    required Decimal snapshotAmount,
+    required DateTime entryDate,
   }) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
@@ -214,13 +215,22 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<void>> removeAssetFromAccount({
-    required String accountId,
-    required String assetId,
+    required String subaccountId,
   }) async {
-    positionsByAccount[accountId] = (positionsByAccount[accountId] ?? [])
-        .where((p) => p.assetId != assetId)
-        .toList();
+    for (final entry in positionsByAccount.entries) {
+      entry.value.removeWhere((p) => p.id == subaccountId);
+    }
     return const Success(null);
+  }
+
+  @override
+  Future<Result<AccountAssetEntity>> renameSubaccount({
+    required String subaccountId,
+    required String name,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -278,17 +288,17 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
-    required Set<String> accountAssetIds,
+    required Set<String> subaccountIds,
   }) async {
     return Success({
-      for (final id in accountAssetIds)
+      for (final id in subaccountIds)
         if (currentBalances.containsKey(id)) id: currentBalances[id]!,
     });
   }
 
   @override
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
-    required String accountAssetId,
+    required String subaccountId,
     required int limit,
     int? offset,
   }) async {
@@ -299,10 +309,9 @@ class FakeBalanceRepository implements IBalanceRepository {
 
   @override
   Future<Result<BalanceEntryEntity>> updateBalance({
-    required String accountAssetId,
+    required String subaccountId,
     required DateTime entryDate,
-    Decimal? snapshotAmount,
-    Decimal? deltaAmount,
+    required Decimal snapshotAmount,
   }) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
@@ -360,7 +369,10 @@ void main() {
           id: 'pos_1',
           accountId: 'acc_1',
           assetId: 'asset_usd',
+          name: 'USD Cash',
+          archived: false,
           createdAt: now,
+          updatedAt: now,
         ),
       ],
     };
@@ -429,7 +441,10 @@ void main() {
           id: 'pos_1',
           accountId: 'acc_1',
           assetId: 'asset_usd',
+          name: 'USD Cash',
+          archived: false,
           createdAt: now,
+          updatedAt: now,
         ),
       ],
     });
@@ -464,7 +479,7 @@ void main() {
     );
 
     await cubit.load('acc_1');
-    await cubit.removeAsset(accountId: 'acc_1', assetId: 'asset_usd');
+    await cubit.removeAsset(subaccountId: 'pos_1');
 
     expect(cubit.state.items, isEmpty);
   });

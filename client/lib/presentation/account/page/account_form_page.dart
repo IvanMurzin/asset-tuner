@@ -159,15 +159,22 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                   ),
                                   DSRadioRow(
                                     title: l10n.accountsTypeCryptoWallet,
-                                    selected:
-                                        state.type == AccountType.cryptoWallet,
+                                    selected: state.type == AccountType.wallet,
                                     onTap: state.isSaving
                                         ? null
                                         : () => context
                                               .read<AccountFormCubit>()
-                                              .selectType(
-                                                AccountType.cryptoWallet,
-                                              ),
+                                              .selectType(AccountType.wallet),
+                                  ),
+                                  DSRadioRow(
+                                    title: l10n.accountsTypeExchange,
+                                    selected:
+                                        state.type == AccountType.exchange,
+                                    onTap: state.isSaving
+                                        ? null
+                                        : () => context
+                                              .read<AccountFormCubit>()
+                                              .selectType(AccountType.exchange),
                                   ),
                                   DSRadioRow(
                                     title: l10n.accountsTypeCash,

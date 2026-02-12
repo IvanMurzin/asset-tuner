@@ -8,7 +8,7 @@ part 'asset_rate_usd_dto.g.dart';
 abstract class AssetRateUsdDto with _$AssetRateUsdDto {
   const factory AssetRateUsdDto({
     @JsonName('asset_id') required String assetId,
-    @JsonName('usd_price') required String usdPrice,
+    @JsonName('usd_price') required Object usdPrice,
     @JsonName('as_of') required String asOfIso,
   }) = _AssetRateUsdDto;
 

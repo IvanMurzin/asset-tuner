@@ -145,9 +145,7 @@ class FakeAccountRepository implements IAccountRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount({
-    required String accountId,
-  }) async {
+  Future<Result<void>> deleteAccount({required String accountId}) async {
     _accounts.removeWhere((a) => a.id == accountId);
     return const Success(null);
   }

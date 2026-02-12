@@ -7,18 +7,12 @@ abstract final class BalanceEntryMapper {
   static BalanceEntryEntity toEntity(BalanceEntryDto dto) {
     return BalanceEntryEntity(
       id: dto.id,
-      accountAssetId: dto.accountAssetId,
+      subaccountId: dto.subaccountId,
       entryDate: DateTime.parse(dto.entryDateIso),
-      entryType: _typeFromWire(dto.entryType),
-      snapshotAmount: dto.snapshotAmount == null
+      snapshotAmount: Decimal.parse(dto.snapshotAmount),
+      diffAmount: dto.diffAmount == null
           ? null
-          : Decimal.parse(dto.snapshotAmount!),
-      deltaAmount: dto.deltaAmount == null
-          ? null
-          : Decimal.parse(dto.deltaAmount!),
-      impliedDeltaAmount: dto.impliedDeltaAmount == null
-          ? null
-          : Decimal.parse(dto.impliedDeltaAmount!),
+          : Decimal.parse(dto.diffAmount!),
       createdAt: DateTime.parse(dto.createdAtIso),
     );
   }
@@ -26,12 +20,10 @@ abstract final class BalanceEntryMapper {
   static BalanceEntryDto toDto(StoredBalanceEntry stored) {
     return BalanceEntryDto(
       id: stored.id,
-      accountAssetId: stored.accountAssetId,
+      subaccountId: stored.accountAssetId,
       entryDateIso: stored.entryDateIso,
-      entryType: stored.entryType,
-      snapshotAmount: stored.snapshotAmount,
-      deltaAmount: stored.deltaAmount,
-      impliedDeltaAmount: stored.impliedDeltaAmount,
+      snapshotAmount: stored.snapshotAmount ?? '0',
+      diffAmount: stored.impliedDeltaAmount,
       createdAtIso: stored.createdAtIso,
     );
   }
@@ -39,21 +31,13 @@ abstract final class BalanceEntryMapper {
   static StoredBalanceEntry toStored(BalanceEntryDto dto) {
     return StoredBalanceEntry(
       id: dto.id,
-      accountAssetId: dto.accountAssetId,
+      accountAssetId: dto.subaccountId,
       entryDateIso: dto.entryDateIso,
-      entryType: dto.entryType,
+      entryType: 'snapshot',
       snapshotAmount: dto.snapshotAmount,
-      deltaAmount: dto.deltaAmount,
-      impliedDeltaAmount: dto.impliedDeltaAmount,
+      deltaAmount: null,
+      impliedDeltaAmount: dto.diffAmount,
       createdAtIso: dto.createdAtIso,
     );
-  }
-
-  static BalanceEntryType _typeFromWire(String type) {
-    return switch (type) {
-      'snapshot' => BalanceEntryType.snapshot,
-      'delta' => BalanceEntryType.delta,
-      _ => BalanceEntryType.snapshot,
-    };
   }
 }

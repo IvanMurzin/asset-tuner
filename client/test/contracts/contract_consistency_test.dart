@@ -26,10 +26,11 @@ void main() {
       SupabaseFunctions.bootstrapProfile,
       SupabaseFunctions.createAccount,
       SupabaseFunctions.deleteAccount,
-      SupabaseFunctions.addAssetToAccount,
-      SupabaseFunctions.removeAssetFromAccount,
+      SupabaseFunctions.createSubaccount,
+      SupabaseFunctions.renameSubaccount,
+      SupabaseFunctions.deleteSubaccount,
       SupabaseFunctions.updateBaseCurrency,
-      SupabaseFunctions.updateBalance,
+      SupabaseFunctions.updateSubaccountBalance,
       SupabaseFunctions.updatePlan,
     };
 

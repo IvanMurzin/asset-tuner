@@ -1,6 +1,6 @@
-# Asset Tuner — Requirements
+# Asset Tuner — Requirements — MVP v2 (rewrite)
 
-**Last updated:** 2026-02-10
+**Last updated:** 2026-02-12
 
 Conventions:
 - **FR** = Functional Requirement
@@ -23,30 +23,34 @@ Conventions:
 - **FR-012**: Free tier base currency options are limited to **USD, EUR, RUB**; selecting any other base currency requires paid. **[Backend/Data]**
 
 ### Accounts (top-level containers)
-- **FR-020**: User can create an account with a name and type (Bank / Crypto Wallet / Cash / Other). **[Backend/Data]**
+- **FR-020**: User can create an account with a name and type (Bank / Wallet / Exchange / Cash / Other). **[Backend/Data]**
 - **FR-021**: User can edit account name/type.
 - **FR-022**: User can archive an account (hidden from main totals but recoverable). **[Backend/Data]**
 - **FR-023**: User can delete an account (with confirmation). **[Backend/Data]**
 
 ### Assets inside accounts
-- **FR-030**: User can add supported assets (fiat currencies and crypto tokens) into an account. **[Backend/Data]**
-- **FR-031**: Account may contain multiple assets (e.g., TrustWallet → BTC/ETH/USDT). **[Backend/Data]**
-- **FR-032**: Account may be single-asset (e.g., Cash USD) without extra nesting. **[Backend/Data]**
+- **FR-030**: User can add supported assets (fiat currencies and crypto tokens) into an account by creating a **subaccount (счёт)**. **[Backend/Data]**
+- **FR-031**: Account may contain multiple subaccounts (e.g., TrustWallet → “USDT (TRC20)”, “Bitcoin”). **[Backend/Data]**
+- **FR-032**: Account may contain multiple subaccounts with the **same asset** (e.g., two different USDT subaccounts). **[Backend/Data]**
 - **FR-033**: MVP does **not** allow custom assets. (Supported list only.)
 - **FR-034**: Supported fiat currencies and crypto tokens are provided by a backend catalog (full lists; not curated in client). **[Backend/Data]**
 
 ### Balance tracking (snapshots + deltas)
-- **FR-040**: User can record a **snapshot** balance for an account asset at any date. **[Backend/Data]**
-- **FR-041**: User can record a **delta adjustment** (+/−) for an account asset at any date. **[Backend/Data]**
-- **FR-042**: When user enters a snapshot, the system computes an implied delta vs the previous snapshot and stores the change history. **[Backend/Data]**
-- **FR-043**: App displays balance history per asset (at least as a list; charts optional).
-- **FR-044**: App supports any-date entries; UI provides a monthly update flow as the default shortcut.
-- **FR-045**: Snapshot updates are applied via a backend “update balance” operation that computes and stores the implied delta in a single operation. **[Backend/Data]**
+### Balance tracking (snapshot-only, MVP v2)
+- **FR-040**: User can record a **snapshot** balance for a subaccount (счёт). **[Backend/Data]**
+- **FR-041**: Snapshot date defaults to **today** (UI may add a date picker later). **[Backend/Data]**
+- **FR-042**: When user enters a snapshot, the system computes a **diff** vs the previous snapshot and stores it for history/analytics. **[Backend/Data]**
+- **FR-043**: App displays balance history per subaccount (at least as a list; charts optional).
+- **FR-045**: Snapshot updates are applied via a backend “update subaccount balance” operation that computes and stores the diff in a single operation. **[Backend/Data]**
 
 ### Conversion & totals
 - **FR-050**: App displays a **global total** converted into the user’s base currency. **[Backend/Data]**
-- **FR-051**: App displays per-account totals and per-asset amounts (original currency + converted where available).
-- **FR-052**: If a required rate is missing, app shows a **partial converted total** (priced holdings only) and indicates unpriced holdings; the “full total” is **N/A**. **[Backend/Data]**
+- **FR-051**: App displays per-account totals and per-subaccount amounts (original currency + converted where available).
+- **FR-052**: If a required rate is missing, app excludes that holding from totals and analytics (MVP v2). **[Backend/Data]**
+
+### Analytics (MVP v2)
+- **FR-080**: App shows a chart breakdown of holdings by currency (based on priced holdings only).
+- **FR-081**: App shows a history feed of balance updates with per-update diffs in the subaccount currency and in the user base currency (priced updates only).
 
 ### Rates (server-cached)
 - **FR-060**: System fetches fiat FX rates from OpenExchangeRates and stores them in DB. **[Backend/API]**
@@ -56,7 +60,7 @@ Conventions:
 - **FR-064**: System stores `usdPrice` for each supported asset; client computes conversion to base currency using USD as pivot. **[Backend/Data]**
 
 ### Monetization (freemium)
-- **FR-070**: App enforces free-tier limits: **5 accounts** and **20 tracked asset positions** (account-asset pairs). **[Backend/Data]**
+- **FR-070**: App enforces free-tier limits: **5 accounts** and **20 subaccounts**. **[Backend/Data]**
 - **FR-071**: App paywalls base currency selection beyond **USD, EUR, RUB**. **[Backend/Data]**
 - **FR-072**: App paywalls analytics (post-MVP capability), with stubs/UX in MVP allowed.
 - **FR-073**: Paid plan available as monthly + annual subscription. **[Backend/Data]**

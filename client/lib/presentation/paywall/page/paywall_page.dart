@@ -23,7 +23,7 @@ class PaywallPage extends StatelessWidget {
   String _reasonText(AppLocalizations l10n, PaywallReason reason) {
     return switch (reason) {
       PaywallReason.accountsLimit => l10n.paywallReasonAccounts,
-      PaywallReason.positionsLimit => l10n.paywallReasonPositions,
+      PaywallReason.subaccountsLimit => l10n.paywallReasonSubaccounts,
       PaywallReason.baseCurrency => l10n.paywallReasonBaseCurrency,
     };
   }
@@ -199,7 +199,7 @@ class PaywallPage extends StatelessWidget {
                                   ),
                                   SizedBox(height: spacing.s12),
                                   _FeatureRow(
-                                    text: l10n.paywallFeaturePositions,
+                                    text: l10n.paywallFeatureSubaccounts,
                                   ),
                                   SizedBox(height: spacing.s12),
                                   _FeatureRow(

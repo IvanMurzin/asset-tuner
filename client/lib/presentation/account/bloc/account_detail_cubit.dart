@@ -119,16 +119,12 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
         .where((a) => a.code == profile.baseCurrency)
         .firstOrNull;
 
-    final positions = await _getAccountAssets(
-      accountId: accountId,
-    );
+    final positions = await _getAccountAssets(accountId: accountId);
 
     switch (positions) {
       case Success<List<AccountAssetEntity>>(value: final list):
         final positionIds = list.map((p) => p.id).toSet();
-        final balances = await _getCurrentBalances(
-          accountAssetIds: positionIds,
-        );
+        final balances = await _getCurrentBalances(subaccountIds: positionIds);
         final currentByPosition = switch (balances) {
           Success<Map<String, Decimal>>(value: final map) => map,
           FailureResult<Map<String, Decimal>>() => const <String, Decimal>{},
@@ -156,7 +152,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
                 )
                 .whereType<AccountAssetViewItem>()
                 .toList()
-              ..sort((a, b) => a.assetCode.compareTo(b.assetCode));
+              ..sort((a, b) => a.name.compareTo(b.name));
 
         for (final item in viewItems) {
           if (item.originalAmount == Decimal.zero) {
@@ -200,38 +196,34 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     emit(state.copyWith(navigation: null));
   }
 
-  Future<void> removeAsset({
-    required String accountId,
-    required String assetId,
-  }) async {
+  Future<void> removeAsset({required String subaccountId}) async {
     if (state.status != AccountDetailStatus.ready) {
       return;
     }
 
     emit(
       state.copyWith(
-        busyAssetIds: {...state.busyAssetIds, assetId},
+        busyAssetIds: {...state.busyAssetIds, subaccountId},
         bannerFailureCode: null,
       ),
     );
 
-    final result = await _removeAssetFromAccount(
-      accountId: accountId,
-      assetId: assetId,
-    );
+    final result = await _removeAssetFromAccount(subaccountId: subaccountId);
 
     switch (result) {
       case Success<void>():
         emit(
           state.copyWith(
-            busyAssetIds: {...state.busyAssetIds}..remove(assetId),
-            items: state.items.where((i) => i.assetId != assetId).toList(),
+            busyAssetIds: {...state.busyAssetIds}..remove(subaccountId),
+            items: state.items
+                .where((i) => i.subaccountId != subaccountId)
+                .toList(),
           ),
         );
       case FailureResult<void>(failure: final failure):
         emit(
           state.copyWith(
-            busyAssetIds: {...state.busyAssetIds}..remove(assetId),
+            busyAssetIds: {...state.busyAssetIds}..remove(subaccountId),
             bannerFailureCode: failure.code,
           ),
         );
@@ -247,10 +239,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     }
 
     emit(state.copyWith(isAccountActionBusy: true, bannerFailureCode: null));
-    final result = await _setArchived(
-      accountId: accountId,
-      archived: archived,
-    );
+    final result = await _setArchived(accountId: accountId, archived: archived);
 
     switch (result) {
       case Success<AccountEntity>(value: final updated):
@@ -321,8 +310,9 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
         : null;
 
     return AccountAssetViewItem(
-      accountAssetId: position.id,
+      subaccountId: position.id,
       assetId: position.assetId,
+      name: position.name,
       assetCode: asset.code,
       assetName: asset.name,
       assetKind: asset.kind,
@@ -350,8 +340,9 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
 
 class AccountAssetViewItem {
   const AccountAssetViewItem({
-    required this.accountAssetId,
+    required this.subaccountId,
     required this.assetId,
+    required this.name,
     required this.assetCode,
     required this.assetName,
     required this.assetKind,
@@ -359,8 +350,9 @@ class AccountAssetViewItem {
     required this.convertedAmount,
   });
 
-  final String accountAssetId;
+  final String subaccountId;
   final String assetId;
+  final String name;
   final String assetCode;
   final String assetName;
   final AssetKind assetKind;

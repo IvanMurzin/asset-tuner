@@ -8,12 +8,10 @@ part 'balance_entry_dto.g.dart';
 abstract class BalanceEntryDto with _$BalanceEntryDto {
   const factory BalanceEntryDto({
     required String id,
-    @JsonName('account_asset_id') required String accountAssetId,
+    @JsonName('subaccount_id') required String subaccountId,
     @JsonName('entry_date') required String entryDateIso,
-    @JsonName('entry_type') required String entryType,
-    @JsonName('snapshot_amount') String? snapshotAmount,
-    @JsonName('delta_amount') String? deltaAmount,
-    @JsonName('implied_delta_amount') String? impliedDeltaAmount,
+    @JsonName('snapshot_amount') required String snapshotAmount,
+    @JsonName('diff_amount') String? diffAmount,
     @JsonName('created_at') required String createdAtIso,
   }) = _BalanceEntryDto;
 

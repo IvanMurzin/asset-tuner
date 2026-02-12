@@ -20,7 +20,9 @@ abstract class OverviewAccountItem with _$OverviewAccountItem {
   const factory OverviewAccountItem({
     required String accountId,
     required String accountName,
+    required AccountType accountType,
     required Decimal total,
+    required int subaccountsCount,
     required bool hasUnpricedHoldings,
   }) = _OverviewAccountItem;
 }

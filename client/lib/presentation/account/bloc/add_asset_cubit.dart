@@ -1,10 +1,10 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/add_asset_to_account_usecase.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/count_asset_positions_usecase.dart';
-import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
@@ -23,7 +23,6 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     this._getProfile,
     this._bootstrapProfile,
     this._getAssets,
-    this._getAccountAssets,
     this._countPositions,
     this._addAssetToAccount,
   ) : super(const AddAssetState());
@@ -32,7 +31,6 @@ class AddAssetCubit extends Cubit<AddAssetState> {
   final GetProfileUseCase _getProfile;
   final BootstrapProfileUseCase _bootstrapProfile;
   final GetAssetsUseCase _getAssets;
-  final GetAccountAssetsUseCase _getAccountAssets;
   final CountAssetPositionsUseCase _countPositions;
   final AddAssetToAccountUseCase _addAssetToAccount;
 
@@ -41,10 +39,13 @@ class AddAssetCubit extends Cubit<AddAssetState> {
       state.copyWith(
         status: AddAssetStatus.loading,
         failureCode: null,
-        duplicateError: false,
         navigation: null,
         selectedAssetId: null,
         query: '',
+        name: '',
+        balanceText: '',
+        nameError: null,
+        balanceError: null,
       ),
     );
 
@@ -71,18 +72,11 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     }
 
     final assets = await _getAssets();
-    final existing = await _getAccountAssets(
-      accountId: accountId,
-    );
     final positionCount = await _countPositions();
 
     final assetList = switch (assets) {
       Success<List<AssetEntity>>(value: final list) => list,
       FailureResult<List<AssetEntity>>() => const <AssetEntity>[],
-    };
-    final existingAssetIds = switch (existing) {
-      Success(value: final list) => list.map((p) => p.assetId).toSet(),
-      FailureResult() => <String>{},
     };
     final count = switch (positionCount) {
       Success<int>(value: final v) => v,
@@ -91,10 +85,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
 
     if (assetList.isEmpty) {
       emit(
-        state.copyWith(
-          status: AddAssetStatus.error,
-          failureCode: 'unknown',
-        ),
+        state.copyWith(status: AddAssetStatus.error, failureCode: 'unknown'),
       );
       return;
     }
@@ -109,7 +100,6 @@ class AddAssetCubit extends Cubit<AddAssetState> {
         entitlements: profile.entitlements,
         assets: sortedAssets,
         visibleAssets: sortedAssets,
-        existingAssetIds: existingAssetIds,
         totalPositionsCount: count,
       ),
     );
@@ -135,8 +125,15 @@ class AddAssetCubit extends Cubit<AddAssetState> {
   }
 
   void selectAsset(String assetId) {
-    final isDuplicate = state.existingAssetIds.contains(assetId);
-    emit(state.copyWith(selectedAssetId: assetId, duplicateError: isDuplicate));
+    emit(state.copyWith(selectedAssetId: assetId));
+  }
+
+  void updateName(String name) {
+    emit(state.copyWith(name: name, nameError: null));
+  }
+
+  void updateBalance(String value) {
+    emit(state.copyWith(balanceText: value, balanceError: null));
   }
 
   Future<void> addSelected() async {
@@ -148,14 +145,27 @@ class AddAssetCubit extends Cubit<AddAssetState> {
       return;
     }
 
-    if (state.existingAssetIds.contains(assetId)) {
-      emit(state.copyWith(duplicateError: true));
+    final name = state.name.trim();
+    if (name.isEmpty) {
+      emit(state.copyWith(nameError: 'required'));
+      return;
+    }
+
+    final amountRaw = state.balanceText.trim().replaceAll(',', '.');
+    if (amountRaw.isEmpty) {
+      emit(state.copyWith(balanceError: 'required'));
+      return;
+    }
+
+    final snapshotAmount = _parseDecimal(amountRaw);
+    if (snapshotAmount == null) {
+      emit(state.copyWith(balanceError: 'invalid'));
       return;
     }
 
     final entitlements = state.entitlements;
     if (entitlements != null &&
-        state.totalPositionsCount >= entitlements.maxPositions) {
+        state.totalPositionsCount >= entitlements.maxSubaccounts) {
       emit(
         state.copyWith(
           navigation: const AddAssetNavigation(
@@ -169,7 +179,10 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     emit(state.copyWith(isSaving: true, failureCode: null));
     final result = await _addAssetToAccount(
       accountId: accountId,
+      name: name,
       assetId: assetId,
+      snapshotAmount: snapshotAmount,
+      entryDate: DateTime.now(),
     );
 
     switch (result) {
@@ -200,6 +213,14 @@ class AddAssetCubit extends Cubit<AddAssetState> {
           case FailureResult():
             return null;
         }
+    }
+  }
+
+  Decimal? _parseDecimal(String value) {
+    try {
+      return Decimal.parse(value);
+    } catch (_) {
+      return null;
     }
   }
 

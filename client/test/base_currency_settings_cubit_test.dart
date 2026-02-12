@@ -121,8 +121,7 @@ class FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
-    return updateResult ??
-        Success(freeProfile(baseCurrency: baseCurrency));
+    return updateResult ?? Success(freeProfile(baseCurrency: baseCurrency));
   }
 
   @override

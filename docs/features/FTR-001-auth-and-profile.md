@@ -27,9 +27,9 @@ Out of scope:
 
 ## Acceptance Criteria (BDD-style, unambiguous)
 - Given the app is launched and the user is not authenticated, when the user opens the app, then they are shown the Sign-in screen.
-- Given the user signs in with email and password, when the credentials are valid, then the app establishes a session and navigates to the next onboarding step or the Overview screen (depending on profile completeness).
+- Given the user signs in with email and password, when the credentials are valid, then the app establishes a session and navigates to the next onboarding step or the Main screen (depending on profile completeness).
 - Given the user signs up with email and password, when the credentials are valid, then the app requests an OTP and shows a “check your email” state.
-- Given the user completes OTP verification successfully, when the auth session is established, then the app navigates to the next onboarding step or the Overview screen (depending on profile completeness).
+- Given the user completes OTP verification successfully, when the auth session is established, then the app navigates to the next onboarding step or the Main screen (depending on profile completeness).
 - Given Google/Apple sign-in is configured, when the user signs in with Google/Apple successfully, then the app establishes a Supabase session and proceeds identically to OTP sign-in.
 - Given the user is authenticated, when the app is killed and restarted, then the session is restored and the user is not asked to sign in again (unless the session is expired/invalid).
 - Given a new authenticated user without an existing profile row, when the app completes sign-in, then it creates (or upserts) a `profiles` row with:
@@ -42,7 +42,7 @@ Out of scope:
 - Screen: Sign-up (email + password + confirm password)
 - Screen: OTP verification
 - Screen: Loading/splash (session restore)
-- Screen: Post-sign-in router (decides whether to show base currency selection or Overview)
+- Screen: Post-sign-in router (decides whether to show base currency selection or Main)
 
 ## States (loading/empty/error/success)
 - Loading: restoring session; waiting for OTP verification; OAuth web flow.

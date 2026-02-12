@@ -8,7 +8,7 @@ part 'entitlements_dto.g.dart';
 abstract class EntitlementsDto with _$EntitlementsDto {
   const factory EntitlementsDto({
     @JsonName('max_accounts') required int maxAccounts,
-    @JsonName('max_positions') required int maxPositions,
+    @JsonName('max_subaccounts') required int maxSubaccounts,
     @JsonName('any_base_currency') required bool anyBaseCurrency,
     @JsonName('allowed_base_currency_codes')
     @Default(<String>[])

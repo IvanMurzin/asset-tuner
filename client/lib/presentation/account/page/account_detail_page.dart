@@ -189,10 +189,9 @@ class AccountDetailPage extends StatelessWidget {
                               .load(accountId),
                         ),
                         _ => _PositionsContent(
-                          accountId: account.id,
                           items: state.items,
-                          isBusy: (assetId) =>
-                              state.busyAssetIds.contains(assetId),
+                          isBusy: (subaccountId) =>
+                              state.busyAssetIds.contains(subaccountId),
                           onAddAsset: () async {
                             await context.push<String>(
                               AppRoutes.accountAddAsset.replaceFirst(
@@ -217,10 +216,7 @@ class AccountDetailPage extends StatelessWidget {
                             }
                             await context
                                 .read<AccountDetailCubit>()
-                                .removeAsset(
-                                  accountId: account.id,
-                                  assetId: item.assetId,
-                                );
+                                .removeAsset(subaccountId: item.subaccountId);
                           },
                         ),
                       },
@@ -310,7 +306,6 @@ class AccountDetailPage extends StatelessWidget {
 
 class _PositionsContent extends StatelessWidget {
   const _PositionsContent({
-    required this.accountId,
     required this.items,
     required this.isBusy,
     required this.onAddAsset,
@@ -318,9 +313,8 @@ class _PositionsContent extends StatelessWidget {
     required this.onRemove,
   });
 
-  final String accountId;
   final List<AccountAssetViewItem> items;
-  final bool Function(String assetId) isBusy;
+  final bool Function(String subaccountId) isBusy;
   final VoidCallback onAddAsset;
   final String baseCurrency;
   final Future<void> Function(AccountAssetViewItem item) onRemove;
@@ -333,9 +327,9 @@ class _PositionsContent extends StatelessWidget {
     if (items.isEmpty) {
       return Center(
         child: DSEmptyState(
-          title: l10n.accountDetailEmptyTitle,
-          message: l10n.accountDetailEmptyBody,
-          actionLabel: l10n.assetAddCta,
+          title: l10n.subaccountEmptyTitle,
+          message: l10n.subaccountEmptyBody,
+          actionLabel: l10n.subaccountCreateCta,
           onAction: onAddAsset,
           icon: Icons.add_circle_outline,
         ),
@@ -345,7 +339,7 @@ class _PositionsContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DSSectionTitle(title: l10n.accountDetailAssetsTitle),
+        DSSectionTitle(title: l10n.subaccountListTitle),
         SizedBox(height: spacing.s12),
         Expanded(
           child: DSCard(
@@ -355,9 +349,9 @@ class _PositionsContent extends StatelessWidget {
               separatorBuilder: (context, index) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final item = items[index];
-                final busy = isBusy(item.assetId);
+                final busy = isBusy(item.subaccountId);
                 return DSListRow(
-                  title: item.assetCode,
+                  title: item.name,
                   subtitle:
                       '${item.assetName} · ${_kindLabel(l10n, item.assetKind)} · ${_originalAmountText(context, item)}',
                   trailing: _AssetRowTrailing(
@@ -367,9 +361,10 @@ class _PositionsContent extends StatelessWidget {
                     onRemove: () => onRemove(item),
                   ),
                   onTap: () => context.push(
-                    AppRoutes.assetPositionDetail
-                        .replaceFirst(':accountId', accountId)
-                        .replaceFirst(':assetId', item.assetId),
+                    AppRoutes.subaccountDetail.replaceFirst(
+                      ':id',
+                      item.subaccountId,
+                    ),
                   ),
                 );
               },
@@ -378,7 +373,7 @@ class _PositionsContent extends StatelessWidget {
         ),
         SizedBox(height: spacing.s16),
         DSButton(
-          label: l10n.assetAddCta,
+          label: l10n.subaccountCreateCta,
           fullWidth: true,
           onPressed: onAddAsset,
         ),
@@ -441,7 +436,7 @@ class _AssetRowTrailing extends StatelessWidget {
           enabled: !isBusy,
           items: [
             DSOverflowMenuItem(
-              label: l10n.assetRemove,
+              label: l10n.subaccountDeleteCta,
               icon: Icons.remove_circle_outline,
               isDestructive: true,
               onTap: onRemove,

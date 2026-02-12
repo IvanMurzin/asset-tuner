@@ -27,7 +27,7 @@ Confirm or set the user’s base currency immediately after first sign-in (optio
   - Paid entitlement: any fiat selectable and persisted.
 - Continue:
   - Persists selection (if changed and permitted).
-  - Navigates to `SCR-004` (Overview).
+  - Navigates to `SCR-004` (Main).
 
 ## States
 - Loading:
@@ -51,4 +51,3 @@ Confirm or set the user’s base currency immediately after first sign-in (optio
   - Treat as error (catalog expected non-empty).
 - Entitlements unknown at onboarding time:
   - Treat as free tier for safety; show a non-blocking banner if paywall blocks and entitlements couldn’t be verified.
-

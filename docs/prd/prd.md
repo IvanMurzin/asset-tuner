@@ -1,6 +1,6 @@
 # Asset Tuner — PRD
 
-**Last updated:** 2026-02-10  
+**Last updated:** 2026-02-12  
 **Platforms:** iOS + Android (Flutter)  
 **Backend:** Supabase (Auth + Postgres + scheduled jobs)  
 **Source of truth:** this `docs/prd/` folder
@@ -33,6 +33,14 @@ Represents a real-world place where value is stored (bank account, crypto wallet
 - Can be **single-asset** (e.g., “Cash USD”).
 - Can be **multi-asset** (e.g., “TrustWallet” containing BTC/ETH/USDT).
 
+### Subaccount (счёт) inside an account (MVP v2)
+A subaccount is the concrete thing the user tracks and updates.
+- Each subaccount has:
+  - required user-defined name (e.g., “USDT (TRC20)”, “Bitcoin”),
+  - an immutable currency/token (an `Asset` from catalog),
+  - a balance history (snapshots).
+- There can be **unlimited** subaccounts under an account, including multiple subaccounts with the same currency.
+
 ### Asset
 A currency/token held inside an account.
 - MVP supports **known assets only** (no custom assets).
@@ -43,41 +51,37 @@ A currency/token held inside an account.
 
 ### Balance entry
 Users update holdings over time using:
-- **Snapshot**: “this is my current balance now”.
-- **Adjustment (delta)**: “+X / −Y since last time”.
+- **Snapshot (MVP v2)**: “this is my balance today”.
 
-**Important behavioral decision:** when the user enters a snapshot, the system computes and stores an implied delta relative to the previous snapshot, so history always reflects “what changed”.
-To keep history consistent across devices, snapshot updates are applied via a backend “update balance” operation that creates the implied delta.
+**Important behavioral decision (MVP v2):** when the user enters a snapshot, the system computes and stores a **diff** relative to the previous snapshot, so history reflects “what changed”.
+To keep history consistent across devices, snapshot updates are applied via a backend “update subaccount balance” operation that computes and stores the diff.
 
 ## 6) Key user flows (MVP)
 1. **Onboarding**
    - Sign in (Supabase OTP email; optional Google/Apple).
    - Choose base currency (default USD).
 2. **Create account**
-   - Choose account type (Bank / Crypto Wallet / Cash / Other).
-   - Optional grouping hint (but MVP hierarchy is one level: Account → Assets).
-3. **Add assets to account**
-   - For bank/cash: typically fiat currencies.
-   - For crypto wallet: multiple tokens.
-4. **Enter balance**
-   - Enter snapshot or delta with a date.
-   - UI emphasizes a **monthly update** flow, while still allowing any-date entries.
-   - App shows computed change (delta) and updates totals.
-5. **View overview**
+   - Choose account type (Bank / Wallet / Exchange / Cash / Other).
+3. **Add subaccounts (счета) to account (MVP v2)**
+   - Choose currency/token from catalog, enter a user-defined name, enter initial balance (snapshot for today).
+4. **Update balance (MVP v2)**
+   - Enter a snapshot amount (date = today).
+   - App shows computed diff and updates totals.
+5. **View main screen**
    - Global total in base currency.
-   - Breakdown by account; drill-down to per-asset balances and history.
+   - Breakdown by account; drill-down to per-subaccount balances and history.
 6. **Change base currency**
    - Global total recalculates using server-cached rates.
-   - Missing-rate behavior: show **partial totals** (priced holdings) and mark the full total as **N/A** if not all holdings can be priced.
+   - Rates missing behavior: totals exclude positions that cannot be priced (MVP v2); analytics excludes them as well.
 
 ## 7) MVP feature list
 ### Must-have
 - Auth (Supabase): email OTP + Google/Apple sign-in.
 - Multi-device sync.
 - Account CRUD (create/edit/archive/delete).
-- Asset management inside account (add/remove asset, reorder optional).
-- Balance entries (snapshot + delta), any date.
-- Global total + breakdown; drill-down.
+- Subaccounts inside account (create/rename/delete; unlimited; currency immutable).
+- Snapshot-only balance entries (today) + history.
+- Global total + breakdown; drill-down to account/subaccount.
 - Currency conversion via server-cached rates (hourly refresh).
 - Freemium limits + paywall UX.
 
@@ -91,12 +95,12 @@ MVP includes free tier + paid upgrade.
 
 ### Free tier (MVP)
 - Up to **5 accounts**
-- Up to **20 tracked asset positions** (account-asset pairs)
+- Up to **20 subaccounts** (счета)
 - Base currency options: **USD, EUR, RUB**
 - No free trial
 
 ### Paid tier (MVP)
-- Higher limits (accounts + tracked asset positions)
+- Higher limits (accounts + subaccounts)
 - Any base currency
 - (Later) analytics features
 
@@ -115,8 +119,7 @@ MVP includes free tier + paid upgrade.
 - Conversion to any base currency is calculated client-side using USD as pivot.
 
 **Missing rates:**
-- App shows a **partial converted total** (sum of priced holdings) and clearly indicates unpriced holdings.
-- If not all holdings can be priced, the “full” converted total is **N/A** (original amounts still visible).
+- MVP v2 excludes positions that cannot be priced from totals and analytics. The UI may show a small “some holdings excluded” banner, but does not list unpriced rows in analytics.
 
 ## 10) Constraints
 - Flutter client follows repository architecture rules in `client/AGENTS.md` (layered architecture).

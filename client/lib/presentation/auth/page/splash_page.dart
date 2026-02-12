@@ -25,8 +25,8 @@ class SplashPage extends StatelessWidget {
                 context.go(AppRoutes.signIn);
               case SplashDestination.onboardingBaseCurrency:
                 context.go(AppRoutes.onboardingBaseCurrency);
-              case SplashDestination.overview:
-                context.go(AppRoutes.overview);
+              case SplashDestination.main:
+                context.go(AppRoutes.main);
             }
           }
         },

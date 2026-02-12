@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:decimal/decimal.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
 import 'package:asset_tuner/domain/account_asset/repository/i_account_asset_repository.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/add_asset_to_account_usecase.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/count_asset_positions_usecase.dart';
-import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/asset/repository/i_asset_repository.dart';
 import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
@@ -176,14 +176,20 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
   @override
   Future<Result<AccountAssetEntity>> addAssetToAccount({
     required String accountId,
+    required String name,
     required String assetId,
+    required Decimal snapshotAmount,
+    required DateTime entryDate,
   }) async {
-    final now = DateTime(2026, 2, 10);
+    final now = DateTime(2026, 2, 10, 10, 0);
     final created = AccountAssetEntity(
       id: 'pos_1',
       accountId: accountId,
       assetId: assetId,
+      name: name,
+      archived: false,
       createdAt: now,
+      updatedAt: now,
     );
     final list = <AccountAssetEntity>[
       ...(positionsByAccount[accountId] ?? const []),
@@ -196,8 +202,17 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<void>> removeAssetFromAccount({
-    required String accountId,
-    required String assetId,
+    required String subaccountId,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
+  }
+
+  @override
+  Future<Result<AccountAssetEntity>> renameSubaccount({
+    required String subaccountId,
+    required String name,
   }) async {
     return const FailureResult(
       Failure(code: 'validation', message: 'Not used'),
@@ -221,12 +236,6 @@ void main() {
           ),
         ]),
       ),
-      GetAccountAssetsUseCase(
-        FakeAccountAssetRepository(
-          positionsByAccount: {},
-          totalPositionsCount: 0,
-        ),
-      ),
       CountAssetPositionsUseCase(
         FakeAccountAssetRepository(
           positionsByAccount: {},
@@ -244,53 +253,6 @@ void main() {
     await cubit.load('acc_1');
 
     expect(cubit.state.navigation?.destination, AddAssetDestination.signIn);
-  });
-
-  test('selectAsset shows duplicate error when already in account', () async {
-    final repo = FakeAccountAssetRepository(
-      positionsByAccount: {
-        'acc_1': [
-          AccountAssetEntity(
-            id: 'pos_0',
-            accountId: 'acc_1',
-            assetId: 'asset_usd',
-            createdAt: DateTime(2026, 2, 10),
-          ),
-        ],
-      },
-      totalPositionsCount: 1,
-    );
-
-    final cubit = AddAssetCubit(
-      GetCachedSessionUseCase(
-        FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
-        ),
-      ),
-      GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
-      BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
-      GetAssetsUseCase(
-        FakeAssetRepository(const [
-          AssetEntity(
-            id: 'asset_usd',
-            kind: AssetKind.fiat,
-            code: 'USD',
-            name: 'United States Dollar',
-          ),
-        ]),
-      ),
-      GetAccountAssetsUseCase(repo),
-      CountAssetPositionsUseCase(repo),
-      AddAssetToAccountUseCase(repo),
-    );
-
-    await cubit.load('acc_1');
-    cubit.selectAsset('asset_usd');
-
-    expect(cubit.state.duplicateError, isTrue);
   });
 
   test(
@@ -322,13 +284,14 @@ void main() {
             ),
           ]),
         ),
-        GetAccountAssetsUseCase(repo),
         CountAssetPositionsUseCase(repo),
         AddAssetToAccountUseCase(repo),
       );
 
       await cubit.load('acc_1');
       cubit.selectAsset('asset_btc');
+      cubit.updateName('Bitcoin');
+      cubit.updateBalance('1');
       await cubit.addSelected();
 
       expect(cubit.state.navigation?.destination, AddAssetDestination.paywall);
@@ -362,13 +325,14 @@ void main() {
           ),
         ]),
       ),
-      GetAccountAssetsUseCase(repo),
       CountAssetPositionsUseCase(repo),
       AddAssetToAccountUseCase(repo),
     );
 
     await cubit.load('acc_1');
     cubit.selectAsset('asset_btc');
+    cubit.updateName('Bitcoin');
+    cubit.updateBalance('1');
     await cubit.addSelected();
 
     expect(cubit.state.navigation?.destination, AddAssetDestination.backAdded);

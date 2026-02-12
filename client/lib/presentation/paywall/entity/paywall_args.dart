@@ -1,4 +1,4 @@
-enum PaywallReason { accountsLimit, positionsLimit, baseCurrency }
+enum PaywallReason { accountsLimit, subaccountsLimit, baseCurrency }
 
 class PaywallArgs {
   const PaywallArgs({required this.reason, this.requestedBaseCurrencyCode});

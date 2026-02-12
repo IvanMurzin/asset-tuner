@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show HttpMethod, SupabaseClient;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show HttpMethod, SupabaseClient;
 
 void main() {
   final supabaseUrl = Platform.environment['SUPABASE_URL'];

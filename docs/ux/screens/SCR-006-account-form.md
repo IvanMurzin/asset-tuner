@@ -9,7 +9,8 @@ Create a new account or edit an existing account’s name/type.
   - Close/back
 - Form
   - Account name input
-  - Account type selector (Bank / Crypto Wallet / Cash / Other)
+  - Account type selector (Bank / Wallet / Exchange / Cash / Other)
+  - Optional: type preview (small gradient/icon preview that matches the cards on Main)
 - Footer
   - Primary CTA: “Save”
   - Secondary CTA: “Cancel” (optional; back also works)
@@ -31,7 +32,7 @@ Create a new account or edit an existing account’s name/type.
     - block save and show `SCR-013` paywall (reason “accounts limit”)
   - Otherwise submit create/edit.
   - On success:
-    - Navigate back to `SCR-005` (Accounts list) or forward to `SCR-007` (Account detail).
+    - Navigate to `SCR-007` (Account detail) or back to `SCR-004` (Main) depending on entry point.
 - Cancel/back:
   - If changes exist, optionally confirm discard (nice-to-have; can be omitted in MVP).
 
@@ -50,7 +51,7 @@ Create a new account or edit an existing account’s name/type.
 - Name label: “Account name”
 - Name hint: “e.g., Cash USD”
 - Type label: “Type”
-- Types: “Bank”, “Crypto wallet”, “Cash”, “Other”
+- Types: “Bank”, “Wallet”, “Exchange”, “Cash”, “Other”
 - Save: “Save”
 - Cancel: “Cancel”
 - Validation: “Name is required”
@@ -61,4 +62,3 @@ Create a new account or edit an existing account’s name/type.
   - Allowed (names are labels); do not block.
 - Offline:
   - Saving disabled with explanation “You’re offline. Changes are disabled.”
-

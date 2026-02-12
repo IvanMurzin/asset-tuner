@@ -1,16 +1,22 @@
-# SCR-009: Settings
+# SCR-009: Profile (MVP v2)
+
+See also: `docs/ux/navigation.md`.
 
 ## Purpose
-Provide access to base currency settings and subscription management.
+Provide access to user preferences and account-level settings, including base currency and subscription (if enabled).
 
 ## Layout sections
-- App bar: “Settings”
+- App bar: “Profile”
 - Sections:
   - Preferences
     - Base currency row (shows current code)
-  - Subscription
-    - Plan status row (Free/Paid + expires info if available)
+    - Language row
+    - Theme row
+  - Subscription (optional)
+    - Plan status row
     - Manage subscription row
+  - Account
+    - Sign out
 
 ## Components
 - DS: `DSSectionTitle`
@@ -34,7 +40,7 @@ Provide access to base currency settings and subscription management.
   - Rows show current base currency and plan status.
 
 ## Copy (key text)
-- Title: “Settings”
+- Title: “Profile”
 - Base currency: “Base currency”
 - Subscription section: “Subscription”
 - Plan (free): “Free plan”
@@ -46,4 +52,3 @@ Provide access to base currency settings and subscription management.
 ## Edge cases
 - Entitlements unknown:
   - Treat as free tier for gating; make messaging non-blocking.
-

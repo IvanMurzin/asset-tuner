@@ -8,6 +8,8 @@ import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/account/usecase/get_accounts_usecase.dart';
 import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
+import 'package:asset_tuner/domain/account_asset/usecase/remove_asset_from_account_usecase.dart';
+import 'package:asset_tuner/domain/account_asset/usecase/rename_subaccount_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
@@ -34,6 +36,8 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     this._getAssets,
     this._getHistory,
     this._getLatestUsdRates,
+    this._removeSubaccount,
+    this._renameSubaccount,
   ) : super(const AssetPositionDetailState());
 
   final GetCachedSessionUseCase _getCachedSession;
@@ -44,11 +48,10 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
   final GetAssetsUseCase _getAssets;
   final GetBalanceHistoryUseCase _getHistory;
   final GetLatestUsdRatesUseCase _getLatestUsdRates;
+  final RemoveAssetFromAccountUseCase _removeSubaccount;
+  final RenameSubaccountUseCase _renameSubaccount;
 
-  Future<void> load({
-    required String accountId,
-    required String assetId,
-  }) async {
+  Future<void> load({required String subaccountId}) async {
     emit(
       state.copyWith(
         status: AssetPositionDetailStatus.loading,
@@ -91,30 +94,23 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       FailureResult<RatesSnapshotEntity?>() => null,
     };
 
-    final accounts = await _getAccounts();
-    final account = switch (accounts) {
-      Success<List<AccountEntity>>(value: final list) =>
-        list.where((a) => a.id == accountId).firstOrNull,
-      FailureResult<List<AccountEntity>>() => null,
+    final accountsResult = await _getAccounts();
+    final accounts = switch (accountsResult) {
+      Success<List<AccountEntity>>(value: final list) => list,
+      FailureResult<List<AccountEntity>>() => const <AccountEntity>[],
     };
+
+    final tuple = await _findSubaccount(accounts, subaccountId);
+    final account = tuple?.account;
+    final subaccount = tuple?.subaccount;
 
     final assetsResult = await _getAssets();
     final assets = switch (assetsResult) {
       Success<List<AssetEntity>>(value: final list) => list,
       FailureResult<List<AssetEntity>>() => null,
     };
-    final asset = assets?.firstWhereOrNull((a) => a.id == assetId);
-    final baseAsset = assets?.firstWhereOrNull(
-      (a) => a.code == profile.baseCurrency,
-    );
 
-    final baseUsdPrice = _baseUsdPrice(
-      baseCurrencyCode: profile.baseCurrency,
-      baseAssetId: baseAsset?.id,
-      snapshot: ratesSnapshot,
-    );
-
-    if (account == null || asset == null) {
+    if (account == null || subaccount == null || assets == null) {
       emit(
         state.copyWith(
           status: AssetPositionDetailStatus.error,
@@ -124,15 +120,12 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       return;
     }
 
-    final positions = await _getAccountAssets(
-      accountId: accountId,
+    final asset = assets.firstWhereOrNull((a) => a.id == subaccount.assetId);
+    final baseAsset = assets.firstWhereOrNull(
+      (a) => a.code == profile.baseCurrency,
     );
-    final position = switch (positions) {
-      Success<List<AccountAssetEntity>>(value: final list) =>
-        list.where((p) => p.assetId == assetId).firstOrNull,
-      FailureResult<List<AccountAssetEntity>>() => null,
-    };
-    if (position == null) {
+
+    if (asset == null) {
       emit(
         state.copyWith(
           status: AssetPositionDetailStatus.error,
@@ -143,34 +136,43 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     }
 
     final firstPage = await _getHistory(
-      accountAssetId: position.id,
+      subaccountId: subaccount.id,
       limit: 50,
       offset: 0,
     );
 
     switch (firstPage) {
       case Success<BalanceHistoryPageEntity>(value: final page):
-        final current = await _computeCurrentBalance(
-          accountAssetId: position.id,
+        final current = page.entries.isEmpty
+            ? Decimal.zero
+            : page.entries.first.snapshotAmount;
+
+        final baseUsdPrice = _baseUsdPrice(
+          baseCurrencyCode: profile.baseCurrency,
+          baseAssetId: baseAsset?.id,
+          snapshot: ratesSnapshot,
         );
+
         final converted = _toConvertedValue(
           originalAmount: current,
-          assetId: assetId,
+          assetId: asset.id,
           baseUsdPrice: baseUsdPrice,
           ratesSnapshot: ratesSnapshot,
         );
         final isUnpriced = current != Decimal.zero && converted == null;
+
         emit(
           state.copyWith(
             status: AssetPositionDetailStatus.ready,
-            accountId: accountId,
-            assetId: assetId,
+            accountId: account.id,
             accountName: account.name,
+            subaccountId: subaccount.id,
+            subaccountName: subaccount.name,
+            assetId: asset.id,
             assetCode: asset.code,
             assetName: asset.name,
             baseCurrency: profile.baseCurrency,
             ratesAsOf: ratesSnapshot?.asOf,
-            accountAssetId: position.id,
             currentBalance: current,
             convertedValue: converted,
             isUnpriced: isUnpriced,
@@ -183,27 +185,15 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
           state.copyWith(
             status: AssetPositionDetailStatus.error,
             failureCode: failure.code,
-            accountId: accountId,
-            assetId: assetId,
-            accountName: account.name,
-            assetCode: asset.code,
-            assetName: asset.name,
-            baseCurrency: profile.baseCurrency,
-            ratesAsOf: ratesSnapshot?.asOf,
-            accountAssetId: position.id,
           ),
         );
     }
   }
 
-  void consumeNavigation() {
-    emit(state.copyWith(navigation: null));
-  }
-
   Future<void> loadMore() async {
-    final accountAssetId = state.accountAssetId;
+    final subaccountId = state.subaccountId;
     final nextOffset = state.nextOffset;
-    if (accountAssetId == null || nextOffset == null) {
+    if (subaccountId == null || nextOffset == null) {
       return;
     }
     if (state.isLoadingMore) {
@@ -212,7 +202,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
 
     emit(state.copyWith(isLoadingMore: true, bannerFailureCode: null));
     final result = await _getHistory(
-      accountAssetId: accountAssetId,
+      subaccountId: subaccountId,
       limit: 50,
       offset: nextOffset,
     );
@@ -233,57 +223,75 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     }
   }
 
-  Future<Decimal> _computeCurrentBalance({
-    required String accountAssetId,
-  }) async {
-    var offset = 0;
-    final all = <BalanceEntryEntity>[];
-    while (true) {
-      final page = await _getHistory(
-        accountAssetId: accountAssetId,
-        limit: 200,
-        offset: offset,
-      );
-      final value = switch (page) {
-        Success<BalanceHistoryPageEntity>(value: final v) => v,
-        FailureResult<BalanceHistoryPageEntity>() => null,
-      };
-      if (value == null) {
-        break;
-      }
-      all.addAll(value.entries);
-      if (value.nextOffset == null) {
-        break;
-      }
-      offset = value.nextOffset!;
-      if (offset > 5000) {
-        break;
-      }
+  Future<void> rename(String name) async {
+    final subaccountId = state.subaccountId;
+    final normalized = name.trim();
+    if (subaccountId == null || normalized.isEmpty) {
+      return;
     }
 
-    final asc = [...all]..sort(_sortAsc);
-    var balance = Decimal.zero;
-    for (final entry in asc) {
-      switch (entry.entryType) {
-        case BalanceEntryType.snapshot:
-          if (entry.snapshotAmount != null) {
-            balance = entry.snapshotAmount!;
-          }
-        case BalanceEntryType.delta:
-          if (entry.deltaAmount != null) {
-            balance += entry.deltaAmount!;
-          }
-      }
+    emit(state.copyWith(isMutating: true, bannerFailureCode: null));
+    final result = await _renameSubaccount(
+      subaccountId: subaccountId,
+      name: normalized,
+    );
+
+    switch (result) {
+      case Success<AccountAssetEntity>(value: final updated):
+        emit(state.copyWith(isMutating: false, subaccountName: updated.name));
+      case FailureResult<AccountAssetEntity>(failure: final failure):
+        emit(
+          state.copyWith(isMutating: false, bannerFailureCode: failure.code),
+        );
     }
-    return balance;
   }
 
-  int _sortAsc(BalanceEntryEntity a, BalanceEntryEntity b) {
-    final dateCmp = a.entryDate.compareTo(b.entryDate);
-    if (dateCmp != 0) {
-      return dateCmp;
+  Future<void> deleteSubaccount() async {
+    final subaccountId = state.subaccountId;
+    if (subaccountId == null) {
+      return;
     }
-    return a.createdAt.compareTo(b.createdAt);
+
+    emit(state.copyWith(isMutating: true, bannerFailureCode: null));
+    final result = await _removeSubaccount(subaccountId: subaccountId);
+    switch (result) {
+      case Success<void>():
+        emit(
+          state.copyWith(
+            isMutating: false,
+            navigation: const AssetPositionDetailNavigation(
+              destination: AssetPositionDetailDestination.backDeleted,
+            ),
+          ),
+        );
+      case FailureResult<void>(failure: final failure):
+        emit(
+          state.copyWith(isMutating: false, bannerFailureCode: failure.code),
+        );
+    }
+  }
+
+  void consumeNavigation() {
+    emit(state.copyWith(navigation: null));
+  }
+
+  Future<({AccountEntity account, AccountAssetEntity subaccount})?>
+  _findSubaccount(List<AccountEntity> accounts, String subaccountId) async {
+    for (final account in accounts) {
+      final result = await _getAccountAssets(accountId: account.id);
+      switch (result) {
+        case Success<List<AccountAssetEntity>>(value: final items):
+          final found = items.firstWhereOrNull(
+            (item) => item.id == subaccountId,
+          );
+          if (found != null) {
+            return (account: account, subaccount: found);
+          }
+        case FailureResult<List<AccountAssetEntity>>():
+          continue;
+      }
+    }
+    return null;
   }
 
   Future<ProfileEntity?> _loadProfile() async {
@@ -337,16 +345,9 @@ Decimal? _toConvertedValue({
 }
 
 extension<T> on Iterable<T> {
-  T? get firstOrNull {
+  T? firstWhereOrNull(bool Function(T item) test) {
     for (final item in this) {
-      return item;
-    }
-    return null;
-  }
-
-  T? firstWhereOrNull(bool Function(T item) predicate) {
-    for (final item in this) {
-      if (predicate(item)) {
+      if (test(item)) {
         return item;
       }
     }

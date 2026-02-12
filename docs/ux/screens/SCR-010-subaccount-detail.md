@@ -1,21 +1,24 @@
-# SCR-010: Asset position detail (history)
+# SCR-010: Subaccount detail (history) — MVP v2
+
+See also: `docs/features/FTR-006-balance-entries-snapshot-and-delta.md`.
 
 ## Purpose
-Show the selected asset position’s current balance and balance history, and allow adding a new balance entry.
+Show a subaccount (счёт) current balance and balance history, and allow updating balance (snapshot-only).
 
 ## Layout sections
 - App bar
-  - Asset code + account name (or asset name)
-- Summary card
-  - Current balance (derived per product rule)
-  - Converted value (if priced) or “Unpriced”
+  - Subaccount name
+  - Overflow actions: Rename / Delete
+- Summary card (gradient)
+  - Current balance (latest snapshot)
+  - Converted value (base currency; placeholder if not priced)
+  - “Rates updated at …”
 - History list
   - Entries sorted by `entry_date desc, created_at desc`
-  - Shows snapshot/delta type and implied delta (for snapshots)
+  - Shows snapshot amount and diff (when available)
   - Pagination (“Load more” or infinite scroll)
 - Primary CTA
-  - “Add balance”
-  - Optional shortcut: “Update for this month”
+  - “Update balance”
 
 ## Components
 - DS: `DSSectionTitle`
@@ -23,14 +26,17 @@ Show the selected asset position’s current balance and balance history, and al
 - DS: `DSButton`
 - needs component: `DSAppBar`
 - needs component: `DSListRow` (history row)
-- needs component: `DSInlineBanner` (unpriced, offline)
+- needs component: `DSInlineBanner` (errors, offline)
 - needs component: `DSEmptyState` (no history)
 - needs component: `DSSkeleton` (loading)
 
 ## Actions & navigation
-- Add balance → `SCR-011`.
-- Monthly shortcut:
-  - Prefills date as current month (implementation detail) and opens `SCR-011`.
+- Update balance → `SCR-011`.
+- Rename:
+  - Changes subaccount name only (currency is immutable).
+- Delete:
+  - Confirm destructive action.
+  - On success: return to `SCR-007` (Account detail).
 - Pagination:
   - Load next page (50 entries/page).
 
@@ -47,16 +53,14 @@ Show the selected asset position’s current balance and balance history, and al
     - Show banner and hide converted value or show “Unpriced”.
 
 ## Copy (key text)
-- Add balance: “Add balance”
-- Monthly: “Update for this month”
+- Update balance: “Update balance”
 - Empty title: “No balance history yet”
-- Empty body: “Add a snapshot or change to start tracking.”
+- Empty body: “Add a snapshot to start tracking.”
 - Empty CTA: “Add your first balance”
-- Unpriced: “Unpriced”
+ 
 
 ## Edge cases
 - Offline:
-  - Allow viewing cached history if available; disable “Add balance”.
+  - Allow viewing cached history if available; disable “Update balance”.
 - Many decimals:
   - Display rounding rules must not alter stored precision.
-

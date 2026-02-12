@@ -101,7 +101,7 @@ class AuthRepository implements IAuthRepository {
           Failure(
             code: 'validation',
             message: 'Use email OTP or password sign-in',
-            ),
+          ),
         );
       }
       await _dataSource.signInWithOAuth(provider);

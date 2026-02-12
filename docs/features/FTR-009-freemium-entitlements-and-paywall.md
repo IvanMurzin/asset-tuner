@@ -1,7 +1,7 @@
-# FTR-009: Freemium limits, entitlements, and paywall UX
+# FTR-009: Freemium limits, entitlements, and paywall UX (MVP v2)
 
 ## Summary
-Enforce free-tier limits (5 accounts, 20 asset positions, base currency limited to USD/EUR/RUB) and provide a paid subscription upgrade (monthly/annual) that unlocks higher limits and any base currency.
+Enforce free-tier limits (5 accounts, 20 subaccounts, base currency limited to USD/EUR/RUB) and provide a paid subscription upgrade (monthly/annual) that unlocks higher limits and any base currency.
 
 Source references:
 - Product: `docs/prd/prd.md` (free vs paid), `docs/prd/requirements.md` (FR-070..FR-074)
@@ -14,10 +14,10 @@ As a user, I want a clear free tier with upgrade options, so that I can try the 
 Scope:
 - Free-tier enforcement:
   - Max accounts: 5
-  - Max asset positions: 20 (account-asset pairs)
+  - Max subaccounts: 20 (счета)
   - Base currency choices limited to USD/EUR/RUB (integration point with FTR-003)
 - Paywall UX:
-  - Shown when user attempts an action that exceeds free limits (creating 6th account, adding 21st asset position, selecting non-free base currency).
+  - Shown when user attempts an action that exceeds free limits (creating 6th account, adding 21st subaccount, selecting non-free base currency).
   - Explains what is locked and what paid unlocks.
 - Subscription purchase flow:
   - Monthly + annual plans.
@@ -32,9 +32,9 @@ Out of scope:
 - Given the user is on the free tier, when they attempt to create an account that would exceed 5 total accounts, then the app:
   - blocks the creation,
   - shows the paywall with messaging specific to the “accounts limit”.
-- Given the user is on the free tier, when they attempt to add an asset position that would exceed 20 total positions, then the app:
+- Given the user is on the free tier, when they attempt to create a subaccount that would exceed 20 total subaccounts, then the app:
   - blocks the add,
-  - shows the paywall with messaging specific to the “asset positions limit”.
+  - shows the paywall with messaging specific to the “subaccounts limit”.
 - Given the user is on the free tier, when they attempt to select a base currency outside USD/EUR/RUB, then the app shows the paywall and does not change `profiles.base_currency` (see FTR-003).
 - Given the user purchases a subscription successfully, when entitlements are refreshed, then:
   - the user is able to exceed free-tier limits according to the paid plan,
@@ -51,7 +51,7 @@ Out of scope:
 - Screen: Settings → Manage subscription (optional link-out)
 - Entry points:
   - Create account (FTR-004)
-  - Add asset to account (FTR-005)
+  - Add subaccount to account (FTR-005)
   - Base currency settings (FTR-003)
 
 ## States (loading/empty/error/success)
@@ -68,7 +68,7 @@ Out of scope:
   - `plan: text` in {free, paid}
   - `entitlements: jsonb` (or structured fields), including:
     - `max_accounts: int`
-    - `max_positions: int`
+    - `max_subaccounts: int`
     - `any_base_currency: bool`
     - `expires_at: timestamptz?`
   - `updated_at: timestamptz`
@@ -88,5 +88,5 @@ Local logging only in MVP (no third-party per `docs/tech/integrations.md`):
 
 **MVP decision (client-only mock):** treat `plan=paid` as effectively unlimited for gating:
 - `max_accounts = 999`
-- `max_positions = 9999`
+- `max_subaccounts = 9999`
 - `any_base_currency = true`

@@ -3,9 +3,13 @@ import { requireAuthUser } from '../_shared/auth.ts';
 import { entitlementsForPlan, normalizePlan } from '../_shared/entitlements.ts';
 import { json, jsonError } from '../_shared/responses.ts';
 import { getServiceClient } from '../_shared/supabase.ts';
-import { isUuid } from '../_shared/validators.ts';
+import { isUuid, normalizeName, parseIsoDate, parseNumericString } from '../_shared/validators.ts';
 
-async function ensureEntitlements(service: ReturnType<typeof getServiceClient>, userId: string) {
+function todayUtcIsoDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+async function loadEntitlements(service: ReturnType<typeof getServiceClient>, userId: string) {
   const { data: profile, error } = await service
     .from('profiles')
     .select('plan')
@@ -14,8 +18,7 @@ async function ensureEntitlements(service: ReturnType<typeof getServiceClient>, 
   if (error) {
     throw new Error('profile_load_failed');
   }
-  const plan = normalizePlan(profile?.plan);
-  return entitlementsForPlan(plan);
+  return entitlementsForPlan(normalizePlan(profile?.plan));
 }
 
 Deno.serve(async (req) => {
@@ -30,6 +33,9 @@ Deno.serve(async (req) => {
 
     const accountId = body.account_id;
     const assetId = body.asset_id;
+    const name = normalizeName(body.name);
+    const snapshotAmount = parseNumericString(body.snapshot_amount);
+    const entryDate = parseIsoDate(body.entry_date) ?? todayUtcIsoDate();
 
     if (!isUuid(accountId)) {
       return jsonError('validation', 'Invalid account_id', 400, { field: 'account_id' });
@@ -37,20 +43,26 @@ Deno.serve(async (req) => {
     if (!isUuid(assetId)) {
       return jsonError('validation', 'Invalid asset_id', 400, { field: 'asset_id' });
     }
+    if (!name) {
+      return jsonError('validation', 'Invalid name', 400, { field: 'name' });
+    }
+    if (snapshotAmount == null) {
+      return jsonError('validation', 'Invalid snapshot_amount', 400, { field: 'snapshot_amount' });
+    }
 
     const service = getServiceClient();
-    const entitlements = await ensureEntitlements(service, user.id);
+    const entitlements = await loadEntitlements(service, user.id);
 
-    const { count: positionsCount, error: positionsCountError } = await service
-      .from('account_assets')
+    const { count: subaccountsCount, error: countError } = await service
+      .from('subaccounts')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id);
-    if (positionsCountError) {
+    if (countError) {
       return jsonError('unknown', 'Failed to check limits', 500);
     }
-    if ((positionsCount ?? 0) >= entitlements.max_positions) {
-      return jsonError('forbidden', 'Asset positions limit reached', 403, {
-        reason: 'positions_limit',
+    if ((subaccountsCount ?? 0) >= entitlements.max_subaccounts) {
+      return jsonError('forbidden', 'Subaccounts limit reached', 403, {
+        reason: 'subaccounts_limit',
       });
     }
 
@@ -79,28 +91,39 @@ Deno.serve(async (req) => {
       return jsonError('validation', 'Unknown asset_id', 400, { field: 'asset_id' });
     }
 
-    const { data: inserted, error: insertError } = await service
-      .from('account_assets')
+    const { data: subaccount, error: subaccountError } = await service
+      .from('subaccounts')
       .insert({
         user_id: user.id,
         account_id: accountId,
         asset_id: assetId,
+        name,
       })
       .select('*')
       .single();
 
-    if (insertError) {
-      const msg = insertError.message ?? '';
-      if (msg.includes('uq_account_assets_account_asset') || msg.includes('duplicate key')) {
-        return jsonError('validation', 'Asset already added to account', 400, {
-          field: 'asset_id',
-          reason: 'duplicate_position',
-        });
-      }
-      return jsonError('unknown', 'Failed to add asset to account', 500);
+    if (subaccountError || !subaccount) {
+      return jsonError('unknown', 'Failed to create subaccount', 500);
     }
 
-    return json(inserted);
+    const { data: balanceEntry, error: balanceEntryError } = await service
+      .from('balance_entries')
+      .insert({
+        user_id: user.id,
+        subaccount_id: subaccount.id,
+        entry_date: entryDate,
+        snapshot_amount: snapshotAmount,
+        diff_amount: null,
+      })
+      .select('*')
+      .single();
+
+    if (balanceEntryError || !balanceEntry) {
+      await service.from('subaccounts').delete().eq('id', subaccount.id).eq('user_id', user.id);
+      return jsonError('unknown', 'Failed to create initial snapshot', 500);
+    }
+
+    return json({ subaccount, balance_entry: balanceEntry });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unexpected';
     if (message === 'Missing Authorization header' || message === 'Unauthorized') {
@@ -109,4 +132,3 @@ Deno.serve(async (req) => {
     return jsonError('unknown', 'Unexpected error', 500);
   }
 });
-

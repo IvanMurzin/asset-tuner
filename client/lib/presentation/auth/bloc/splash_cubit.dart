@@ -9,7 +9,7 @@ import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dar
 part 'splash_state.dart';
 part 'splash_cubit.freezed.dart';
 
-enum SplashDestination { signIn, onboardingBaseCurrency, overview }
+enum SplashDestination { signIn, onboardingBaseCurrency, main }
 
 @injectable
 class SplashCubit extends Cubit<SplashState> {
@@ -62,9 +62,7 @@ class SplashCubit extends Cubit<SplashState> {
               );
             } else {
               emit(
-                const SplashState.route(
-                  destination: SplashDestination.overview,
-                ),
+                const SplashState.route(destination: SplashDestination.main),
               );
             }
         }

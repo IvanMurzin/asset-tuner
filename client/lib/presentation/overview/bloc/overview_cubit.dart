@@ -119,9 +119,7 @@ class OverviewCubit extends Cubit<OverviewState> {
 
     final positionsByAccount = <String, List<AccountAssetEntity>>{};
     for (final account in activeAccounts) {
-      final positions = await _getAccountAssets(
-        accountId: account.id,
-      );
+      final positions = await _getAccountAssets(accountId: account.id);
       switch (positions) {
         case Success<List<AccountAssetEntity>>(value: final list):
           positionsByAccount[account.id] = list;
@@ -145,9 +143,7 @@ class OverviewCubit extends Cubit<OverviewState> {
       return;
     }
 
-    final balances = await _getCurrentBalances(
-      accountAssetIds: allPositionIds,
-    );
+    final balances = await _getCurrentBalances(subaccountIds: allPositionIds);
     final currentByPosition = switch (balances) {
       Success<Map<String, Decimal>>(value: final map) => map,
       FailureResult<Map<String, Decimal>>() => null,
@@ -214,7 +210,9 @@ class OverviewCubit extends Cubit<OverviewState> {
         OverviewAccountItem(
           accountId: account.id,
           accountName: account.name,
+          accountType: account.type,
           total: accountTotal,
+          subaccountsCount: positions.length,
           hasUnpricedHoldings: accountHasUnpriced,
         ),
       );
@@ -316,7 +314,9 @@ class OverviewCubit extends Cubit<OverviewState> {
                   (a) => OverviewAccountItem(
                     accountId: a.accountId,
                     accountName: a.accountName,
+                    accountType: AccountType.other,
                     total: a.totalDecimal ?? Decimal.zero,
+                    subaccountsCount: 0,
                     hasUnpricedHoldings: a.hasUnpriced,
                   ),
                 )

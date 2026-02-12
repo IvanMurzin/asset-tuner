@@ -24,7 +24,7 @@ Restore an existing Supabase session (if any), bootstrap the user profile, and r
   - Route:
     - If unauthenticated → `SCR-002` (Sign-in).
     - If authenticated and onboarding requires base currency confirmation → `SCR-003`.
-    - Else → `SCR-004` (Overview).
+    - Else → `SCR-004` (Main).
 - Retry: if a transient error occurs during restore/bootstrap, show error state with “Try again”.
 
 ## States
@@ -50,4 +50,3 @@ Restore an existing Supabase session (if any), bootstrap the user profile, and r
   - Do not route into app until profile row exists (base currency + entitlements rely on it).
 - Slow networks:
   - Avoid flicker: keep splash visible until routing decision is final.
-

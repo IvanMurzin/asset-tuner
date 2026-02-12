@@ -30,15 +30,15 @@ Out of scope:
   - the previous last-known rates remain available to clients,
   - failure is logged server-side (implementation detail) and does not delete existing rates (see NFR-004 in `docs/prd/requirements.md`).
 - Given the client loads rates, when it queries the DB, then it receives the latest `usd_price` per asset and the corresponding `as_of` timestamp.
-- Given the Overview is shown, when rates are available, then the UI displays “Rates updated at <timestamp>” using locale-aware formatting (see FTR-002).
+- Given the Main screen is shown, when rates are available, then the UI displays “Rates updated at <timestamp>” using locale-aware formatting (see FTR-002).
 
 ## UX references (which screens it touches; placeholders ok)
-- Screen: Overview (shows “rates updated at” timestamp)
+- Screen: Main (shows “rates updated at” timestamp)
 - Screen: Settings/About (optional diagnostics)
 
 ## States (loading/empty/error/success)
 - Loading: fetching latest rates.
-- Empty: no rates available (fresh install or prolonged outage) → totals must show missing-rate behavior (handled in FTR-008).
+- Empty: no rates available (fresh install or prolonged outage) → totals cannot be computed; show a retryable state (handled in FTR-008).
 - Error: network/unauthorized/unknown while reading rates → show retry.
 - Success: rates loaded with timestamp.
 

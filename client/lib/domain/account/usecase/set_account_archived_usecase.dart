@@ -13,9 +13,6 @@ class SetAccountArchivedUseCase {
     required String accountId,
     required bool archived,
   }) {
-    return _repository.setArchived(
-      accountId: accountId,
-      archived: archived,
-    );
+    return _repository.setArchived(accountId: accountId, archived: archived);
   }
 }

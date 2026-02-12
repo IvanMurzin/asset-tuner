@@ -1,7 +1,7 @@
-# FTR-006: Balance entries (snapshot + delta) with history
+# FTR-006: Balance entries (snapshot-only) with history
 
 ## Summary
-Let users record balance snapshots or delta adjustments for an asset position at any date, while ensuring snapshots compute and store an implied delta consistently across devices via an Edge Function.
+Let users record **snapshot-only** balance updates for a subaccount, while ensuring each snapshot stores a computed **diff** consistently across devices via an Edge Function.
 
 Source references:
 - Product: `docs/prd/prd.md` (snapshot vs delta; implied delta), `docs/prd/requirements.md` (FR-040..FR-045)
@@ -12,39 +12,35 @@ As a user, I want to update my balances as a snapshot or as a change since last 
 
 ## Scope / Out of scope
 Scope:
-- Entry modes:
-  - Snapshot: “current balance is X”
-  - Delta: “+X / −Y since last time”
-- Any-date entry support (with UI optimized for monthly updates).
-- Atomic backend write via Edge Function `POST /update_balance`:
-  - On snapshot: compute implied delta vs previous snapshot and persist consistent history.
-  - On delta: persist delta entry.
-- Balance history view for an asset position (list; charts optional).
+- Entry mode:
+  - Snapshot: “current balance is X (today)”
+- Date defaults to today (any-date support can be added later).
+- Atomic backend write via Edge Function `POST /update_subaccount_balance`:
+  - Compute and store `diff_amount` vs previous snapshot (if any).
+- Balance history view for a subaccount (list; charts optional).
 - Paginated history reads (page size 50; stable sort per `docs/tech/api_assumptions.md`).
 
 Out of scope:
 - Expense tracking and categorization (explicit non-goal; see `docs/prd/non_goals.md`).
 - Editing historical entries (not specified; treat entries as immutable rows per `docs/tech/api_assumptions.md`).
+- Delta input in UI (explicitly deferred).
 
 ## Acceptance Criteria (BDD-style, unambiguous)
-- Given the user opens “Add balance” for an asset position, when the form loads, then it allows selecting:
-  - entry type (Snapshot or Delta),
-  - entry date,
-  - amount (Decimal input).
-- Given the user submits a snapshot for date D, when the client calls `POST /update_balance` with `snapshot_amount`, then:
-  - the server stores a new balance entry for date D,
-  - the stored entry includes a computed implied delta vs the most recent prior snapshot (if any),
-  - the client refreshes and displays the updated current balance and change history.
-- Given the user submits a delta for date D, when the client calls `POST /update_balance` with `delta_amount`, then the server stores the delta entry and history reflects the change.
-- Given multiple devices submit updates concurrently for the same asset position, when both sync, then the resulting history is consistent and does not duplicate snapshot logic (implied delta computed server-side only).
-- Given the user views history for an asset position, when more than 50 entries exist, then the list is paginated and sorted by `entry_date desc, created_at desc`.
+- Given the user opens “Update balance” for a subaccount, when the form loads, then it shows:
+  - date = today (read-only in MVP v2),
+  - amount input (required).
+- Given the user submits a snapshot for date D, when the client calls `POST /update_subaccount_balance`, then:
+  - the server stores a new snapshot entry for date D,
+  - the stored entry includes a computed `diff_amount` vs the most recent prior snapshot (if any),
+  - the client refreshes and displays the updated current balance and history.
+- Given multiple devices submit snapshots concurrently for the same subaccount, when both sync, then the resulting history is consistent (diff computed server-side only).
+- Given the user views history for a subaccount, when more than 50 entries exist, then the list is paginated and sorted by `entry_date desc, created_at desc`.
 - Given the server returns a `validation` failure (e.g., missing amount, invalid date), when the app renders the error, then it highlights the invalid field and does not create an entry.
 
 ## UX references (which screens it touches; placeholders ok)
-- Screen: Account detail → Asset position detail
-- UI: “Add balance” modal/screen (snapshot vs delta toggle; date picker)
-- Screen: Balance history list (per asset position)
-- UI: Monthly update shortcut (e.g., “Update for this month”)
+- Screen: Account detail → Subaccount detail
+- UI: “Update balance” modal/screen (snapshot-only)
+- Screen: Balance history list (per subaccount)
 
 ## States (loading/empty/error/success)
 - Loading: submitting update; loading history pages.
@@ -58,17 +54,15 @@ Out of scope:
 - Success: entry created; totals/history refresh.
 
 ## Data needs (entities + fields)
-- `balance_entries` (user-owned; proposed shape)
+- `balance_entries` (user-owned; v2 shape)
   - `id: uuid`
-  - `account_asset_id: uuid`
+  - `subaccount_id: uuid`
   - `entry_date: date` (or `timestamptz` if time-of-day matters; not required by PRD)
-  - `entry_type: "snapshot" | "delta"`
-  - `snapshot_amount: numeric` (nullable)
-  - `delta_amount: numeric` (nullable)
-  - `implied_delta_amount: numeric` (nullable; set when entry_type=snapshot)
+  - `snapshot_amount: numeric` (non-null)
+  - `diff_amount: numeric` (nullable; null when no previous snapshot)
   - `created_at: timestamptz`
 - Edge Function:
-  - `POST /update_balance { account_asset_id, entry_date, snapshot_amount? , delta_amount? }`
+  - `POST /update_subaccount_balance { subaccount_id, entry_date, snapshot_amount }`
   - Response returns created/updated entry identifiers needed for refresh.
 
 ## Analytics (events, optional)
@@ -78,6 +72,6 @@ Out of scope:
 
 ## Open questions (if any)
 - Multiple entries on the same `entry_date`:
-  - **MVP decision:** allowed.
+  - **MVP v2 decision:** allowed.
   - Ordering: `entry_date desc, created_at desc` for history.
-  - “Current balance” is computed by applying entries in chronological order (`entry_date asc, created_at asc`), where snapshots set the balance and deltas add/subtract.
+  - “Current balance” is the latest snapshot by the stable ordering `entry_date desc, created_at desc`.

@@ -10,8 +10,11 @@ abstract class AccountAssetDto with _$AccountAssetDto {
     required String id,
     @JsonName('account_id') required String accountId,
     @JsonName('asset_id') required String assetId,
+    required String name,
+    required bool archived,
     @JsonName('sort_order') int? sortOrder,
     @JsonName('created_at') required String createdAtIso,
+    @JsonName('updated_at') required String updatedAtIso,
   }) = _AccountAssetDto;
 
   factory AccountAssetDto.fromJson(Map<String, dynamic> json) {

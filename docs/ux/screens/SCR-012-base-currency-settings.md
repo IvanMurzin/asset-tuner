@@ -1,7 +1,7 @@
 # SCR-012: Base currency settings
 
 ## Purpose
-Allow the user to change their base currency, enforcing free-tier limits and reflecting changes in Overview totals.
+Allow the user to change their base currency, enforcing free-tier limits and reflecting changes in Main totals.
 
 ## Layout sections
 - App bar: “Base currency”
@@ -35,7 +35,7 @@ Allow the user to change their base currency, enforcing free-tier limits and ref
   - Paid entitlement: any fiat allowed.
 - Save:
   - Persist selection (if changed and allowed).
-  - Navigate back to Settings or Overview.
+  - Navigate back to Profile or Main.
 
 ## States
 - Loading:
@@ -45,7 +45,7 @@ Allow the user to change their base currency, enforcing free-tier limits and ref
 - Error:
   - Retryable error when loading catalog.
 - Success:
-  - Saved selection causes `SCR-004` totals to recompute on next refresh (or immediately if Overview is listening).
+  - Saved selection causes `SCR-004` totals to recompute on next refresh (or immediately if Main is listening).
 
 ## Copy (key text)
 - Title: “Base currency”
@@ -58,4 +58,3 @@ Allow the user to change their base currency, enforcing free-tier limits and ref
 - Entitlements can’t be verified:
   - Treat as free tier for safety.
   - If user is blocked by paywall, show non-blocking message: “Couldn’t verify subscription; try again.”
-

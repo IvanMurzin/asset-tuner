@@ -464,6 +464,54 @@ abstract class AppLocalizations {
   /// **'Overview'**
   String get overviewTitle;
 
+  /// No description provided for @mainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Main'**
+  String get mainTitle;
+
+  /// No description provided for @mainAddAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Add account'**
+  String get mainAddAccount;
+
+  /// No description provided for @analyticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analyticsTitle;
+
+  /// No description provided for @analyticsBreakdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdown'**
+  String get analyticsBreakdownTitle;
+
+  /// No description provided for @analyticsUpdatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates'**
+  String get analyticsUpdatesTitle;
+
+  /// No description provided for @analyticsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No analytics yet'**
+  String get analyticsEmptyTitle;
+
+  /// No description provided for @analyticsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add accounts and balances to see breakdown and updates.'**
+  String get analyticsEmptyBody;
+
+  /// No description provided for @actionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get actionsTitle;
+
   /// No description provided for @overviewTotalLabel.
   ///
   /// In en, this message translates to:
@@ -698,6 +746,12 @@ abstract class AppLocalizations {
   /// **'Crypto wallet'**
   String get accountsTypeCryptoWallet;
 
+  /// No description provided for @accountsTypeExchange.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange'**
+  String get accountsTypeExchange;
+
   /// No description provided for @accountsTypeCash.
   ///
   /// In en, this message translates to:
@@ -865,6 +919,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Crypto'**
   String get assetKindCrypto;
+
+  /// No description provided for @subaccountsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'subaccounts'**
+  String get subaccountsCountLabel;
+
+  /// No description provided for @subaccountCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add subaccount'**
+  String get subaccountCreateTitle;
+
+  /// No description provided for @subaccountCreateCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add subaccount'**
+  String get subaccountCreateCta;
+
+  /// No description provided for @subaccountCurrencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get subaccountCurrencyLabel;
+
+  /// No description provided for @subaccountNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., USDT (TRC20)'**
+  String get subaccountNameHint;
+
+  /// No description provided for @subaccountEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No subaccounts yet'**
+  String get subaccountEmptyTitle;
+
+  /// No description provided for @subaccountEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the holdings you have in this account.'**
+  String get subaccountEmptyBody;
+
+  /// No description provided for @subaccountListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subaccounts'**
+  String get subaccountListTitle;
+
+  /// No description provided for @subaccountUpdateBalanceCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Update balance'**
+  String get subaccountUpdateBalanceCta;
+
+  /// No description provided for @subaccountRenameCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get subaccountRenameCta;
+
+  /// No description provided for @subaccountRenameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename subaccount'**
+  String get subaccountRenameTitle;
+
+  /// No description provided for @subaccountDeleteCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get subaccountDeleteCta;
+
+  /// No description provided for @subaccountDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete subaccount?'**
+  String get subaccountDeleteConfirmTitle;
+
+  /// No description provided for @subaccountDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will delete its balance history.'**
+  String get subaccountDeleteConfirmBody;
 
   /// No description provided for @assetRemove.
   ///
@@ -1040,11 +1178,11 @@ abstract class AppLocalizations {
   /// **'You’ve reached the free limit of 5 accounts.'**
   String get paywallReasonAccounts;
 
-  /// No description provided for @paywallReasonPositions.
+  /// No description provided for @paywallReasonSubaccounts.
   ///
   /// In en, this message translates to:
-  /// **'You’ve reached the free limit of 20 tracked assets.'**
-  String get paywallReasonPositions;
+  /// **'You’ve reached the free limit of 20 subaccounts.'**
+  String get paywallReasonSubaccounts;
 
   /// No description provided for @paywallReasonBaseCurrency.
   ///
@@ -1076,11 +1214,11 @@ abstract class AppLocalizations {
   /// **'More accounts'**
   String get paywallFeatureAccounts;
 
-  /// No description provided for @paywallFeaturePositions.
+  /// No description provided for @paywallFeatureSubaccounts.
   ///
   /// In en, this message translates to:
-  /// **'More tracked assets'**
-  String get paywallFeaturePositions;
+  /// **'More subaccounts'**
+  String get paywallFeatureSubaccounts;
 
   /// No description provided for @paywallFeatureCurrencies.
   ///

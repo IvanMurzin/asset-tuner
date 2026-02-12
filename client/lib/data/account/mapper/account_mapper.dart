@@ -27,7 +27,8 @@ abstract final class AccountMapper {
   static AccountType _typeFromWire(String type) {
     return switch (type) {
       'bank' => AccountType.bank,
-      'crypto_wallet' => AccountType.cryptoWallet,
+      'wallet' => AccountType.wallet,
+      'exchange' => AccountType.exchange,
       'cash' => AccountType.cash,
       'other' => AccountType.other,
       _ => AccountType.other,
@@ -37,7 +38,8 @@ abstract final class AccountMapper {
   static String _typeToWire(AccountType type) {
     return switch (type) {
       AccountType.bank => 'bank',
-      AccountType.cryptoWallet => 'crypto_wallet',
+      AccountType.wallet => 'wallet',
+      AccountType.exchange => 'exchange',
       AccountType.cash => 'cash',
       AccountType.other => 'other',
     };

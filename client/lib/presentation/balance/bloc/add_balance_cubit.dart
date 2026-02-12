@@ -3,10 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
-import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
-import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
-import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
 import 'package:asset_tuner/domain/balance/usecase/update_balance_usecase.dart';
 
 part 'add_balance_cubit.freezed.dart';
@@ -14,19 +11,14 @@ part 'add_balance_state.dart';
 
 @injectable
 class AddBalanceCubit extends Cubit<AddBalanceState> {
-  AddBalanceCubit(
-    this._getCachedSession,
-    this._getAccountAssets,
-    this._updateBalance,
-  ) : super(const AddBalanceState());
+  AddBalanceCubit(this._getCachedSession, this._updateBalance)
+    : super(const AddBalanceState());
 
   final GetCachedSessionUseCase _getCachedSession;
-  final GetAccountAssetsUseCase _getAccountAssets;
   final UpdateBalanceUseCase _updateBalance;
 
   Future<void> load({
-    required String accountId,
-    required String assetId,
+    required String subaccountId,
     DateTime? initialDate,
   }) async {
     emit(
@@ -54,29 +46,10 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
       return;
     }
 
-    final positions = await _getAccountAssets(
-      accountId: accountId,
-    );
-    final position = switch (positions) {
-      Success<List<AccountAssetEntity>>(value: final list) =>
-        list.where((p) => p.assetId == assetId).firstOrNull,
-      FailureResult<List<AccountAssetEntity>>() => null,
-    };
-    if (position == null) {
-      emit(
-        state.copyWith(
-          status: AddBalanceStatus.error,
-          failureCode: 'not_found',
-        ),
-      );
-      return;
-    }
-
     emit(
       state.copyWith(
         status: AddBalanceStatus.ready,
-        accountAssetId: position.id,
-        entryType: BalanceEntryType.snapshot,
+        subaccountId: subaccountId,
         entryDate: initialDate ?? DateTime.now(),
       ),
     );
@@ -84,10 +57,6 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
 
   void consumeNavigation() {
     emit(state.copyWith(navigation: null));
-  }
-
-  void selectType(BalanceEntryType type) {
-    emit(state.copyWith(entryType: type));
   }
 
   void selectDate(DateTime date) {
@@ -99,13 +68,11 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
   }
 
   Future<void> save() async {
-    final accountAssetId = state.accountAssetId;
+    final subaccountId = state.subaccountId;
     final date = state.entryDate;
-    final type = state.entryType;
     if (state.status != AddBalanceStatus.ready ||
-        accountAssetId == null ||
-        date == null ||
-        type == null) {
+        subaccountId == null ||
+        date == null) {
       return;
     }
 
@@ -123,10 +90,9 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
 
     emit(state.copyWith(isSaving: true, failureCode: null));
     final result = await _updateBalance(
-      accountAssetId: accountAssetId,
+      subaccountId: subaccountId,
       entryDate: date,
-      snapshotAmount: type == BalanceEntryType.snapshot ? parsed : null,
-      deltaAmount: type == BalanceEntryType.delta ? parsed : null,
+      snapshotAmount: parsed,
     );
 
     switch (result) {
@@ -140,17 +106,6 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
           ),
         );
       case FailureResult(failure: final failure):
-        if (failure.code == 'validation') {
-          emit(
-            state.copyWith(
-              isSaving: false,
-              amountError: failure.message == 'amount' ? 'invalid' : null,
-              dateError: failure.message == 'date' ? 'invalid' : null,
-              failureCode: failure.code,
-            ),
-          );
-          return;
-        }
         emit(state.copyWith(isSaving: false, failureCode: failure.code));
     }
   }
@@ -166,14 +121,5 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
     } catch (_) {
       return null;
     }
-  }
-}
-
-extension<T> on Iterable<T> {
-  T? get firstOrNull {
-    for (final item in this) {
-      return item;
-    }
-    return null;
   }
 }

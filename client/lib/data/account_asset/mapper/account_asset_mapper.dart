@@ -7,8 +7,11 @@ abstract final class AccountAssetMapper {
       id: dto.id,
       accountId: dto.accountId,
       assetId: dto.assetId,
+      name: dto.name,
+      archived: dto.archived,
       sortOrder: dto.sortOrder,
       createdAt: DateTime.parse(dto.createdAtIso),
+      updatedAt: DateTime.parse(dto.updatedAtIso),
     );
   }
 }

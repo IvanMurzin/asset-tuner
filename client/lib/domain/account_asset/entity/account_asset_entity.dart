@@ -8,7 +8,10 @@ abstract class AccountAssetEntity with _$AccountAssetEntity {
     required String id,
     required String accountId,
     required String assetId,
+    required String name,
+    required bool archived,
     required DateTime createdAt,
+    required DateTime updatedAt,
     int? sortOrder,
   }) = _AccountAssetEntity;
 }

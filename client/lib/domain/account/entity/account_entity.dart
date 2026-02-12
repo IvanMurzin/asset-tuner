@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'account_entity.freezed.dart';
 
-enum AccountType { bank, cryptoWallet, cash, other }
+enum AccountType { bank, wallet, exchange, cash, other }
 
 @freezed
 abstract class AccountEntity with _$AccountEntity {

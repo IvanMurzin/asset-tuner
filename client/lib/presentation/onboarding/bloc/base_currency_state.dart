@@ -4,7 +4,7 @@ enum BaseCurrencyStatus { loading, ready, error }
 
 enum BaseCurrencyBannerType { selectCurrency, saveFailure }
 
-enum BaseCurrencyDestination { overview, signIn, paywall }
+enum BaseCurrencyDestination { main, signIn, paywall }
 
 @freezed
 abstract class BaseCurrencyNavigation with _$BaseCurrencyNavigation {

@@ -3,21 +3,19 @@ import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 
 const freeEntitlements = EntitlementsEntity(
   maxAccounts: 5,
-  maxPositions: 20,
+  maxSubaccounts: 20,
   anyBaseCurrency: false,
   freeBaseCurrencyCodes: {'USD', 'EUR', 'RUB'},
 );
 
 const paidEntitlements = EntitlementsEntity(
   maxAccounts: 999,
-  maxPositions: 9999,
+  maxSubaccounts: 9999,
   anyBaseCurrency: true,
   freeBaseCurrencyCodes: <String>{},
 );
 
-ProfileEntity freeProfile({
-  String baseCurrency = 'USD',
-}) {
+ProfileEntity freeProfile({String baseCurrency = 'USD'}) {
   return ProfileEntity(
     baseCurrency: baseCurrency,
     plan: 'free',
@@ -25,9 +23,7 @@ ProfileEntity freeProfile({
   );
 }
 
-ProfileEntity paidProfile({
-  String baseCurrency = 'USD',
-}) {
+ProfileEntity paidProfile({String baseCurrency = 'USD'}) {
   return ProfileEntity(
     baseCurrency: baseCurrency,
     plan: 'paid',

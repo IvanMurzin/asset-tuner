@@ -102,9 +102,7 @@ class AccountRepository implements IAccountRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount({
-    required String accountId,
-  }) async {
+  Future<Result<void>> deleteAccount({required String accountId}) async {
     try {
       await _dataSource.deleteAccountCascade(accountId: accountId);
       logger.i('AccountRepository.deleteAccount success');
@@ -123,7 +121,8 @@ class AccountRepository implements IAccountRepository {
   String _typeToWire(AccountType type) {
     return switch (type) {
       AccountType.bank => 'bank',
-      AccountType.cryptoWallet => 'crypto_wallet',
+      AccountType.wallet => 'wallet',
+      AccountType.exchange => 'exchange',
       AccountType.cash => 'cash',
       AccountType.other => 'other',
     };

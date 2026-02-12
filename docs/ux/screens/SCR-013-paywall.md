@@ -6,7 +6,7 @@ Explain why an action is locked on the free tier and offer subscription purchase
 ## Layout sections
 - Header
   - Title (“Upgrade”)
-  - Reason-specific subtitle (accounts limit / asset positions limit / base currency)
+  - Reason-specific subtitle (accounts limit / subaccounts limit / base currency)
 - Value proposition
   - Bulleted list of what paid unlocks
 - Plan selection
@@ -30,7 +30,7 @@ Explain why an action is locked on the free tier and offer subscription purchase
 ## Actions & navigation
 - Entry:
   - Launched from a gated action; must carry context:
-    - reason: `accounts_limit` | `positions_limit` | `base_currency`
+    - reason: `accounts_limit` | `subaccounts_limit` | `base_currency`
     - attempted action metadata (optional)
 - Upgrade:
   - Starts purchase flow for selected plan.
@@ -55,11 +55,11 @@ Explain why an action is locked on the free tier and offer subscription purchase
 ## Copy (key text)
 - Title: “Upgrade”
 - Reason (accounts): “You’ve reached the free limit of 5 accounts.”
-- Reason (positions): “You’ve reached the free limit of 20 tracked assets.”
+- Reason (subaccounts): “You’ve reached the free limit of 20 subaccounts.”
 - Reason (base currency): “Unlock any base currency.”
 - Unlock list:
   - “More accounts”
-  - “More tracked assets”
+  - “More subaccounts”
   - “Any base currency”
 - Primary CTA: “Upgrade”
 - Secondary CTA: “Not now”
@@ -71,4 +71,3 @@ Explain why an action is locked on the free tier and offer subscription purchase
   - Provide “Refresh”/“Restore” action and re-check entitlements.
 - Subscription cancelled/expired:
   - Screen should still allow purchase; existing data remains visible elsewhere.
-

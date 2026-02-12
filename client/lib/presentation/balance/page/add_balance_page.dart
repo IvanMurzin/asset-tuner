@@ -11,22 +11,18 @@ import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
-import 'package:asset_tuner/core_ui/components/ds_segmented_control.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
-import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/balance/bloc/add_balance_cubit.dart';
 
 class AddBalancePage extends StatefulWidget {
   const AddBalancePage({
     super.key,
-    required this.accountId,
-    required this.assetId,
+    required this.subaccountId,
     this.initialDate,
   });
 
-  final String accountId;
-  final String assetId;
+  final String subaccountId;
   final DateTime? initialDate;
 
   @override
@@ -55,8 +51,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
     return BlocProvider(
       create: (_) => getIt<AddBalanceCubit>()
         ..load(
-          accountId: widget.accountId,
-          assetId: widget.assetId,
+          subaccountId: widget.subaccountId,
           initialDate: widget.initialDate,
         ),
       child: BlocConsumer<AddBalanceCubit, AddBalanceState>(
@@ -84,35 +79,27 @@ class _AddBalancePageState extends State<AddBalancePage> {
           }
 
           if (state.status == AddBalanceStatus.error &&
-              state.accountAssetId == null) {
+              state.subaccountId == null) {
             return Scaffold(
-              appBar: DSAppBar(title: l10n.addBalanceTitle),
+              appBar: DSAppBar(title: l10n.subaccountUpdateBalanceCta),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
                 message: _failureMessage(l10n, state.failureCode),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<AddBalanceCubit>().load(
-                  accountId: widget.accountId,
-                  assetId: widget.assetId,
+                  subaccountId: widget.subaccountId,
                   initialDate: widget.initialDate,
                 ),
               ),
             );
           }
 
-          final selectedIndex = state.entryType == BalanceEntryType.delta
-              ? 1
-              : 0;
-          final helper = state.entryType == BalanceEntryType.delta
-              ? l10n.addBalanceHelperDelta
-              : l10n.addBalanceHelperSnapshot;
-
           if (_amountController.text.isEmpty && state.amountText.isNotEmpty) {
             _amountController.text = state.amountText;
           }
 
           return Scaffold(
-            appBar: DSAppBar(title: l10n.addBalanceTitle),
+            appBar: DSAppBar(title: l10n.subaccountUpdateBalanceCta),
             body: SafeArea(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
@@ -127,7 +114,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
                     if (state.failureCode != null &&
                         state.failureCode != 'validation') ...[
                       DSInlineBanner(
-                        title: l10n.addBalanceTitle,
+                        title: l10n.subaccountUpdateBalanceCta,
                         message: _failureMessage(l10n, state.failureCode),
                         variant: DSInlineBannerVariant.danger,
                       ),
@@ -140,27 +127,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                l10n.addBalanceEntryTypeLabel,
-                                style: typography.caption,
-                              ),
-                              SizedBox(height: spacing.s8),
-                              DSSegmentedControl(
-                                labels: [
-                                  l10n.addBalanceTypeSnapshot,
-                                  l10n.addBalanceTypeDelta,
-                                ],
-                                selectedIndex: selectedIndex,
-                                enabled: !state.isSaving,
-                                onChanged: (index) =>
-                                    context.read<AddBalanceCubit>().selectType(
-                                      index == 1
-                                          ? BalanceEntryType.delta
-                                          : BalanceEntryType.snapshot,
-                                    ),
-                              ),
-                              SizedBox(height: spacing.s12),
-                              Text(
-                                helper,
+                                l10n.addBalanceHelperSnapshot,
                                 style: typography.caption.copyWith(
                                   color: context.dsColors.textSecondary,
                                 ),

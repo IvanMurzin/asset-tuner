@@ -1,8 +1,17 @@
-# Asset Tuner — API Surface (Supabase)
+# Asset Tuner — API Surface (Supabase) — v2 (breaking)
 
 This document defines the concrete client-facing API surface: Auth, PostgREST reads, Edge Function operations, filters/pagination, and the error model.
 
-**Last updated:** 2026-02-11
+**Last updated:** 2026-02-12
+
+## Versioning / breaking changes
+This API surface is **v2** and is intentionally **breaking** vs earlier MVP drafts:
+- Replace `account_assets` “asset positions” with **`subaccounts`** (unlimited, named).
+- Replace “Add asset” and “Add balance (snapshot/delta)” flows with:
+  - `create_subaccount` (creates subaccount + initial snapshot),
+  - `update_subaccount_balance` (snapshot-only),
+  - `rename_subaccount` and `delete_subaccount`.
+- Analytics reads are based on snapshot updates.
 
 ## Base components
 - Supabase project URL + anon key are provided to the client via `--dart-define-from-file` (`SUPABASE_URL`, `SUPABASE_ANON_KEY`).
@@ -67,11 +76,11 @@ Contract notes:
   - optional filters:
     - `archived=eq.true|false`
 
-### `account_assets`
-- `LIST positions for account`:
-  - query: `account_assets?account_id=eq.<account_id>&order=created_at.asc`
-- `COUNT positions`:
-  - query: `HEAD account_assets` with `Prefer: count=exact` (no body)
+### `subaccounts`
+- `LIST subaccounts for account`:
+  - query: `subaccounts?account_id=eq.<account_id>&order=sort_order.asc.nullslast,created_at.asc`
+- `COUNT subaccounts`:
+  - query: `HEAD subaccounts` with `Prefer: count=exact` (no body)
 
 ### `assets`
 - `LIST assets`:
@@ -80,8 +89,8 @@ Contract notes:
   - query: `assets?kind=eq.fiat&select=*&order=code.asc`
 
 ### `balance_entries`
-- `LIST history for position`:
-  - query: `balance_entries?account_asset_id=eq.<id>&order=entry_date.desc,created_at.desc`
+- `LIST history for subaccount`:
+  - query: `balance_entries?subaccount_id=eq.<id>&order=entry_date.desc,created_at.desc`
   - pagination: use range (inclusive) with `offset` + `limit`
 
 ### `asset_rates_usd`
@@ -131,13 +140,13 @@ Response:
     "user_id": "uuid",
     "base_currency": "USD",
     "plan": "free",
-    "entitlements": {
-      "max_accounts": 5,
-      "max_positions": 20,
-      "any_base_currency": false,
-      "allowed_base_currency_codes": ["USD", "EUR", "RUB"],
-      "expires_at": null
-    },
+      "entitlements": {
+        "max_accounts": 5,
+        "max_subaccounts": 20,
+        "any_base_currency": false,
+        "allowed_base_currency_codes": ["USD", "EUR", "RUB"],
+        "expires_at": null
+      },
     "created_at": "timestamptz",
     "updated_at": "timestamptz"
   },
@@ -161,7 +170,7 @@ Errors:
 - `forbidden` with `details.reason = "accounts_limit"` when free-tier cap exceeded
 
 ### `DELETE /account`
-Cascades delete: account + positions + balance history.
+Cascades delete: account + subaccounts + balance history.
 
 Request:
 ```json
@@ -173,26 +182,86 @@ Response:
 { "ok": true }
 ```
 
-### `POST /add_asset_to_account`
-Creates an `account_assets` row (position) and enforces entitlement limits.
+### `POST /create_subaccount`
+Creates a subaccount (user-defined “счёт”) under an account and writes the initial balance snapshot for today.
+
+Notes:
+- `name` is required and not derived from currency.
+- `asset_id` is immutable once created.
 
 Request:
 ```json
-{ "account_id": "uuid", "asset_id": "uuid" }
+{
+  "account_id": "uuid",
+  "name": "USDT (TRC20)",
+  "asset_id": "uuid",
+  "snapshot_amount": "200",
+  "entry_date": "2026-02-12"
+}
 ```
 
-Response: `account_assets` row.
+Response:
+```json
+{
+  "subaccount": {
+    "id": "uuid",
+    "account_id": "uuid",
+    "asset_id": "uuid",
+    "name": "USDT (TRC20)",
+    "archived": false,
+    "sort_order": null,
+    "created_at": "timestamptz",
+    "updated_at": "timestamptz"
+  },
+  "balance_entry": {
+    "id": "uuid",
+    "subaccount_id": "uuid",
+    "entry_date": "2026-02-12",
+    "snapshot_amount": "200",
+    "diff_amount": null,
+    "created_at": "timestamptz"
+  }
+}
+```
 
 Errors:
-- `validation` (duplicate position, unknown ids)
-- `forbidden` with `details.reason = "positions_limit"` when free-tier cap exceeded
+- `validation` (missing/invalid fields; negative snapshot rules if any; unknown ids)
+- `forbidden` with `details.reason = "subaccounts_limit"` when free-tier cap exceeded
 
-### `POST /remove_asset_from_account`
-Deletes an `account_assets` row and cascades deletes its `balance_entries`.
+### `POST /update_subaccount_balance`
+Writes a **snapshot** balance entry for a subaccount and computes/stores `diff_amount` vs the previous snapshot (if any).
 
 Request:
 ```json
-{ "account_id": "uuid", "asset_id": "uuid" }
+{
+  "subaccount_id": "uuid",
+  "snapshot_amount": "0.001",
+  "entry_date": "2026-02-12"
+}
+```
+
+Response: `balance_entries` row.
+
+Errors:
+- `validation` (missing amount/date; invalid date)
+- `not_found` (unknown subaccount or not owned)
+
+### `POST /rename_subaccount`
+Renames a subaccount. Currency (`asset_id`) is immutable and must not be updatable.
+
+Request:
+```json
+{ "subaccount_id": "uuid", "name": "Bitcoin" }
+```
+
+Response: `subaccounts` row.
+
+### `DELETE /subaccount`
+Deletes a subaccount and cascades delete its `balance_entries`.
+
+Request:
+```json
+{ "subaccount_id": "uuid" }
 ```
 
 Response:

@@ -28,7 +28,7 @@ Out of scope:
 - Given the user is on the free tier, when they attempt to select a base currency other than `USD|EUR|RUB`, then:
   - the app shows the paywall (FTR-009),
   - the base currency remains unchanged in `profiles`.
-- Given the user has paid entitlement for “any base currency”, when they select any supported fiat currency and save, then `profiles.base_currency` is updated and the Overview totals are recalculated using the new base currency.
+- Given the user has paid entitlement for “any base currency”, when they select any supported fiat currency and save, then `profiles.base_currency` is updated and the Main totals are recalculated using the new base currency.
 - Given the app fails to load the fiat catalog, when the user opens base currency settings, then the screen shows a retryable error state (mapped `Failure` codes per `docs/tech/api_assumptions.md`).
 
 ## UX references (which screens it touches; placeholders ok)
@@ -81,5 +81,5 @@ Out of scope:
 - Empty fiat catalog is treated as an error:
   - `client/lib/presentation/settings/bloc/base_currency_settings_cubit.dart` (empty list → `error`)
   - `client/lib/presentation/onboarding/bloc/base_currency_cubit.dart` (empty list → `error`)
-- Overview reflects base currency changes after saving:
+- Main reflects base currency changes after saving:
   - `client/lib/presentation/overview/bloc/overview_cubit.dart` + `client/lib/presentation/overview/page/overview_page.dart` (base currency chip reloads after returning)

@@ -23,7 +23,7 @@ abstract final class ProfileMapper {
   static EntitlementsEntity _entitlementsToEntity(EntitlementsDto dto) {
     return EntitlementsEntity(
       maxAccounts: dto.maxAccounts,
-      maxPositions: dto.maxPositions,
+      maxSubaccounts: dto.maxSubaccounts,
       anyBaseCurrency: dto.anyBaseCurrency,
       freeBaseCurrencyCodes: dto.allowedBaseCurrencyCodes
           .map((e) => e.toUpperCase())
@@ -37,7 +37,7 @@ abstract final class ProfileMapper {
   static EntitlementsDto _entitlementsToDto(EntitlementsEntity entity) {
     return EntitlementsDto(
       maxAccounts: entity.maxAccounts,
-      maxPositions: entity.maxPositions,
+      maxSubaccounts: entity.maxSubaccounts,
       anyBaseCurrency: entity.anyBaseCurrency,
       allowedBaseCurrencyCodes: entity.freeBaseCurrencyCodes
           .map((e) => e.toUpperCase())

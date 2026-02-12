@@ -1,6 +1,11 @@
-# Asset Tuner — API Assumptions
+# Asset Tuner — API Assumptions — v2 (breaking)
 
-**Last updated:** 2026-02-10
+**Last updated:** 2026-02-12
+
+## Breaking change note
+This document is updated for **MVP v2** (rewrite):
+- “Assets inside accounts” are modeled as **unlimited named subaccounts** (`subaccounts`).
+- Balance updates are **snapshot-only** (no delta input).
 
 ## API style
 - **Reads:** Supabase PostgREST (direct table reads) where safe under RLS.
@@ -42,20 +47,27 @@ Names may change, but the responsibilities should not.
 ### User-owned
 - `profiles` (1:1 with auth user, base currency, plan/entitlements)
 - `accounts` (user containers, archived flag)
-- `account_assets` (account ↔ asset many-to-many with ordering)
-- `balance_entries` (snapshot + delta history per account_asset; immutable rows)
+- `subaccounts` (account ↔ asset with a user-defined name; unlimited per account)
+- `balance_entries` (snapshot-only history per subaccount; immutable rows)
 
 ### Public/read-only
 - `assets` (fiat + crypto catalog)
 - `asset_rates_usd` (latest `usd_price` per asset + timestamp; server-written)
 
 ## Edge Functions (suggested endpoints)
-- `POST /update_balance`
-  - Input: `account_asset_id`, `entry_date`, `snapshot_amount` OR `delta_amount`
-  - Behavior: on snapshot, compute implied delta vs previous snapshot and persist consistent history
+- `POST /create_subaccount`
+  - Input: `account_id`, `name`, `asset_id`, `snapshot_amount`, `entry_date`
+  - Behavior: create `subaccounts` row + initial snapshot in a single atomic operation
+- `POST /update_subaccount_balance`
+  - Input: `subaccount_id`, `entry_date`, `snapshot_amount`
+  - Behavior: store a new snapshot and compute/store `diff_amount` vs previous snapshot
+- `POST /rename_subaccount`
+  - Input: `subaccount_id`, `name`
+- `DELETE /subaccount`
+  - Input: `subaccount_id`
 - `DELETE /account`
   - Input: `account_id`
-  - Behavior: cascade delete account + account_assets + balance_entries (authorized user only)
+  - Behavior: cascade delete account + subaccounts + balance_entries (authorized user only)
 - `POST /rates_sync` (cron only)
   - Fetch providers and upsert into `asset_rates_usd`
 
@@ -63,4 +75,3 @@ Names may change, but the responsibilities should not.
 - User-initiated deletion is supported in MVP:
   - Account deletion removes dependent data (server-side cascade).
   - Soft-delete/archiving remains available separately for “hide from totals”.
-

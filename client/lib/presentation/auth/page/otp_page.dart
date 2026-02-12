@@ -32,7 +32,7 @@ class OtpPage extends StatelessWidget {
             case OtpDestination.onboardingBaseCurrency:
               context.go(AppRoutes.onboardingBaseCurrency);
             case OtpDestination.overview:
-              context.go(AppRoutes.overview);
+              context.go(AppRoutes.main);
             case OtpDestination.signIn:
               context.go(AppRoutes.signIn);
           }

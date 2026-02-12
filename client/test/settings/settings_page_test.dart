@@ -49,9 +49,7 @@ void main() {
           ),
         ),
         GetProfileUseCase(_FakeProfileRepository(freeProfile())),
-        BootstrapProfileUseCase(
-          _FakeProfileRepository(freeProfile()),
-        ),
+        BootstrapProfileUseCase(_FakeProfileRepository(freeProfile())),
         SignOutUseCase(_FakeAuthRepository()),
         DeleteAccountUseCase(_FakeAuthRepository()),
       ),
@@ -62,10 +60,10 @@ void main() {
     tester,
   ) async {
     final router = GoRouter(
-      initialLocation: AppRoutes.settings,
+      initialLocation: AppRoutes.profile,
       routes: [
         GoRoute(
-          path: AppRoutes.settings,
+          path: AppRoutes.profile,
           builder: (context, state) => const ProfilePage(),
         ),
         GoRoute(

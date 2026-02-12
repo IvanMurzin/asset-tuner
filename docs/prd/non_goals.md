@@ -9,7 +9,7 @@
 - Liabilities/debts (loans, credit cards) and net worth with liabilities.
 - Securities/portfolio features (stocks, bonds, funds), performance, tax lots.
 - Custom user-defined assets/tokens.
-- Multi-level hierarchy beyond **Account → Assets** (no arbitrary nesting).
+- Multi-level hierarchy beyond **Account → Subaccounts** (no arbitrary nesting).
 - AI advice/assistant features.
 - Advanced analytics (allocation, charts, forecasting) beyond minimal views needed for MVP.
 - App-level privacy lock (PIN/biometric) and “hide amounts” mode.

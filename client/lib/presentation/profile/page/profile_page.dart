@@ -210,7 +210,7 @@ class ProfilePage extends StatelessWidget {
                                   Icons.chevron_right,
                                   color: context.dsColors.textTertiary,
                                 ),
-                                onTap: () => context.push(AppRoutes.accounts),
+                                onTap: () => context.push(AppRoutes.main),
                               ),
                             ),
                             SizedBox(height: spacing.s24),

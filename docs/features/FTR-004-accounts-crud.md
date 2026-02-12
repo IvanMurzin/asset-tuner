@@ -1,7 +1,7 @@
 # FTR-004: Accounts CRUD (create/edit/archive/delete)
 
 ## Summary
-Allow users to create and manage top-level accounts (Bank/Crypto Wallet/Cash/Other), including archiving (hide from totals) and deletion (server-side cascade).
+Allow users to create and manage top-level accounts (Bank/Wallet/Exchange/Cash/Other), including archiving (hide from totals) and deletion (server-side cascade).
 
 Source references:
 - Product: `docs/prd/prd.md` (Account concept + flows), `docs/prd/requirements.md` (FR-020..FR-023)
@@ -12,24 +12,24 @@ As a user, I want to model where my money is stored (banks, wallets, cash) so th
 
 ## Scope / Out of scope
 Scope:
-- Create account with `name` and `type` (Bank/Crypto Wallet/Cash/Other).
+- Create account with `name` and `type` (Bank/Wallet/Exchange/Cash/Other).
 - Edit account name/type.
 - Archive/unarchive account:
-  - archived accounts are hidden from Overview totals by default,
+  - archived accounts are hidden from Main totals by default,
   - archived accounts remain recoverable.
 - Delete account:
   - requires explicit confirmation,
   - performed via Edge Function to cascade delete dependent rows (account assets + balance entries).
 
 Out of scope:
-- Multi-level nesting beyond Account → Assets (explicit non-goal; see `docs/prd/non_goals.md`).
+- Multi-level nesting beyond Account → Subaccounts (explicit non-goal; see `docs/prd/non_goals.md`).
 - Account search/filter (nice-to-have only; see `docs/prd/prd.md`).
 
 ## Acceptance Criteria (BDD-style, unambiguous)
 - Given the user is signed in, when they create an account with a name and type, then the account appears in their account list and is included in totals (once it has assets/balances).
 - Given the user edits an account’s name or type, when they save, then the updated values persist and are reflected across devices after refresh.
 - Given the user archives an account, when they confirm, then:
-  - the account is hidden from the default Overview list and excluded from the default global total,
+  - the account is hidden from the default Main list and excluded from the default global total,
   - the account can be shown via an “Archived” section and unarchived.
 - Given the user deletes an account, when they confirm deletion, then:
   - the client calls `DELETE /account` Edge Function (see `docs/tech/api_assumptions.md`),
@@ -54,7 +54,7 @@ Out of scope:
   - `id: uuid`
   - `user_id: uuid`
   - `name: text`
-  - `type: enum/text` in {bank, crypto_wallet, cash, other}
+- `type: enum/text` in {bank, wallet, exchange, cash, other}
   - `archived: boolean`
   - `created_at, updated_at: timestamptz`
 - Edge Function:
@@ -66,5 +66,4 @@ Out of scope:
 - `account_deleted { account_id }`
 
 ## Open questions (if any)
-- Should archived accounts be excluded from totals always, or should Overview have a toggle “Include archived in totals”?
-
+- Should archived accounts be excluded from totals always, or should Main have a toggle “Include archived in totals”?

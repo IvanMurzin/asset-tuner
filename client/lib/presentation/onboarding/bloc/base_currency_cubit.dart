@@ -161,7 +161,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
           state.copyWith(
             isSaving: false,
             navigation: const BaseCurrencyNavigation(
-              destination: BaseCurrencyDestination.overview,
+              destination: BaseCurrencyDestination.main,
             ),
           ),
         );

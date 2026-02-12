@@ -22,15 +22,15 @@ set
 insert into public.asset_rates_usd (asset_id, usd_price, as_of)
 select a.id,
   case
-    when a.kind = 'fiat' and a.code = 'USD' then '1'
-    when a.kind = 'fiat' and a.code = 'EUR' then '1.08'
-    when a.kind = 'fiat' and a.code = 'RUB' then '0.011'
-    when a.kind = 'fiat' and a.code = 'GBP' then '1.27'
-    when a.kind = 'fiat' and a.code = 'CHF' then '1.10'
-    when a.kind = 'crypto' and a.code = 'BTC' then '45000'
-    when a.kind = 'crypto' and a.code = 'ETH' then '2500'
-    when a.kind = 'crypto' and a.code = 'USDT' then '1'
-    when a.kind = 'crypto' and a.code = 'SOL' then '100'
+    when a.kind = 'fiat' and a.code = 'USD' then 1
+    when a.kind = 'fiat' and a.code = 'EUR' then 1.08
+    when a.kind = 'fiat' and a.code = 'RUB' then 0.011
+    when a.kind = 'fiat' and a.code = 'GBP' then 1.27
+    when a.kind = 'fiat' and a.code = 'CHF' then 1.10
+    when a.kind = 'crypto' and a.code = 'BTC' then 45000
+    when a.kind = 'crypto' and a.code = 'ETH' then 2500
+    when a.kind = 'crypto' and a.code = 'USDT' then 1
+    when a.kind = 'crypto' and a.code = 'SOL' then 100
     else null
   end as usd_price,
   now() as as_of

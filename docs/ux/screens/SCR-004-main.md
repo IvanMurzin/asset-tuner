@@ -1,31 +1,37 @@
-# SCR-004: Overview
+# SCR-004: Main (MVP v2)
+
+See also: `docs/ux/navigation.md`.
 
 ## Purpose
-Show the global total in base currency, breakdown by account, and missing-rate + offline indicators; serve as the main hub for drill-down.
+Show the global total in base currency and the list of accounts; serve as the primary hub.
+
+Primary navigation:
+- Bottom tabs: Main / Analytics / Profile.
 
 ## Layout sections
-- Top app bar
-  - Title: “Overview”
-  - Base currency chip (tappable to Settings → Base currency)
+- Top app bar (no Settings icon)
+  - Title: “Main”
+  - Base currency chip (tappable → Profile → Base currency)
   - Pull-to-refresh affordance
-- Summary section
-  - Global total (full total or `N/A`)
-  - Partial total (only when missing rates)
-  - “Rates updated at …” timestamp (or missing)
+- Global total section
+  - Gradient card showing global total converted into base currency
+  - Rates updated timestamp
   - Offline indicator (if offline)
-- Accounts breakdown
-  - List of active accounts with totals
-  - Archived accounts excluded by default (no toggle in MVP unless specified)
-- Missing rates section (only when needed)
-  - List of unpriced holdings (asset code + original amount)
+- Accounts list
+  - Gradient cards per account, styled by account type
+  - Each card shows:
+    - account name,
+    - converted total in base currency,
+    - count of subaccounts (счетов).
+  - Primary CTA: “Add account” (floating or inline; must be prominent)
 
 ## Components
 - DS: `DSSectionTitle`
 - DS: `DSCard`
 - DS: `DSButton` (empty-state CTAs)
 - needs component: `DSAppBar` (with trailing actions)
-- needs component: `DSTotalValue` (large total typography + skeleton loading)
-- needs component: `DSListRow` (account row with trailing amount)
+- needs component: `DSTotalValue` (large total typography + skeleton loading) or reuse DS typography
+- needs component: `DSAccountCard` (gradient card by account type)
 - needs component: `DSChip` (base currency pill)
 - needs component: `DSInlineBanner` (offline / missing rates / errors)
 - needs component: `DSSkeleton` (loading placeholders)
@@ -33,11 +39,11 @@ Show the global total in base currency, breakdown by account, and missing-rate +
 
 ## Actions & navigation
 - Tap account row → `SCR-007` (Account detail).
-- Tap base currency chip → `SCR-012` (Base currency settings) via `SCR-009` (Settings) or direct.
+- Tap base currency chip → `SCR-012` (Base currency settings) via `SCR-009` (Profile).
 - Empty-state CTAs:
   - No accounts → “Create account” → `SCR-006`.
-  - Accounts exist but no assets → “Add asset” → `SCR-007` (choose account first) or `SCR-005`.
-  - Assets exist but no balances → “Add balance” → `SCR-010` then `SCR-011`.
+  - Accounts exist but no subaccounts → open an account → “Add subaccount” (`SCR-008`).
+  - Subaccounts exist but no balances → open a subaccount → “Update balance” (`SCR-011`).
 - Refresh:
   - Pull-to-refresh reloads accounts/assets/balances/rates and recomputes totals.
 
@@ -47,7 +53,7 @@ Show the global total in base currency, breakdown by account, and missing-rate +
   - Show cached snapshot immediately if available (prefer) while refreshing in background.
 - Empty (progressive):
   - No accounts: show CTA “Create account”.
-  - Has accounts, no assets: show guidance + CTA “Add asset”.
+  - Has accounts, no subaccounts: show guidance + CTA “Open an account to add subaccounts”.
   - Has assets, no balances: show guidance + CTA “Add balance”.
 - Error:
   - Network error while online: show retry banner.
@@ -57,15 +63,13 @@ Show the global total in base currency, breakdown by account, and missing-rate +
     - If no cache → offline empty/error state with “Try again”.
 - Success:
   - Totals computed with Decimal math; rounding for display only.
-  - Missing rates:
-    - Show partial total + full total as `N/A`.
-    - List unpriced holdings.
+  - Missing rates (MVP v2):
+    - Exclude holdings that cannot be priced from totals.
+    - Analytics excludes them as well.
 
 ## Copy (key text)
-- Title: “Overview”
+- Title: “Main”
 - Global total label: “Total”
-- Full total missing: “N/A”
-- Partial total label (missing rates): “Priced total”
 - Rates updated: “Rates updated at {time}”
 - Rates missing: “Rates unavailable”
 - Offline: “Offline”
@@ -73,13 +77,12 @@ Show the global total in base currency, breakdown by account, and missing-rate +
 - Empty: “Create your first account”
 - Empty CTA: “Create account”
 - Retry: “Try again”
-- Missing rates banner: “Some holdings can’t be priced right now.”
+ - Add account CTA: “Add account”
 
 ## Edge cases
 - Missing rates for base currency itself:
-  - Treat as missing-rate scenario; show `N/A` full total and list affected holdings.
+  - Totals cannot be computed reliably; show a retryable error/banner.
 - Archived accounts:
   - Exclude from default totals and list; if product later adds a toggle, ensure it is explicit.
 - Large numbers / many decimals:
   - Use compact formatting rules (but keep full precision for calculations).
-

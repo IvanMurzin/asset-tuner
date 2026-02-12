@@ -13,7 +13,7 @@ class SupabaseBalanceDataSource {
   final SupabaseEdgeFunctions _edgeFunctions;
 
   Future<List<BalanceEntryDto>> fetchHistory({
-    required String accountAssetId,
+    required String subaccountId,
     required int limit,
     required int offset,
   }) async {
@@ -22,7 +22,7 @@ class SupabaseBalanceDataSource {
     final rows = await _client
         .from(SupabaseTables.balanceEntries)
         .select()
-        .eq('account_asset_id', accountAssetId)
+        .eq('subaccount_id', subaccountId)
         .order('entry_date', ascending: false)
         .order('created_at', ascending: false)
         .range(start, end);
@@ -33,35 +33,28 @@ class SupabaseBalanceDataSource {
   }
 
   Future<BalanceEntryDto> updateBalance({
-    required String accountAssetId,
+    required String subaccountId,
     required DateTime entryDate,
-    Decimal? snapshotAmount,
-    Decimal? deltaAmount,
+    required Decimal snapshotAmount,
   }) {
-    final body = <String, dynamic>{
-      'account_asset_id': accountAssetId,
-      'entry_date': _formatDate(entryDate),
-    };
-    if (snapshotAmount != null) {
-      body['snapshot_amount'] = snapshotAmount.toString();
-    }
-    if (deltaAmount != null) {
-      body['delta_amount'] = deltaAmount.toString();
-    }
     return _edgeFunctions.invoke(
-      SupabaseFunctions.updateBalance,
-      body: body,
+      SupabaseFunctions.updateSubaccountBalance,
+      body: {
+        'subaccount_id': subaccountId,
+        'entry_date': _formatDate(entryDate),
+        'snapshot_amount': snapshotAmount.toString(),
+      },
       decode: BalanceEntryDto.fromJson,
     );
   }
 
   Future<List<BalanceEntryDto>> fetchEntriesForPositions(
-    Set<String> accountAssetIds,
+    Set<String> subaccountIds,
   ) async {
     final rows = await _client
         .from(SupabaseTables.balanceEntries)
         .select()
-        .inFilter('account_asset_id', accountAssetIds.toList())
+        .inFilter('subaccount_id', subaccountIds.toList())
         .order('entry_date', ascending: true)
         .order('created_at', ascending: true);
     return (rows as List)
@@ -74,4 +67,3 @@ class SupabaseBalanceDataSource {
     return '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }
-

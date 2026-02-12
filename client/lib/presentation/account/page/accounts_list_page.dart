@@ -393,7 +393,8 @@ class _AccountRow extends StatelessWidget {
   String _typeLabel(AppLocalizations l10n, AccountType type) {
     return switch (type) {
       AccountType.bank => l10n.accountsTypeBank,
-      AccountType.cryptoWallet => l10n.accountsTypeCryptoWallet,
+      AccountType.wallet => l10n.accountsTypeCryptoWallet,
+      AccountType.exchange => l10n.accountsTypeExchange,
       AccountType.cash => l10n.accountsTypeCash,
       AccountType.other => l10n.accountsTypeOther,
     };

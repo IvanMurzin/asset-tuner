@@ -6,7 +6,7 @@ part 'entitlements_entity.freezed.dart';
 abstract class EntitlementsEntity with _$EntitlementsEntity {
   const factory EntitlementsEntity({
     required int maxAccounts,
-    required int maxPositions,
+    required int maxSubaccounts,
     required bool anyBaseCurrency,
     required Set<String> freeBaseCurrencyCodes,
     DateTime? expiresAt,

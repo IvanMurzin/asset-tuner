@@ -36,8 +36,8 @@ class BaseCurrencyPage extends StatelessWidget {
             case BaseCurrencyDestination.signIn:
               context.go(AppRoutes.signIn);
               break;
-            case BaseCurrencyDestination.overview:
-              context.go(AppRoutes.overview);
+            case BaseCurrencyDestination.main:
+              context.go(AppRoutes.main);
               break;
             case BaseCurrencyDestination.paywall:
               final upgraded = await context.push<bool>(

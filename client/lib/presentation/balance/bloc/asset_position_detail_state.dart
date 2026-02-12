@@ -2,7 +2,7 @@ part of 'asset_position_detail_cubit.dart';
 
 enum AssetPositionDetailStatus { loading, ready, error }
 
-enum AssetPositionDetailDestination { signIn }
+enum AssetPositionDetailDestination { signIn, backDeleted }
 
 @freezed
 abstract class AssetPositionDetailNavigation
@@ -18,9 +18,10 @@ abstract class AssetPositionDetailState with _$AssetPositionDetailState {
     @Default(AssetPositionDetailStatus.loading)
     AssetPositionDetailStatus status,
     String? accountId,
-    String? assetId,
-    String? accountAssetId,
+    String? subaccountId,
     String? accountName,
+    String? subaccountName,
+    String? assetId,
     String? assetCode,
     String? assetName,
     String? baseCurrency,
@@ -31,6 +32,7 @@ abstract class AssetPositionDetailState with _$AssetPositionDetailState {
     @Default([]) List<BalanceEntryEntity> entries,
     int? nextOffset,
     @Default(false) bool isLoadingMore,
+    @Default(false) bool isMutating,
     String? failureCode,
     String? bannerFailureCode,
     AssetPositionDetailNavigation? navigation,

@@ -4,16 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
+import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_chip.dart';
 import 'package:asset_tuner/core_ui/components/ds_empty_state.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
-import 'package:asset_tuner/core_ui/components/ds_list_row.dart';
-import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
-import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
@@ -55,11 +55,10 @@ class OverviewPage extends StatelessWidget {
         },
         builder: (context, state) {
           final baseCurrency = state.baseCurrency ?? 'USD';
-          final canMutate = !state.isOffline;
 
           return Scaffold(
             appBar: DSAppBar(
-              title: l10n.overviewTitle,
+              title: l10n.mainTitle,
               actions: [
                 Center(
                   child: Padding(
@@ -67,22 +66,16 @@ class OverviewPage extends StatelessWidget {
                     child: DSChip(
                       label: baseCurrency,
                       icon: Icons.currency_exchange,
-                      onTap: !canMutate
-                          ? null
-                          : () async {
-                              await context.push<String>(
-                                AppRoutes.baseCurrencySettings,
-                              );
-                              if (context.mounted) {
-                                await context.read<OverviewCubit>().load();
-                              }
-                            },
+                      onTap: () async {
+                        await context.push<String>(
+                          AppRoutes.baseCurrencySettings,
+                        );
+                        if (context.mounted) {
+                          await context.read<OverviewCubit>().load();
+                        }
+                      },
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () => context.push(AppRoutes.settings),
-                  icon: const Icon(Icons.settings_outlined),
                 ),
               ],
             ),
@@ -126,8 +119,6 @@ class _OverviewBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final spacing = context.dsSpacing;
-    final typography = context.dsTypography;
-    final colors = context.dsColors;
 
     final status = state.status;
     if (status == OverviewStatus.loading) {
@@ -158,34 +149,37 @@ class _OverviewBody extends StatelessWidget {
         child: DSEmptyState(
           title: l10n.overviewEmptyNoAccountsTitle,
           message: l10n.overviewEmptyNoAccountsBody,
-          actionLabel: l10n.overviewEmptyNoAccountsCta,
+          actionLabel: l10n.mainAddAccount,
           onAction: () => context.push(AppRoutes.accountNew),
           icon: Icons.account_balance_outlined,
         ),
       );
     }
 
-    if (status == OverviewStatus.emptyNoAssets) {
-      return Center(
-        child: DSEmptyState(
-          title: l10n.overviewEmptyNoAssetsTitle,
-          message: l10n.overviewEmptyNoAssetsBody,
-          actionLabel: l10n.overviewEmptyNoAssetsCta,
-          onAction: () => context.push(AppRoutes.accounts),
-          icon: Icons.add_circle_outline,
-        ),
-      );
-    }
-
-    if (status == OverviewStatus.emptyNoBalances) {
-      return Center(
-        child: DSEmptyState(
-          title: l10n.overviewEmptyNoBalancesTitle,
-          message: l10n.overviewEmptyNoBalancesBody,
-          actionLabel: l10n.overviewEmptyNoBalancesCta,
-          onAction: () => context.push(AppRoutes.accounts),
-          icon: Icons.timeline_outlined,
-        ),
+    if (status == OverviewStatus.emptyNoAssets ||
+        status == OverviewStatus.emptyNoBalances) {
+      return ListView(
+        children: [
+          _SummaryCard(
+            totalLabel: l10n.overviewTotalLabel,
+            totalValue: _formatMoney(context, baseCurrency, Decimal.zero),
+            ratesText: ratesText,
+            pricedTotalLabel: null,
+            pricedTotalValue: null,
+          ),
+          SizedBox(height: spacing.s24),
+          DSEmptyState(
+            title: status == OverviewStatus.emptyNoAssets
+                ? l10n.subaccountEmptyTitle
+                : l10n.positionHistoryEmptyTitle,
+            message: status == OverviewStatus.emptyNoAssets
+                ? l10n.subaccountEmptyBody
+                : l10n.positionHistoryEmptyBody,
+            actionLabel: l10n.mainAddAccount,
+            onAction: () => context.push(AppRoutes.accountNew),
+            icon: Icons.add_circle_outline,
+          ),
+        ],
       );
     }
 
@@ -220,50 +214,16 @@ class _OverviewBody extends StatelessWidget {
           ratesText: ratesText,
         ),
         SizedBox(height: spacing.s24),
-        DSSectionTitle(title: l10n.accountsActiveSection),
-        SizedBox(height: spacing.s12),
-        DSCard(
-          padding: EdgeInsets.zero,
-          child: Column(
-            children: [
-              for (var i = 0; i < state.accounts.length; i++) ...[
-                _AccountRow(
-                  item: state.accounts[i],
-                  baseCurrency: baseCurrency,
-                ),
-                if (i != state.accounts.length - 1) const Divider(height: 1),
-              ],
-            ],
-          ),
-        ),
-        if (state.hasUnpricedHoldings) ...[
-          SizedBox(height: spacing.s24),
-          DSInlineBanner(
-            title: l10n.overviewMissingRatesTitle,
-            message: l10n.overviewMissingRatesBody,
-            variant: DSInlineBannerVariant.warning,
-          ),
-          SizedBox(height: spacing.s16),
-          DSSectionTitle(title: l10n.overviewUnpricedHoldingsTitle),
+        for (final item in state.accounts) ...[
+          _AccountCard(item: item, baseCurrency: baseCurrency),
           SizedBox(height: spacing.s12),
-          DSCard(
-            padding: EdgeInsets.zero,
-            child: Column(
-              children: [
-                for (var i = 0; i < state.unpricedHoldings.length; i++) ...[
-                  _UnpricedRow(item: state.unpricedHoldings[i]),
-                  if (i != state.unpricedHoldings.length - 1)
-                    const Divider(height: 1),
-                ],
-              ],
-            ),
-          ),
         ],
-        SizedBox(height: spacing.s16),
-        Text(
-          l10n.pullToRefreshHint,
-          style: typography.caption.copyWith(color: colors.textSecondary),
-          textAlign: TextAlign.center,
+        SizedBox(height: spacing.s8),
+        DSButton(
+          label: l10n.mainAddAccount,
+          leadingIcon: Icons.add,
+          fullWidth: true,
+          onPressed: () => context.push(AppRoutes.accountNew),
         ),
       ],
     );
@@ -316,32 +276,26 @@ class _SummaryCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            colors.primary.withValues(alpha: 0.18),
+            colors.primary.withValues(alpha: 0.22),
             colors.info.withValues(alpha: 0.16),
           ],
         ),
         borderRadius: BorderRadius.circular(context.dsRadius.r16),
-        border: Border.all(color: colors.border.withValues(alpha: 0.6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(totalLabel, style: typography.h3),
-          SizedBox(height: spacing.s8),
           Text(
-            totalValue,
-            style: typography.totalNumeric.copyWith(color: colors.textPrimary),
+            totalLabel,
+            style: typography.caption.copyWith(color: colors.textSecondary),
           ),
+          SizedBox(height: spacing.s8),
+          Text(totalValue, style: typography.h1),
           if (pricedTotalLabel != null && pricedTotalValue != null) ...[
             SizedBox(height: spacing.s12),
             Text(
-              pricedTotalLabel!,
-              style: typography.caption.copyWith(color: colors.textSecondary),
-            ),
-            SizedBox(height: spacing.s4),
-            Text(
-              pricedTotalValue!,
-              style: typography.h2.copyWith(color: colors.textPrimary),
+              '$pricedTotalLabel: $pricedTotalValue',
+              style: typography.body.copyWith(color: colors.textSecondary),
             ),
           ],
           SizedBox(height: spacing.s12),
@@ -355,72 +309,75 @@ class _SummaryCard extends StatelessWidget {
   }
 }
 
-class _AccountRow extends StatelessWidget {
-  const _AccountRow({required this.item, required this.baseCurrency});
+class _AccountCard extends StatelessWidget {
+  const _AccountCard({required this.item, required this.baseCurrency});
 
   final OverviewAccountItem item;
   final String baseCurrency;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final trailing = item.hasUnpricedHoldings
-        ? Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                l10n.notAvailable,
-                style: context.dsTypography.body.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: context.dsColors.textPrimary,
-                ),
-              ),
-              SizedBox(height: context.dsSpacing.s4),
-              Text(
-                l10n.overviewPartialHint,
-                style: context.dsTypography.caption.copyWith(
-                  color: context.dsColors.textSecondary,
-                ),
-              ),
-            ],
-          )
-        : Text(
-            '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(item.total, maximumFractionDigits: 2)}',
-            style: context.dsTypography.body.copyWith(
-              fontWeight: FontWeight.w700,
-              color: context.dsColors.textPrimary,
-            ),
-          );
+    final colors = context.dsColors;
+    final typography = context.dsTypography;
+    final spacing = context.dsSpacing;
 
-    return DSListRow(
-      title: item.accountName,
-      trailing: trailing,
+    final gradient = switch (item.accountType) {
+      AccountType.bank => [
+        colors.primary.withValues(alpha: 0.22),
+        colors.surface,
+      ],
+      AccountType.wallet => [
+        colors.info.withValues(alpha: 0.22),
+        colors.surface,
+      ],
+      AccountType.exchange => [
+        colors.success.withValues(alpha: 0.22),
+        colors.surface,
+      ],
+      AccountType.cash => [
+        colors.warning.withValues(alpha: 0.25),
+        colors.surface,
+      ],
+      AccountType.other => [
+        colors.textTertiary.withValues(alpha: 0.2),
+        colors.surface,
+      ],
+    };
+
+    final totalText =
+        '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(item.total, maximumFractionDigits: 2)}';
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(context.dsRadius.r16),
       onTap: () => context.push(
         AppRoutes.accountDetail.replaceFirst(':id', item.accountId),
       ),
-    );
-  }
-}
-
-class _UnpricedRow extends StatelessWidget {
-  const _UnpricedRow({required this.item});
-
-  final OverviewUnpricedHolding item;
-
-  @override
-  Widget build(BuildContext context) {
-    final amountText = context.dsFormatters.formatDecimalFromDecimal(
-      item.amount,
-      maximumFractionDigits: 8,
-    );
-    return DSListRow(
-      title: item.assetCode,
-      trailing: Text(
-        amountText,
-        style: context.dsTypography.body.copyWith(
-          fontWeight: FontWeight.w700,
-          color: context.dsColors.textPrimary,
+      child: Container(
+        padding: EdgeInsets.all(spacing.s16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: gradient,
+          ),
+          borderRadius: BorderRadius.circular(context.dsRadius.r16),
+          border: Border.all(color: colors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(item.accountName, style: typography.h3),
+            SizedBox(height: spacing.s8),
+            Text(
+              totalText,
+              style: typography.body.copyWith(fontWeight: FontWeight.w700),
+            ),
+            SizedBox(height: spacing.s8),
+            Text(
+              '${item.subaccountsCount} ${AppLocalizations.of(context)!.subaccountsCountLabel}',
+              style: typography.caption.copyWith(color: colors.textSecondary),
+            ),
+          ],
         ),
       ),
     );
@@ -435,11 +392,11 @@ class _SummarySkeleton extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const DSSkeleton(width: 120, height: 16),
+          DSSkeleton(height: 18, width: 96),
           SizedBox(height: spacing.s12),
-          const DSSkeleton(width: 200, height: 32),
-          SizedBox(height: spacing.s12),
-          const DSSkeleton(width: 160, height: 14),
+          DSSkeleton(height: 38, width: 180),
+          SizedBox(height: spacing.s8),
+          DSSkeleton(height: 14, width: 150),
         ],
       ),
     );
@@ -450,28 +407,25 @@ class _AccountsSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spacing = context.dsSpacing;
-    return DSCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          for (var i = 0; i < 4; i++) ...[
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: spacing.s16,
-                vertical: spacing.s12,
-              ),
-              child: Row(
-                children: [
-                  const Expanded(child: DSSkeleton(height: 14)),
-                  SizedBox(width: spacing.s12),
-                  const DSSkeleton(width: 72, height: 14),
-                ],
-              ),
+
+    return Column(
+      children: [
+        for (var i = 0; i < 4; i++) ...[
+          DSCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DSSkeleton(height: 20, width: 140),
+                SizedBox(height: spacing.s8),
+                DSSkeleton(height: 16, width: 96),
+                SizedBox(height: spacing.s8),
+                DSSkeleton(height: 12, width: 120),
+              ],
             ),
-            if (i != 3) const Divider(height: 1),
-          ],
+          ),
+          if (i != 3) SizedBox(height: spacing.s12),
         ],
-      ),
+      ],
     );
   }
 }

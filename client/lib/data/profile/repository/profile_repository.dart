@@ -63,9 +63,7 @@ class ProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Result<ProfileEntity>> updateBaseCurrency(
-    String baseCurrency,
-  ) async {
+  Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
     try {
       final dto = await _dataSource.updateBaseCurrency(baseCurrency);
       logger.i('ProfileRepository.updateBaseCurrency success');

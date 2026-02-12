@@ -5,19 +5,18 @@ import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.da
 
 abstract interface class IBalanceRepository {
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
-    required String accountAssetId,
+    required String subaccountId,
     required int limit,
     int? offset,
   });
 
   Future<Result<BalanceEntryEntity>> updateBalance({
-    required String accountAssetId,
+    required String subaccountId,
     required DateTime entryDate,
-    Decimal? snapshotAmount,
-    Decimal? deltaAmount,
+    required Decimal snapshotAmount,
   });
 
   Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
-    required Set<String> accountAssetIds,
+    required Set<String> subaccountIds,
   });
 }

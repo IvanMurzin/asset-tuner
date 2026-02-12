@@ -199,6 +199,31 @@ class AppLocalizationsRu extends AppLocalizations {
   String get overviewTitle => 'Обзор';
 
   @override
+  String get mainTitle => 'Главная';
+
+  @override
+  String get mainAddAccount => 'Добавить аккаунт';
+
+  @override
+  String get analyticsTitle => 'Аналитика';
+
+  @override
+  String get analyticsBreakdownTitle => 'Разбивка';
+
+  @override
+  String get analyticsUpdatesTitle => 'Обновления';
+
+  @override
+  String get analyticsEmptyTitle => 'Пока нет аналитики';
+
+  @override
+  String get analyticsEmptyBody =>
+      'Добавьте аккаунты и балансы, чтобы увидеть разбивку и обновления.';
+
+  @override
+  String get actionsTitle => 'Действия';
+
+  @override
   String get overviewTotalLabel => 'Итого';
 
   @override
@@ -326,6 +351,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountsTypeCryptoWallet => 'Криптокошелек';
 
   @override
+  String get accountsTypeExchange => 'Биржа';
+
+  @override
   String get accountsTypeCash => 'Наличные';
 
   @override
@@ -414,6 +442,50 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get assetKindCrypto => 'Крипто';
+
+  @override
+  String get subaccountsCountLabel => 'счетов';
+
+  @override
+  String get subaccountCreateTitle => 'Добавить счет';
+
+  @override
+  String get subaccountCreateCta => 'Добавить счет';
+
+  @override
+  String get subaccountCurrencyLabel => 'Валюта';
+
+  @override
+  String get subaccountNameHint => 'например, USDT (TRC20)';
+
+  @override
+  String get subaccountEmptyTitle => 'Пока нет счетов';
+
+  @override
+  String get subaccountEmptyBody =>
+      'Добавьте активы, которые хранятся в этом аккаунте.';
+
+  @override
+  String get subaccountListTitle => 'Счета';
+
+  @override
+  String get subaccountUpdateBalanceCta => 'Обновить баланс';
+
+  @override
+  String get subaccountRenameCta => 'Переименовать';
+
+  @override
+  String get subaccountRenameTitle => 'Переименовать счет';
+
+  @override
+  String get subaccountDeleteCta => 'Удалить';
+
+  @override
+  String get subaccountDeleteConfirmTitle => 'Удалить счет?';
+
+  @override
+  String get subaccountDeleteConfirmBody =>
+      'Это удалит историю балансов счета.';
 
   @override
   String get assetRemove => 'Удалить';
@@ -509,8 +581,8 @@ class AppLocalizationsRu extends AppLocalizations {
       'Вы достигли бесплатного лимита: 5 счетов.';
 
   @override
-  String get paywallReasonPositions =>
-      'Вы достигли бесплатного лимита: 20 отслеживаемых активов.';
+  String get paywallReasonSubaccounts =>
+      'Вы достигли бесплатного лимита: 20 счетов.';
 
   @override
   String get paywallReasonBaseCurrency => 'Откройте любую базовую валюту.';
@@ -529,7 +601,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallFeatureAccounts => 'Больше счетов';
 
   @override
-  String get paywallFeaturePositions => 'Больше отслеживаемых активов';
+  String get paywallFeatureSubaccounts => 'Больше счетов';
 
   @override
   String get paywallFeatureCurrencies => 'Любая базовая валюта';

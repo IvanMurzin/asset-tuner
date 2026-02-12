@@ -7,12 +7,14 @@ import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
+import 'package:asset_tuner/core_ui/components/ds_dialog.dart';
 import 'package:asset_tuner/core_ui/components/ds_empty_state.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_list_row.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
+import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
@@ -20,14 +22,9 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/balance/bloc/asset_position_detail_cubit.dart';
 
 class AssetPositionDetailPage extends StatelessWidget {
-  const AssetPositionDetailPage({
-    super.key,
-    required this.accountId,
-    required this.assetId,
-  });
+  const AssetPositionDetailPage({super.key, required this.subaccountId});
 
-  final String accountId;
-  final String assetId;
+  final String subaccountId;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +32,7 @@ class AssetPositionDetailPage extends StatelessWidget {
 
     return BlocProvider(
       create: (_) =>
-          getIt<AssetPositionDetailCubit>()
-            ..load(accountId: accountId, assetId: assetId),
+          getIt<AssetPositionDetailCubit>()..load(subaccountId: subaccountId),
       child: BlocConsumer<AssetPositionDetailCubit, AssetPositionDetailState>(
         listener: (context, state) {
           final navigation = state.navigation;
@@ -47,6 +43,9 @@ class AssetPositionDetailPage extends StatelessWidget {
           switch (navigation.destination) {
             case AssetPositionDetailDestination.signIn:
               context.go(AppRoutes.signIn);
+              break;
+            case AssetPositionDetailDestination.backDeleted:
+              context.pop(true);
               break;
           }
         },
@@ -59,10 +58,11 @@ class AssetPositionDetailPage extends StatelessWidget {
             return const Scaffold(body: Center(child: DSLoader()));
           }
 
-          final title = state.assetCode ?? l10n.notAvailable;
+          final title =
+              state.subaccountName ?? state.assetCode ?? l10n.notAvailable;
 
           if (state.status == AssetPositionDetailStatus.error &&
-              state.accountAssetId == null) {
+              state.subaccountId == null) {
             return Scaffold(
               appBar: DSAppBar(title: title),
               body: DSInlineError(
@@ -70,8 +70,7 @@ class AssetPositionDetailPage extends StatelessWidget {
                 message: _failureMessage(l10n, state.failureCode),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<AssetPositionDetailCubit>().load(
-                  accountId: accountId,
-                  assetId: assetId,
+                  subaccountId: subaccountId,
                 ),
               ),
             );
@@ -160,48 +159,66 @@ class AssetPositionDetailPage extends StatelessWidget {
                         variant: DSInlineBannerVariant.warning,
                       ),
                     ],
-                    SizedBox(height: spacing.s24),
+                    SizedBox(height: spacing.s16),
+                    DSSectionTitle(title: l10n.actionsTitle),
+                    SizedBox(height: spacing.s12),
                     Row(
                       children: [
                         Expanded(
                           child: DSButton(
-                            label: l10n.positionAddBalance,
+                            label: l10n.subaccountUpdateBalanceCta,
                             onPressed: () async {
                               await context.push<bool>(
-                                AppRoutes.addBalance
-                                    .replaceFirst(':accountId', accountId)
-                                    .replaceFirst(':assetId', assetId),
+                                AppRoutes.addBalance.replaceFirst(
+                                  ':id',
+                                  subaccountId,
+                                ),
                               );
                               if (context.mounted) {
                                 await context
                                     .read<AssetPositionDetailCubit>()
-                                    .load(
-                                      accountId: accountId,
-                                      assetId: assetId,
-                                    );
+                                    .load(subaccountId: subaccountId);
                               }
                             },
                           ),
                         ),
-                        SizedBox(width: spacing.s12),
+                        SizedBox(width: spacing.s8),
                         DSButton(
-                          label: l10n.positionUpdateThisMonth,
+                          label: l10n.subaccountRenameCta,
                           variant: DSButtonVariant.secondary,
-                          onPressed: () async {
-                            final now = DateTime.now();
-                            final date = DateTime(now.year, now.month, 1);
-                            await context.push<bool>(
-                              AppRoutes.addBalance
-                                  .replaceFirst(':accountId', accountId)
-                                  .replaceFirst(':assetId', assetId),
-                              extra: date,
-                            );
-                            if (context.mounted) {
-                              await context
-                                  .read<AssetPositionDetailCubit>()
-                                  .load(accountId: accountId, assetId: assetId);
-                            }
-                          },
+                          onPressed: state.isMutating
+                              ? null
+                              : () async {
+                                  final name = await _showRenameDialog(
+                                    context,
+                                    initial: state.subaccountName ?? '',
+                                  );
+                                  if (name == null || !context.mounted) {
+                                    return;
+                                  }
+                                  await context
+                                      .read<AssetPositionDetailCubit>()
+                                      .rename(name);
+                                },
+                        ),
+                        SizedBox(width: spacing.s8),
+                        DSButton(
+                          label: l10n.subaccountDeleteCta,
+                          variant: DSButtonVariant.danger,
+                          onPressed: state.isMutating
+                              ? null
+                              : () async {
+                                  final confirmed = await _confirmDelete(
+                                    context,
+                                    l10n,
+                                  );
+                                  if (!confirmed || !context.mounted) {
+                                    return;
+                                  }
+                                  await context
+                                      .read<AssetPositionDetailCubit>()
+                                      .deleteSubaccount();
+                                },
                         ),
                       ],
                     ),
@@ -216,9 +233,10 @@ class AssetPositionDetailPage extends StatelessWidget {
                                 message: l10n.positionHistoryEmptyBody,
                                 actionLabel: l10n.positionHistoryEmptyCta,
                                 onAction: () => context.push<bool>(
-                                  AppRoutes.addBalance
-                                      .replaceFirst(':accountId', accountId)
-                                      .replaceFirst(':assetId', assetId),
+                                  AppRoutes.addBalance.replaceFirst(
+                                    ':id',
+                                    subaccountId,
+                                  ),
                                 ),
                                 icon: Icons.history_toggle_off_outlined,
                               ),
@@ -278,6 +296,53 @@ class AssetPositionDetailPage extends StatelessWidget {
       _ => l10n.errorGeneric,
     };
   }
+
+  Future<bool> _confirmDelete(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (_) => DSDialog(
+        title: l10n.subaccountDeleteConfirmTitle,
+        content: Text(l10n.subaccountDeleteConfirmBody),
+        primaryLabel: l10n.subaccountDeleteCta,
+        secondaryLabel: l10n.cancel,
+        isDestructive: true,
+        onSecondary: () => Navigator.of(context).pop(false),
+        onPrimary: () => Navigator.of(context).pop(true),
+      ),
+    );
+    return result ?? false;
+  }
+
+  Future<String?> _showRenameDialog(
+    BuildContext context, {
+    required String initial,
+  }) async {
+    final controller = TextEditingController(text: initial);
+    final l10n = AppLocalizations.of(context)!;
+    final value = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => DSDialog(
+        title: l10n.subaccountRenameTitle,
+        content: DSTextField(
+          label: l10n.accountsNameLabel,
+          controller: controller,
+        ),
+        primaryLabel: l10n.save,
+        secondaryLabel: l10n.cancel,
+        onSecondary: () => Navigator.of(dialogContext).pop(),
+        onPrimary: () =>
+            Navigator.of(dialogContext).pop(controller.text.trim()),
+      ),
+    );
+    controller.dispose();
+    if (value == null || value.trim().isEmpty) {
+      return null;
+    }
+    return value.trim();
+  }
 }
 
 class _HistoryRow extends StatelessWidget {
@@ -292,26 +357,16 @@ class _HistoryRow extends StatelessWidget {
     final colors = context.dsColors;
     final dateText = context.dsFormatters.formatDate(entry.entryDate);
 
-    final title = switch (entry.entryType) {
-      BalanceEntryType.snapshot => l10n.balanceEntrySnapshot,
-      BalanceEntryType.delta => l10n.balanceEntryDelta,
-    };
-
-    final amount = entry.entryType == BalanceEntryType.snapshot
-        ? entry.snapshotAmount
-        : entry.deltaAmount;
-    final implied = entry.impliedDeltaAmount;
-
-    final amountText = amount == null ? l10n.notAvailable : amount.toString();
-    final impliedText = implied?.toString();
+    final amountText = entry.snapshotAmount.toString();
+    final diffText = entry.diffAmount?.toString();
 
     final subtitleParts = <String>[dateText];
-    if (entry.entryType == BalanceEntryType.snapshot && impliedText != null) {
-      subtitleParts.add('${l10n.balanceEntryImpliedDeltaLabel}: $impliedText');
+    if (diffText != null) {
+      subtitleParts.add('${l10n.balanceEntryImpliedDeltaLabel}: $diffText');
     }
 
     return DSListRow(
-      title: title,
+      title: l10n.balanceEntrySnapshot,
       subtitle: subtitleParts.join(' · '),
       trailing: Text(
         amountText,

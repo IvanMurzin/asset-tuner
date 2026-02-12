@@ -168,7 +168,7 @@ void main() {
       );
       addTearDown(cubit.close);
 
-      await cubit.load(reason: PaywallReason.positionsLimit);
+      await cubit.load(reason: PaywallReason.subaccountsLimit);
 
       expect(cubit.state.status, PaywallStatus.ready);
       expect(cubit.state.plan, 'free');

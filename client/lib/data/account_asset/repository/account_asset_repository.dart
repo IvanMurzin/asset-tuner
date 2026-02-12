@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
@@ -29,7 +30,7 @@ class AccountAssetRepository implements IAccountAssetRepository {
       return FailureResult(
         SupabaseFailureMapper.toFailure(
           error,
-          fallbackMessage: 'Unable to load account assets',
+          fallbackMessage: 'Unable to load subaccounts',
         ),
       );
     }
@@ -49,7 +50,7 @@ class AccountAssetRepository implements IAccountAssetRepository {
       return FailureResult(
         SupabaseFailureMapper.toFailure(
           error,
-          fallbackMessage: 'Unable to count positions',
+          fallbackMessage: 'Unable to count subaccounts',
         ),
       );
     }
@@ -58,12 +59,18 @@ class AccountAssetRepository implements IAccountAssetRepository {
   @override
   Future<Result<AccountAssetEntity>> addAssetToAccount({
     required String accountId,
+    required String name,
     required String assetId,
+    required Decimal snapshotAmount,
+    required DateTime entryDate,
   }) async {
     try {
       final dto = await _dataSource.addAssetToAccount(
         accountId: accountId,
+        name: name,
         assetId: assetId,
+        snapshotAmount: snapshotAmount,
+        entryDate: entryDate,
       );
       logger.i('AccountAssetRepository.addAssetToAccount success');
       return Success(AccountAssetMapper.toEntity(dto));
@@ -72,7 +79,30 @@ class AccountAssetRepository implements IAccountAssetRepository {
       return FailureResult(
         SupabaseFailureMapper.toFailure(
           error,
-          fallbackMessage: 'Unable to add asset to account',
+          fallbackMessage: 'Unable to create subaccount',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Result<AccountAssetEntity>> renameSubaccount({
+    required String subaccountId,
+    required String name,
+  }) async {
+    try {
+      final dto = await _dataSource.renameSubaccount(
+        subaccountId: subaccountId,
+        name: name,
+      );
+      logger.i('AccountAssetRepository.renameSubaccount success');
+      return Success(AccountAssetMapper.toEntity(dto));
+    } catch (error) {
+      logger.e('AccountAssetRepository.renameSubaccount failed', error: error);
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to rename subaccount',
         ),
       );
     }
@@ -80,14 +110,10 @@ class AccountAssetRepository implements IAccountAssetRepository {
 
   @override
   Future<Result<void>> removeAssetFromAccount({
-    required String accountId,
-    required String assetId,
+    required String subaccountId,
   }) async {
     try {
-      await _dataSource.removeAssetFromAccount(
-        accountId: accountId,
-        assetId: assetId,
-      );
+      await _dataSource.removeAssetFromAccount(subaccountId: subaccountId);
       logger.i('AccountAssetRepository.removeAssetFromAccount success');
       return const Success(null);
     } catch (error) {
@@ -98,7 +124,7 @@ class AccountAssetRepository implements IAccountAssetRepository {
       return FailureResult(
         SupabaseFailureMapper.toFailure(
           error,
-          fallbackMessage: 'Unable to remove asset from account',
+          fallbackMessage: 'Unable to delete subaccount',
         ),
       );
     }

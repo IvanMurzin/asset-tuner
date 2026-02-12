@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asset_tuner/core/supabase/supabase_constants.dart';
@@ -11,11 +12,15 @@ class SupabaseAccountAssetDataSource {
   final SupabaseClient _client;
   final SupabaseEdgeFunctions _edgeFunctions;
 
-  Future<List<AccountAssetDto>> fetchAccountAssets({required String accountId}) async {
+  Future<List<AccountAssetDto>> fetchAccountAssets({
+    required String accountId,
+  }) async {
     final rows = await _client
         .from(SupabaseTables.accountAssets)
         .select()
         .eq('account_id', accountId)
+        .eq('archived', false)
+        .order('sort_order', ascending: true)
         .order('created_at', ascending: true);
     return (rows as List)
         .whereType<Map<String, dynamic>>()
@@ -29,22 +34,48 @@ class SupabaseAccountAssetDataSource {
 
   Future<AccountAssetDto> addAssetToAccount({
     required String accountId,
+    required String name,
     required String assetId,
+    required Decimal snapshotAmount,
+    required DateTime entryDate,
+  }) async {
+    final payload = await _edgeFunctions.invokeJson(
+      SupabaseFunctions.createSubaccount,
+      body: {
+        'account_id': accountId,
+        'name': name,
+        'asset_id': assetId,
+        'snapshot_amount': snapshotAmount.toString(),
+        'entry_date': _toDate(entryDate),
+      },
+    );
+    final subaccountJson = payload['subaccount'];
+    if (subaccountJson is! Map<String, dynamic>) {
+      throw StateError('create_subaccount returned invalid payload');
+    }
+    return AccountAssetDto.fromJson(subaccountJson);
+  }
+
+  Future<AccountAssetDto> renameSubaccount({
+    required String subaccountId,
+    required String name,
   }) {
     return _edgeFunctions.invoke(
-      SupabaseFunctions.addAssetToAccount,
-      body: {'account_id': accountId, 'asset_id': assetId},
+      SupabaseFunctions.renameSubaccount,
+      body: {'subaccount_id': subaccountId, 'name': name},
       decode: AccountAssetDto.fromJson,
     );
   }
 
-  Future<void> removeAssetFromAccount({
-    required String accountId,
-    required String assetId,
-  }) async {
+  Future<void> removeAssetFromAccount({required String subaccountId}) async {
     await _edgeFunctions.invokeVoid(
-      SupabaseFunctions.removeAssetFromAccount,
-      body: {'account_id': accountId, 'asset_id': assetId},
+      SupabaseFunctions.deleteSubaccount,
+      method: HttpMethod.delete,
+      body: {'subaccount_id': subaccountId},
     );
+  }
+
+  String _toDate(DateTime date) {
+    return '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }

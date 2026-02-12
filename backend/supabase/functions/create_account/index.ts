@@ -5,7 +5,7 @@ import { json, jsonError } from '../_shared/responses.ts';
 import { getServiceClient } from '../_shared/supabase.ts';
 import { normalizeName } from '../_shared/validators.ts';
 
-const allowedTypes = new Set(['bank', 'crypto_wallet', 'cash', 'other']);
+const allowedTypes = new Set(['bank', 'wallet', 'exchange', 'cash', 'other']);
 
 async function ensureProfile(service: ReturnType<typeof getServiceClient>, userId: string) {
   const { data: profile, error } = await service
@@ -95,4 +95,3 @@ Deno.serve(async (req) => {
     return jsonError('unknown', 'Unexpected error', 500);
   }
 });
-

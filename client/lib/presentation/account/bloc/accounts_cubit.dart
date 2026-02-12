@@ -89,10 +89,7 @@ class AccountsCubit extends Cubit<AccountsState> {
       ),
     );
 
-    final result = await _setArchived(
-      accountId: accountId,
-      archived: archived,
-    );
+    final result = await _setArchived(accountId: accountId, archived: archived);
     switch (result) {
       case Success<AccountEntity>(value: final updated):
         emit(

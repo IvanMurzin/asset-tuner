@@ -28,4 +28,3 @@ class SupabaseCurrencyDataSource {
         .toList();
   }
 }
-

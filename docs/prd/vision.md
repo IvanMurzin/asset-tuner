@@ -27,7 +27,7 @@ In under 30 seconds, a user can:
 
 ## What makes it different
 - **Manual-first, zero bank integrations** (fast to ship, works globally).
-- **Account → Assets hierarchy** supports multi-token wallets (e.g., TrustWallet → BTC/ETH/USDT) while still allowing simple “single-asset accounts” (e.g., Cash USD).
+- **Account → Subaccounts hierarchy** supports multi-token wallets (e.g., TrustWallet → “USDT (TRC20)”, “Bitcoin”) while still allowing simple “single-holding accounts”.
 - **Always-converted view** via server-cached FX + crypto rates (hourly), so totals are consistent across devices.
 
 ## MVP scope (explicit)
@@ -36,7 +36,7 @@ In under 30 seconds, a user can:
 - Any-date entries (UI emphasizes a monthly update flow).
 - Currency conversion to a user-selected base currency.
 - Authentication + multi-device sync via Supabase.
-- Freemium: free tier (5 accounts, 20 asset positions, base currencies USD/EUR/RUB) + paid upgrade (any base currency, higher limits, later analytics).
+- Freemium: free tier (5 accounts, 20 subaccounts, base currencies USD/EUR/RUB) + paid upgrade (any base currency, higher limits, later analytics).
 
 ## Not in MVP (direction, not exhaustive)
 - Expense tracking / categories / budgeting.

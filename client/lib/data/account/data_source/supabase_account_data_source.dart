@@ -22,7 +22,10 @@ class SupabaseAccountDataSource {
         .toList();
   }
 
-  Future<AccountDto> createAccount({required String name, required String type}) {
+  Future<AccountDto> createAccount({
+    required String name,
+    required String type,
+  }) {
     return _edgeFunctions.invoke(
       SupabaseFunctions.createAccount,
       body: {'name': name, 'type': type},
@@ -65,4 +68,3 @@ class SupabaseAccountDataSource {
     );
   }
 }
-
