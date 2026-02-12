@@ -29,6 +29,7 @@ class AccountFormPage extends StatefulWidget {
 
 class _AccountFormPageState extends State<AccountFormPage> {
   late final TextEditingController _nameController;
+  bool _didSeedInitialName = false;
 
   @override
   void initState() {
@@ -99,8 +100,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
 
           final isEdit = widget.accountId != null;
 
-          if (state.initialName != null && _nameController.text.isEmpty) {
+          if (!_didSeedInitialName && state.initialName != null) {
             _nameController.text = state.initialName!;
+            _didSeedInitialName = true;
           }
 
           return Scaffold(

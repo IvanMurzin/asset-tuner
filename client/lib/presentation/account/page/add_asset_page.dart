@@ -176,20 +176,18 @@ class _AddAssetPageState extends State<AddAssetPage> {
                       onChanged: context.read<AddAssetCubit>().updateBalance,
                     ),
                     SizedBox(height: spacing.s12),
-                    Expanded(
-                      child: DSCurrencyPicker(
-                        options: options,
-                        selectedId: state.selectedAssetId,
-                        searchHintText: l10n.assetSearchHint,
-                        recentTitleText: l10n.currencyPickerRecentTitle,
-                        selectedTitleText: l10n.subaccountCurrencyLabel,
-                        changeSelectionText: l10n.currencyPickerChangeAction,
-                        emptyResultsTitle: l10n.assetNoMatchesTitle,
-                        emptyResultsMessage: l10n.assetNoMatchesBody,
-                        enabled: !state.isSaving,
-                        onSelect: (assetId) =>
-                            context.read<AddAssetCubit>().selectAsset(assetId),
-                      ),
+                    DSCurrencyPicker(
+                      options: options,
+                      selectedId: state.selectedAssetId,
+                      searchHintText: l10n.assetSearchHint,
+                      recentTitleText: l10n.currencyPickerRecentTitle,
+                      selectedTitleText: l10n.subaccountCurrencyLabel,
+                      changeSelectionText: l10n.currencyPickerChangeAction,
+                      emptyResultsTitle: l10n.assetNoMatchesTitle,
+                      emptyResultsMessage: l10n.assetNoMatchesBody,
+                      enabled: !state.isSaving,
+                      onSelect: (assetId) =>
+                          context.read<AddAssetCubit>().selectAsset(assetId),
                     ),
                     SizedBox(height: spacing.s16),
                     DSButton(

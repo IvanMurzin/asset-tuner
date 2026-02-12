@@ -28,18 +28,30 @@ class DSDatePickerField extends StatefulWidget {
 
 class _DSDatePickerFieldState extends State<DSDatePickerField> {
   late final TextEditingController _controller;
+  Locale? _locale;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: _text(context, widget.value));
+    _controller = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = Localizations.localeOf(context);
+    if (_locale == locale) {
+      return;
+    }
+    _locale = locale;
+    _syncText();
   }
 
   @override
   void didUpdateWidget(covariant DSDatePickerField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
-      _controller.text = _text(context, widget.value);
+      _syncText();
     }
   }
 
@@ -73,6 +85,18 @@ class _DSDatePickerFieldState extends State<DSDatePickerField> {
     if (picked != null) {
       widget.onChanged(picked);
     }
+  }
+
+  void _syncText() {
+    final nextText = _text(context, widget.value);
+    if (_controller.text == nextText) {
+      return;
+    }
+    _controller.value = _controller.value.copyWith(
+      text: nextText,
+      selection: TextSelection.collapsed(offset: nextText.length),
+      composing: TextRange.empty,
+    );
   }
 
   String _text(BuildContext context, DateTime? value) {
