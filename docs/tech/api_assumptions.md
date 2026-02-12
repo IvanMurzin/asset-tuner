@@ -32,8 +32,8 @@ Normalize backend errors into `Failure { code, message }` with codes:
 - `unknown`
 
 ## Money / decimals
-- Persist numeric values in Postgres as `numeric`.
-- In Flutter, use `decimal` for arithmetic; avoid `double` for amounts/rates.
+- Persist money/rates in Postgres as decimal strings in `text` columns.
+- In Flutter, parse those strings directly to `Decimal`; do not use `double` for amounts/rates.
 
 ## Security & RLS assumptions
 - All user-owned rows include `user_id uuid not null default auth.uid()`.

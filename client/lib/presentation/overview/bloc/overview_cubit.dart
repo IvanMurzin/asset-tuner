@@ -132,37 +132,20 @@ class OverviewCubit extends Cubit<OverviewState> {
     final allPositionIds = positionsByAccount.values
         .expand((e) => e.map((p) => p.id))
         .toSet();
-    if (allPositionIds.isEmpty) {
-      emit(
-        state.copyWith(
-          status: OverviewStatus.emptyNoAssets,
-          baseCurrency: profile.baseCurrency,
-          ratesAsOf: ratesSnapshot?.asOf,
-        ),
-      );
-      return;
-    }
-
-    final balances = await _getCurrentBalances(subaccountIds: allPositionIds);
-    final currentByPosition = switch (balances) {
-      Success<Map<String, Decimal>>(value: final map) => map,
-      FailureResult<Map<String, Decimal>>() => null,
-    };
-    if (currentByPosition == null) {
-      final code =
-          (balances as FailureResult<Map<String, Decimal>>).failure.code;
-      await _tryUseCache(session.userId, failureCode: code);
-      return;
-    }
-    if (currentByPosition.isEmpty) {
-      emit(
-        state.copyWith(
-          status: OverviewStatus.emptyNoBalances,
-          baseCurrency: profile.baseCurrency,
-          ratesAsOf: ratesSnapshot?.asOf,
-        ),
-      );
-      return;
+    Map<String, Decimal> currentByPosition = const <String, Decimal>{};
+    if (allPositionIds.isNotEmpty) {
+      final balances = await _getCurrentBalances(subaccountIds: allPositionIds);
+      final balancesMap = switch (balances) {
+        Success<Map<String, Decimal>>(value: final map) => map,
+        FailureResult<Map<String, Decimal>>() => null,
+      };
+      if (balancesMap == null) {
+        final code =
+            (balances as FailureResult<Map<String, Decimal>>).failure.code;
+        await _tryUseCache(session.userId, failureCode: code);
+        return;
+      }
+      currentByPosition = balancesMap;
     }
 
     final baseUsdPrice = _baseUsdPrice(
@@ -172,8 +155,8 @@ class OverviewCubit extends Cubit<OverviewState> {
     );
 
     final unpriced = <OverviewUnpricedHolding>[];
+    var hasUnpriced = false;
     var globalPricedTotal = Decimal.zero;
-    Decimal? globalFullTotal = Decimal.zero;
 
     final accountItems = <OverviewAccountItem>[];
     for (final account in activeAccounts) {
@@ -190,8 +173,8 @@ class OverviewCubit extends Cubit<OverviewState> {
         final assetCode = asset?.code ?? '?';
         final assetUsd = ratesSnapshot?.usdPriceByAssetId[position.assetId];
         if (baseUsdPrice == null || ratesSnapshot == null || assetUsd == null) {
+          hasUnpriced = true;
           accountHasUnpriced = true;
-          globalFullTotal = null;
           unpriced.add(
             OverviewUnpricedHolding(assetCode: assetCode, amount: original),
           );
@@ -200,10 +183,6 @@ class OverviewCubit extends Cubit<OverviewState> {
         final baseValue = divideToDecimal(original * assetUsd, baseUsdPrice);
         accountTotal += baseValue;
         globalPricedTotal += baseValue;
-      }
-
-      if (!accountHasUnpriced) {
-        globalFullTotal = (globalFullTotal ?? Decimal.zero) + accountTotal;
       }
 
       accountItems.add(
@@ -217,8 +196,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         ),
       );
     }
-
-    final hasUnpriced = globalFullTotal == null && unpriced.isNotEmpty;
+    final globalFullTotal = hasUnpriced ? null : globalPricedTotal;
 
     final computedAt = DateTime.now();
     await _cache.writeSnapshot(

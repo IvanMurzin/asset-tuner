@@ -21,6 +21,9 @@ This folder contains the Supabase backend (database schema, RLS policies, Edge F
 4) Deploy edge functions:
    - `./scripts/supabase_deploy_functions.sh`
 
+Migration details:
+- `../docs/tech/money-text-migration.md`
+
 Anything that cannot be automated via CLI/SQL is listed in `requirements.md`.
 
 ## Local development

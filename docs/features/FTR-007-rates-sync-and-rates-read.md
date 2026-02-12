@@ -52,7 +52,7 @@ Rates update server-side hourly, but the client may need to read them from multi
 ## Data needs (entities + fields)
 - Read-only `asset_rates_usd`
   - `asset_id: uuid`
-  - `usd_price: numeric`
+  - `usd_price: text` (decimal string)
   - `as_of: timestamptz`
   - Optional: `provider: text`, `source_ref: text`
 - Edge Function:

@@ -85,7 +85,7 @@ class RateRepository implements IRateRepository {
           .reduce((a, b) => a.isAfter(b) ? a : b);
       final prices = <String, Decimal>{};
       for (final dto in dtos) {
-        prices[dto.assetId] = Decimal.parse(dto.usdPrice.toString());
+        prices[dto.assetId] = dto.usdPrice;
       }
       logger.i('RateRepository.fetchLatestUsdRates success: ${prices.length}');
       final snapshot = RatesSnapshotEntity(

@@ -6,6 +6,7 @@ Start here:
 - Product: `docs/prd/prd.md`
 - Backend contract (schema): `docs/contracts/data_contract.md`
 - Backend contract (API): `docs/contracts/api_surface.md`
+- Migration runbook (money/rates as text): `docs/tech/money-text-migration.md`
 - Testable features: `docs/features/index.md`
 - UX screens & navigation: `docs/ux/screen_map.md`, `docs/ux/navigation.md`, `docs/ux/screens/*`
 

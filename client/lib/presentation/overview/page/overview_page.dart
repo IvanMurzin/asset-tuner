@@ -115,6 +115,37 @@ class _OverviewBody extends StatelessWidget {
   final String baseCurrency;
   final String ratesText;
 
+  Future<void> _openCreateAccountFlow(BuildContext context) async {
+    final createdAccountId = await context.push<String>(AppRoutes.accountNew);
+    if (!context.mounted ||
+        createdAccountId == null ||
+        createdAccountId.isEmpty) {
+      return;
+    }
+    await context.read<OverviewCubit>().load();
+    if (!context.mounted) {
+      return;
+    }
+    await context.push<bool>(
+      AppRoutes.accountDetail.replaceFirst(':id', createdAccountId),
+    );
+    if (context.mounted) {
+      await context.read<OverviewCubit>().load();
+    }
+  }
+
+  Future<void> _openAccountDetail(
+    BuildContext context,
+    String accountId,
+  ) async {
+    await context.push<bool>(
+      AppRoutes.accountDetail.replaceFirst(':id', accountId),
+    );
+    if (context.mounted) {
+      await context.read<OverviewCubit>().load();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -150,7 +181,7 @@ class _OverviewBody extends StatelessWidget {
           title: l10n.overviewEmptyNoAccountsTitle,
           message: l10n.overviewEmptyNoAccountsBody,
           actionLabel: l10n.mainAddAccount,
-          onAction: () => context.push(AppRoutes.accountNew),
+          onAction: () => _openCreateAccountFlow(context),
           icon: Icons.account_balance_outlined,
         ),
       );
@@ -176,7 +207,7 @@ class _OverviewBody extends StatelessWidget {
                 ? l10n.subaccountEmptyBody
                 : l10n.positionHistoryEmptyBody,
             actionLabel: l10n.mainAddAccount,
-            onAction: () => context.push(AppRoutes.accountNew),
+            onAction: () => _openCreateAccountFlow(context),
             icon: Icons.add_circle_outline,
           ),
         ],
@@ -215,7 +246,11 @@ class _OverviewBody extends StatelessWidget {
         ),
         SizedBox(height: spacing.s24),
         for (final item in state.accounts) ...[
-          _AccountCard(item: item, baseCurrency: baseCurrency),
+          _AccountCard(
+            item: item,
+            baseCurrency: baseCurrency,
+            onTap: () => _openAccountDetail(context, item.accountId),
+          ),
           SizedBox(height: spacing.s12),
         ],
         SizedBox(height: spacing.s8),
@@ -223,7 +258,7 @@ class _OverviewBody extends StatelessWidget {
           label: l10n.mainAddAccount,
           leadingIcon: Icons.add,
           fullWidth: true,
-          onPressed: () => context.push(AppRoutes.accountNew),
+          onPressed: () => _openCreateAccountFlow(context),
         ),
       ],
     );
@@ -310,10 +345,15 @@ class _SummaryCard extends StatelessWidget {
 }
 
 class _AccountCard extends StatelessWidget {
-  const _AccountCard({required this.item, required this.baseCurrency});
+  const _AccountCard({
+    required this.item,
+    required this.baseCurrency,
+    required this.onTap,
+  });
 
   final OverviewAccountItem item;
   final String baseCurrency;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -349,9 +389,7 @@ class _AccountCard extends StatelessWidget {
 
     return InkWell(
       borderRadius: BorderRadius.circular(context.dsRadius.r16),
-      onTap: () => context.push(
-        AppRoutes.accountDetail.replaceFirst(':id', item.accountId),
-      ),
+      onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(spacing.s16),
         decoration: BoxDecoration(

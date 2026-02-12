@@ -16,7 +16,7 @@ This contract is **v2** and is intentionally **breaking** vs earlier MVP drafts:
 ## Conventions
 - **IDs:** `uuid` (generated server-side).
 - **Timestamps:** `timestamptz` in UTC.
-- **Money/rates:** `numeric` (never `float`).
+- **Money/rates:** `text` with decimal-string values.
 - **User ownership:** all user-owned rows include `user_id uuid not null default auth.uid()`.
 - **RLS:** user-owned tables restrict `select/insert/update/delete` to `user_id = auth.uid()`.
 - **Catalog:** read-only for clients (public read policy; no user_id).
@@ -128,8 +128,8 @@ Fields:
 - `user_id uuid not null default auth.uid()` (FK → `profiles.user_id`)
 - `subaccount_id uuid not null` (FK → `subaccounts.id`)
 - `entry_date date not null`
-- `snapshot_amount numeric not null`
-- `diff_amount numeric null`
+- `snapshot_amount text not null` (decimal string)
+- `diff_amount text null` (decimal string)
 - `created_at timestamptz not null default now()`
 
 Constraints:
@@ -146,11 +146,11 @@ Latest known USD price per asset (a pivot for conversion).
 
 Fields:
 - `asset_id uuid` (PK, FK → `assets.id`)
-- `usd_price numeric not null`
+- `usd_price text not null` (decimal string)
 - `as_of timestamptz not null`
 
 Constraints:
-- `usd_price > 0`
+- `usd_price::numeric > 0`
 
 Client notes:
 - The client should cache the latest snapshot in-memory and avoid frequent reads (many rows).

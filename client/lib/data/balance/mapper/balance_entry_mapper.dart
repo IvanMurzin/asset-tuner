@@ -9,10 +9,8 @@ abstract final class BalanceEntryMapper {
       id: dto.id,
       subaccountId: dto.subaccountId,
       entryDate: DateTime.parse(dto.entryDateIso),
-      snapshotAmount: Decimal.parse(dto.snapshotAmount),
-      diffAmount: dto.diffAmount == null
-          ? null
-          : Decimal.parse(dto.diffAmount!),
+      snapshotAmount: dto.snapshotAmount,
+      diffAmount: dto.diffAmount,
       createdAt: DateTime.parse(dto.createdAtIso),
     );
   }
@@ -22,8 +20,10 @@ abstract final class BalanceEntryMapper {
       id: stored.id,
       subaccountId: stored.accountAssetId,
       entryDateIso: stored.entryDateIso,
-      snapshotAmount: stored.snapshotAmount ?? '0',
-      diffAmount: stored.impliedDeltaAmount,
+      snapshotAmount: Decimal.parse(stored.snapshotAmount ?? '0'),
+      diffAmount: stored.impliedDeltaAmount == null
+          ? null
+          : Decimal.parse(stored.impliedDeltaAmount!),
       createdAtIso: stored.createdAtIso,
     );
   }
@@ -34,9 +34,9 @@ abstract final class BalanceEntryMapper {
       accountAssetId: dto.subaccountId,
       entryDateIso: dto.entryDateIso,
       entryType: 'snapshot',
-      snapshotAmount: dto.snapshotAmount,
+      snapshotAmount: dto.snapshotAmount.toString(),
       deltaAmount: null,
-      impliedDeltaAmount: dto.diffAmount,
+      impliedDeltaAmount: dto.diffAmount?.toString(),
       createdAtIso: dto.createdAtIso,
     );
   }

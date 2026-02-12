@@ -19,6 +19,7 @@ This API surface is **v2** and is intentionally **breaking** vs earlier MVP draf
 - Reads use PostgREST where safe under RLS.
 - Writes use Edge Functions for validation, limits, and atomic workflows.
 - Simple row updates may use PostgREST under RLS when no extra server validation is needed.
+- Money/rates fields are serialized as decimal strings in JSON (`"123.45"`), not JSON numbers.
 
 ## Error model (normalized in client)
 All transport and API errors must be normalized by the client into:
@@ -281,28 +282,6 @@ Response: updated `profiles` row.
 
 Errors:
 - `forbidden` with `details.reason = "base_currency"` when the currency is not allowed for the current entitlements
-
-### `POST /update_balance`
-Creates an immutable `balance_entries` row for snapshot or delta.
-
-Request:
-```json
-{
-  "account_asset_id": "uuid",
-  "entry_date": "YYYY-MM-DD",
-  "snapshot_amount": "123.45"
-}
-```
-or
-```json
-{
-  "account_asset_id": "uuid",
-  "entry_date": "YYYY-MM-DD",
-  "delta_amount": "-10"
-}
-```
-
-Response: created `balance_entries` row (including computed `implied_delta_amount` when applicable).
 
 ### `POST /update_plan` (dev/testing only)
 Updates `profiles.plan` and recomputes `profiles.entitlements`.

@@ -193,13 +193,13 @@ class AccountDetailPage extends StatelessWidget {
                           isBusy: (subaccountId) =>
                               state.busyAssetIds.contains(subaccountId),
                           onAddAsset: () async {
-                            await context.push<String>(
+                            final added = await context.push<bool>(
                               AppRoutes.accountAddAsset.replaceFirst(
                                 ':id',
                                 account.id,
                               ),
                             );
-                            if (context.mounted) {
+                            if (context.mounted && added == true) {
                               await context.read<AccountDetailCubit>().load(
                                 accountId,
                               );

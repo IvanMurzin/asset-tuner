@@ -78,8 +78,8 @@ create table if not exists public.balance_entries (
   user_id uuid not null default auth.uid() references public.profiles(user_id) on delete cascade,
   subaccount_id uuid not null references public.subaccounts(id) on delete cascade,
   entry_date date not null,
-  snapshot_amount numeric not null,
-  diff_amount numeric null,
+  snapshot_amount text not null check (snapshot_amount ~ '^-?[0-9]+(\.[0-9]+)?$'),
+  diff_amount text null check (diff_amount is null or diff_amount ~ '^-?[0-9]+(\.[0-9]+)?$'),
   created_at timestamptz not null default now()
 );
 
@@ -90,7 +90,7 @@ create index if not exists idx_balance_entries_subaccount_asc
 
 create table if not exists public.asset_rates_usd (
   asset_id uuid primary key references public.assets(id) on delete cascade,
-  usd_price numeric not null check (usd_price > 0),
+  usd_price text not null check (usd_price ~ '^[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?$' and usd_price::numeric > 0),
   as_of timestamptz not null
 );
 

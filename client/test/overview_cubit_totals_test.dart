@@ -335,6 +335,57 @@ class FakeOverviewCacheStorage extends OverviewCacheStorage {
 }
 
 void main() {
+  test('accounts without subaccounts are shown with zero total', () async {
+    final now = DateTime(2026, 2, 10);
+    final profile = freeProfile();
+    final accounts = [
+      AccountEntity(
+        id: 'acc_1',
+        name: 'Main',
+        type: AccountType.cash,
+        archived: false,
+        createdAt: now,
+        updatedAt: now,
+      ),
+      AccountEntity(
+        id: 'acc_2',
+        name: 'Wallet',
+        type: AccountType.wallet,
+        archived: false,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    ];
+
+    final cubit = OverviewCubit(
+      GetCachedSessionUseCase(
+        FakeAuthRepository(
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
+        ),
+      ),
+      GetProfileUseCase(FakeProfileRepository(profile)),
+      BootstrapProfileUseCase(FakeProfileRepository(profile)),
+      GetAccountsUseCase(FakeAccountRepository(Success(accounts))),
+      GetAccountAssetsUseCase(FakeAccountAssetRepository(const {})),
+      GetAssetsUseCase(FakeAssetRepository(const [])),
+      GetCurrentBalancesUseCase(FakeBalanceRepository(const {})),
+      GetLatestUsdRatesUseCase(FakeRateRepository(const Success(null))),
+      FakeOverviewCacheStorage(),
+    );
+
+    await cubit.load();
+
+    expect(cubit.state.status, OverviewStatus.ready);
+    expect(cubit.state.accounts.length, 2);
+    expect(cubit.state.accounts.first.subaccountsCount, 0);
+    expect(cubit.state.accounts.first.total, Decimal.zero);
+    expect(cubit.state.fullTotal, Decimal.zero);
+    expect(cubit.state.hasUnpricedHoldings, isFalse);
+  });
+
   test('missing rates yields pricedTotal and fullTotal N/A', () async {
     final now = DateTime(2026, 2, 10);
     final profile = freeProfile();

@@ -8,10 +8,9 @@ The app computes totals across fiat and crypto with varying decimal precision. U
 
 ## Decision
 - Use `decimal` for all money/rate arithmetic in Flutter.
-- Store values in Postgres as `numeric` (not float).
+- Store values in Postgres as decimal strings in `text` columns (not float).
 - Convert between DB and client using string representations (avoid parsing through `double`).
 
 ## Consequences
 - DTOs should carry numeric fields as strings in JSON where appropriate (or explicitly document numeric parsing rules).
 - Formatting for display uses locale-aware formatting; calculation always uses Decimal.
-

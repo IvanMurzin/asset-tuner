@@ -5,7 +5,7 @@ Let users record **snapshot-only** balance updates for a subaccount, while ensur
 
 Source references:
 - Product: `docs/prd/prd.md` (snapshot vs delta; implied delta), `docs/prd/requirements.md` (FR-040..FR-045)
-- Tech: `docs/tech/api_assumptions.md` (`balance_entries`, `POST /update_balance`), `docs/adr/ADR-0002-edge-functions-api.md`
+- Tech: `docs/tech/api_assumptions.md` (`balance_entries`, `POST /update_subaccount_balance`), `docs/adr/ADR-0002-edge-functions-api.md`
 
 ## User story
 As a user, I want to update my balances as a snapshot or as a change since last time, so that I can track how my total changes over time without full expense tracking.
@@ -58,8 +58,8 @@ Out of scope:
   - `id: uuid`
   - `subaccount_id: uuid`
   - `entry_date: date` (or `timestamptz` if time-of-day matters; not required by PRD)
-  - `snapshot_amount: numeric` (non-null)
-  - `diff_amount: numeric` (nullable; null when no previous snapshot)
+  - `snapshot_amount: text` (decimal string; non-null)
+  - `diff_amount: text` (decimal string; nullable; null when no previous snapshot)
   - `created_at: timestamptz`
 - Edge Function:
   - `POST /update_subaccount_balance { subaccount_id, entry_date, snapshot_amount }`
@@ -68,7 +68,7 @@ Out of scope:
 ## Analytics (events, optional)
 - `balance_entry_created { entry_type, asset_kind }`
 - `balance_entry_create_failed { entry_type, failure_code }`
-- `balance_history_viewed { account_asset_id }`
+- `balance_history_viewed { subaccount_id }`
 
 ## Open questions (if any)
 - Multiple entries on the same `entry_date`:

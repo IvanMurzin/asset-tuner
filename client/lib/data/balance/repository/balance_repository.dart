@@ -97,7 +97,7 @@ class BalanceRepository implements IBalanceRepository {
           continue;
         }
         final latest = entries.last;
-        result[subaccountId] = Decimal.parse(latest.snapshotAmount);
+        result[subaccountId] = latest.snapshotAmount;
       }
       logger.i(
         'BalanceRepository.fetchCurrentBalances success: ${result.length}',
