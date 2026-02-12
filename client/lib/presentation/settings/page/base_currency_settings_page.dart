@@ -1,22 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
+import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
-import 'package:asset_tuner/core_ui/components/ds_search_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
-import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
-import 'package:asset_tuner/presentation/settings/bloc/base_currency_settings_cubit.dart';
-import 'package:asset_tuner/presentation/settings/widget/base_currency_settings_currency_list.dart';
+import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
+import 'package:asset_tuner/presentation/settings/bloc/base_currency_settings_cubit.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class BaseCurrencySettingsPage extends StatelessWidget {
   const BaseCurrencySettingsPage({super.key});
@@ -53,9 +52,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                 await context.read<BaseCurrencySettingsCubit>().load();
                 final requested = navigation.requestedCode;
                 if (requested != null && context.mounted) {
-                  context.read<BaseCurrencySettingsCubit>().selectCurrency(
-                    requested,
-                  );
+                  context.read<BaseCurrencySettingsCubit>().selectCurrency(requested);
                 }
               }
               break;
@@ -65,46 +62,34 @@ class BaseCurrencySettingsPage extends StatelessWidget {
           final spacing = context.dsSpacing;
           final typography = context.dsTypography;
           final colors = context.dsColors;
-          final radius = context.dsRadius;
 
           if (state.status == BaseCurrencySettingsStatus.loading) {
             return const Scaffold(body: Center(child: DSLoader()));
           }
 
-          if (state.status == BaseCurrencySettingsStatus.error &&
-              state.currencies.isEmpty) {
+          if (state.status == BaseCurrencySettingsStatus.error && state.currencies.isEmpty) {
             return Scaffold(
               appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
               body: DSInlineError(
                 title: l10n.baseCurrencySettingsLoadErrorTitle,
                 message: _failureMessage(l10n, state.loadFailureCode),
                 actionLabel: l10n.splashRetry,
-                onAction: () =>
-                    context.read<BaseCurrencySettingsCubit>().load(),
+                onAction: () => context.read<BaseCurrencySettingsCubit>().load(),
               ),
             );
           }
 
-          final visible = state.visibleCurrencies;
-          final query = state.query.trim();
-          final showBrowseAll = query.length < 2 && !state.showAll;
+          final options = _buildOptions(state);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
             body: SafeArea(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s16,
-                ),
+                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DSSectionTitle(
-                      title: l10n.baseCurrencySettingsCurrentTitle,
-                    ),
+                    DSSectionTitle(title: l10n.baseCurrencySettingsCurrentTitle),
                     SizedBox(height: spacing.s12),
                     DSCard(
                       child: Column(
@@ -119,9 +104,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                           SizedBox(height: spacing.s4),
                           Text(
                             l10n.baseCurrencySettingsCurrentBody,
-                            style: typography.body.copyWith(
-                              color: colors.textSecondary,
-                            ),
+                            style: typography.body.copyWith(color: colors.textSecondary),
                           ),
                         ],
                       ),
@@ -129,98 +112,35 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                     SizedBox(height: spacing.s24),
                     DSSectionTitle(title: l10n.baseCurrencySettingsPickerTitle),
                     SizedBox(height: spacing.s12),
-                    Expanded(
-                      child: DSCard(
-                        padding: EdgeInsets.all(spacing.s16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            DSSearchField(
-                              hintText: l10n.baseCurrencySettingsSearchHint,
-                              onChanged: context
-                                  .read<BaseCurrencySettingsCubit>()
-                                  .updateQuery,
-                            ),
-                            SizedBox(height: spacing.s12),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    l10n.baseCurrencySettingsSearchTip,
-                                    style: typography.caption.copyWith(
-                                      color: colors.textSecondary,
-                                    ),
-                                  ),
-                                ),
-                                if (showBrowseAll) ...[
-                                  SizedBox(width: spacing.s12),
-                                  DSButton(
-                                    label: l10n.baseCurrencySettingsBrowseAll,
-                                    variant: DSButtonVariant.secondary,
-                                    onPressed: () => context
-                                        .read<BaseCurrencySettingsCubit>()
-                                        .showAll(),
-                                  ),
-                                ],
-                              ],
-                            ),
-                            SizedBox(height: spacing.s16),
-                            if (state.bannerType ==
-                                    BaseCurrencySettingsBannerType
-                                        .saveFailure &&
-                                state.bannerFailureCode != null) ...[
-                              DSInlineBanner(
-                                title: l10n.baseCurrencySettingsTitle,
-                                message: _failureMessage(
-                                  l10n,
-                                  state.bannerFailureCode,
-                                ),
-                                variant: DSInlineBannerVariant.danger,
-                              ),
-                              SizedBox(height: spacing.s16),
-                            ],
-                            if (state.hasMoreResults) ...[
-                              Text(
-                                l10n.baseCurrencySettingsResultsHint,
-                                style: typography.caption.copyWith(
-                                  color: colors.textSecondary,
-                                ),
-                              ),
-                              SizedBox(height: spacing.s12),
-                            ],
-                            if (!(state.entitlements?.anyBaseCurrency ??
-                                false)) ...[
-                              DSInlineBanner(
-                                title: l10n.baseCurrencySettingsTitle,
-                                message: l10n.baseCurrencySettingsPaywallHint,
-                                variant: DSInlineBannerVariant.info,
-                              ),
-                              SizedBox(height: spacing.s12),
-                            ],
-                            Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: colors.surface,
-                                  borderRadius: BorderRadius.circular(
-                                    radius.r12,
-                                  ),
-                                  border: Border.all(color: colors.border),
-                                ),
-                                child: BaseCurrencySettingsCurrencyList(
-                                  currencies: visible,
-                                  selectedCode: state.selectedCode,
-                                  isAllowed: (code) =>
-                                      _isAllowed(state.entitlements, code),
-                                  onSelect: (code) => context
-                                      .read<BaseCurrencySettingsCubit>()
-                                      .selectCurrency(code),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                    if (state.bannerType == BaseCurrencySettingsBannerType.saveFailure &&
+                        state.bannerFailureCode != null) ...[
+                      DSInlineBanner(
+                        title: l10n.baseCurrencySettingsTitle,
+                        message: _failureMessage(l10n, state.bannerFailureCode),
+                        variant: DSInlineBannerVariant.danger,
                       ),
+                      SizedBox(height: spacing.s16),
+                    ],
+                    if (!(state.entitlements?.anyBaseCurrency ?? false)) ...[
+                      DSInlineBanner(
+                        title: l10n.baseCurrencySettingsTitle,
+                        message: l10n.baseCurrencySettingsPaywallHint,
+                        variant: DSInlineBannerVariant.info,
+                      ),
+                      SizedBox(height: spacing.s12),
+                    ],
+                    DSCurrencyPicker(
+                      options: options,
+                      selectedId: state.selectedCode?.toUpperCase(),
+                      searchHintText: l10n.baseCurrencySettingsSearchHint,
+                      recentTitleText: l10n.currencyPickerRecentTitle,
+                      selectedTitleText: l10n.currencyPickerSelectedTitle,
+                      changeSelectionText: l10n.currencyPickerChangeAction,
+                      emptyResultsTitle: l10n.currencyPickerNoResultsTitle,
+                      emptyResultsMessage: l10n.currencyPickerNoResultsBody,
+                      enabled: !state.isSaving,
+                      onSelect: (code) =>
+                          context.read<BaseCurrencySettingsCubit>().selectCurrency(code),
                     ),
                     SizedBox(height: spacing.s16),
                     DSButton(
@@ -229,9 +149,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                       isLoading: state.isSaving,
                       onPressed: state.isSaving
                           ? null
-                          : () => context
-                                .read<BaseCurrencySettingsCubit>()
-                                .save(),
+                          : () => context.read<BaseCurrencySettingsCubit>().save(),
                     ),
                   ],
                 ),
@@ -241,6 +159,35 @@ class BaseCurrencySettingsPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  List<DSCurrencyPickerOption> _buildOptions(BaseCurrencySettingsState state) {
+    final popularSet = BaseCurrencySettingsCubit.popularCodes
+        .map((item) => item.toUpperCase())
+        .toSet();
+    final sorted = [...state.currencies]
+      ..sort((a, b) {
+        final aCode = a.code.toUpperCase();
+        final bCode = b.code.toUpperCase();
+        final aWeight = popularSet.contains(aCode) ? 0 : 1;
+        final bWeight = popularSet.contains(bCode) ? 0 : 1;
+        if (aWeight != bWeight) {
+          return aWeight.compareTo(bWeight);
+        }
+        return aCode.compareTo(bCode);
+      });
+
+    return sorted.map((currency) {
+      final code = currency.code.toUpperCase();
+      return DSCurrencyPickerOption(
+        id: code,
+        primaryText: code,
+        secondaryText: currency.name,
+        tertiaryText: currency.symbol,
+        searchTerms: [currency.name, currency.symbol],
+        locked: !_isAllowed(state.entitlements, code),
+      );
+    }).toList();
   }
 
   String _failureMessage(AppLocalizations l10n, String? code) {

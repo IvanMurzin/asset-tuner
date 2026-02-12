@@ -1,17 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
+import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
 import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
-import 'package:asset_tuner/core_ui/components/ds_empty_state.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
-import 'package:asset_tuner/core_ui/components/ds_list_row.dart';
-import 'package:asset_tuner/core_ui/components/ds_search_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
@@ -19,6 +14,9 @@ import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/add_asset_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class AddAssetPage extends StatefulWidget {
   const AddAssetPage({super.key, required this.accountId});
@@ -82,8 +80,6 @@ class _AddAssetPageState extends State<AddAssetPage> {
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
-          final colors = context.dsColors;
-          final typography = context.dsTypography;
 
           if (_nameController.text != state.name) {
             _nameController.value = _nameController.value.copyWith(
@@ -109,11 +105,11 @@ class _AddAssetPageState extends State<AddAssetPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DSSkeleton(height: 18),
+                      const DSSkeleton(height: 18),
                       SizedBox(height: spacing.s12),
-                      DSSkeleton(height: 18),
+                      const DSSkeleton(height: 18),
                       SizedBox(height: spacing.s12),
-                      DSSkeleton(height: 18),
+                      const DSSkeleton(height: 18),
                     ],
                   ),
                 ),
@@ -139,6 +135,8 @@ class _AddAssetPageState extends State<AddAssetPage> {
               state.name.trim().isNotEmpty &&
               state.balanceText.trim().isNotEmpty &&
               !state.isSaving;
+
+          final options = _buildAssetOptions(l10n, state.assets);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.subaccountCreateTitle),
@@ -178,62 +176,20 @@ class _AddAssetPageState extends State<AddAssetPage> {
                       onChanged: context.read<AddAssetCubit>().updateBalance,
                     ),
                     SizedBox(height: spacing.s12),
-                    DSSearchField(
-                      hintText: l10n.assetSearchHint,
-                      onChanged: context.read<AddAssetCubit>().updateQuery,
-                    ),
-                    SizedBox(height: spacing.s12),
                     Expanded(
-                      child: state.visibleAssets.isEmpty
-                          ? Center(
-                              child: DSEmptyState(
-                                title: l10n.assetNoMatchesTitle,
-                                message: l10n.assetNoMatchesBody,
-                                icon: Icons.search_off_outlined,
-                              ),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                color: colors.surface,
-                                borderRadius: BorderRadius.circular(
-                                  context.dsRadius.r12,
-                                ),
-                                border: Border.all(color: colors.border),
-                              ),
-                              child: ListView.separated(
-                                itemCount: state.visibleAssets.length,
-                                separatorBuilder: (context, index) =>
-                                    const Divider(height: 1),
-                                itemBuilder: (context, index) {
-                                  final asset = state.visibleAssets[index];
-                                  final selected =
-                                      state.selectedAssetId == asset.id;
-
-                                  return DSListRow(
-                                    title: asset.code,
-                                    subtitle:
-                                        '${asset.name} · ${_kindLabel(l10n, asset.kind)}',
-                                    selected: selected,
-                                    trailing: selected
-                                        ? Icon(
-                                            Icons.check_circle,
-                                            color: colors.primary,
-                                          )
-                                        : Text(
-                                            l10n.subaccountCurrencyLabel,
-                                            style: typography.caption.copyWith(
-                                              color: colors.textSecondary,
-                                            ),
-                                          ),
-                                    onTap: state.isSaving
-                                        ? null
-                                        : () => context
-                                              .read<AddAssetCubit>()
-                                              .selectAsset(asset.id),
-                                  );
-                                },
-                              ),
-                            ),
+                      child: DSCurrencyPicker(
+                        options: options,
+                        selectedId: state.selectedAssetId,
+                        searchHintText: l10n.assetSearchHint,
+                        recentTitleText: l10n.currencyPickerRecentTitle,
+                        selectedTitleText: l10n.subaccountCurrencyLabel,
+                        changeSelectionText: l10n.currencyPickerChangeAction,
+                        emptyResultsTitle: l10n.assetNoMatchesTitle,
+                        emptyResultsMessage: l10n.assetNoMatchesBody,
+                        enabled: !state.isSaving,
+                        onSelect: (assetId) =>
+                            context.read<AddAssetCubit>().selectAsset(assetId),
+                      ),
                     ),
                     SizedBox(height: spacing.s16),
                     DSButton(
@@ -252,6 +208,23 @@ class _AddAssetPageState extends State<AddAssetPage> {
         },
       ),
     );
+  }
+
+  List<DSCurrencyPickerOption> _buildAssetOptions(
+    AppLocalizations l10n,
+    List<AssetEntity> assets,
+  ) {
+    return assets
+        .map(
+          (asset) => DSCurrencyPickerOption(
+            id: asset.id,
+            primaryText: asset.code,
+            secondaryText: asset.name,
+            tertiaryText: _kindLabel(l10n, asset.kind),
+            searchTerms: [asset.code, asset.name, _kindLabel(l10n, asset.kind)],
+          ),
+        )
+        .toList();
   }
 
   String _failureMessage(AppLocalizations l10n, String? code) {

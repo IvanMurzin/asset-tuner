@@ -848,6 +848,22 @@ class AppLocalizationsRu extends AppLocalizations {
       'Показана только часть результатов. Уточните запрос, чтобы найти больше.';
 
   @override
+  String get currencyPickerRecentTitle => 'Недавние';
+
+  @override
+  String get currencyPickerSelectedTitle => 'Выбрано';
+
+  @override
+  String get currencyPickerChangeAction => 'Изменить';
+
+  @override
+  String get currencyPickerNoResultsTitle => 'Валюты не найдены';
+
+  @override
+  String get currencyPickerNoResultsBody =>
+      'Попробуйте другой код или название.';
+
+  @override
   String get subscriptionTitle => 'Подписка';
 
   @override

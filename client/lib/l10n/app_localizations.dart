@@ -1682,6 +1682,36 @@ abstract class AppLocalizations {
   /// **'Showing a limited set of results. Refine your search to find more.'**
   String get baseCurrencySettingsResultsHint;
 
+  /// No description provided for @currencyPickerRecentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get currencyPickerRecentTitle;
+
+  /// No description provided for @currencyPickerSelectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get currencyPickerSelectedTitle;
+
+  /// No description provided for @currencyPickerChangeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get currencyPickerChangeAction;
+
+  /// No description provided for @currencyPickerNoResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No currencies found'**
+  String get currencyPickerNoResultsTitle;
+
+  /// No description provided for @currencyPickerNoResultsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another code or name.'**
+  String get currencyPickerNoResultsBody;
+
   /// No description provided for @subscriptionTitle.
   ///
   /// In en, this message translates to:

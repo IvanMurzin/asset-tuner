@@ -849,6 +849,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Showing a limited set of results. Refine your search to find more.';
 
   @override
+  String get currencyPickerRecentTitle => 'Recent';
+
+  @override
+  String get currencyPickerSelectedTitle => 'Selected';
+
+  @override
+  String get currencyPickerChangeAction => 'Change';
+
+  @override
+  String get currencyPickerNoResultsTitle => 'No currencies found';
+
+  @override
+  String get currencyPickerNoResultsBody => 'Try another code or name.';
+
+  @override
   String get subscriptionTitle => 'Subscription';
 
   @override

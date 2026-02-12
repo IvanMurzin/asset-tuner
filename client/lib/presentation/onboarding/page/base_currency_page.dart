@@ -1,20 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
-import 'package:asset_tuner/core_ui/components/ds_search_field.dart';
-import 'package:asset_tuner/core_ui/components/ds_select_list.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/onboarding/bloc/base_currency_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class BaseCurrencyPage extends StatelessWidget {
   const BaseCurrencyPage({super.key});
@@ -70,16 +69,7 @@ class BaseCurrencyPage extends StatelessWidget {
             );
           }
 
-          final filtered = _filterCurrencies(state);
-          final options = filtered
-              .map(
-                (currency) => DSSelectOption(
-                  id: currency.code,
-                  title: '${currency.code} · ${currency.name}',
-                  subtitle: currency.symbol,
-                ),
-              )
-              .toList();
+          final options = _buildOptions(state.currencies);
           final bannerMessage = _bannerMessage(l10n, state);
 
           return Scaffold(
@@ -126,18 +116,6 @@ class BaseCurrencyPage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: spacing.s24),
-                    DSSearchField(
-                      hintText: l10n.onboardingSearchHint,
-                      onChanged: context.read<BaseCurrencyCubit>().updateQuery,
-                    ),
-                    SizedBox(height: spacing.s16),
-                    Text(
-                      l10n.baseCurrencySettingsSearchTip,
-                      style: typography.caption.copyWith(
-                        color: context.dsColors.textSecondary,
-                      ),
-                    ),
-                    SizedBox(height: spacing.s12),
                     if (bannerMessage != null)
                       DSInlineBanner(
                         title: l10n.onboardingBaseCurrencyTitle,
@@ -149,14 +127,19 @@ class BaseCurrencyPage extends StatelessWidget {
                             : DSInlineBannerVariant.info,
                       ),
                     if (bannerMessage != null) SizedBox(height: spacing.s16),
-                    DSSelectList(
+                    DSCurrencyPicker(
                       options: options,
-                      selectedId: state.selectedCode,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      onSelect: (option) => context
+                      selectedId: state.selectedCode?.toUpperCase(),
+                      searchHintText: l10n.onboardingSearchHint,
+                      recentTitleText: l10n.currencyPickerRecentTitle,
+                      selectedTitleText: l10n.currencyPickerSelectedTitle,
+                      changeSelectionText: l10n.currencyPickerChangeAction,
+                      emptyResultsTitle: l10n.currencyPickerNoResultsTitle,
+                      emptyResultsMessage: l10n.currencyPickerNoResultsBody,
+                      enabled: !state.isSaving,
+                      onSelect: (code) => context
                           .read<BaseCurrencyCubit>()
-                          .selectCurrency(option.id),
+                          .selectCurrency(code),
                     ),
                     SizedBox(height: spacing.s24),
                     DSButton(
@@ -186,19 +169,30 @@ class BaseCurrencyPage extends StatelessWidget {
     );
   }
 
-  List<CurrencyEntity> _filterCurrencies(BaseCurrencyState state) {
-    final query = state.query.trim().toLowerCase();
-    if (query.length < 2) {
-      const popular = {'USD', 'EUR', 'RUB'};
-      return state.currencies.where((c) => popular.contains(c.code)).toList();
-    }
-    return state.currencies
-        .where(
-          (currency) =>
-              currency.code.toLowerCase().contains(query) ||
-              currency.name.toLowerCase().contains(query),
+  List<DSCurrencyPickerOption> _buildOptions(List<CurrencyEntity> currencies) {
+    const popularSet = {'USD', 'EUR', 'RUB'};
+    final sorted = [...currencies]
+      ..sort((a, b) {
+        final aCode = a.code.toUpperCase();
+        final bCode = b.code.toUpperCase();
+        final aWeight = popularSet.contains(aCode) ? 0 : 1;
+        final bWeight = popularSet.contains(bCode) ? 0 : 1;
+        if (aWeight != bWeight) {
+          return aWeight.compareTo(bWeight);
+        }
+        return aCode.compareTo(bCode);
+      });
+
+    return sorted
+        .map(
+          (currency) => DSCurrencyPickerOption(
+            id: currency.code.toUpperCase(),
+            primaryText: currency.code.toUpperCase(),
+            secondaryText: currency.name,
+            tertiaryText: currency.symbol,
+            searchTerms: [currency.name, currency.symbol],
+          ),
         )
-        .take(50)
         .toList();
   }
 
