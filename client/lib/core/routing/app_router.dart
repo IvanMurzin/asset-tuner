@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/preview/ds_preview_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_detail_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_form_page.dart';
@@ -57,6 +58,64 @@ final appRouter = GoRouter(
             GoRoute(
               path: AppRoutes.main,
               builder: (context, state) => const OverviewPage(),
+              routes: [
+                GoRoute(
+                  path: 'accounts/new',
+                  builder: (context, state) => const AccountFormPage(),
+                ),
+                GoRoute(
+                  path: 'accounts/:id',
+                  builder: (context, state) {
+                    final id = state.pathParameters['id']!;
+                    final extra = state.extra is AccountDetailExtra
+                        ? state.extra as AccountDetailExtra
+                        : null;
+                    return AccountDetailPage(
+                      accountId: id,
+                      initialTitle: extra?.initialTitle,
+                      initialAccountType: extra?.initialAccountType,
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'edit',
+                      builder: (context, state) =>
+                          AccountFormPage(
+                            accountId: state.pathParameters['id'],
+                          ),
+                    ),
+                    GoRoute(
+                      path: 'subaccounts/new',
+                      builder: (context, state) =>
+                          AddAssetPage(
+                            accountId: state.pathParameters['id']!,
+                          ),
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: 'subaccounts/:id',
+                  builder: (context, state) {
+                    final id = state.pathParameters['id']!;
+                    final extra = state.extra is SubaccountDetailExtra
+                        ? state.extra as SubaccountDetailExtra
+                        : null;
+                    return AssetPositionDetailPage(
+                      subaccountId: id,
+                      initialTitle: extra?.initialTitle,
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'update-balance',
+                      builder: (context, state) =>
+                          AddBalancePage(
+                            subaccountId: state.pathParameters['id']!,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
@@ -77,35 +136,6 @@ final appRouter = GoRouter(
           ],
         ),
       ],
-    ),
-    GoRoute(
-      path: AppRoutes.accountNew,
-      builder: (context, state) => const AccountFormPage(),
-    ),
-    GoRoute(
-      path: AppRoutes.accountDetail,
-      builder: (context, state) =>
-          AccountDetailPage(accountId: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: AppRoutes.accountEdit,
-      builder: (context, state) =>
-          AccountFormPage(accountId: state.pathParameters['id']),
-    ),
-    GoRoute(
-      path: AppRoutes.accountAddAsset,
-      builder: (context, state) =>
-          AddAssetPage(accountId: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: AppRoutes.subaccountDetail,
-      builder: (context, state) =>
-          AssetPositionDetailPage(subaccountId: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: AppRoutes.addBalance,
-      builder: (context, state) =>
-          AddBalancePage(subaccountId: state.pathParameters['id']!),
     ),
     GoRoute(
       path: AppRoutes.paywall,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
-import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/presentation/account/utils/account_type_theme.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 
 class OverviewAccountCard extends StatelessWidget {
@@ -24,45 +24,13 @@ class OverviewAccountCard extends StatelessWidget {
     final spacing = context.dsSpacing;
     final l10n = AppLocalizations.of(context)!;
 
-    final gradient = switch (item.accountType) {
-      AccountType.bank => [
-        colors.primary.withValues(alpha: 0.22),
-        colors.primary.withValues(alpha: 0.06),
-      ],
-      AccountType.wallet => [
-        colors.info.withValues(alpha: 0.22),
-        colors.info.withValues(alpha: 0.06),
-      ],
-      AccountType.exchange => [
-        colors.success.withValues(alpha: 0.22),
-        colors.success.withValues(alpha: 0.06),
-      ],
-      AccountType.cash => [
-        colors.warning.withValues(alpha: 0.25),
-        colors.warning.withValues(alpha: 0.08),
-      ],
-      AccountType.other => [
-        colors.textTertiary.withValues(alpha: 0.2),
-        colors.textTertiary.withValues(alpha: 0.06),
-      ],
-    };
-    final iconColor = switch (item.accountType) {
-      AccountType.bank => colors.primary,
-      AccountType.wallet => colors.info,
-      AccountType.exchange => colors.success,
-      AccountType.cash => colors.warning,
-      AccountType.other => colors.textSecondary,
-    };
-    final iconData = switch (item.accountType) {
-      AccountType.bank => Icons.account_balance_outlined,
-      AccountType.wallet => Icons.account_balance_wallet_outlined,
-      AccountType.exchange => Icons.candlestick_chart_outlined,
-      AccountType.cash => Icons.payments_outlined,
-      AccountType.other => Icons.layers_outlined,
-    };
+    final gradient =
+        accountTypeGradientColors(colors, item.accountType);
+    final iconColor = accountTypeAccentColor(colors, item.accountType);
+    final iconData = accountTypeIcon(item.accountType);
 
     final totalText =
-        '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(item.total, maximumFractionDigits: 2)}';
+        context.dsFormatters.formatMoney(item.total, baseCurrency);
     final subaccountsText =
         '${item.subaccountsCount} ${l10n.subaccountsCountLabel}';
 

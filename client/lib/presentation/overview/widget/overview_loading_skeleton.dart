@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/domain/account/entity/account_entity.dart';
+import 'package:asset_tuner/presentation/account/utils/account_type_theme.dart';
 
 class OverviewLoadingSkeleton extends StatelessWidget {
   const OverviewLoadingSkeleton({super.key});
@@ -13,9 +14,16 @@ class OverviewLoadingSkeleton extends StatelessWidget {
     return ListView(
       children: [
         SizedBox(height: spacing.s24),
-        const _SummarySkeleton(),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+          child: const _SummarySkeleton(),
+        ),
         SizedBox(height: spacing.s24),
-        const _AccountsSkeleton(),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+          child: const _AccountsSkeleton(),
+        ),
+        SizedBox(height: spacing.s24),
       ],
     );
   }
@@ -66,15 +74,20 @@ class _AccountsSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final spacing = context.dsSpacing;
 
+    final types = [
+      AccountType.bank,
+      AccountType.wallet,
+      AccountType.exchange,
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var section = 0; section < 3; section++) ...[
           const DSSkeleton(height: 16, width: 96),
           SizedBox(height: spacing.s12),
-          const _AccountCardSkeleton(),
+          _AccountCardSkeleton(type: types[section]),
           const SizedBox(height: 10),
-          if (section == 0) const _AccountCardSkeleton(),
+          if (section == 0) _AccountCardSkeleton(type: types[section]),
           const SizedBox(height: 20),
         ],
       ],
@@ -83,12 +96,26 @@ class _AccountsSkeleton extends StatelessWidget {
 }
 
 class _AccountCardSkeleton extends StatelessWidget {
-  const _AccountCardSkeleton();
+  const _AccountCardSkeleton({required this.type});
+
+  final AccountType type;
 
   @override
   Widget build(BuildContext context) {
     final spacing = context.dsSpacing;
-    return DSCard(
+    final colors = context.dsColors;
+    final gradient = accountTypeGradientColors(colors, type);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: spacing.s12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: gradient,
+        ),
+        borderRadius: BorderRadius.circular(context.dsRadius.r16),
+        border: Border.all(color: colors.border),
+      ),
       child: Row(
         children: [
           const DSSkeleton(height: 40, width: 40),

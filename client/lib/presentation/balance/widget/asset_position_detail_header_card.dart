@@ -31,13 +31,19 @@ class AssetPositionDetailHeaderCard extends StatelessWidget {
     final typography = context.dsTypography;
     final colors = context.dsColors;
 
-    final assetText = context.dsFormatters.formatDecimalFromDecimal(
-      currentBalance,
-      maximumFractionDigits: 8,
-    );
+    final assetText = (assetCode ?? '').isEmpty
+        ? context.dsFormatters.formatDecimalFromDecimal(
+            currentBalance,
+            maximumFractionDigits: 8,
+          )
+        : context.dsFormatters.formatMoney(
+            currentBalance,
+            assetCode!,
+            maximumFractionDigits: 8,
+          );
     final convertedText = convertedValue == null
         ? l10n.unpriced
-        : '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(convertedValue!, maximumFractionDigits: 2)}';
+        : context.dsFormatters.formatMoney(convertedValue!, baseCurrency);
 
     return Container(
       width: double.infinity,
@@ -104,7 +110,7 @@ class AssetPositionDetailHeaderCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            '$assetText ${assetCode ?? ''}'.trim(),
+            assetText,
             style: typography.h2.copyWith(fontWeight: FontWeight.w700),
           ),
           SizedBox(height: spacing.s4),

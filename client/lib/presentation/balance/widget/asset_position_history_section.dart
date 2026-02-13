@@ -141,11 +141,19 @@ class _HistoryEntryTile extends StatelessWidget {
         ? colors.textTertiary
         : (diff.compareTo(Decimal.zero) >= 0 ? colors.success : colors.danger);
     final code = (assetCode ?? '').isEmpty ? l10n.notAvailable : assetCode!;
-    final snapshotAsset =
-        '${context.dsFormatters.formatDecimalFromDecimal(entry.snapshotAmount, maximumFractionDigits: 8)} $code';
+    final snapshotAsset = code == l10n.notAvailable
+        ? context.dsFormatters.formatDecimalFromDecimal(
+            entry.snapshotAmount,
+            maximumFractionDigits: 8,
+          )
+        : context.dsFormatters.formatMoney(
+            entry.snapshotAmount,
+            code,
+            maximumFractionDigits: 8,
+          );
     final snapshotBase = convertedSnapshot == null
         ? l10n.unpriced
-        : '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(convertedSnapshot, maximumFractionDigits: 2)}';
+        : context.dsFormatters.formatMoney(convertedSnapshot, baseCurrency);
 
     return Container(
       width: double.infinity,
@@ -228,14 +236,17 @@ class _HistoryEntryTile extends StatelessWidget {
     if (diff == null) {
       return '-';
     }
-    return '${_signed(context, diff, digits: 8)} ${assetCode ?? ''}'.trim();
+    final code = (assetCode ?? '').trim();
+    return code.isEmpty
+        ? _signed(context, diff, digits: 8)
+        : '${_signed(context, diff, digits: 8)} $code';
   }
 
   String _baseDeltaText(BuildContext context, Decimal? diff) {
     if (diff == null) {
       return '-';
     }
-    return '$baseCurrency ${_signed(context, diff, digits: 2)}';
+    return '${_signed(context, diff, digits: 2)} $baseCurrency';
   }
 
   String _signed(BuildContext context, Decimal value, {required int digits}) {

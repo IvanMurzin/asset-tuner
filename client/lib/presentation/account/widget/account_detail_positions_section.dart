@@ -30,21 +30,24 @@ class AccountDetailPositionsSection extends StatelessWidget {
     final sortedItems = _sortByBalance(items);
 
     if (sortedItems.isEmpty) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          DSEmptyState(
-            title: l10n.subaccountEmptyTitle,
-            message: l10n.subaccountEmptyBody,
-            icon: Icons.add_circle_outline,
-          ),
-          SizedBox(height: spacing.s16),
-          DSButton(
-            label: l10n.subaccountCreateCta,
-            fullWidth: true,
-            onPressed: onAddAsset,
-          ),
-        ],
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DSEmptyState(
+              title: l10n.subaccountEmptyTitle,
+              message: l10n.subaccountEmptyBody,
+              icon: Icons.add_circle_outline,
+            ),
+            SizedBox(height: spacing.s16),
+            DSButton(
+              label: l10n.subaccountCreateCta,
+              fullWidth: true,
+              onPressed: onAddAsset,
+            ),
+          ],
+        ),
       );
     }
 
@@ -106,10 +109,13 @@ class _PositionCard extends StatelessWidget {
     final gradient = _gradientByKind(colors, item.assetKind);
 
     final convertedText = item.isPriced
-        ? '$baseCurrency ${context.dsFormatters.formatDecimalFromDecimal(item.convertedAmount!, maximumFractionDigits: 2)}'
+        ? context.dsFormatters.formatMoney(item.convertedAmount!, baseCurrency)
         : l10n.unpriced;
-    final originalText =
-        '${item.assetCode} ${context.dsFormatters.formatDecimalFromDecimal(item.originalAmount, maximumFractionDigits: 8)}';
+    final originalText = context.dsFormatters.formatMoney(
+      item.originalAmount,
+      item.assetCode,
+      maximumFractionDigits: 8,
+    );
 
     return InkWell(
       borderRadius: BorderRadius.circular(context.dsRadius.r16),

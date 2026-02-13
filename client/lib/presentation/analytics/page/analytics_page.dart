@@ -121,10 +121,6 @@ class _Body extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: Column(
             children: state.updates.take(40).map((item) {
-              final value = context.dsFormatters.formatDecimalFromDecimal(
-                item.diffBaseAmount,
-                maximumFractionDigits: 2,
-              );
               final diff = context.dsFormatters.formatDecimalFromDecimal(
                 item.diffAmount,
                 maximumFractionDigits: 8,
@@ -136,8 +132,10 @@ class _Body extends StatelessWidget {
               return DSListRow(
                 title: '${item.accountName} · ${item.subaccountName}',
                 subtitle:
-                    '${item.assetCode} $sign$diff · ${context.dsFormatters.formatDate(item.entryDate)}',
-                trailing: Text('$currency $value'),
+                    '$sign$diff ${item.assetCode} · ${context.dsFormatters.formatDate(item.entryDate)}',
+                trailing: Text(
+                  context.dsFormatters.formatMoney(item.diffBaseAmount, currency),
+                ),
               );
             }).toList(),
           ),
@@ -178,7 +176,7 @@ class _BreakdownRow extends StatelessWidget {
           children: [
             Expanded(child: Text(item.assetCode)),
             Text(
-              '$currency ${context.dsFormatters.formatDecimalFromDecimal(item.value, maximumFractionDigits: 2)}',
+              context.dsFormatters.formatMoney(item.value, currency),
             ),
           ],
         ),

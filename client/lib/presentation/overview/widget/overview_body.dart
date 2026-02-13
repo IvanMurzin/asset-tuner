@@ -1,4 +1,5 @@
 import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_empty_state.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
@@ -36,28 +37,26 @@ class OverviewBody extends StatelessWidget {
         createdAccountId.isEmpty) {
       return;
     }
-    await context.read<OverviewCubit>().load();
-    if (!context.mounted) {
-      return;
-    }
     await context.push<bool>(
       AppRoutes.accountDetail.replaceFirst(':id', createdAccountId),
     );
-    if (context.mounted) {
-      await context.read<OverviewCubit>().load();
-    }
   }
 
   Future<void> _openAccountDetail(
     BuildContext context,
     String accountId,
+    String? accountName,
+    AccountType? accountType,
   ) async {
     await context.push<bool>(
       AppRoutes.accountDetail.replaceFirst(':id', accountId),
+      extra: accountName != null || accountType != null
+          ? AccountDetailExtra(
+              initialTitle: accountName,
+              initialAccountType: accountType,
+            )
+          : null,
     );
-    if (context.mounted) {
-      await context.read<OverviewCubit>().load();
-    }
   }
 
   @override
@@ -73,12 +72,17 @@ class OverviewBody extends StatelessWidget {
     if (status == OverviewStatus.error) {
       return ListView(
         children: [
-          DSInlineError(
-            title: l10n.splashErrorTitle,
-            message: _failureMessage(l10n, state.failureCode),
-            actionLabel: l10n.splashRetry,
-            onAction: () => context.read<OverviewCubit>().load(),
+          SizedBox(height: spacing.s24),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+            child: DSInlineError(
+              title: l10n.splashErrorTitle,
+              message: _failureMessage(l10n, state.failureCode),
+              actionLabel: l10n.splashRetry,
+              onAction: () => context.read<OverviewCubit>().refresh(),
+            ),
           ),
+          SizedBox(height: spacing.s24),
         ],
       );
     }
@@ -99,81 +103,111 @@ class OverviewBody extends StatelessWidget {
         status == OverviewStatus.emptyNoBalances) {
       return ListView(
         children: [
-          OverviewSummaryCard(
-            totalLabel: l10n.overviewTotalLabel,
-            totalValue: _formatMoney(context, baseCurrency, Decimal.zero),
-            ratesText: ratesText,
-            pricedTotalLabel: null,
-            pricedTotalValue: null,
+          SizedBox(height: spacing.s24),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+            child: OverviewSummaryCard(
+              totalLabel: l10n.overviewTotalLabel,
+              totalValue: context.dsFormatters.formatMoney(Decimal.zero, baseCurrency),
+              ratesText: ratesText,
+              pricedTotalLabel: null,
+              pricedTotalValue: null,
+            ),
           ),
           SizedBox(height: spacing.s24),
-          DSEmptyState(
-            title: status == OverviewStatus.emptyNoAssets
-                ? l10n.subaccountEmptyTitle
-                : l10n.positionHistoryEmptyTitle,
-            message: status == OverviewStatus.emptyNoAssets
-                ? l10n.subaccountEmptyBody
-                : l10n.positionHistoryEmptyBody,
-            actionLabel: l10n.mainAddAccount,
-            onAction: () => _openCreateAccountFlow(context),
-            icon: Icons.add_circle_outline,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+            child: DSEmptyState(
+              title: status == OverviewStatus.emptyNoAssets
+                  ? l10n.subaccountEmptyTitle
+                  : l10n.positionHistoryEmptyTitle,
+              message: status == OverviewStatus.emptyNoAssets
+                  ? l10n.subaccountEmptyBody
+                  : l10n.positionHistoryEmptyBody,
+              actionLabel: l10n.mainAddAccount,
+              onAction: () => _openCreateAccountFlow(context),
+              icon: Icons.add_circle_outline,
+            ),
           ),
+          SizedBox(height: spacing.s24),
         ],
       );
     }
 
     final totalText = state.fullTotal == null
         ? l10n.notAvailable
-        : _formatMoney(context, baseCurrency, state.fullTotal!);
+        : context.dsFormatters.formatMoney(state.fullTotal!, baseCurrency);
     final pricedTotalText = state.pricedTotal == null
         ? null
-        : _formatMoney(context, baseCurrency, state.pricedTotal!);
+        : context.dsFormatters.formatMoney(state.pricedTotal!, baseCurrency);
     final groupedAccounts = _groupAccounts(state.accounts);
 
     return ListView(
       children: [
+        SizedBox(height: spacing.s24),
         if (state.isOffline) ...[
-          DSInlineBanner(
-            title: l10n.offlineTitle,
-            message: l10n.offlineShowingLastSaved(
-              context.dsFormatters.formatDateTime(
-                state.offlineCachedAt ?? DateTime.now(),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+            child: DSInlineBanner(
+              title: l10n.offlineTitle,
+              message: l10n.offlineShowingLastSaved(
+                context.dsFormatters.formatDateTime(
+                  state.offlineCachedAt ?? DateTime.now(),
+                ),
               ),
+              variant: DSInlineBannerVariant.warning,
             ),
-            variant: DSInlineBannerVariant.warning,
           ),
           SizedBox(height: spacing.s16),
         ],
-        OverviewSummaryCard(
-          totalLabel: l10n.overviewTotalLabel,
-          totalValue: totalText,
-          pricedTotalLabel: state.hasUnpricedHoldings
-              ? l10n.overviewPricedTotalLabel
-              : null,
-          pricedTotalValue: state.hasUnpricedHoldings ? pricedTotalText : null,
-          ratesText: ratesText,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+          child: OverviewSummaryCard(
+            totalLabel: l10n.overviewTotalLabel,
+            totalValue: totalText,
+            pricedTotalLabel: state.hasUnpricedHoldings
+                ? l10n.overviewPricedTotalLabel
+                : null,
+            pricedTotalValue: state.hasUnpricedHoldings ? pricedTotalText : null,
+            ratesText: ratesText,
+          ),
         ),
         SizedBox(height: spacing.s24),
-        for (final section in groupedAccounts) ...[
-          DSSectionTitle(title: _typeLabel(l10n, section.type)),
-          SizedBox(height: spacing.s12),
-          for (var i = 0; i < section.items.length; i++) ...[
-            OverviewAccountCard(
-              item: section.items[i],
-              baseCurrency: baseCurrency,
-              onTap: () =>
-                  _openAccountDetail(context, section.items[i].accountId),
+        for (final section in groupedAccounts)
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DSSectionTitle(title: _typeLabel(l10n, section.type)),
+                SizedBox(height: spacing.s12),
+                for (var i = 0; i < section.items.length; i++) ...[
+                  OverviewAccountCard(
+                    item: section.items[i],
+                    baseCurrency: baseCurrency,
+                    onTap: () => _openAccountDetail(
+                        context,
+                        section.items[i].accountId,
+                        section.items[i].accountName,
+                        section.items[i].accountType,
+                      ),
+                  ),
+                  if (i != section.items.length - 1) const SizedBox(height: 10),
+                ],
+                const SizedBox(height: 20),
+              ],
             ),
-            if (i != section.items.length - 1) const SizedBox(height: 10),
-          ],
-          const SizedBox(height: 20),
-        ],
-        DSButton(
-          label: l10n.mainAddAccount,
-          leadingIcon: Icons.add,
-          fullWidth: true,
-          onPressed: () => _openCreateAccountFlow(context),
+          ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+          child: DSButton(
+            label: l10n.mainAddAccount,
+            leadingIcon: Icons.add,
+            fullWidth: true,
+            onPressed: () => _openCreateAccountFlow(context),
+          ),
         ),
+        SizedBox(height: spacing.s24),
       ],
     );
   }
@@ -189,10 +223,6 @@ class OverviewBody extends StatelessWidget {
       'rate_limited' => l10n.errorRateLimited,
       _ => l10n.errorGeneric,
     };
-  }
-
-  String _formatMoney(BuildContext context, String code, Decimal value) {
-    return '$code ${context.dsFormatters.formatDecimalFromDecimal(value, maximumFractionDigits: 2)}';
   }
 
   List<({AccountType type, List<OverviewAccountItem> items})> _groupAccounts(

@@ -8,6 +8,7 @@ import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/balance/bloc/asset_position_detail_cubit.dart';
+import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/balance/widget/asset_position_detail_actions_row.dart';
 import 'package:asset_tuner/presentation/balance/widget/asset_position_detail_header_card.dart';
 import 'package:asset_tuner/presentation/balance/widget/asset_position_detail_loading_skeleton.dart';
@@ -18,13 +19,46 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AssetPositionDetailPage extends StatelessWidget {
-  const AssetPositionDetailPage({super.key, required this.subaccountId});
+  const AssetPositionDetailPage({
+    super.key,
+    required this.subaccountId,
+    this.initialTitle,
+  });
 
   final String subaccountId;
+  final String? initialTitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return _AssetPositionDetailBody(
+      subaccountId: subaccountId,
+      initialTitle: initialTitle,
+    );
+  }
+}
+
+class _AssetPositionDetailBody extends StatefulWidget {
+  const _AssetPositionDetailBody({
+    required this.subaccountId,
+    this.initialTitle,
+  });
+
+  final String subaccountId;
+  final String? initialTitle;
+
+  @override
+  State<_AssetPositionDetailBody> createState() =>
+      _AssetPositionDetailBodyState();
+}
+
+class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
+  bool _hasUnsyncedChange = false;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final subaccountId = widget.subaccountId;
+    final initialTitle = widget.initialTitle;
 
     return BlocProvider(
       create: (_) =>
@@ -41,28 +75,23 @@ class AssetPositionDetailPage extends StatelessWidget {
               context.go(AppRoutes.signIn);
               break;
             case AssetPositionDetailDestination.backDeleted:
+              context.read<OverviewCubit>().refresh();
               context.pop(true);
               break;
           }
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
-          final title =
-              state.subaccountName ?? state.assetCode ?? l10n.notAvailable;
+          final title = initialTitle ??
+              state.subaccountName ??
+              state.assetCode ??
+              l10n.notAvailable;
 
           if (state.status == AssetPositionDetailStatus.loading) {
             return Scaffold(
               appBar: DSAppBar(title: title),
               body: SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    spacing.s16,
-                    spacing.s16,
-                    spacing.s16,
-                    spacing.s16,
-                  ),
-                  child: const AssetPositionDetailLoadingSkeleton(),
-                ),
+                child: const AssetPositionDetailLoadingSkeleton(),
               ),
             );
           }
@@ -85,59 +114,70 @@ class AssetPositionDetailPage extends StatelessWidget {
           final baseCurrency = state.baseCurrency ?? 'USD';
           final current = state.currentBalance ?? Decimal.zero;
           final canLoadMore = state.nextOffset != null && !state.isLoadingMore;
+          void onBalanceUpdated() => setState(() => _hasUnsyncedChange = true);
 
-          return Scaffold(
+          return PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) {
+                context.pop(_hasUnsyncedChange);
+              }
+            },
+            child: Scaffold(
             appBar: DSAppBar(title: title),
             body: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s16,
-                  spacing.s16,
-                  spacing.s16,
-                  spacing.s16,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (state.bannerFailureCode != null) ...[
-                      DSInlineBanner(
-                        title: title,
-                        message: _failureMessage(l10n, state.bannerFailureCode),
-                        variant: DSInlineBannerVariant.danger,
-                      ),
-                      SizedBox(height: spacing.s12),
-                    ],
-                    AssetPositionDetailHeaderCard(
-                      subaccountName: state.subaccountName,
-                      accountName: state.accountName,
-                      assetCode: state.assetCode,
-                      baseCurrency: baseCurrency,
-                      currentBalance: current,
-                      convertedValue: state.convertedValue,
-                      ratesAsOf: state.ratesAsOf,
-                    ),
-                    if (state.isUnpriced) ...[
-                      SizedBox(height: spacing.s12),
-                      DSInlineBanner(
-                        title: l10n.unpriced,
-                        message: l10n.positionUnpricedHint,
-                        variant: DSInlineBannerVariant.warning,
-                      ),
-                    ],
-                    SizedBox(height: spacing.s16),
-                    AssetPositionDetailActionsRow(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: spacing.s24),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (state.bannerFailureCode != null) ...[
+                          DSInlineBanner(
+                            title: title,
+                            message: _failureMessage(l10n, state.bannerFailureCode),
+                            variant: DSInlineBannerVariant.danger,
+                          ),
+                          SizedBox(height: spacing.s12),
+                        ],
+                        AssetPositionDetailHeaderCard(
+                          subaccountName: state.subaccountName,
+                          accountName: state.accountName,
+                          assetCode: state.assetCode,
+                          baseCurrency: baseCurrency,
+                          currentBalance: current,
+                          convertedValue: state.convertedValue,
+                          ratesAsOf: state.ratesAsOf,
+                        ),
+                        if (state.isUnpriced) ...[
+                          SizedBox(height: spacing.s12),
+                          DSInlineBanner(
+                            title: l10n.unpriced,
+                            message: l10n.positionUnpricedHint,
+                            variant: DSInlineBannerVariant.warning,
+                          ),
+                        ],
+                        SizedBox(height: spacing.s16),
+                        AssetPositionDetailActionsRow(
                       isEnabled: !state.isMutating,
                       updateLabel: l10n.subaccountUpdateBalanceCta,
                       renameLabel: l10n.subaccountRenameCta,
                       deleteLabel: l10n.subaccountDeleteCta,
                       onUpdate: () async {
-                        await context.push<bool>(
+                        final saved = await context.push<bool>(
                           AppRoutes.addBalance.replaceFirst(
                             ':id',
                             subaccountId,
                           ),
                         );
                         if (context.mounted) {
+                          if (saved == true) {
+                            context.read<OverviewCubit>().refresh();
+                            onBalanceUpdated();
+                          }
                           await context.read<AssetPositionDetailCubit>().load(
                             subaccountId: subaccountId,
                           );
@@ -154,6 +194,9 @@ class AssetPositionDetailPage extends StatelessWidget {
                         await context.read<AssetPositionDetailCubit>().rename(
                           name,
                         );
+                        if (context.mounted) {
+                          onBalanceUpdated();
+                        }
                       },
                       onDelete: () async {
                         final confirmed = await _confirmDelete(context, l10n);
@@ -164,9 +207,14 @@ class AssetPositionDetailPage extends StatelessWidget {
                             .read<AssetPositionDetailCubit>()
                             .deleteSubaccount();
                       },
+                        ),
+                        SizedBox(height: spacing.s24),
+                      ],
                     ),
-                    SizedBox(height: spacing.s24),
-                    Expanded(
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: spacing.s24),
                       child: state.status == AssetPositionDetailStatus.error
                           ? DSInlineError(
                               title: l10n.splashErrorTitle,
@@ -194,7 +242,11 @@ class AssetPositionDetailPage extends StatelessWidget {
                                     subaccountId,
                                   ),
                                 );
-                                if (context.mounted && saved == true) {
+                                if (context.mounted) {
+                                  if (saved == true) {
+                                    context.read<OverviewCubit>().refresh();
+                                    onBalanceUpdated();
+                                  }
                                   await context
                                       .read<AssetPositionDetailCubit>()
                                       .load(subaccountId: subaccountId);
@@ -202,9 +254,10 @@ class AssetPositionDetailPage extends StatelessWidget {
                               },
                             ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
             ),
           );
         },

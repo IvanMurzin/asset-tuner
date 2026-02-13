@@ -34,6 +34,15 @@ class DSFormatters {
     );
   }
 
+  /// Returns "amount currency" (e.g. "1 234.56 USD").
+  String formatMoney(
+    Decimal amount,
+    String currency, {
+    int maximumFractionDigits = 2,
+  }) {
+    return '${formatDecimalFromDecimal(amount, maximumFractionDigits: maximumFractionDigits)} $currency';
+  }
+
   String formatDate(DateTime value) {
     return DateFormat.yMMMd(locale.toLanguageTag()).format(value);
   }

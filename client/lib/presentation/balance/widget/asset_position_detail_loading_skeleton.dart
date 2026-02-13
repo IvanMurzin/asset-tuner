@@ -12,6 +12,12 @@ class AssetPositionDetailLoadingSkeleton extends StatelessWidget {
 
     return ListView(
       children: [
+        SizedBox(height: spacing.s24),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
         Container(
           width: double.infinity,
           padding: EdgeInsets.all(spacing.s16),
@@ -59,18 +65,35 @@ class AssetPositionDetailLoadingSkeleton extends StatelessWidget {
         SizedBox(height: spacing.s16),
         Row(
           children: [
-            for (var i = 0; i < 3; i++) ...[
-              Expanded(
-                child: Column(
-                  children: [
-                    const DSSkeleton(height: 52, width: 52),
-                    SizedBox(height: spacing.s8),
-                    const DSSkeleton(height: 12, width: 64),
-                  ],
-                ),
+            Expanded(
+              child: Column(
+                children: [
+                  const DSSkeleton(height: 52, width: 52),
+                  SizedBox(height: spacing.s8),
+                  const DSSkeleton(height: 12, width: 64),
+                ],
               ),
-              if (i != 2) SizedBox(width: spacing.s8),
-            ],
+            ),
+            SizedBox(width: spacing.s8),
+            Expanded(
+              child: Column(
+                children: [
+                  const DSSkeleton(height: 52, width: 52),
+                  SizedBox(height: spacing.s8),
+                  const DSSkeleton(height: 12, width: 64),
+                ],
+              ),
+            ),
+            SizedBox(width: spacing.s8),
+            Expanded(
+              child: Column(
+                children: [
+                  const DSSkeleton(height: 52, width: 52),
+                  SizedBox(height: spacing.s8),
+                  const DSSkeleton(height: 12, width: 64),
+                ],
+              ),
+            ),
           ],
         ),
         SizedBox(height: spacing.s24),
@@ -118,6 +141,10 @@ class AssetPositionDetailLoadingSkeleton extends StatelessWidget {
           ),
           if (i != 3) SizedBox(height: spacing.s8),
         ],
+            ],
+          ),
+        ),
+        SizedBox(height: spacing.s24),
       ],
     );
   }

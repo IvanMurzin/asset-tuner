@@ -10,13 +10,13 @@ abstract final class AppRoutes {
   static const String analytics = '/analytics';
   static const String profile = '/profile';
 
-  static const String accountNew = '/accounts/new';
-  static const String accountDetail = '/accounts/:id';
-  static const String accountEdit = '/accounts/:id/edit';
-  static const String accountAddAsset = '/accounts/:id/subaccounts/new';
+  static const String accountNew = '/main/accounts/new';
+  static const String accountDetail = '/main/accounts/:id';
+  static const String accountEdit = '/main/accounts/:id/edit';
+  static const String accountAddAsset = '/main/accounts/:id/subaccounts/new';
 
-  static const String subaccountDetail = '/subaccounts/:id';
-  static const String addBalance = '/subaccounts/:id/update-balance';
+  static const String subaccountDetail = '/main/subaccounts/:id';
+  static const String addBalance = '/main/subaccounts/:id/update-balance';
 
   static const String paywall = '/paywall';
   static const String baseCurrencySettings = '/profile/base-currency';

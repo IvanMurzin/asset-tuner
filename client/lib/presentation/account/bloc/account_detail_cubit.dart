@@ -61,10 +61,30 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
         busyAssetIds: const {},
       ),
     );
+    await _fetchAndEmit(accountId, silent: false);
+  }
+
+  Future<void> refresh() async {
+    if (state.account == null) {
+      return;
+    }
+    await _fetchAndEmit(state.account!.id, silent: true);
+  }
+
+  Future<void> _fetchAndEmit(String accountId, {required bool silent}) async {
+    void maybeEmit(AccountDetailState next) {
+      if (silent) {
+        if (next != state || next.navigation != null) {
+          emit(next);
+        }
+      } else {
+        emit(next);
+      }
+    }
 
     final session = await _getCachedSession();
     if (session == null) {
-      emit(
+      maybeEmit(
         state.copyWith(
           status: AccountDetailStatus.error,
           failureCode: 'unauthorized',
@@ -78,7 +98,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
 
     final profile = await _loadProfile();
     if (profile == null) {
-      emit(
+      maybeEmit(
         state.copyWith(
           status: AccountDetailStatus.error,
           failureCode: 'unknown',
@@ -100,7 +120,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
       FailureResult<List<AccountEntity>>() => null,
     };
     if (account == null) {
-      emit(
+      maybeEmit(
         state.copyWith(
           status: AccountDetailStatus.error,
           failureCode: 'not_found',
@@ -165,7 +185,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
           }
         }
 
-        emit(
+        maybeEmit(
           state.copyWith(
             status: AccountDetailStatus.ready,
             account: account,
@@ -179,7 +199,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
           ),
         );
       case FailureResult<List<AccountAssetEntity>>(failure: final failure):
-        emit(
+        maybeEmit(
           state.copyWith(
             status: AccountDetailStatus.error,
             failureCode: failure.code,

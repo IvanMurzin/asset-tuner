@@ -16,6 +16,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_form_cubit.dart';
+import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 
 class AccountFormPage extends StatefulWidget {
@@ -73,7 +74,17 @@ class _AccountFormPageState extends State<AccountFormPage> {
               }
               break;
             case AccountFormDestination.backSaved:
-              context.pop(navigation.accountId);
+              context.read<OverviewCubit>().refresh();
+              if (widget.accountId == null) {
+                final id = navigation.accountId;
+                if (id != null && id.isNotEmpty) {
+                  context.go(
+                    AppRoutes.accountDetail.replaceFirst(':id', id),
+                  );
+                }
+              } else {
+                context.pop(navigation.accountId);
+              }
               break;
           }
         },

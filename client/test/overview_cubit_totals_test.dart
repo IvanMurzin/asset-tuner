@@ -531,4 +531,95 @@ void main() {
     expect(cubit.state.fullTotal, Decimal.parse('123'));
     expect(cubit.state.failureCode, 'network');
   });
+
+  test('refresh does not emit loading', () async {
+    final now = DateTime(2026, 2, 10);
+    final profile = freeProfile();
+    final accounts = [
+      AccountEntity(
+        id: 'acc_1',
+        name: 'Main',
+        type: AccountType.cash,
+        archived: false,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    ];
+
+    final cubit = OverviewCubit(
+      GetCachedSessionUseCase(
+        FakeAuthRepository(
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
+        ),
+      ),
+      GetProfileUseCase(FakeProfileRepository(profile)),
+      BootstrapProfileUseCase(FakeProfileRepository(profile)),
+      GetAccountsUseCase(FakeAccountRepository(Success(accounts))),
+      GetAccountAssetsUseCase(FakeAccountAssetRepository(const {})),
+      GetAssetsUseCase(FakeAssetRepository(const [])),
+      GetCurrentBalancesUseCase(FakeBalanceRepository(const {})),
+      GetLatestUsdRatesUseCase(FakeRateRepository(const Success(null))),
+      FakeOverviewCacheStorage(),
+    );
+
+    await cubit.load();
+    expect(cubit.state.status, OverviewStatus.ready);
+
+    final states = <OverviewState>[];
+    final sub = cubit.stream.listen(states.add);
+    await cubit.refresh();
+    await sub.cancel();
+
+    expect(
+      states.every((s) => s.status != OverviewStatus.loading),
+      isTrue,
+    );
+  });
+
+  test('refresh does not emit when data unchanged', () async {
+    final now = DateTime(2026, 2, 10);
+    final profile = freeProfile();
+    final accounts = [
+      AccountEntity(
+        id: 'acc_1',
+        name: 'Main',
+        type: AccountType.cash,
+        archived: false,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    ];
+
+    final cubit = OverviewCubit(
+      GetCachedSessionUseCase(
+        FakeAuthRepository(
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
+        ),
+      ),
+      GetProfileUseCase(FakeProfileRepository(profile)),
+      BootstrapProfileUseCase(FakeProfileRepository(profile)),
+      GetAccountsUseCase(FakeAccountRepository(Success(accounts))),
+      GetAccountAssetsUseCase(FakeAccountAssetRepository(const {})),
+      GetAssetsUseCase(FakeAssetRepository(const [])),
+      GetCurrentBalancesUseCase(FakeBalanceRepository(const {})),
+      GetLatestUsdRatesUseCase(FakeRateRepository(const Success(null))),
+      FakeOverviewCacheStorage(),
+    );
+
+    await cubit.load();
+    expect(cubit.state.status, OverviewStatus.ready);
+
+    final states = <OverviewState>[];
+    final sub = cubit.stream.listen(states.add);
+    await cubit.refresh();
+    await sub.cancel();
+
+    expect(states, isEmpty);
+  });
 }

@@ -1,4 +1,3 @@
-import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_chip.dart';
@@ -32,62 +31,56 @@ class OverviewPage extends StatelessWidget {
     final spacing = context.dsSpacing;
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocProvider(
-      create: (_) => getIt<OverviewCubit>()..load(),
-      child: BlocConsumer<OverviewCubit, OverviewState>(
-        listener: (context, state) {
-          final navigation = state.navigation;
-          if (navigation == null) {
-            return;
-          }
-          context.read<OverviewCubit>().consumeNavigation();
-          switch (navigation.destination) {
-            case OverviewDestination.signIn:
-              context.go(AppRoutes.signIn);
-          }
-        },
-        builder: (context, state) {
-          final baseCurrency = state.baseCurrency ?? 'USD';
+    return BlocConsumer<OverviewCubit, OverviewState>(
+      listener: (context, state) {
+        final navigation = state.navigation;
+        if (navigation == null) {
+          return;
+        }
+        context.read<OverviewCubit>().consumeNavigation();
+        switch (navigation.destination) {
+          case OverviewDestination.signIn:
+            context.go(AppRoutes.signIn);
+        }
+      },
+      builder: (context, state) {
+        final baseCurrency = state.baseCurrency ?? 'USD';
 
-          return Scaffold(
-            appBar: DSAppBar(
-              title: l10n.mainTitle,
-              actions: [
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: spacing.s12),
-                    child: DSChip(
-                      label: baseCurrency,
-                      icon: Icons.currency_exchange,
-                      onTap: () async {
-                        await context.push<String>(
-                          AppRoutes.baseCurrencySettings,
-                        );
-                        if (context.mounted) {
-                          await context.read<OverviewCubit>().load();
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            body: SafeArea(
-              child: RefreshIndicator(
-                onRefresh: () => context.read<OverviewCubit>().load(),
+        return Scaffold(
+          appBar: DSAppBar(
+            title: l10n.mainTitle,
+            actions: [
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(spacing.s24, 0, spacing.s24, 0),
-                  child: OverviewBody(
-                    state: state,
-                    baseCurrency: baseCurrency,
-                    ratesText: _ratesText(context, l10n, state.ratesAsOf),
+                  padding: EdgeInsets.only(right: spacing.s12),
+                  child: DSChip(
+                    label: baseCurrency,
+                    icon: Icons.currency_exchange,
+                    onTap: () async {
+                      await context.push<String>(
+                        AppRoutes.baseCurrencySettings,
+                      );
+                      if (context.mounted) {
+                        await context.read<OverviewCubit>().refresh();
+                      }
+                    },
                   ),
                 ),
               ),
+            ],
+          ),
+          body: SafeArea(
+            child: RefreshIndicator(
+              onRefresh: () => context.read<OverviewCubit>().refresh(),
+              child: OverviewBody(
+                state: state,
+                baseCurrency: baseCurrency,
+                ratesText: _ratesText(context, l10n, state.ratesAsOf),
+              ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

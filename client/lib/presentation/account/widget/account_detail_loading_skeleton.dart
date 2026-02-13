@@ -1,17 +1,29 @@
 import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/domain/account/entity/account_entity.dart';
+import 'package:asset_tuner/presentation/account/utils/account_type_theme.dart';
 import 'package:flutter/material.dart';
 
 class AccountDetailLoadingSkeleton extends StatelessWidget {
-  const AccountDetailLoadingSkeleton({super.key});
+  const AccountDetailLoadingSkeleton({super.key, this.accountType});
+
+  final AccountType? accountType;
 
   @override
   Widget build(BuildContext context) {
     final spacing = context.dsSpacing;
     final colors = context.dsColors;
+    final type = accountType ?? AccountType.other;
+    final gradient = accountTypeGradientColors(colors, type);
 
     return ListView(
       children: [
+        SizedBox(height: spacing.s24),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
         Container(
           width: double.infinity,
           padding: EdgeInsets.all(spacing.s24),
@@ -19,10 +31,7 @@ class AccountDetailLoadingSkeleton extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                colors.primary.withValues(alpha: 0.14),
-                colors.info.withValues(alpha: 0.1),
-              ],
+              colors: gradient,
             ),
             borderRadius: BorderRadius.circular(context.dsRadius.r16),
           ),
@@ -57,18 +66,35 @@ class AccountDetailLoadingSkeleton extends StatelessWidget {
         SizedBox(height: spacing.s16),
         Row(
           children: [
-            for (var i = 0; i < 3; i++) ...[
-              Expanded(
-                child: Column(
-                  children: [
-                    const DSSkeleton(height: 52, width: 52),
-                    SizedBox(height: spacing.s8),
-                    const DSSkeleton(height: 12, width: 56),
-                  ],
-                ),
+            Expanded(
+              child: Column(
+                children: [
+                  const DSSkeleton(height: 52, width: 52),
+                  SizedBox(height: spacing.s8),
+                  const DSSkeleton(height: 12, width: 56),
+                ],
               ),
-              if (i != 2) SizedBox(width: spacing.s8),
-            ],
+            ),
+            SizedBox(width: spacing.s8),
+            Expanded(
+              child: Column(
+                children: [
+                  const DSSkeleton(height: 52, width: 52),
+                  SizedBox(height: spacing.s8),
+                  const DSSkeleton(height: 12, width: 56),
+                ],
+              ),
+            ),
+            SizedBox(width: spacing.s8),
+            Expanded(
+              child: Column(
+                children: [
+                  const DSSkeleton(height: 52, width: 52),
+                  SizedBox(height: spacing.s8),
+                  const DSSkeleton(height: 12, width: 56),
+                ],
+              ),
+            ),
           ],
         ),
         SizedBox(height: spacing.s24),
@@ -114,6 +140,10 @@ class AccountDetailLoadingSkeleton extends StatelessWidget {
           ),
           if (i != 3) SizedBox(height: spacing.s8),
         ],
+            ],
+          ),
+        ),
+        SizedBox(height: spacing.s24),
       ],
     );
   }
