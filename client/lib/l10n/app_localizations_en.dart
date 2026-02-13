@@ -906,6 +906,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileAccounts => 'Accounts';
 
   @override
+  String get settingsArchivedAccounts => 'Archived accounts';
+
+  @override
+  String get archivedAccountsEmptyTitle => 'No archived accounts';
+
+  @override
+  String get archivedAccountsEmptyBody =>
+      'Accounts you archive will appear here.';
+
+  @override
   String get profileLanguage => 'Language';
 
   @override

@@ -190,6 +190,113 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     }
   }
 
+  Future<void> refresh() async {
+    final subaccountId = state.subaccountId;
+    if (subaccountId == null) {
+      return;
+    }
+    if (state.status != AssetPositionDetailStatus.ready) {
+      return;
+    }
+
+    final session = await _getCachedSession();
+    if (session == null) {
+      emit(
+        state.copyWith(
+          navigation: const AssetPositionDetailNavigation(
+            destination: AssetPositionDetailDestination.signIn,
+          ),
+        ),
+      );
+      return;
+    }
+
+    final profile = await _loadProfile();
+    if (profile == null) {
+      return;
+    }
+
+    final rates = await _getLatestUsdRates();
+    final ratesSnapshot = switch (rates) {
+      Success<RatesSnapshotEntity?>(value: final snapshot) => snapshot,
+      FailureResult<RatesSnapshotEntity?>() => null,
+    };
+
+    final accountsResult = await _getAccounts();
+    final accounts = switch (accountsResult) {
+      Success<List<AccountEntity>>(value: final list) => list,
+      FailureResult<List<AccountEntity>>() => const <AccountEntity>[],
+    };
+
+    final tuple = await _findSubaccount(accounts, subaccountId);
+    final account = tuple?.account;
+    final subaccount = tuple?.subaccount;
+
+    final assetsResult = await _getAssets();
+    final assets = switch (assetsResult) {
+      Success<List<AssetEntity>>(value: final list) => list,
+      FailureResult<List<AssetEntity>>() => null,
+    };
+
+    if (account == null || subaccount == null || assets == null) {
+      emit(state.copyWith(bannerFailureCode: 'not_found'));
+      return;
+    }
+
+    final asset = assets.firstWhereOrNull((a) => a.id == subaccount.assetId);
+    final baseAsset = assets.firstWhereOrNull(
+      (a) => a.code == profile.baseCurrency,
+    );
+
+    if (asset == null) {
+      emit(state.copyWith(bannerFailureCode: 'not_found'));
+      return;
+    }
+
+    final firstPage = await _getHistory(
+      subaccountId: subaccount.id,
+      limit: 50,
+      offset: 0,
+    );
+
+    switch (firstPage) {
+      case Success<BalanceHistoryPageEntity>(value: final page):
+        final current = page.entries.isEmpty
+            ? Decimal.zero
+            : page.entries.first.snapshotAmount;
+
+        final baseUsdPrice = _baseUsdPrice(
+          baseCurrencyCode: profile.baseCurrency,
+          baseAssetId: baseAsset?.id,
+          snapshot: ratesSnapshot,
+        );
+
+        final converted = _toConvertedValue(
+          originalAmount: current,
+          assetId: asset.id,
+          baseUsdPrice: baseUsdPrice,
+          ratesSnapshot: ratesSnapshot,
+        );
+        final isUnpriced = current != Decimal.zero && converted == null;
+
+        emit(
+          state.copyWith(
+            accountName: account.name,
+            subaccountName: subaccount.name,
+            ratesAsOf: ratesSnapshot?.asOf,
+            currentBalance: current,
+            convertedValue: converted,
+            isUnpriced: isUnpriced,
+            entries: page.entries,
+            nextOffset: page.nextOffset,
+            bannerFailureCode: null,
+          ),
+        );
+      case FailureResult<BalanceHistoryPageEntity>(failure: final failure):
+        emit(state.copyWith(bannerFailureCode: failure.code));
+    }
+  }
+
   Future<void> loadMore() async {
     final subaccountId = state.subaccountId;
     final nextOffset = state.nextOffset;

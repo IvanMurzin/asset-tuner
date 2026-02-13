@@ -47,73 +47,95 @@ class SignInPage extends StatelessWidget {
           return Scaffold(
             appBar: DSAppBar(title: l10n.signInTitle),
             body: SafeArea(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s32,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AuthHero(
-                      title: l10n.signInTitle,
-                      subtitle: l10n.signInBody,
-                    ),
-                    SizedBox(height: spacing.s24),
-                    if (bannerText != null)
-                      DSInlineBanner(
-                        title: l10n.bannerSignInError,
-                        message: bannerText,
-                        variant: DSInlineBannerVariant.danger,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(
+                        spacing.s24,
+                        spacing.s24,
+                        spacing.s24,
+                        spacing.s16,
                       ),
-                    if (bannerText != null) SizedBox(height: spacing.s16),
-                    SignInEmailField(
-                      label: l10n.emailLabel,
-                      hint: l10n.emailHint,
-                      errorText: _emailErrorText(l10n, state.emailError),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AuthHero(
+                            title: l10n.signInTitle,
+                            subtitle: l10n.signInBody,
+                          ),
+                          SizedBox(height: spacing.s24),
+                          if (bannerText != null)
+                            DSInlineBanner(
+                              title: l10n.bannerSignInError,
+                              message: bannerText,
+                              variant: DSInlineBannerVariant.danger,
+                            ),
+                          if (bannerText != null) SizedBox(height: spacing.s16),
+                          SignInEmailField(
+                            label: l10n.emailLabel,
+                            hint: l10n.emailHint,
+                            errorText: _emailErrorText(l10n, state.emailError),
+                          ),
+                          SizedBox(height: spacing.s16),
+                          SignInPasswordField(
+                            label: l10n.passwordLabel,
+                            hint: l10n.passwordHint,
+                            errorText: _passwordErrorText(
+                              l10n,
+                              state.passwordError,
+                            ),
+                          ),
+                          if (providers.isNotEmpty) ...[
+                            SizedBox(height: spacing.s24),
+                            Text(l10n.signInWith, style: typography.caption),
+                            SizedBox(height: spacing.s12),
+                            OAuthSection(
+                              isLoading: isLoading,
+                              providers: providers,
+                              googleLabel: l10n.continueWithGoogle,
+                              appleLabel: l10n.continueWithApple,
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-                    SizedBox(height: spacing.s16),
-                    SignInPasswordField(
-                      label: l10n.passwordLabel,
-                      hint: l10n.passwordHint,
-                      errorText: _passwordErrorText(l10n, state.passwordError),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      spacing.s24,
+                      spacing.s16,
+                      spacing.s24,
+                      spacing.s24,
                     ),
-                    SizedBox(height: spacing.s24),
-                    DSButton(
-                      label: l10n.signInPrimary,
-                      isLoading: isLoading,
-                      fullWidth: true,
-                      onPressed: isLoading
-                          ? null
-                          : context.read<SignInCubit>().signIn,
-                    ),
-                    SizedBox(height: spacing.s16),
-                    TextButton(
-                      onPressed: isLoading
-                          ? null
-                          : () => context.go(AppRoutes.signUp),
-                      child: Text(
-                        l10n.switchToSignUp,
-                        style: typography.body.copyWith(
-                          color: context.dsColors.primary,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        DSButton(
+                          label: l10n.signInPrimary,
+                          isLoading: isLoading,
+                          fullWidth: true,
+                          onPressed: isLoading
+                              ? null
+                              : context.read<SignInCubit>().signIn,
                         ),
-                      ),
+                        SizedBox(height: spacing.s16),
+                        TextButton(
+                          onPressed: isLoading
+                              ? null
+                              : () => context.go(AppRoutes.signUp),
+                          child: Text(
+                            l10n.switchToSignUp,
+                            style: typography.body.copyWith(
+                              color: context.dsColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    if (providers.isNotEmpty) ...[
-                      SizedBox(height: spacing.s24),
-                      Text(l10n.signInWith, style: typography.caption),
-                      SizedBox(height: spacing.s12),
-                      OAuthSection(
-                        isLoading: isLoading,
-                        providers: providers,
-                        googleLabel: l10n.continueWithGoogle,
-                        appleLabel: l10n.continueWithApple,
-                      ),
-                    ],
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );

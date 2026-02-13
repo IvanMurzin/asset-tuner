@@ -47,61 +47,80 @@ class OtpPage extends StatelessWidget {
           return Scaffold(
             appBar: DSAppBar(title: l10n.otpTitle),
             body: SafeArea(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s32,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AuthHero(
-                      title: l10n.otpTitle,
-                      subtitle: l10n.otpBodyWithEmail(email),
-                    ),
-                    SizedBox(height: spacing.s24),
-                    if (bannerText != null)
-                      DSInlineBanner(
-                        title: l10n.bannerOtpError,
-                        message: bannerText,
-                        variant: DSInlineBannerVariant.danger,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(
+                        spacing.s24,
+                        spacing.s24,
+                        spacing.s24,
+                        spacing.s16,
                       ),
-                    if (bannerText != null) SizedBox(height: spacing.s16),
-                    Text(l10n.otpCodeLabel, style: typography.label),
-                    SizedBox(height: spacing.s8),
-                    DSTextField(
-                      label: null,
-                      hintText: l10n.otpCodeHint,
-                      enabled: !isLoading,
-                      errorText: _codeErrorText(l10n, state.codeError),
-                      keyboardType: TextInputType.number,
-                      onChanged: context.read<OtpCubit>().updateCode,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AuthHero(
+                            title: l10n.otpTitle,
+                            subtitle: l10n.otpBodyWithEmail(email),
+                          ),
+                          SizedBox(height: spacing.s24),
+                          if (bannerText != null)
+                            DSInlineBanner(
+                              title: l10n.bannerOtpError,
+                              message: bannerText,
+                              variant: DSInlineBannerVariant.danger,
+                            ),
+                          if (bannerText != null) SizedBox(height: spacing.s16),
+                          Text(l10n.otpCodeLabel, style: typography.label),
+                          SizedBox(height: spacing.s8),
+                          DSTextField(
+                            label: null,
+                            hintText: l10n.otpCodeHint,
+                            enabled: !isLoading,
+                            errorText: _codeErrorText(l10n, state.codeError),
+                            keyboardType: TextInputType.number,
+                            onChanged: context.read<OtpCubit>().updateCode,
+                          ),
+                        ],
+                      ),
                     ),
-                    SizedBox(height: spacing.s24),
-                    DSButton(
-                      label: l10n.verifyOtp,
-                      isLoading: isLoading,
-                      fullWidth: true,
-                      onPressed: isLoading
-                          ? null
-                          : context.read<OtpCubit>().verify,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      spacing.s24,
+                      spacing.s16,
+                      spacing.s24,
+                      spacing.s24,
                     ),
-                    SizedBox(height: spacing.s12),
-                    TextButton(
-                      onPressed: isLoading
-                          ? null
-                          : () => context.go(AppRoutes.signUp),
-                      child: Text(
-                        l10n.changeEmail,
-                        style: typography.body.copyWith(
-                          color: context.dsColors.primary,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        DSButton(
+                          label: l10n.verifyOtp,
+                          isLoading: isLoading,
+                          fullWidth: true,
+                          onPressed: isLoading
+                              ? null
+                              : context.read<OtpCubit>().verify,
                         ),
-                      ),
+                        SizedBox(height: spacing.s12),
+                        TextButton(
+                          onPressed: isLoading
+                              ? null
+                              : () => context.go(AppRoutes.signUp),
+                          child: Text(
+                            l10n.changeEmail,
+                            style: typography.body.copyWith(
+                              color: context.dsColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );

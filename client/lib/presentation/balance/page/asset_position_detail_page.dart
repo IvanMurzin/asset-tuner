@@ -1,4 +1,3 @@
-import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_dialog.dart';
@@ -60,10 +59,7 @@ class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
     final subaccountId = widget.subaccountId;
     final initialTitle = widget.initialTitle;
 
-    return BlocProvider(
-      create: (_) =>
-          getIt<AssetPositionDetailCubit>()..load(subaccountId: subaccountId),
-      child: BlocConsumer<AssetPositionDetailCubit, AssetPositionDetailState>(
+    return BlocConsumer<AssetPositionDetailCubit, AssetPositionDetailState>(
         listener: (context, state) {
           final navigation = state.navigation;
           if (navigation == null) {
@@ -177,10 +173,8 @@ class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
                           if (saved == true) {
                             context.read<OverviewCubit>().refresh();
                             onBalanceUpdated();
+                            context.read<AssetPositionDetailCubit>().refresh();
                           }
-                          await context.read<AssetPositionDetailCubit>().load(
-                            subaccountId: subaccountId,
-                          );
                         }
                       },
                       onRename: () async {
@@ -196,6 +190,7 @@ class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
                         );
                         if (context.mounted) {
                           onBalanceUpdated();
+                          context.read<AssetPositionDetailCubit>().refresh();
                         }
                       },
                       onDelete: () async {
@@ -246,10 +241,8 @@ class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
                                   if (saved == true) {
                                     context.read<OverviewCubit>().refresh();
                                     onBalanceUpdated();
+                                    context.read<AssetPositionDetailCubit>().refresh();
                                   }
-                                  await context
-                                      .read<AssetPositionDetailCubit>()
-                                      .load(subaccountId: subaccountId);
                                 }
                               },
                             ),
@@ -261,7 +254,6 @@ class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
             ),
           );
         },
-      ),
     );
   }
 

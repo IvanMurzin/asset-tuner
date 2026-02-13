@@ -906,6 +906,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileAccounts => 'Счета';
 
   @override
+  String get settingsArchivedAccounts => 'Архивные счета';
+
+  @override
+  String get archivedAccountsEmptyTitle => 'Нет архивных счетов';
+
+  @override
+  String get archivedAccountsEmptyBody =>
+      'Счета, которые вы архивируете, появятся здесь.';
+
+  @override
   String get profileLanguage => 'Язык';
 
   @override

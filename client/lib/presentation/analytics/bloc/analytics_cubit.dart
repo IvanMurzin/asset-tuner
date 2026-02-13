@@ -51,7 +51,20 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   final GetLatestUsdRatesUseCase _getLatestUsdRates;
 
   Future<void> load() async {
-    emit(state.copyWith(status: AnalyticsStatus.loading, failureCode: null));
+    await _fetch(silent: false);
+  }
+
+  Future<void> refresh() async {
+    if (state.status != AnalyticsStatus.ready) {
+      return;
+    }
+    await _fetch(silent: true);
+  }
+
+  Future<void> _fetch({required bool silent}) async {
+    if (!silent) {
+      emit(state.copyWith(status: AnalyticsStatus.loading, failureCode: null));
+    }
 
     final session = await _getCachedSession();
     if (session == null) {

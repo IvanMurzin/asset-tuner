@@ -39,9 +39,7 @@ class AccountDetailPage extends StatelessWidget {
       child: BlocConsumer<AccountDetailCubit, AccountDetailState>(
         listenWhen: (prev, curr) =>
             curr.navigation != null ||
-            (prev.account != null &&
-                curr.account != null &&
-                prev.account != curr.account),
+            (prev.account != null && curr.account != null && prev.account != curr.account),
         listener: (context, state) {
           final navigation = state.navigation;
           if (navigation != null) {
@@ -66,29 +64,19 @@ class AccountDetailPage extends StatelessWidget {
 
           if (state.status == AccountDetailStatus.loading) {
             return Scaffold(
-              appBar: DSAppBar(
-                title: initialTitle ?? l10n.accountsTitle,
-              ),
-              body: SafeArea(
-                child: AccountDetailLoadingSkeleton(
-                  accountType: initialAccountType,
-                ),
-              ),
+              appBar: DSAppBar(title: initialTitle ?? l10n.accountsTitle),
+              body: SafeArea(child: AccountDetailLoadingSkeleton(accountType: initialAccountType)),
             );
           }
 
-          if (state.status == AccountDetailStatus.error &&
-              state.account == null) {
+          if (state.status == AccountDetailStatus.error && state.account == null) {
             return Scaffold(
-              appBar: DSAppBar(
-                title: initialTitle ?? l10n.accountsTitle,
-              ),
+              appBar: DSAppBar(title: initialTitle ?? l10n.accountsTitle),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
                 message: _failureMessage(l10n, state.failureCode),
                 actionLabel: l10n.splashRetry,
-                onAction: () =>
-                    context.read<AccountDetailCubit>().load(accountId),
+                onAction: () => context.read<AccountDetailCubit>().load(accountId),
               ),
             );
           }
@@ -98,20 +86,17 @@ class AccountDetailPage extends StatelessWidget {
           final actionsEnabled = !state.isAccountActionBusy;
 
           return Scaffold(
-            appBar: DSAppBar(
-              title: account.name,
-            ),
+            appBar: DSAppBar(title: account.name),
             body: SafeArea(
               child: RefreshIndicator(
-                onRefresh: () =>
-                    context.read<AccountDetailCubit>().refresh(),
+                onRefresh: () => context.read<AccountDetailCubit>().refresh(),
                 child: ListView(
                   children: [
                     SizedBox(height: spacing.s24),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: spacing.s24),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           if (state.bannerFailureCode != null) ...[
                             DSInlineBanner(
@@ -146,46 +131,44 @@ class AccountDetailPage extends StatelessWidget {
                           ),
                           SizedBox(height: spacing.s16),
                           AccountDetailActionsRow(
-                      isEnabled: actionsEnabled,
-                      isArchived: state.isAccountArchived,
-                      editLabel: l10n.accountsEdit,
-                      archiveLabel: l10n.accountsArchive,
-                      unarchiveLabel: l10n.accountsUnarchive,
-                      deleteLabel: l10n.accountsDelete,
-                      onEdit: () async {
-                        final saved = await context.push<String>(
-                          AppRoutes.accountEdit.replaceFirst(':id', account.id),
-                        );
-                        if (context.mounted && saved != null) {
-                          await context.read<AccountDetailCubit>().refresh();
-                        }
-                      },
-                      onArchiveToggle: () async {
-                        final confirmed = await _confirmArchive(
-                          context,
-                          l10n,
-                          archive: !state.isAccountArchived,
-                        );
-                        if (!confirmed || !context.mounted) {
-                          return;
-                        }
-                        await context.read<AccountDetailCubit>().setArchived(
-                          accountId: account.id,
-                          archived: !state.isAccountArchived,
-                        );
-                        if (context.mounted) {
-                          context.read<OverviewCubit>().refresh();
-                        }
-                      },
-                      onDelete: () async {
-                        final confirmed = await _confirmDelete(context, l10n);
-                        if (!confirmed || !context.mounted) {
-                          return;
-                        }
-                        await context.read<AccountDetailCubit>().deleteAccount(
-                          account.id,
-                        );
-                      },
+                            isEnabled: actionsEnabled,
+                            isArchived: state.isAccountArchived,
+                            editLabel: l10n.accountsEdit,
+                            archiveLabel: l10n.accountsArchive,
+                            unarchiveLabel: l10n.accountsUnarchive,
+                            deleteLabel: l10n.accountsDelete,
+                            onEdit: () async {
+                              final saved = await context.push<String>(
+                                AppRoutes.accountEdit.replaceFirst(':id', account.id),
+                              );
+                              if (context.mounted && saved != null) {
+                                await context.read<AccountDetailCubit>().refresh();
+                              }
+                            },
+                            onArchiveToggle: () async {
+                              final confirmed = await _confirmArchive(
+                                context,
+                                l10n,
+                                archive: !state.isAccountArchived,
+                              );
+                              if (!confirmed || !context.mounted) {
+                                return;
+                              }
+                              await context.read<AccountDetailCubit>().setArchived(
+                                accountId: account.id,
+                                archived: !state.isAccountArchived,
+                              );
+                              if (context.mounted) {
+                                context.read<OverviewCubit>().refresh();
+                              }
+                            },
+                            onDelete: () async {
+                              final confirmed = await _confirmDelete(context, l10n);
+                              if (!confirmed || !context.mounted) {
+                                return;
+                              }
+                              await context.read<AccountDetailCubit>().deleteAccount(account.id);
+                            },
                           ),
                           SizedBox(height: spacing.s24),
                           if (state.status == AccountDetailStatus.error)
@@ -193,8 +176,7 @@ class AccountDetailPage extends StatelessWidget {
                               title: l10n.splashErrorTitle,
                               message: _failureMessage(l10n, state.failureCode),
                               actionLabel: l10n.splashRetry,
-                              onAction: () =>
-                                  context.read<AccountDetailCubit>().load(accountId),
+                              onAction: () => context.read<AccountDetailCubit>().load(accountId),
                             )
                           else
                             AccountDetailPositionsSection(
@@ -202,10 +184,7 @@ class AccountDetailPage extends StatelessWidget {
                               baseCurrency: baseCurrency,
                               onAddAsset: () async {
                                 final added = await context.push<bool>(
-                                  AppRoutes.accountAddAsset.replaceFirst(
-                                    ':id',
-                                    account.id,
-                                  ),
+                                  AppRoutes.accountAddAsset.replaceFirst(':id', account.id),
                                 );
                                 if (context.mounted && added == true) {
                                   await context.read<AccountDetailCubit>().refresh();
@@ -213,13 +192,8 @@ class AccountDetailPage extends StatelessWidget {
                               },
                               onOpenSubaccount: (item) async {
                                 final changed = await context.push<bool>(
-                                  AppRoutes.subaccountDetail.replaceFirst(
-                                    ':id',
-                                    item.subaccountId,
-                                  ),
-                                  extra: SubaccountDetailExtra(
-                                    initialTitle: item.name,
-                                  ),
+                                  AppRoutes.subaccountDetail.replaceFirst(':id', item.subaccountId),
+                                  extra: SubaccountDetailExtra(initialTitle: item.name),
                                 );
                                 if (context.mounted && changed == true) {
                                   await context.read<AccountDetailCubit>().refresh();
@@ -261,9 +235,7 @@ class AccountDetailPage extends StatelessWidget {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => DSDialog(
-        title: archive
-            ? l10n.accountsArchiveConfirmTitle
-            : l10n.accountsUnarchiveConfirmTitle,
+        title: archive ? l10n.accountsArchiveConfirmTitle : l10n.accountsUnarchiveConfirmTitle,
         content: archive ? Text(l10n.accountsArchiveConfirmBody) : null,
         primaryLabel: archive ? l10n.accountsArchive : l10n.accountsUnarchive,
         secondaryLabel: l10n.cancel,
@@ -274,10 +246,7 @@ class AccountDetailPage extends StatelessWidget {
     return result ?? false;
   }
 
-  Future<bool> _confirmDelete(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) async {
+  Future<bool> _confirmDelete(BuildContext context, AppLocalizations l10n) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => DSDialog(

@@ -2,7 +2,6 @@ import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
 import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
@@ -101,17 +100,39 @@ class _AddAssetPageState extends State<AddAssetPage> {
           if (state.status == AddAssetStatus.loading) {
             return Scaffold(
               appBar: DSAppBar(title: l10n.subaccountCreateTitle),
-              body: Padding(
-                padding: EdgeInsets.all(spacing.s24),
-                child: DSCard(
+              body: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    spacing.s24,
+                    spacing.s24,
+                    spacing.s24,
+                    spacing.s16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const DSSkeleton(height: 18),
+                      const DSSkeleton(height: 56),
                       SizedBox(height: spacing.s12),
-                      const DSSkeleton(height: 18),
+                      const DSSkeleton(height: 56),
                       SizedBox(height: spacing.s12),
-                      const DSSkeleton(height: 18),
+                      Container(
+                        width: double.infinity,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: context.dsColors.surface,
+                          borderRadius: BorderRadius.circular(
+                            context.dsRadius.r12,
+                          ),
+                          border: Border.all(color: context.dsColors.border),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: spacing.s12,
+                          vertical: spacing.s12,
+                        ),
+                        child: const DSSkeleton(height: 20, width: 120),
+                      ),
+                      SizedBox(height: spacing.s16),
+                      const DSSkeleton(height: 52),
                     ],
                   ),
                 ),

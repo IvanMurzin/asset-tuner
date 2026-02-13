@@ -1,8 +1,11 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/preview/ds_preview_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_detail_page.dart';
+import 'package:asset_tuner/presentation/balance/bloc/asset_position_detail_cubit.dart';
 import 'package:asset_tuner/presentation/account/page/account_form_page.dart';
 import 'package:asset_tuner/presentation/account/page/add_asset_page.dart';
 import 'package:asset_tuner/presentation/analytics/page/analytics_page.dart';
@@ -20,6 +23,7 @@ import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
 import 'package:asset_tuner/presentation/profile/page/account_actions_page.dart';
 import 'package:asset_tuner/presentation/profile/page/language_page.dart';
 import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
+import 'package:asset_tuner/presentation/profile/page/archived_accounts_page.dart';
 import 'package:asset_tuner/presentation/profile/page/theme_page.dart';
 import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
 import 'package:asset_tuner/presentation/settings/page/manage_subscription_page.dart';
@@ -100,9 +104,13 @@ final appRouter = GoRouter(
                     final extra = state.extra is SubaccountDetailExtra
                         ? state.extra as SubaccountDetailExtra
                         : null;
-                    return AssetPositionDetailPage(
-                      subaccountId: id,
-                      initialTitle: extra?.initialTitle,
+                    return BlocProvider(
+                      create: (_) =>
+                          getIt<AssetPositionDetailCubit>()..load(subaccountId: id),
+                      child: AssetPositionDetailPage(
+                        subaccountId: id,
+                        initialTitle: extra?.initialTitle,
+                      ),
                     );
                   },
                   routes: [
@@ -149,6 +157,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.accountActions,
       builder: (context, state) => const AccountActionsPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.archivedAccounts,
+      builder: (context, state) => const ArchivedAccountsPage(),
     ),
     GoRoute(
       path: AppRoutes.baseCurrencySettings,

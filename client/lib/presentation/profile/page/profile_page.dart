@@ -196,21 +196,24 @@ class ProfilePage extends StatelessWidget {
                               },
                             ),
                             SizedBox(height: spacing.s24),
-                            DSSectionTitle(title: l10n.profileSectionPortfolio),
+                            DSSectionTitle(
+                              title: l10n.settingsArchivedAccounts,
+                            ),
                             SizedBox(height: spacing.s12),
                             DSCard(
                               padding: EdgeInsets.zero,
                               child: DSListRow(
-                                title: l10n.profileAccounts,
+                                title: l10n.settingsArchivedAccounts,
                                 leading: Icon(
-                                  Icons.account_balance_outlined,
+                                  Icons.archive_outlined,
                                   color: context.dsColors.textTertiary,
                                 ),
                                 trailing: Icon(
                                   Icons.chevron_right,
                                   color: context.dsColors.textTertiary,
                                 ),
-                                onTap: () => context.push(AppRoutes.main),
+                                onTap: () =>
+                                    context.push(AppRoutes.archivedAccounts),
                               ),
                             ),
                             SizedBox(height: spacing.s24),

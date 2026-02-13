@@ -85,26 +85,50 @@ class BaseCurrencySettingsPage extends StatelessWidget {
             appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
             body: SafeArea(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
+                padding: EdgeInsets.only(
+                  top: spacing.s24,
+                  bottom: spacing.s16,
+                  left: spacing.s24,
+                  right: spacing.s24,
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     DSSectionTitle(title: l10n.baseCurrencySettingsCurrentTitle),
                     SizedBox(height: spacing.s12),
                     DSCard(
+                      padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            state.currentCode ?? l10n.notAvailable,
-                            style: typography.h2,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(height: spacing.s4),
-                          Text(
-                            l10n.baseCurrencySettingsCurrentBody,
-                            style: typography.body.copyWith(color: colors.textSecondary),
+                          Row(
+                            children: [
+                              Icon(Icons.attach_money_rounded, size: 28, color: colors.primary),
+                              SizedBox(width: spacing.s12),
+                              Expanded(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        l10n.baseCurrencySettingsCurrentBody,
+                                        style: typography.body.copyWith(
+                                          color: colors.textSecondary,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: spacing.s4),
+                                    Text(
+                                      state.currentCode ?? l10n.notAvailable,
+                                      style: typography.h2.copyWith(fontWeight: FontWeight.w700),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(width: spacing.s16),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -114,18 +138,24 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                     SizedBox(height: spacing.s12),
                     if (state.bannerType == BaseCurrencySettingsBannerType.saveFailure &&
                         state.bannerFailureCode != null) ...[
-                      DSInlineBanner(
-                        title: l10n.baseCurrencySettingsTitle,
-                        message: _failureMessage(l10n, state.bannerFailureCode),
-                        variant: DSInlineBannerVariant.danger,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+                        child: DSInlineBanner(
+                          title: l10n.baseCurrencySettingsTitle,
+                          message: _failureMessage(l10n, state.bannerFailureCode),
+                          variant: DSInlineBannerVariant.danger,
+                        ),
                       ),
                       SizedBox(height: spacing.s16),
                     ],
                     if (!(state.entitlements?.anyBaseCurrency ?? false)) ...[
-                      DSInlineBanner(
-                        title: l10n.baseCurrencySettingsTitle,
-                        message: l10n.baseCurrencySettingsPaywallHint,
-                        variant: DSInlineBannerVariant.info,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+                        child: DSInlineBanner(
+                          title: l10n.baseCurrencySettingsTitle,
+                          message: l10n.baseCurrencySettingsPaywallHint,
+                          variant: DSInlineBannerVariant.info,
+                        ),
                       ),
                       SizedBox(height: spacing.s12),
                     ],
@@ -142,7 +172,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                       onSelect: (code) =>
                           context.read<BaseCurrencySettingsCubit>().selectCurrency(code),
                     ),
-                    SizedBox(height: spacing.s16),
+                    Spacer(),
                     DSButton(
                       label: l10n.baseCurrencySettingsSave,
                       fullWidth: true,
@@ -151,6 +181,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                           ? null
                           : () => context.read<BaseCurrencySettingsCubit>().save(),
                     ),
+                    SizedBox(height: spacing.s16),
                   ],
                 ),
               ),

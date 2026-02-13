@@ -11,11 +11,15 @@ class OverviewAccountCard extends StatelessWidget {
     required this.item,
     required this.baseCurrency,
     required this.onTap,
+    this.showBalance = true,
+    this.subtitleOverride,
   });
 
   final OverviewAccountItem item;
   final String baseCurrency;
   final VoidCallback onTap;
+  final bool showBalance;
+  final String? subtitleOverride;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +33,10 @@ class OverviewAccountCard extends StatelessWidget {
     final iconColor = accountTypeAccentColor(colors, item.accountType);
     final iconData = accountTypeIcon(item.accountType);
 
-    final totalText =
-        context.dsFormatters.formatMoney(item.total, baseCurrency);
-    final subaccountsText =
+    final totalText = showBalance
+        ? context.dsFormatters.formatMoney(item.total, baseCurrency)
+        : '—';
+    final subaccountsText = subtitleOverride ??
         '${item.subaccountsCount} ${l10n.subaccountsCountLabel}';
 
     return InkWell(
@@ -80,7 +85,10 @@ class OverviewAccountCard extends StatelessWidget {
             Text(
               totalText,
               textAlign: TextAlign.right,
-              style: typography.body.copyWith(fontWeight: FontWeight.w700),
+              style: typography.body.copyWith(
+                fontWeight: FontWeight.w700,
+                color: showBalance ? null : colors.textSecondary,
+              ),
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 
 class MainShellPage extends StatelessWidget {
@@ -15,9 +16,31 @@ class MainShellPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocProvider<OverviewCubit>(
-      create: (_) => getIt<OverviewCubit>()..load(),
-      child: Scaffold(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<OverviewCubit>(
+          create: (_) => getIt<OverviewCubit>()..load(),
+        ),
+        BlocProvider<AnalyticsCubit>(
+          create: (_) => getIt<AnalyticsCubit>()..load(),
+        ),
+      ],
+      child: BlocListener<OverviewCubit, OverviewState>(
+        listenWhen: (prev, curr) {
+          if (curr.status != OverviewStatus.ready) {
+            return false;
+          }
+          if (prev.status != OverviewStatus.ready) {
+            return true;
+          }
+          return prev.fullTotal != curr.fullTotal ||
+              prev.ratesAsOf != curr.ratesAsOf ||
+              prev.accounts.length != curr.accounts.length;
+        },
+        listener: (context, state) {
+          context.read<AnalyticsCubit>().refresh();
+        },
+        child: Scaffold(
         body: navigationShell,
         bottomNavigationBar: NavigationBar(
           selectedIndex: navigationShell.currentIndex,
@@ -46,6 +69,7 @@ class MainShellPage extends StatelessWidget {
           ],
         ),
         backgroundColor: context.dsColors.background,
+      ),
       ),
     );
   }

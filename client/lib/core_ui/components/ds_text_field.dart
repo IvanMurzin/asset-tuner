@@ -65,7 +65,7 @@ class DSTextField extends StatelessWidget {
           horizontal: spacing.s16,
           vertical: spacing.s12,
         ),
-        labelStyle: typography.label.copyWith(color: colors.textSecondary),
+        labelStyle: typography.body.copyWith(color: colors.textSecondary),
         hintStyle: typography.body.copyWith(color: colors.textTertiary),
         errorStyle: typography.caption.copyWith(color: colors.danger),
         border: OutlineInputBorder(

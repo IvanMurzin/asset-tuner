@@ -1790,6 +1790,24 @@ abstract class AppLocalizations {
   /// **'Accounts'**
   String get profileAccounts;
 
+  /// No description provided for @settingsArchivedAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived accounts'**
+  String get settingsArchivedAccounts;
+
+  /// No description provided for @archivedAccountsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived accounts'**
+  String get archivedAccountsEmptyTitle;
+
+  /// No description provided for @archivedAccountsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts you archive will appear here.'**
+  String get archivedAccountsEmptyBody;
+
   /// No description provided for @profileLanguage.
   ///
   /// In en, this message translates to:

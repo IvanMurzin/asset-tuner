@@ -186,7 +186,7 @@ ThemeData _buildTheme(DSColors colors, Brightness brightness) {
         borderSide: BorderSide(color: colors.danger, width: 1.5),
       ),
       hintStyle: typography.body.copyWith(color: colors.textTertiary),
-      labelStyle: typography.label.copyWith(color: colors.textSecondary),
+      labelStyle: typography.body.copyWith(color: colors.textSecondary),
       errorStyle: typography.caption.copyWith(color: colors.danger),
     ),
     cardTheme: CardThemeData(

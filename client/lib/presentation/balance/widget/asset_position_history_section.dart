@@ -1,6 +1,7 @@
 import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_empty_state.dart';
+import 'package:asset_tuner/core_ui/components/ds_history_entry_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
@@ -67,14 +68,56 @@ class AssetPositionHistorySection extends StatelessWidget {
                         SizedBox(height: spacing.s8),
                     itemBuilder: (context, index) {
                       final entry = entries[index];
-                      return _HistoryEntryTile(
-                        entry: entry,
-                        assetCode: assetCode,
-                        baseCurrency: baseCurrency,
-                        conversionFactor: _conversionFactor(
-                          currentBalance,
-                          convertedValue,
+                      final factor = _conversionFactor(
+                        currentBalance,
+                        convertedValue,
+                      );
+                      final convertedSnapshot = factor == null
+                          ? null
+                          : entry.snapshotAmount * factor;
+                      final diff = entry.diffAmount;
+                      final convertedDiff = factor == null || diff == null
+                          ? null
+                          : diff * factor;
+                      final deltaColor = diff == null
+                          ? context.dsColors.textTertiary
+                          : (diff.compareTo(Decimal.zero) >= 0
+                              ? context.dsColors.success
+                              : context.dsColors.danger);
+                      final code = (assetCode ?? '').isEmpty
+                          ? l10n.notAvailable
+                          : assetCode!;
+                      final snapshotAsset = code == l10n.notAvailable
+                          ? context.dsFormatters.formatDecimalFromDecimal(
+                              entry.snapshotAmount,
+                              maximumFractionDigits: 8,
+                            )
+                          : context.dsFormatters.formatMoney(
+                              entry.snapshotAmount,
+                              code,
+                              maximumFractionDigits: 8,
+                            );
+                      final snapshotBase = convertedSnapshot == null
+                          ? l10n.unpriced
+                          : context.dsFormatters.formatMoney(
+                              convertedSnapshot,
+                              baseCurrency,
+                            );
+                      return DSHistoryEntryCard(
+                        dateText: context.dsFormatters.formatDateTime(
+                          entry.entryDate,
                         ),
+                        subtitleText: l10n.balanceEntryImpliedDeltaLabel,
+                        deltaText: _assetDeltaText(context, diff, code, l10n),
+                        deltaColor: deltaColor,
+                        baseLineText: _baseDeltaText(
+                          context,
+                          convertedDiff,
+                          baseCurrency,
+                        ),
+                        trailingTitle: l10n.balanceEntrySnapshot,
+                        trailingPrimaryText: snapshotAsset,
+                        trailingSecondaryText: snapshotBase,
                       );
                     },
                   ),
@@ -107,142 +150,27 @@ class AssetPositionHistorySection extends StatelessWidget {
     }
     return divideToDecimal(converted, current);
   }
-}
 
-class _HistoryEntryTile extends StatelessWidget {
-  const _HistoryEntryTile({
-    required this.entry,
-    required this.assetCode,
-    required this.baseCurrency,
-    required this.conversionFactor,
-  });
-
-  final BalanceEntryEntity entry;
-  final String? assetCode;
-  final String baseCurrency;
-  final Decimal? conversionFactor;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final spacing = context.dsSpacing;
-    final colors = context.dsColors;
-    final typography = context.dsTypography;
-
-    final convertedSnapshot = conversionFactor == null
-        ? null
-        : entry.snapshotAmount * conversionFactor!;
-    final diff = entry.diffAmount;
-    final convertedDiff = conversionFactor == null || diff == null
-        ? null
-        : diff * conversionFactor!;
-
-    final deltaAccent = diff == null
-        ? colors.textTertiary
-        : (diff.compareTo(Decimal.zero) >= 0 ? colors.success : colors.danger);
-    final code = (assetCode ?? '').isEmpty ? l10n.notAvailable : assetCode!;
-    final snapshotAsset = code == l10n.notAvailable
-        ? context.dsFormatters.formatDecimalFromDecimal(
-            entry.snapshotAmount,
-            maximumFractionDigits: 8,
-          )
-        : context.dsFormatters.formatMoney(
-            entry.snapshotAmount,
-            code,
-            maximumFractionDigits: 8,
-          );
-    final snapshotBase = convertedSnapshot == null
-        ? l10n.unpriced
-        : context.dsFormatters.formatMoney(convertedSnapshot, baseCurrency);
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(spacing.s12),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(context.dsRadius.r12),
-        border: Border.all(color: colors.border),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.dsFormatters.formatDateTime(entry.entryDate),
-                  style: typography.caption.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: spacing.s8),
-                Text(
-                  l10n.balanceEntryImpliedDeltaLabel,
-                  style: typography.caption.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-                SizedBox(height: spacing.s4),
-                Text(
-                  _assetDeltaText(context, diff),
-                  style: typography.body.copyWith(
-                    color: deltaAccent,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _baseDeltaText(context, convertedDiff),
-                  style: typography.caption.copyWith(color: deltaAccent),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: spacing.s12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                l10n.balanceEntrySnapshot,
-                style: typography.caption.copyWith(color: colors.textSecondary),
-              ),
-              SizedBox(height: spacing.s4),
-              Text(
-                snapshotAsset,
-                textAlign: TextAlign.right,
-                style: typography.h3.copyWith(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                snapshotBase,
-                textAlign: TextAlign.right,
-                style: typography.body.copyWith(color: colors.textSecondary),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _assetDeltaText(BuildContext context, Decimal? diff) {
+  String _assetDeltaText(
+    BuildContext context,
+    Decimal? diff,
+    String code,
+    AppLocalizations l10n,
+  ) {
     if (diff == null) {
       return '-';
     }
-    final code = (assetCode ?? '').trim();
-    return code.isEmpty
+    final trimmed = (assetCode ?? '').trim();
+    return trimmed.isEmpty
         ? _signed(context, diff, digits: 8)
         : '${_signed(context, diff, digits: 8)} $code';
   }
 
-  String _baseDeltaText(BuildContext context, Decimal? diff) {
+  String _baseDeltaText(
+    BuildContext context,
+    Decimal? diff,
+    String baseCurrency,
+  ) {
     if (diff == null) {
       return '-';
     }
