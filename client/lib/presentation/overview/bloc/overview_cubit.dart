@@ -59,6 +59,7 @@ class OverviewCubit extends Cubit<OverviewState> {
 
   Future<void> _fetchAndEmit({required bool silent}) async {
     void maybeEmit(OverviewState next) {
+      if (isClosed) return;
       if (silent) {
         if (next != state || next.navigation != null) {
           emit(next);
@@ -290,6 +291,7 @@ class OverviewCubit extends Cubit<OverviewState> {
   }) async {
     final doEmit = emit ?? this.emit;
     final cached = await _cache.readSnapshot(userId);
+    if (isClosed) return;
     if (cached == null) {
       doEmit(
         state.copyWith(

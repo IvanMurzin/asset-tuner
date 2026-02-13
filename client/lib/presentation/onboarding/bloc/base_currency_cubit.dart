@@ -32,6 +32,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
   Future<void> load() async {
     emit(state.copyWith(status: BaseCurrencyStatus.loading));
     final session = await _getCachedSessionUseCase();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -45,6 +46,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
 
     final profileResult = await _getProfileUseCase();
     final currenciesResult = await _getFiatCurrenciesUseCase();
+    if (isClosed) return;
 
     late final ProfileEntity profile;
     switch (profileResult) {
@@ -134,6 +136,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
   Future<void> _saveSelection(String code) async {
     emit(state.copyWith(isSaving: true, bannerType: null));
     final session = await _getCachedSessionUseCase();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -147,6 +150,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     }
 
     final result = await _updateBaseCurrencyUseCase(code);
+    if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
         emit(

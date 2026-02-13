@@ -50,6 +50,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     );
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -64,6 +65,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     }
 
     final profile = await _loadProfile();
+    if (isClosed) return;
     if (profile == null) {
       emit(
         state.copyWith(status: AddAssetStatus.error, failureCode: 'unknown'),
@@ -73,6 +75,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
 
     final assets = await _getAssets();
     final positionCount = await _countPositions();
+    if (isClosed) return;
 
     final assetList = switch (assets) {
       Success<List<AssetEntity>>(value: final list) => list,
@@ -184,7 +187,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
       snapshotAmount: snapshotAmount,
       entryDate: DateTime.now(),
     );
-
+    if (isClosed) return;
     switch (result) {
       case Success():
         emit(

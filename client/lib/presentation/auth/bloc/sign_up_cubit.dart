@@ -66,7 +66,7 @@ class SignUpCubit extends Cubit<SignUpState> {
       state.email.trim(),
       state.password,
     );
-
+    if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
         emit(

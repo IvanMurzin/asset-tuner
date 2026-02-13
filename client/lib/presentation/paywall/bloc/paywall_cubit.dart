@@ -37,6 +37,7 @@ class PaywallCubit extends Cubit<PaywallState> {
     );
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -48,6 +49,7 @@ class PaywallCubit extends Cubit<PaywallState> {
     }
 
     final profileResult = await _getProfile();
+    if (isClosed) return;
     switch (profileResult) {
       case Success<ProfileEntity>(value: final profile):
         logger.i(
@@ -63,6 +65,7 @@ class PaywallCubit extends Cubit<PaywallState> {
         );
       case FailureResult<ProfileEntity>(failure: final failure):
         final bootstrap = await _bootstrapProfile();
+        if (isClosed) return;
         final bootProfile = switch (bootstrap) {
           Success(value: final data) => data.profile,
           FailureResult() => null,
@@ -92,6 +95,7 @@ class PaywallCubit extends Cubit<PaywallState> {
     emit(state.copyWith(isUpdating: true, upgradeFailureCode: null));
     logger.i('purchase_started plan=${state.selectedPlan.name}');
     final result = await _updatePlan('paid');
+    if (isClosed) return;
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         logger.i('purchase_succeeded plan=${state.selectedPlan.name}');

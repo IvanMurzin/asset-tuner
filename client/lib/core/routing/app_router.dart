@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core/routing/app_page_transitions.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/preview/ds_preview_page.dart';
@@ -21,10 +22,8 @@ import 'package:asset_tuner/presentation/overview/page/overview_page.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
 import 'package:asset_tuner/presentation/profile/page/account_actions_page.dart';
-import 'package:asset_tuner/presentation/profile/page/language_page.dart';
 import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
 import 'package:asset_tuner/presentation/profile/page/archived_accounts_page.dart';
-import 'package:asset_tuner/presentation/profile/page/theme_page.dart';
 import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
 import 'package:asset_tuner/presentation/settings/page/manage_subscription_page.dart';
 
@@ -65,61 +64,82 @@ final appRouter = GoRouter(
               routes: [
                 GoRoute(
                   path: 'accounts/new',
-                  builder: (context, state) => const AccountFormPage(),
+                  pageBuilder: (context, state) => slideTransition(
+                    context,
+                    state,
+                    const AccountFormPage(),
+                  ),
                 ),
                 GoRoute(
                   path: 'accounts/:id',
-                  builder: (context, state) {
+                  pageBuilder: (context, state) {
                     final id = state.pathParameters['id']!;
                     final extra = state.extra is AccountDetailExtra
                         ? state.extra as AccountDetailExtra
                         : null;
-                    return AccountDetailPage(
-                      accountId: id,
-                      initialTitle: extra?.initialTitle,
-                      initialAccountType: extra?.initialAccountType,
+                    return slideTransition(
+                      context,
+                      state,
+                      AccountDetailPage(
+                        accountId: id,
+                        initialTitle: extra?.initialTitle,
+                        initialAccountType: extra?.initialAccountType,
+                      ),
                     );
                   },
                   routes: [
                     GoRoute(
                       path: 'edit',
-                      builder: (context, state) =>
-                          AccountFormPage(
-                            accountId: state.pathParameters['id'],
-                          ),
+                      pageBuilder: (context, state) => slideTransition(
+                        context,
+                        state,
+                        AccountFormPage(
+                          accountId: state.pathParameters['id'],
+                        ),
+                      ),
                     ),
                     GoRoute(
                       path: 'subaccounts/new',
-                      builder: (context, state) =>
-                          AddAssetPage(
-                            accountId: state.pathParameters['id']!,
-                          ),
+                      pageBuilder: (context, state) => slideTransition(
+                        context,
+                        state,
+                        AddAssetPage(
+                          accountId: state.pathParameters['id']!,
+                        ),
+                      ),
                     ),
                   ],
                 ),
                 GoRoute(
                   path: 'subaccounts/:id',
-                  builder: (context, state) {
+                  pageBuilder: (context, state) {
                     final id = state.pathParameters['id']!;
                     final extra = state.extra is SubaccountDetailExtra
                         ? state.extra as SubaccountDetailExtra
                         : null;
-                    return BlocProvider(
-                      create: (_) =>
-                          getIt<AssetPositionDetailCubit>()..load(subaccountId: id),
-                      child: AssetPositionDetailPage(
-                        subaccountId: id,
-                        initialTitle: extra?.initialTitle,
+                    return slideTransition(
+                      context,
+                      state,
+                      BlocProvider(
+                        create: (_) =>
+                            getIt<AssetPositionDetailCubit>()..load(subaccountId: id),
+                        child: AssetPositionDetailPage(
+                          subaccountId: id,
+                          initialTitle: extra?.initialTitle,
+                        ),
                       ),
                     );
                   },
                   routes: [
                     GoRoute(
                       path: 'update-balance',
-                      builder: (context, state) =>
-                          AddBalancePage(
-                            subaccountId: state.pathParameters['id']!,
-                          ),
+                      pageBuilder: (context, state) => slideTransition(
+                        context,
+                        state,
+                        AddBalancePage(
+                          subaccountId: state.pathParameters['id']!,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -147,36 +167,38 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.paywall,
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final args = state.extra is PaywallArgs
             ? state.extra as PaywallArgs
             : const PaywallArgs(reason: PaywallReason.baseCurrency);
-        return PaywallPage(args: args);
+        return slideTransition(context, state, PaywallPage(args: args));
       },
     ),
     GoRoute(
       path: AppRoutes.accountActions,
-      builder: (context, state) => const AccountActionsPage(),
+      pageBuilder: (context, state) =>
+          slideTransition(context, state, const AccountActionsPage()),
     ),
     GoRoute(
       path: AppRoutes.archivedAccounts,
-      builder: (context, state) => const ArchivedAccountsPage(),
+      pageBuilder: (context, state) =>
+          slideTransition(context, state, const ArchivedAccountsPage()),
     ),
     GoRoute(
       path: AppRoutes.baseCurrencySettings,
-      builder: (context, state) => const BaseCurrencySettingsPage(),
+      pageBuilder: (context, state) => slideTransition(
+        context,
+        state,
+        const BaseCurrencySettingsPage(),
+      ),
     ),
     GoRoute(
       path: AppRoutes.manageSubscription,
-      builder: (context, state) => const ManageSubscriptionPage(),
-    ),
-    GoRoute(
-      path: AppRoutes.language,
-      builder: (context, state) => const LanguagePage(),
-    ),
-    GoRoute(
-      path: AppRoutes.theme,
-      builder: (context, state) => const ThemePage(),
+      pageBuilder: (context, state) => slideTransition(
+        context,
+        state,
+        const ManageSubscriptionPage(),
+      ),
     ),
   ],
 );

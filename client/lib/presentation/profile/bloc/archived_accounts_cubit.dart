@@ -21,6 +21,7 @@ class ArchivedAccountsCubit extends Cubit<ArchivedAccountsState> {
     emit(state.copyWith(status: ArchivedAccountsStatus.loading, failureCode: null));
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -32,6 +33,7 @@ class ArchivedAccountsCubit extends Cubit<ArchivedAccountsState> {
     }
 
     final result = await _getAccounts();
+    if (isClosed) return;
     switch (result) {
       case Success<List<AccountEntity>>(value: final list):
         final archived = list.where((a) => a.archived).toList();

@@ -976,6 +976,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String profileHeaderCurrencyLabel(String currency) {
+    return 'Base currency: $currency';
+  }
+
+  @override
   String get subscriptionManageSuccess => 'Subscription status updated.';
 
   @override

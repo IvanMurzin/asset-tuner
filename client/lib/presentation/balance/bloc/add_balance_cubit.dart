@@ -33,6 +33,7 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
     );
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -94,7 +95,7 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
       entryDate: date,
       snapshotAmount: parsed,
     );
-
+    if (isClosed) return;
     switch (result) {
       case Success():
         emit(

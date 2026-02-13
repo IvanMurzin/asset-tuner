@@ -351,6 +351,15 @@
   "profileDeleteConfirmCta": "Удалить",
   "profileDeleteConfirmCancel": "Отмена",
   "profileHeaderSubtitle": "{plan} · Базовая валюта: {currency}",
+  "profileHeaderCurrencyLabel": "Базовая валюта: {currency}",
+  "@profileHeaderCurrencyLabel": {
+    "description": "Label for base currency in profile header.",
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
   "@profileHeaderSubtitle": {
     "description": "Profile header subtitle showing plan and base currency.",
     "placeholders": {

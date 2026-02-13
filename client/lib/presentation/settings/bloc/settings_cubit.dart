@@ -29,6 +29,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(state.copyWith(status: SettingsStatus.loading, failureCode: null));
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -43,6 +44,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
 
     final profile = await _loadProfile();
+    if (isClosed) return;
     if (profile == null) {
       emit(
         state.copyWith(status: SettingsStatus.error, failureCode: 'unknown'),
@@ -67,6 +69,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> signOut() async {
     emit(state.copyWith(isSigningOut: true));
     final result = await _signOut();
+    if (isClosed) return;
     switch (result) {
       case Success<void>():
         emit(

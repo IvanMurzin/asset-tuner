@@ -1922,6 +1922,12 @@ abstract class AppLocalizations {
   /// **'{plan} · Base currency: {currency}'**
   String profileHeaderSubtitle(String plan, String currency);
 
+  /// Label for base currency in profile header.
+  ///
+  /// In en, this message translates to:
+  /// **'Base currency: {currency}'**
+  String profileHeaderCurrencyLabel(String currency);
+
   /// No description provided for @subscriptionManageSuccess.
   ///
   /// In en, this message translates to:

@@ -33,10 +33,28 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> load() async {
     emit(state.copyWith(status: ProfileStatus.loading, failureCode: null));
+    await _fetchAndEmit(silent: false);
+  }
+
+  Future<void> refresh() async {
+    await _fetchAndEmit(silent: true);
+  }
+
+  Future<void> _fetchAndEmit({required bool silent}) async {
+    void maybeEmit(ProfileState next) {
+      if (isClosed) return;
+      if (silent) {
+        if (next != state || next.navigation != null) {
+          emit(next);
+        }
+      } else {
+        emit(next);
+      }
+    }
 
     final session = await _getCachedSession();
     if (session == null) {
-      emit(
+      maybeEmit(
         state.copyWith(
           status: ProfileStatus.error,
           failureCode: 'unauthorized',
@@ -50,11 +68,11 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     final profile = await _loadProfile();
     if (profile == null) {
-      emit(state.copyWith(status: ProfileStatus.error, failureCode: 'unknown'));
+      maybeEmit(state.copyWith(status: ProfileStatus.error, failureCode: 'unknown'));
       return;
     }
 
-    emit(
+    maybeEmit(
       state.copyWith(
         status: ProfileStatus.ready,
         email: session.email,
@@ -85,6 +103,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> signOut() async {
     emit(state.copyWith(isSigningOut: true));
     final result = await _signOut();
+    if (isClosed) return;
     switch (result) {
       case Success<void>():
         emit(
@@ -128,6 +147,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> deleteAccount() async {
     emit(state.copyWith(isDeletingAccount: true));
     final result = await _deleteAccount();
+    if (isClosed) return;
     switch (result) {
       case Success<void>():
         emit(

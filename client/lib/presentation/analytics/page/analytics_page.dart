@@ -110,10 +110,18 @@ class _Body extends StatelessWidget {
         DSCard(
           child: Column(
             children: state.breakdown
+                .toList()
+                .asMap()
+                .entries
                 .map(
-                  (item) => Padding(
+                  (entry) => Padding(
                     padding: EdgeInsets.only(bottom: spacing.s12),
-                    child: _BreakdownRow(item: item, currency: currency),
+                    child: _BreakdownRow(
+                      item: entry.value,
+                      index: entry.key,
+                      currency: currency,
+                      colors: context.dsColors,
+                    ),
                   ),
                 )
                 .toList(),
@@ -168,15 +176,23 @@ class _Body extends StatelessWidget {
 }
 
 class _BreakdownRow extends StatelessWidget {
-  const _BreakdownRow({required this.item, required this.currency});
+  const _BreakdownRow({
+    required this.item,
+    required this.index,
+    required this.currency,
+    required this.colors,
+  });
 
   final AnalyticsBreakdownItem item;
+  final int index;
   final String currency;
+  final DSColors colors;
 
   @override
   Widget build(BuildContext context) {
     final spacing = context.dsSpacing;
     final percent = double.parse(item.percent.toString()).clamp(0, 100) / 100;
+    final barColor = _breakdownBarColorAt(index, colors);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,11 +208,33 @@ class _BreakdownRow extends StatelessWidget {
         SizedBox(height: spacing.s8),
         ClipRRect(
           borderRadius: BorderRadius.circular(context.dsRadius.r12),
-          child: LinearProgressIndicator(value: percent, minHeight: spacing.s8),
+          child: LinearProgressIndicator(
+            value: percent,
+            minHeight: spacing.s8,
+            valueColor: AlwaysStoppedAnimation<Color>(barColor),
+          ),
         ),
       ],
     );
   }
+}
+
+Color _breakdownBarColorAt(int index, DSColors colors) {
+  const sectionColors = [
+    _ChartColor.primary,
+    _ChartColor.success,
+    _ChartColor.info,
+    _ChartColor.warning,
+    _ChartColor.neutral,
+  ];
+  final c = sectionColors[index % sectionColors.length];
+  return switch (c) {
+    _ChartColor.primary => colors.primary,
+    _ChartColor.success => colors.success,
+    _ChartColor.info => colors.info,
+    _ChartColor.warning => colors.warning,
+    _ChartColor.neutral => colors.neutral400,
+  };
 }
 
 class _AnalyticsPieChart extends StatelessWidget {

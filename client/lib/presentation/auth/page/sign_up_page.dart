@@ -5,7 +5,7 @@ import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/auth/bloc/sign_up_cubit.dart';
@@ -24,19 +24,42 @@ class SignUpPage extends StatelessWidget {
     return BlocProvider(
       create: (_) => getIt<SignUpCubit>(),
       child: BlocConsumer<SignUpCubit, SignUpState>(
+        listenWhen: (prev, curr) =>
+            curr.navigation != null ||
+            (curr.bannerType != prev.bannerType && curr.bannerType != null),
         listener: (context, state) {
           final navigation = state.navigation;
-          if (navigation == null) {
+          if (navigation != null) {
+            if (state.bannerType == SignUpBannerType.success) {
+              final message = _bannerMessage(l10n, state);
+              if (message != null && context.mounted) {
+                showDSSnackBar(
+                  context,
+                  variant: DSSnackBarVariant.success,
+                  message: message,
+                  duration: const Duration(seconds: 3),
+                );
+              }
+            }
+            if (context.mounted) {
+              context.go(AppRoutes.otp, extra: navigation.email);
+              context.read<SignUpCubit>().consumeNavigation();
+            }
             return;
           }
-          context.go(AppRoutes.otp, extra: navigation.email);
-          context.read<SignUpCubit>().consumeNavigation();
+          final message = _bannerMessage(l10n, state);
+          if (message != null && context.mounted) {
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: message,
+            );
+          }
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
           final typography = context.dsTypography;
           final isLoading = state.status == SignUpStatus.loading;
-          final bannerMessage = _bannerMessage(l10n, state);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.signUpTitle),
@@ -60,17 +83,6 @@ class SignUpPage extends StatelessWidget {
                             subtitle: l10n.signUpBody,
                           ),
                           SizedBox(height: spacing.s24),
-                          if (bannerMessage != null)
-                            DSInlineBanner(
-                              title: state.bannerType == SignUpBannerType.success
-                                  ? l10n.bannerOtpSuccessTitle
-                                  : l10n.bannerSignUpError,
-                              message: bannerMessage,
-                              variant: state.bannerType == SignUpBannerType.success
-                                  ? DSInlineBannerVariant.success
-                                  : DSInlineBannerVariant.danger,
-                            ),
-                          if (bannerMessage != null) SizedBox(height: spacing.s16),
                           SignUpEmailField(
                             label: l10n.emailLabel,
                             hint: l10n.emailHint,

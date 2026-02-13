@@ -976,6 +976,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String profileHeaderCurrencyLabel(String currency) {
+    return 'Базовая валюта: $currency';
+  }
+
+  @override
   String get subscriptionManageSuccess => 'Статус подписки обновлен.';
 
   @override

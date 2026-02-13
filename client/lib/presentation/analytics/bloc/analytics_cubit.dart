@@ -67,6 +67,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     }
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -81,6 +82,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     }
 
     final profile = await _loadProfile();
+    if (isClosed) return;
     if (profile == null) {
       emit(
         state.copyWith(status: AnalyticsStatus.error, failureCode: 'unknown'),
@@ -95,6 +97,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     };
 
     final accountsResult = await _getAccounts();
+    if (isClosed) return;
     List<AccountEntity> accounts;
     switch (accountsResult) {
       case Success<List<AccountEntity>>(value: final value):
@@ -122,6 +125,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     }
 
     final assetsResult = await _getAssets();
+    if (isClosed) return;
     List<AssetEntity> assets;
     switch (assetsResult) {
       case Success<List<AssetEntity>>(value: final value):
@@ -149,6 +153,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     final subaccountsByAccount = <String, List<AccountAssetEntity>>{};
     for (final account in accounts) {
       final result = await _getAccountAssets(accountId: account.id);
+      if (isClosed) return;
       switch (result) {
         case Success<List<AccountAssetEntity>>(value: final value):
           subaccountsByAccount[account.id] = value;
@@ -182,6 +187,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     final balancesResult = await _getCurrentBalances(
       subaccountIds: subaccountIds,
     );
+    if (isClosed) return;
     Map<String, Decimal> balances;
     switch (balancesResult) {
       case Success<Map<String, Decimal>>(value: final value):
@@ -242,6 +248,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         limit: 20,
         offset: 0,
       );
+      if (isClosed) return;
 
       final entries = switch (historyResult) {
         Success(value: final page) => page.entries,
@@ -284,6 +291,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
     updates.sort((a, b) => b.entryDate.compareTo(a.entryDate));
 
+    if (isClosed) return;
     emit(
       state.copyWith(
         status: AnalyticsStatus.ready,

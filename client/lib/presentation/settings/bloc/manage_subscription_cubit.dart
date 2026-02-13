@@ -35,6 +35,7 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
     );
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -46,6 +47,7 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
     }
 
     final profile = await _loadProfile();
+    if (isClosed) return;
     if (profile == null) {
       emit(
         state.copyWith(
@@ -89,6 +91,7 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
     }
     emit(state.copyWith(isUpdating: true, banner: null));
     final result = await _updatePlan(plan);
+    if (isClosed) return;
     switch (result) {
       case Success<ProfileEntity>(value: final profile):
         emit(

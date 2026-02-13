@@ -64,6 +64,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     );
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -78,6 +79,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     }
 
     final profile = await _loadProfile();
+    if (isClosed) return;
     if (profile == null) {
       emit(
         state.copyWith(
@@ -109,7 +111,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       Success<List<AssetEntity>>(value: final list) => list,
       FailureResult<List<AssetEntity>>() => null,
     };
-
+    if (isClosed) return;
     if (account == null || subaccount == null || assets == null) {
       emit(
         state.copyWith(
@@ -125,6 +127,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       (a) => a.code == profile.baseCurrency,
     );
 
+    if (isClosed) return;
     if (asset == null) {
       emit(
         state.copyWith(
@@ -140,7 +143,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       limit: 50,
       offset: 0,
     );
-
+    if (isClosed) return;
     switch (firstPage) {
       case Success<BalanceHistoryPageEntity>(value: final page):
         final current = page.entries.isEmpty
@@ -200,6 +203,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     }
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -212,6 +216,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     }
 
     final profile = await _loadProfile();
+    if (isClosed) return;
     if (profile == null) {
       return;
     }
@@ -237,7 +242,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       Success<List<AssetEntity>>(value: final list) => list,
       FailureResult<List<AssetEntity>>() => null,
     };
-
+    if (isClosed) return;
     if (account == null || subaccount == null || assets == null) {
       emit(state.copyWith(bannerFailureCode: 'not_found'));
       return;
@@ -247,7 +252,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
     final baseAsset = assets.firstWhereOrNull(
       (a) => a.code == profile.baseCurrency,
     );
-
+    if (isClosed) return;
     if (asset == null) {
       emit(state.copyWith(bannerFailureCode: 'not_found'));
       return;
@@ -258,7 +263,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       limit: 50,
       offset: 0,
     );
-
+    if (isClosed) return;
     switch (firstPage) {
       case Success<BalanceHistoryPageEntity>(value: final page):
         final current = page.entries.isEmpty
@@ -313,7 +318,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       limit: 50,
       offset: nextOffset,
     );
-
+    if (isClosed) return;
     switch (result) {
       case Success<BalanceHistoryPageEntity>(value: final page):
         emit(
@@ -342,7 +347,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
       subaccountId: subaccountId,
       name: normalized,
     );
-
+    if (isClosed) return;
     switch (result) {
       case Success<AccountAssetEntity>(value: final updated):
         emit(state.copyWith(isMutating: false, subaccountName: updated.name));
@@ -361,6 +366,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
 
     emit(state.copyWith(isMutating: true, bannerFailureCode: null));
     final result = await _removeSubaccount(subaccountId: subaccountId);
+    if (isClosed) return;
     switch (result) {
       case Success<void>():
         emit(

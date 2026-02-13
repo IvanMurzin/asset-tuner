@@ -44,6 +44,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     );
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -58,6 +59,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     }
 
     final profile = await _loadProfile();
+    if (isClosed) return;
     if (profile == null) {
       emit(
         state.copyWith(status: AccountFormStatus.error, failureCode: 'unknown'),
@@ -66,6 +68,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     }
 
     final accounts = await _getAccounts();
+    if (isClosed) return;
     final activeCount = switch (accounts) {
       Success<List<AccountEntity>>(value: final list) =>
         list.where((a) => !a.archived).length,
@@ -143,7 +146,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
             name: normalized,
             type: type,
           );
-
+    if (isClosed) return;
     switch (result) {
       case Success<AccountEntity>(value: final account):
         emit(

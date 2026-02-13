@@ -73,6 +73,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
 
   Future<void> _fetchAndEmit(String accountId, {required bool silent}) async {
     void maybeEmit(AccountDetailState next) {
+      if (isClosed) return;
       if (silent) {
         if (next != state || next.navigation != null) {
           emit(next);
@@ -213,6 +214,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
   }
 
   void consumeNavigation() {
+    if (isClosed) return;
     emit(state.copyWith(navigation: null));
   }
 
@@ -229,6 +231,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     );
 
     final result = await _removeAssetFromAccount(subaccountId: subaccountId);
+    if (isClosed) return;
 
     switch (result) {
       case Success<void>():
@@ -260,6 +263,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
 
     emit(state.copyWith(isAccountActionBusy: true, bannerFailureCode: null));
     final result = await _setArchived(accountId: accountId, archived: archived);
+    if (isClosed) return;
 
     switch (result) {
       case Success<AccountEntity>(value: final updated):
@@ -287,6 +291,8 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
 
     emit(state.copyWith(isAccountActionBusy: true, bannerFailureCode: null));
     final result = await _deleteAccount(accountId: accountId);
+    if (isClosed) return;
+
     switch (result) {
       case Success<void>():
         emit(

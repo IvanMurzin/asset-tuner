@@ -33,7 +33,7 @@ class OtpCubit extends Cubit<OtpState> {
 
     emit(state.copyWith(status: OtpStatus.loading, bannerFailureCode: null));
     final result = await _verifySignUpOtpUseCase(state.email, code);
-
+    if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
         emit(
@@ -44,6 +44,7 @@ class OtpCubit extends Cubit<OtpState> {
         );
       case Success():
         final profileResult = await _bootstrapProfileUseCase();
+        if (isClosed) return;
         switch (profileResult) {
           case FailureResult(:final failure):
             emit(

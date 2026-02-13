@@ -23,6 +23,4 @@ abstract final class AppRoutes {
   static const String manageSubscription = '/profile/subscription';
   static const String accountActions = '/profile/account';
   static const String archivedAccounts = '/profile/archived-accounts';
-  static const String language = '/profile/language';
-  static const String theme = '/profile/theme';
 }

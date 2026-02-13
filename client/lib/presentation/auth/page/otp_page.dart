@@ -5,7 +5,7 @@ import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
@@ -23,26 +23,37 @@ class OtpPage extends StatelessWidget {
     return BlocProvider(
       create: (_) => getIt<OtpCubit>()..setEmail(email),
       child: BlocConsumer<OtpCubit, OtpState>(
+        listenWhen: (prev, curr) =>
+            curr.navigation != null ||
+            (curr.bannerFailureCode != null &&
+                curr.bannerFailureCode != prev.bannerFailureCode),
         listener: (context, state) {
           final navigation = state.navigation;
-          if (navigation == null) {
+          if (navigation != null) {
+            switch (navigation.destination) {
+              case OtpDestination.onboardingBaseCurrency:
+                context.go(AppRoutes.onboardingBaseCurrency);
+              case OtpDestination.overview:
+                context.go(AppRoutes.main);
+              case OtpDestination.signIn:
+                context.go(AppRoutes.signIn);
+            }
+            context.read<OtpCubit>().consumeNavigation();
             return;
           }
-          switch (navigation.destination) {
-            case OtpDestination.onboardingBaseCurrency:
-              context.go(AppRoutes.onboardingBaseCurrency);
-            case OtpDestination.overview:
-              context.go(AppRoutes.main);
-            case OtpDestination.signIn:
-              context.go(AppRoutes.signIn);
+          final message = _failureMessage(l10n, state.bannerFailureCode);
+          if (message != null && context.mounted) {
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: message,
+            );
           }
-          context.read<OtpCubit>().consumeNavigation();
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
           final typography = context.dsTypography;
           final isLoading = state.status == OtpStatus.loading;
-          final bannerText = _failureMessage(l10n, state.bannerFailureCode);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.otpTitle),
@@ -66,13 +77,6 @@ class OtpPage extends StatelessWidget {
                             subtitle: l10n.otpBodyWithEmail(email),
                           ),
                           SizedBox(height: spacing.s24),
-                          if (bannerText != null)
-                            DSInlineBanner(
-                              title: l10n.bannerOtpError,
-                              message: bannerText,
-                              variant: DSInlineBannerVariant.danger,
-                            ),
-                          if (bannerText != null) SizedBox(height: spacing.s16),
                           Text(l10n.otpCodeLabel, style: typography.label),
                           SizedBox(height: spacing.s8),
                           DSTextField(

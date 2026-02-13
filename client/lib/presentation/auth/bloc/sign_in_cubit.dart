@@ -61,6 +61,7 @@ class SignInCubit extends Cubit<SignInState> {
       state.email.trim(),
       state.password,
     );
+    if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
         emit(
@@ -77,6 +78,7 @@ class SignInCubit extends Cubit<SignInState> {
   Future<void> signInWithProvider(AuthProvider provider) async {
     emit(state.copyWith(status: SignInStatus.loading, bannerFailureCode: null));
     final result = await _oAuthSignInUseCase(provider);
+    if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
         emit(
@@ -96,6 +98,7 @@ class SignInCubit extends Cubit<SignInState> {
 
   Future<void> _handleSignedIn() async {
     final session = await _getCachedSessionUseCase();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -106,6 +109,7 @@ class SignInCubit extends Cubit<SignInState> {
       return;
     }
     final profileResult = await _bootstrapProfileUseCase();
+    if (isClosed) return;
     switch (profileResult) {
       case FailureResult(:final failure):
         emit(
@@ -129,6 +133,7 @@ class SignInCubit extends Cubit<SignInState> {
 
   Future<void> _loadProviders() async {
     final providers = await _getAuthProvidersUseCase();
+    if (isClosed) return;
     emit(
       state.copyWith(
         availableProviders: providers

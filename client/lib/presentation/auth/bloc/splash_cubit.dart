@@ -28,10 +28,12 @@ class SplashCubit extends Cubit<SplashState> {
   Future<void> restore() async {
     emit(const SplashState.loading(stage: SplashStage.restoring));
     final sessionResult = await _restoreSessionUseCase();
+    if (isClosed) return;
     switch (sessionResult) {
       case FailureResult(:final failure):
         if (failure.code == 'unauthorized') {
           await _signOutUseCase();
+          if (isClosed) return;
           emit(const SplashState.route(destination: SplashDestination.signIn));
         } else {
           emit(SplashState.error(failureCode: failure.code));
@@ -43,10 +45,12 @@ class SplashCubit extends Cubit<SplashState> {
         }
         emit(const SplashState.loading(stage: SplashStage.preparingProfile));
         final profileResult = await _bootstrapProfileUseCase();
+        if (isClosed) return;
         switch (profileResult) {
           case FailureResult(:final failure):
             if (failure.code == 'unauthorized') {
               await _signOutUseCase();
+              if (isClosed) return;
               emit(
                 const SplashState.route(destination: SplashDestination.signIn),
               );

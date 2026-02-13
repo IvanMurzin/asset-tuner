@@ -25,10 +25,8 @@ import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
-import 'package:asset_tuner/presentation/profile/page/language_page.dart';
 import 'package:asset_tuner/presentation/profile/page/account_actions_page.dart';
 import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
-import 'package:asset_tuner/presentation/profile/page/theme_page.dart';
 import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
 import 'package:asset_tuner/presentation/settings/page/manage_subscription_page.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
@@ -75,14 +73,6 @@ void main() {
           builder: (context, state) => const ManageSubscriptionPage(),
         ),
         GoRoute(
-          path: AppRoutes.language,
-          builder: (context, state) => const LanguagePage(),
-        ),
-        GoRoute(
-          path: AppRoutes.theme,
-          builder: (context, state) => const ThemePage(),
-        ),
-        GoRoute(
           path: AppRoutes.accountActions,
           builder: (context, state) => const AccountActionsPage(),
         ),
@@ -119,7 +109,7 @@ void main() {
     expect(find.text('Base currency'), findsOneWidget);
     expect(find.text('USD'), findsOneWidget);
     expect(find.text('Language'), findsOneWidget);
-    expect(find.text('Plan status'), findsOneWidget);
+    expect(find.text('Theme'), findsOneWidget);
     expect(find.text('Free plan'), findsOneWidget);
     expect(find.text('Manage subscription'), findsOneWidget);
     expect(find.text('Account actions'), findsOneWidget);

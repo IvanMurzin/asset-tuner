@@ -5,7 +5,7 @@ import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/auth/bloc/sign_in_cubit.dart';
@@ -24,25 +24,36 @@ class SignInPage extends StatelessWidget {
     return BlocProvider(
       create: (_) => getIt<SignInCubit>(),
       child: BlocConsumer<SignInCubit, SignInState>(
+        listenWhen: (prev, curr) =>
+            curr.navigation != null ||
+            (curr.bannerFailureCode != null &&
+                curr.bannerFailureCode != prev.bannerFailureCode),
         listener: (context, state) {
           final navigation = state.navigation;
-          if (navigation == null) {
+          if (navigation != null) {
+            switch (navigation.destination) {
+              case SignInDestination.onboardingBaseCurrency:
+                context.go(AppRoutes.onboardingBaseCurrency);
+              case SignInDestination.overview:
+                context.go(AppRoutes.main);
+            }
+            context.read<SignInCubit>().consumeNavigation();
             return;
           }
-          switch (navigation.destination) {
-            case SignInDestination.onboardingBaseCurrency:
-              context.go(AppRoutes.onboardingBaseCurrency);
-            case SignInDestination.overview:
-              context.go(AppRoutes.main);
+          final message = _bannerText(l10n, state.bannerFailureCode);
+          if (message != null && context.mounted) {
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: message,
+            );
           }
-          context.read<SignInCubit>().consumeNavigation();
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
           final typography = context.dsTypography;
           final isLoading = state.status == SignInStatus.loading;
           final providers = state.availableProviders;
-          final bannerText = _bannerText(l10n, state.bannerFailureCode);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.signInTitle),
@@ -66,13 +77,6 @@ class SignInPage extends StatelessWidget {
                             subtitle: l10n.signInBody,
                           ),
                           SizedBox(height: spacing.s24),
-                          if (bannerText != null)
-                            DSInlineBanner(
-                              title: l10n.bannerSignInError,
-                              message: bannerText,
-                              variant: DSInlineBannerVariant.danger,
-                            ),
-                          if (bannerText != null) SizedBox(height: spacing.s16),
                           SignInEmailField(
                             label: l10n.emailLabel,
                             hint: l10n.emailHint,

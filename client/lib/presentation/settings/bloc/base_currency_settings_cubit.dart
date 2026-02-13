@@ -41,6 +41,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     );
 
     final session = await _getCachedSession();
+    if (isClosed) return;
     if (session == null) {
       emit(
         state.copyWith(
@@ -59,6 +60,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
       Success(value: final data) => data.profile,
       FailureResult() => null,
     };
+    if (isClosed) return;
     if (profile == null) {
       emit(
         state.copyWith(
@@ -70,6 +72,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     }
 
     final catalog = await _getFiatCurrencies();
+    if (isClosed) return;
     switch (catalog) {
       case Success<List<CurrencyEntity>>(value: final currencies):
         if (currencies.isEmpty) {
@@ -180,6 +183,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     );
 
     final result = await _updateBaseCurrency(selected);
+    if (isClosed) return;
     switch (result) {
       case Success(value: final profile):
         emit(

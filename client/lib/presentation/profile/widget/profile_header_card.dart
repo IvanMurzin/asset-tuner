@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 
@@ -9,11 +8,15 @@ class ProfileHeaderCard extends StatelessWidget {
     required this.email,
     required this.planLabel,
     required this.baseCurrency,
+    this.isPaid = false,
+    this.onManageSubscriptionTap,
   });
 
   final String email;
   final String planLabel;
   final String baseCurrency;
+  final bool isPaid;
+  final VoidCallback? onManageSubscriptionTap;
 
   @override
   Widget build(BuildContext context) {
@@ -25,63 +28,173 @@ class ProfileHeaderCard extends StatelessWidget {
 
     final initials = _initials(email);
 
-    return DSCard(
-      bordered: false,
-      elevation: DSElevationLevel.level2,
-      padding: EdgeInsets.zero,
-      child: Container(
-        padding: EdgeInsets.all(spacing.s16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              colors.primary.withValues(alpha: 0.92),
-              colors.info.withValues(alpha: 0.86),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(radius.r16),
+        boxShadow: [
+          BoxShadow(
+            color: colors.primary.withValues(alpha: 0.15),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: colors.onPrimary.withValues(alpha: 0.18),
-                borderRadius: BorderRadius.circular(radius.r16),
-                border: Border.all(
-                  color: colors.onPrimary.withValues(alpha: 0.22),
-                ),
-              ),
-              child: Text(
-                initials,
-                style: typography.h3.copyWith(color: colors.onPrimary),
-              ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(radius.r16),
+        child: Container(
+          padding: EdgeInsets.all(spacing.s24),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(radius.r16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                colors.primary,
+                colors.primary.withValues(alpha: 0.88),
+                colors.info.withValues(alpha: 0.82),
+              ],
+              stops: const [0.0, 0.5, 1.0],
             ),
-            SizedBox(width: spacing.s12),
-            Expanded(
-              child: Column(
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    email,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: typography.h3.copyWith(color: colors.onPrimary),
+                  Container(
+                    width: 56,
+                    height: 56,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: colors.onPrimary.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(radius.r12),
+                      border: Border.all(
+                        color: colors.onPrimary.withValues(alpha: 0.35),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Text(
+                      initials,
+                      style: typography.h2.copyWith(
+                        color: colors.onPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                  SizedBox(height: spacing.s4),
-                  Text(
-                    l10n.profileHeaderSubtitle(planLabel, baseCurrency),
-                    style: typography.body.copyWith(
-                      color: colors.onPrimary.withValues(alpha: 0.85),
+                  SizedBox(width: spacing.s16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          email,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: typography.body.copyWith(
+                            color: colors.onPrimary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: spacing.s8),
+                        Text(
+                          l10n.profileHeaderCurrencyLabel(baseCurrency),
+                          style: typography.caption.copyWith(
+                            color: colors.onPrimary.withValues(alpha: 0.9),
+                          ),
+                        ),
+                        SizedBox(height: spacing.s12),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: spacing.s12,
+                            vertical: spacing.s8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isPaid
+                                ? colors.success.withValues(alpha: 0.28)
+                                : colors.onPrimary.withValues(alpha: 0.22),
+                            borderRadius:
+                                BorderRadius.circular(radius.r16),
+                            border: Border.all(
+                              color: isPaid
+                                  ? colors.success.withValues(alpha: 0.6)
+                                  : colors.onPrimary.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                isPaid
+                                    ? Icons.workspace_premium_rounded
+                                    : Icons.person_outline_rounded,
+                                size: 14,
+                                color: colors.onPrimary,
+                              ),
+                              SizedBox(width: spacing.s8),
+                              Text(
+                                planLabel,
+                                style: typography.caption.copyWith(
+                                  color: colors.onPrimary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+              if (onManageSubscriptionTap != null) ...[
+                SizedBox(height: spacing.s16),
+                Divider(
+                  height: 1,
+                  color: colors.onPrimary.withValues(alpha: 0.25),
+                ),
+                SizedBox(height: spacing.s12),
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onManageSubscriptionTap,
+                    borderRadius: BorderRadius.circular(radius.r8),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: spacing.s8,
+                        horizontal: spacing.s4,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.card_membership_rounded,
+                            size: 18,
+                            color: colors.onPrimary.withValues(alpha: 0.95),
+                          ),
+                          SizedBox(width: spacing.s4),
+                          Text(
+                            l10n.settingsManageSubscription,
+                            style: typography.body.copyWith(
+                              color: colors.onPrimary.withValues(alpha: 0.95),
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          SizedBox(width: spacing.s4),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 12,
+                            color: colors.onPrimary.withValues(alpha: 0.8),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
