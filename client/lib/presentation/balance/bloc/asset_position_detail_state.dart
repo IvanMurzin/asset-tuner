@@ -34,7 +34,9 @@ abstract class AssetPositionDetailState with _$AssetPositionDetailState {
     @Default(false) bool isLoadingMore,
     @Default(false) bool isMutating,
     String? failureCode,
+    String? failureMessage,
     String? bannerFailureCode,
+    String? bannerFailureMessage,
     AssetPositionDetailNavigation? navigation,
   }) = _AssetPositionDetailState;
 }

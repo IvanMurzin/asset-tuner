@@ -7,7 +7,6 @@ import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
-import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/onboarding/bloc/base_currency_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
@@ -62,14 +61,14 @@ class BaseCurrencyPage extends StatelessWidget {
               appBar: DSAppBar(title: l10n.onboardingBaseCurrencyTitle),
               body: DSInlineError(
                 title: l10n.onboardingLoadError,
-                message: _failureMessage(l10n, state.loadFailureCode),
+                message: _failureMessage(l10n, state.loadFailureCode, state.loadFailureMessage),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<BaseCurrencyCubit>().load(),
               ),
             );
           }
 
-          final options = _buildOptions(state.currencies);
+          final options = _buildOptions(state);
           final bannerMessage = _bannerMessage(l10n, state);
 
           return Scaffold(
@@ -169,34 +168,28 @@ class BaseCurrencyPage extends StatelessWidget {
     );
   }
 
-  List<DSCurrencyPickerOption> _buildOptions(List<CurrencyEntity> currencies) {
-    const popularSet = {'USD', 'EUR', 'RUB'};
-    final sorted = [...currencies]
-      ..sort((a, b) {
-        final aCode = a.code.toUpperCase();
-        final bCode = b.code.toUpperCase();
-        final aWeight = popularSet.contains(aCode) ? 0 : 1;
-        final bWeight = popularSet.contains(bCode) ? 0 : 1;
-        if (aWeight != bWeight) {
-          return aWeight.compareTo(bWeight);
-        }
-        return aCode.compareTo(bCode);
-      });
-
-    return sorted
-        .map(
-          (currency) => DSCurrencyPickerOption(
-            id: currency.code.toUpperCase(),
-            primaryText: currency.code.toUpperCase(),
-            secondaryText: currency.name,
-            tertiaryText: currency.symbol,
-            searchTerms: [currency.name, currency.symbol],
-          ),
-        )
-        .toList();
+  List<DSCurrencyPickerOption> _buildOptions(BaseCurrencyState state) {
+    const freeUnlockedByRank = 5;
+    return state.currencies.asMap().entries.map((entry) {
+      final index = entry.key;
+      final currency = entry.value;
+      final code = currency.code.toUpperCase();
+      final allowed =
+          (state.entitlements?.anyBaseCurrency ?? false) ||
+          index < freeUnlockedByRank;
+      return DSCurrencyPickerOption(
+        id: code,
+        primaryText: code,
+        secondaryText: currency.name,
+        tertiaryText: currency.symbol,
+        searchTerms: [currency.name, currency.symbol],
+        locked: !allowed,
+      );
+    }).toList();
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'rate_limited' => l10n.errorRateLimited,
       'network' => l10n.errorNetwork,
@@ -212,6 +205,7 @@ class BaseCurrencyPage extends StatelessWidget {
       BaseCurrencyBannerType.saveFailure => _failureMessage(
         l10n,
         state.bannerFailureCode,
+        state.bannerFailureMessage,
       ),
       null => null,
     };

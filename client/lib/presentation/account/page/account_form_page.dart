@@ -100,7 +100,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
               appBar: DSAppBar(title: l10n.accountsTitle),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: _failureMessage(l10n, state.failureCode),
+                message: _failureMessage(l10n, state.failureCode, state.failureMessage),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<AccountFormCubit>().load(
                   accountId: widget.accountId,
@@ -134,7 +134,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                     if (state.failureCode != null) ...[
                       DSInlineBanner(
                         title: l10n.accountsTitle,
-                        message: _failureMessage(l10n, state.failureCode),
+                        message: _failureMessage(l10n, state.failureCode, state.failureMessage),
                         variant: DSInlineBannerVariant.danger,
                       ),
                       SizedBox(height: spacing.s16),
@@ -247,7 +247,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
     };
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'network' => l10n.errorNetwork,
       'unauthorized' => l10n.errorUnauthorized,

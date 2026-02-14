@@ -74,7 +74,7 @@ class AccountDetailPage extends StatelessWidget {
               appBar: DSAppBar(title: initialTitle ?? l10n.accountsTitle),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: _failureMessage(l10n, state.failureCode),
+                message: _failureMessage(l10n, state.failureCode, state.failureMessage),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<AccountDetailCubit>().load(accountId),
               ),
@@ -101,7 +101,7 @@ class AccountDetailPage extends StatelessWidget {
                           if (state.bannerFailureCode != null) ...[
                             DSInlineBanner(
                               title: account.name,
-                              message: _failureMessage(l10n, state.bannerFailureCode),
+                              message: _failureMessage(l10n, state.bannerFailureCode, state.bannerFailureMessage),
                               variant: DSInlineBannerVariant.danger,
                             ),
                             SizedBox(height: spacing.s12),
@@ -174,7 +174,7 @@ class AccountDetailPage extends StatelessWidget {
                           if (state.status == AccountDetailStatus.error)
                             DSInlineError(
                               title: l10n.splashErrorTitle,
-                              message: _failureMessage(l10n, state.failureCode),
+                              message: _failureMessage(l10n, state.failureCode, state.failureMessage),
                               actionLabel: l10n.splashRetry,
                               onAction: () => context.read<AccountDetailCubit>().load(accountId),
                             )
@@ -214,7 +214,8 @@ class AccountDetailPage extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'network' => l10n.errorNetwork,
       'unauthorized' => l10n.errorUnauthorized,

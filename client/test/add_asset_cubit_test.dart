@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:decimal/decimal.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
@@ -7,8 +7,9 @@ import 'package:asset_tuner/domain/account_asset/repository/i_account_asset_repo
 import 'package:asset_tuner/domain/account_asset/usecase/add_asset_to_account_usecase.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/count_asset_positions_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_picker_item_entity.dart';
 import 'package:asset_tuner/domain/asset/repository/i_asset_repository.dart';
-import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
+import 'package:asset_tuner/domain/asset/usecase/get_assets_for_subaccount_picker_usecase.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
@@ -142,13 +143,20 @@ class FakeProfileRepository implements IProfileRepository {
 }
 
 class FakeAssetRepository implements IAssetRepository {
-  FakeAssetRepository(this.assets);
+  FakeAssetRepository(this.pickerByKind);
 
-  final List<AssetEntity> assets;
+  final Map<AssetKind, List<AssetPickerItemEntity>> pickerByKind;
 
   @override
   Future<Result<List<AssetEntity>>> fetchAssets() async {
-    return Success(assets);
+    return const Success([]);
+  }
+
+  @override
+  Future<Result<List<AssetPickerItemEntity>>> fetchAssetsForSubaccountPicker({
+    required AssetKind kind,
+  }) async {
+    return Success(pickerByKind[kind] ?? const []);
   }
 }
 
@@ -226,15 +234,19 @@ void main() {
       GetCachedSessionUseCase(FakeAuthRepository()),
       GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
       BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
-      GetAssetsUseCase(
-        FakeAssetRepository(const [
-          AssetEntity(
-            id: 'asset_usd',
-            kind: AssetKind.fiat,
-            code: 'USD',
-            name: 'United States Dollar',
-          ),
-        ]),
+      GetAssetsForSubaccountPickerUseCase(
+        FakeAssetRepository({
+          AssetKind.fiat: const [
+            AssetPickerItemEntity(
+              id: 'asset_usd',
+              kind: AssetKind.fiat,
+              code: 'USD',
+              name: 'United States Dollar',
+              rank: 1,
+              isUnlocked: true,
+            ),
+          ],
+        }),
       ),
       CountAssetPositionsUseCase(
         FakeAccountAssetRepository(
@@ -274,21 +286,26 @@ void main() {
         ),
         GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
         BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
-        GetAssetsUseCase(
-          FakeAssetRepository(const [
-            AssetEntity(
-              id: 'asset_btc',
-              kind: AssetKind.crypto,
-              code: 'BTC',
-              name: 'Bitcoin',
-            ),
-          ]),
+        GetAssetsForSubaccountPickerUseCase(
+          FakeAssetRepository({
+            AssetKind.crypto: const [
+              AssetPickerItemEntity(
+                id: 'asset_btc',
+                kind: AssetKind.crypto,
+                code: 'BTC',
+                name: 'Bitcoin',
+                rank: 1,
+                isUnlocked: true,
+              ),
+            ],
+          }),
         ),
         CountAssetPositionsUseCase(repo),
         AddAssetToAccountUseCase(repo),
       );
 
       await cubit.load('acc_1');
+      await cubit.selectKind(AssetKind.crypto);
       cubit.selectAsset('asset_btc');
       cubit.updateName('Bitcoin');
       cubit.updateBalance('1');
@@ -315,26 +332,139 @@ void main() {
       ),
       GetProfileUseCase(FakeProfileRepository(profile: paidProfile())),
       BootstrapProfileUseCase(FakeProfileRepository(profile: paidProfile())),
-      GetAssetsUseCase(
-        FakeAssetRepository(const [
-          AssetEntity(
-            id: 'asset_btc',
-            kind: AssetKind.crypto,
-            code: 'BTC',
-            name: 'Bitcoin',
-          ),
-        ]),
+      GetAssetsForSubaccountPickerUseCase(
+        FakeAssetRepository({
+          AssetKind.crypto: const [
+            AssetPickerItemEntity(
+              id: 'asset_btc',
+              kind: AssetKind.crypto,
+              code: 'BTC',
+              name: 'Bitcoin',
+              rank: 1,
+              isUnlocked: true,
+            ),
+          ],
+        }),
       ),
       CountAssetPositionsUseCase(repo),
       AddAssetToAccountUseCase(repo),
     );
 
     await cubit.load('acc_1');
+    await cubit.selectKind(AssetKind.crypto);
     cubit.selectAsset('asset_btc');
     cubit.updateName('Bitcoin');
     cubit.updateBalance('1');
     await cubit.addSelected();
 
     expect(cubit.state.navigation?.destination, AddAssetDestination.backAdded);
+  });
+
+  test('load keeps assets hidden until kind is selected', () async {
+    final cubit = AddAssetCubit(
+      GetCachedSessionUseCase(
+        FakeAuthRepository(
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
+        ),
+      ),
+      GetProfileUseCase(FakeProfileRepository(profile: paidProfile())),
+      BootstrapProfileUseCase(FakeProfileRepository(profile: paidProfile())),
+      GetAssetsForSubaccountPickerUseCase(
+        FakeAssetRepository({
+          AssetKind.fiat: const [
+            AssetPickerItemEntity(
+              id: 'asset_usd',
+              kind: AssetKind.fiat,
+              code: 'USD',
+              name: 'US Dollar',
+              rank: 1,
+              isUnlocked: true,
+            ),
+          ],
+          AssetKind.crypto: const [
+            AssetPickerItemEntity(
+              id: 'asset_btc',
+              kind: AssetKind.crypto,
+              code: 'BTC',
+              name: 'Bitcoin',
+              rank: 1,
+              isUnlocked: true,
+            ),
+          ],
+        }),
+      ),
+      CountAssetPositionsUseCase(
+        FakeAccountAssetRepository(
+          positionsByAccount: {},
+          totalPositionsCount: 0,
+        ),
+      ),
+      AddAssetToAccountUseCase(
+        FakeAccountAssetRepository(
+          positionsByAccount: {},
+          totalPositionsCount: 0,
+        ),
+      ),
+    );
+
+    await cubit.load('acc_1');
+    expect(cubit.state.selectedKind, isNull);
+    expect(cubit.state.visibleAssets, isEmpty);
+
+    await cubit.selectKind(AssetKind.fiat);
+    expect(cubit.state.selectedKind, AssetKind.fiat);
+    expect(cubit.state.visibleAssets.map((e) => e.kind).toSet(), {
+      AssetKind.fiat,
+    });
+  });
+
+  test('locked asset selection routes to paywall before submit', () async {
+    final cubit = AddAssetCubit(
+      GetCachedSessionUseCase(
+        FakeAuthRepository(
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
+        ),
+      ),
+      GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
+      BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
+      GetAssetsForSubaccountPickerUseCase(
+        FakeAssetRepository({
+          AssetKind.crypto: const [
+            AssetPickerItemEntity(
+              id: 'asset_sol',
+              kind: AssetKind.crypto,
+              code: 'SOL',
+              name: 'Solana',
+              rank: 12,
+              isUnlocked: false,
+            ),
+          ],
+        }),
+      ),
+      CountAssetPositionsUseCase(
+        FakeAccountAssetRepository(
+          positionsByAccount: {},
+          totalPositionsCount: 0,
+        ),
+      ),
+      AddAssetToAccountUseCase(
+        FakeAccountAssetRepository(
+          positionsByAccount: {},
+          totalPositionsCount: 0,
+        ),
+      ),
+    );
+
+    await cubit.load('acc_1');
+    await cubit.selectKind(AssetKind.crypto);
+    cubit.selectAsset('asset_sol');
+
+    expect(cubit.state.navigation?.destination, AddAssetDestination.paywall);
   });
 }

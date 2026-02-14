@@ -5,6 +5,8 @@ import { json, jsonError } from '../_shared/responses.ts';
 import { getServiceClient } from '../_shared/supabase.ts';
 import { normalizeCode } from '../_shared/validators.ts';
 
+const FREE_BASE_CURRENCY_RANK_LIMIT = 5;
+
 Deno.serve(async (req) => {
   const cors = handleCors(req);
   if (cors) {
@@ -35,13 +37,24 @@ Deno.serve(async (req) => {
 
     const plan = normalizePlan(profile.plan);
     const entitlements = entitlementsForPlan(plan);
-    if (!entitlements.any_base_currency) {
-      const allowed = new Set(entitlements.allowed_base_currency_codes);
-      if (!allowed.has(baseCurrency)) {
-        return jsonError('forbidden', 'Base currency not allowed', 403, {
-          reason: 'base_currency',
-        });
-      }
+
+    const { data: fiatRank, error: rankError } = await service
+      .from('asset_rankings')
+      .select('rank')
+      .eq('kind', 'fiat')
+      .eq('code', baseCurrency)
+      .maybeSingle();
+    if (rankError) {
+      return jsonError('unknown', 'Failed to validate currency rank', 500);
+    }
+    if (!fiatRank) {
+      return jsonError('validation', 'Unsupported currency', 400, { field: 'base_currency' });
+    }
+
+    if (!entitlements.any_base_currency && Number(fiatRank.rank) > FREE_BASE_CURRENCY_RANK_LIMIT) {
+      return jsonError('forbidden', 'Base currency not allowed', 403, {
+        reason: 'base_currency',
+      });
     }
 
     const { data: fiat, error: fiatError } = await service
@@ -77,4 +90,3 @@ Deno.serve(async (req) => {
     return jsonError('unknown', 'Unexpected error', 500);
   }
 });
-

@@ -18,7 +18,7 @@ class ArchivedAccountsCubit extends Cubit<ArchivedAccountsState> {
   final GetAccountsUseCase _getAccounts;
 
   Future<void> load() async {
-    emit(state.copyWith(status: ArchivedAccountsStatus.loading, failureCode: null));
+    emit(state.copyWith(status: ArchivedAccountsStatus.loading, clearFailure: true));
 
     final session = await _getCachedSession();
     if (isClosed) return;
@@ -47,6 +47,7 @@ class ArchivedAccountsCubit extends Cubit<ArchivedAccountsState> {
           state.copyWith(
             status: ArchivedAccountsStatus.error,
             failureCode: failure.code,
+            failureMessage: failure.message,
           ),
         );
     }

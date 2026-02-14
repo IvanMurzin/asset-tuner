@@ -49,7 +49,7 @@ class OverviewCubit extends Cubit<OverviewState> {
   final OverviewCacheStorage _cache;
 
   Future<void> load() async {
-    emit(state.copyWith(status: OverviewStatus.loading, failureCode: null));
+    emit(state.copyWith(status: OverviewStatus.loading, failureCode: null, failureMessage: null));
     await _fetchAndEmit(silent: false);
   }
 
@@ -101,9 +101,14 @@ class OverviewCubit extends Cubit<OverviewState> {
       FailureResult<List<AccountEntity>>() => null,
     };
     if (accountsList == null) {
-      final code =
-          (accounts as FailureResult<List<AccountEntity>>).failure.code;
-      await _tryUseCache(session.userId, failureCode: code, emit: maybeEmit);
+      final failure =
+          (accounts as FailureResult<List<AccountEntity>>).failure;
+      await _tryUseCache(
+        session.userId,
+        failureCode: failure.code,
+        failureMessage: failure.message,
+        emit: maybeEmit,
+      );
       return;
     }
 
@@ -125,9 +130,14 @@ class OverviewCubit extends Cubit<OverviewState> {
       FailureResult<List<AssetEntity>>() => null,
     };
     if (assets == null) {
-      final code =
-          (assetsResult as FailureResult<List<AssetEntity>>).failure.code;
-      await _tryUseCache(session.userId, failureCode: code, emit: maybeEmit);
+      final failure =
+          (assetsResult as FailureResult<List<AssetEntity>>).failure;
+      await _tryUseCache(
+        session.userId,
+        failureCode: failure.code,
+        failureMessage: failure.message,
+        emit: maybeEmit,
+      );
       return;
     }
     final assetsById = {for (final a in assets) a.id: a};
@@ -142,7 +152,12 @@ class OverviewCubit extends Cubit<OverviewState> {
         case Success<List<AccountAssetEntity>>(value: final list):
           positionsByAccount[account.id] = list;
         case FailureResult<List<AccountAssetEntity>>(failure: final failure):
-          await _tryUseCache(session.userId, failureCode: failure.code, emit: maybeEmit);
+          await _tryUseCache(
+            session.userId,
+            failureCode: failure.code,
+            failureMessage: failure.message,
+            emit: maybeEmit,
+          );
           return;
       }
     }
@@ -158,9 +173,14 @@ class OverviewCubit extends Cubit<OverviewState> {
         FailureResult<Map<String, Decimal>>() => null,
       };
       if (balancesMap == null) {
-        final code =
-            (balances as FailureResult<Map<String, Decimal>>).failure.code;
-        await _tryUseCache(session.userId, failureCode: code, emit: maybeEmit);
+        final failure =
+            (balances as FailureResult<Map<String, Decimal>>).failure;
+        await _tryUseCache(
+          session.userId,
+          failureCode: failure.code,
+          failureMessage: failure.message,
+          emit: maybeEmit,
+        );
         return;
       }
       currentByPosition = balancesMap;
@@ -287,6 +307,7 @@ class OverviewCubit extends Cubit<OverviewState> {
   Future<void> _tryUseCache(
     String userId, {
     String? failureCode,
+    String? failureMessage,
     void Function(OverviewState)? emit,
   }) async {
     final doEmit = emit ?? this.emit;
@@ -297,6 +318,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         state.copyWith(
           status: OverviewStatus.error,
           failureCode: failureCode ?? 'unknown',
+          failureMessage: failureMessage,
         ),
       );
       return;
@@ -335,6 +357,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         isOffline: true,
         offlineCachedAt: cached.computedAt,
         failureCode: failureCode,
+        failureMessage: failureMessage,
       ),
     );
   }

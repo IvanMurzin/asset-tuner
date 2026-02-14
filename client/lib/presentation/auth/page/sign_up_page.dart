@@ -62,6 +62,7 @@ class SignUpPage extends StatelessWidget {
           final isLoading = state.status == SignUpStatus.loading;
 
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: DSAppBar(title: l10n.signUpTitle),
             body: SafeArea(
               child: Column(
@@ -179,13 +180,14 @@ class SignUpPage extends StatelessWidget {
         final email = state.bannerEmail ?? '';
         return l10n.bannerOtpSuccessBodyWithEmail(email);
       case SignUpBannerType.failure:
-        return _failureMessage(l10n, state.bannerFailureCode);
+        return _failureMessage(l10n, state.bannerFailureCode, state.bannerFailureMessage);
       case null:
         return null;
     }
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'rate_limited' => l10n.errorRateLimited,
       'network' => l10n.errorNetwork,

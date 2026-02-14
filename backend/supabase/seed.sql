@@ -1,21 +1,22 @@
 -- Minimal seed data for local/dev usage.
 -- For production, prefer running rates sync and expanding the asset catalog.
 
-insert into public.assets (kind, code, name, decimals)
+insert into public.assets (kind, code, name, decimals, provider_ref)
 values
-  ('fiat', 'USD', 'US Dollar', 2),
-  ('fiat', 'EUR', 'Euro', 2),
-  ('fiat', 'RUB', 'Russian Ruble', 2),
-  ('fiat', 'GBP', 'British Pound', 2),
-  ('fiat', 'CHF', 'Swiss Franc', 2),
-  ('crypto', 'BTC', 'Bitcoin', 8),
-  ('crypto', 'ETH', 'Ethereum', 18),
-  ('crypto', 'USDT', 'Tether', 6),
-  ('crypto', 'SOL', 'Solana', 9)
+  ('fiat', 'USD', 'US Dollar', 2, null),
+  ('fiat', 'EUR', 'Euro', 2, null),
+  ('fiat', 'RUB', 'Russian Ruble', 2, null),
+  ('fiat', 'GBP', 'British Pound', 2, null),
+  ('fiat', 'CHF', 'Swiss Franc', 2, null),
+  ('crypto', 'BTC', 'Bitcoin', 8, 'bitcoin'),
+  ('crypto', 'ETH', 'Ethereum', 18, 'ethereum'),
+  ('crypto', 'USDT', 'Tether', 6, 'tether'),
+  ('crypto', 'SOL', 'Solana', 9, 'solana')
 on conflict (kind, code) do update
 set
   name = excluded.name,
-  decimals = excluded.decimals;
+  decimals = excluded.decimals,
+  provider_ref = excluded.provider_ref;
 
 -- Seed a tiny rates snapshot (so the app can render conversions before the first sync).
 -- These values are placeholders; `rates_sync` will overwrite them.

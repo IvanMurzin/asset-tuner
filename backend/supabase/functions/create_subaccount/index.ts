@@ -18,7 +18,11 @@ async function loadEntitlements(service: ReturnType<typeof getServiceClient>, us
   if (error) {
     throw new Error('profile_load_failed');
   }
-  return entitlementsForPlan(normalizePlan(profile?.plan));
+  const plan = normalizePlan(profile?.plan);
+  return {
+    plan,
+    entitlements: entitlementsForPlan(plan),
+  };
 }
 
 Deno.serve(async (req) => {
@@ -51,7 +55,7 @@ Deno.serve(async (req) => {
     }
 
     const service = getServiceClient();
-    const entitlements = await loadEntitlements(service, user.id);
+    const { entitlements, plan } = await loadEntitlements(service, user.id);
 
     const { count: subaccountsCount, error: countError } = await service
       .from('subaccounts')
@@ -79,16 +83,44 @@ Deno.serve(async (req) => {
       return jsonError('not_found', 'Account not found', 404);
     }
 
-    const { data: asset, error: assetError } = await service
-      .from('assets')
-      .select('id')
-      .eq('id', assetId)
+    const { data: rankedAsset, error: rankedAssetError } = await service
+      .from('asset_rankings')
+      .select('asset_id, kind, rank')
+      .eq('asset_id', assetId)
       .maybeSingle();
-    if (assetError) {
+    if (rankedAssetError) {
       return jsonError('unknown', 'Failed to validate asset', 500);
     }
-    if (!asset) {
+    if (!rankedAsset) {
       return jsonError('validation', 'Unknown asset_id', 400, { field: 'asset_id' });
+    }
+
+    const { data: limits, error: limitsError } = await service
+      .from('plan_limits')
+      .select('fiat_limit, crypto_limit, allow_all')
+      .eq('plan', plan)
+      .maybeSingle();
+    if (limitsError) {
+      return jsonError('unknown', 'Failed to validate plan limits', 500);
+    }
+
+    const allowAll = Boolean(limits?.allow_all);
+    if (!allowAll) {
+      const rank = Number.isFinite(Number(rankedAsset.rank)) && Number(rankedAsset.rank) > 0
+        ? Number(rankedAsset.rank)
+        : 999999;
+      const fiatLimit = Number.isFinite(Number(limits?.fiat_limit))
+        ? Number(limits?.fiat_limit)
+        : (plan === 'paid' ? 100 : 10);
+      const cryptoLimit = Number.isFinite(Number(limits?.crypto_limit))
+        ? Number(limits?.crypto_limit)
+        : (plan === 'paid' ? 100 : 10);
+      const planLimit = rankedAsset.kind === 'crypto' ? cryptoLimit : fiatLimit;
+      if (rank > planLimit) {
+        return jsonError('forbidden', 'Asset is locked for current plan', 403, {
+          reason: 'asset_locked',
+        });
+      }
     }
 
     const { data: subaccount, error: subaccountError } = await service

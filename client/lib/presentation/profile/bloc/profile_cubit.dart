@@ -32,7 +32,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   final DeleteAccountUseCase _deleteAccount;
 
   Future<void> load() async {
-    emit(state.copyWith(status: ProfileStatus.loading, failureCode: null));
+    emit(state.copyWith(status: ProfileStatus.loading, failureCode: null, failureMessage: null));
     await _fetchAndEmit(silent: false);
   }
 
@@ -120,6 +120,7 @@ class ProfileCubit extends Cubit<ProfileState> {
             isSigningOut: false,
             status: ProfileStatus.ready,
             failureCode: failure.code,
+            failureMessage: failure.message,
           ),
         );
     }
@@ -164,6 +165,7 @@ class ProfileCubit extends Cubit<ProfileState> {
             isDeletingAccount: false,
             status: ProfileStatus.ready,
             failureCode: failure.code,
+            failureMessage: failure.message,
           ),
         );
     }

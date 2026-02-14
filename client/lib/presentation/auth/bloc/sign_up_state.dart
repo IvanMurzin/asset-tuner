@@ -22,6 +22,7 @@ abstract class SignUpState with _$SignUpState {
     SignUpFieldError? confirmPasswordError,
     SignUpBannerType? bannerType,
     String? bannerFailureCode,
+    String? bannerFailureMessage,
     String? bannerEmail,
     @Default(SignUpStatus.idle) SignUpStatus status,
     SignUpNavigation? navigation,

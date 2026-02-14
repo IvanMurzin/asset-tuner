@@ -24,11 +24,17 @@ Dashboard → **Authentication → Providers**:
 - Configure **Google** OAuth (Client ID/secret).
 - Configure **Apple** OAuth (Service ID / Key ID / Team ID / private key).
 
-## 3) Scheduled job (hourly rates sync)
-`rates_sync` is deployed with `verify_jwt = false` and is protected by `RATES_SYNC_SECRET`.
+## 3) Scheduled jobs (rates + metadata)
+Both jobs are deployed with `verify_jwt = false` and are protected by `RATES_SYNC_SECRET`.
 
 Dashboard → **Edge Functions → rates_sync → Scheduled triggers**:
 - Schedule: hourly
+- Method: `POST`
+- Body/payload (JSON):
+  - `{ "secret": "<RATES_SYNC_SECRET>" }`
+
+Dashboard → **Edge Functions → coingecko_refresh_metadata → Scheduled triggers**:
+- Schedule: weekly
 - Method: `POST`
 - Body/payload (JSON):
   - `{ "secret": "<RATES_SYNC_SECRET>" }`
@@ -39,12 +45,15 @@ If the Scheduler UI does not support a body, use headers (if supported):
 ## 4) External provider keys
 Create/get credentials and set them via `./scripts/supabase_set_secrets.sh`:
 - `OPENEXCHANGE_APP_ID` (OpenExchangeRates)
-- `COINGEKO_API_KEY` (CoinGecko)
+- `COINGECKO_API_KEY` (CoinGecko)
 - `RATES_SYNC_SECRET` (random secret; protect `rates_sync`)
 
-CoinGecko now uses an API key (set `COINGEKO_API_KEY`).
-If you expand the crypto catalog, consider also setting:
-- `RATES_SYNC_MAX_CRYPTO` (default 250) to avoid timeouts/rate limits.
+Legacy compatibility is kept for `COINGEKO_API_KEY` (typo key), but use `COINGECKO_API_KEY` as canonical.
+
+Optional tuning vars:
+- `RATES_SYNC_MAX_CRYPTO` (default 100) for top crypto scope.
+- `RATES_SYNC_MAX_FIAT` (default 100) for top fiat scope (priority + fallback fill).
+- `COINGECKO_BASE_URL` (optional override; for Pro keys can be set to `https://pro-api.coingecko.com/api/v3`).
 
 ## 4.1) Env files (dev/prod) and where to get values
 Fill these files locally (do not commit):
@@ -61,14 +70,20 @@ Sources for each variable:
   - Use a `postgresql://...` URI that works with `psql`.
 - `OPENEXCHANGE_APP_ID`
   - OpenExchangeRates account → App ID
-- `COINGEKO_API_KEY`
+- `COINGECKO_API_KEY`
   - CoinGecko account → API key
+- `COINGEKO_API_KEY`
+  - Legacy alias (optional fallback; prefer `COINGECKO_API_KEY`)
+- `COINGECKO_BASE_URL`
+  - Optional CoinGecko API root override (useful for Pro key routing)
 - `RATES_SYNC_SECRET`
   - Generate yourself (random string), then set:
     - secrets via `./scripts/supabase_set_secrets.sh <env>`
     - scheduler payload/header (see section 3)
 - `RATES_SYNC_MAX_CRYPTO`
-  - Optional tuning (default 250)
+  - Optional tuning (default 100)
+- `RATES_SYNC_MAX_FIAT`
+  - Optional tuning for fiat autofill (default 100, priority + fallback)
 - `UPDATE_PLAN_ENABLED`, `UPDATE_PLAN_ALLOWLIST_EMAILS`
   - Dev/testing only (see section 5)
 

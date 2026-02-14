@@ -20,6 +20,7 @@ abstract class SignInState with _$SignInState {
     SignInFieldError? emailError,
     SignInFieldError? passwordError,
     String? bannerFailureCode,
+    String? bannerFailureMessage,
     @Default([]) List<AuthProvider> availableProviders,
     @Default(SignInStatus.idle) SignInStatus status,
     SignInNavigation? navigation,

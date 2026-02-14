@@ -4,7 +4,7 @@ This document is the concrete, single-source contract for persisted entities in 
 
 If any code, migrations, or edge functions disagree with this document, treat it as a bug.
 
-**Last updated:** 2026-02-12
+**Last updated:** 2026-02-14
 
 ## Versioning / breaking changes
 This contract is **v2** and is intentionally **breaking** vs earlier MVP drafts:
@@ -16,7 +16,7 @@ This contract is **v2** and is intentionally **breaking** vs earlier MVP drafts:
 ## Conventions
 - **IDs:** `uuid` (generated server-side).
 - **Timestamps:** `timestamptz` in UTC.
-- **Money/rates:** `text` with decimal-string values.
+- **Money/rates:** `text` decimal strings.
 - **User ownership:** all user-owned rows include `user_id uuid not null default auth.uid()`.
 - **RLS:** user-owned tables restrict `select/insert/update/delete` to `user_id = auth.uid()`.
 - **Catalog:** read-only for clients (public read policy; no user_id).
@@ -78,9 +78,12 @@ Fields:
 - `code text not null` (uppercase; unique within kind)
 - `name text not null`
 - `decimals int null`
+- `provider_ref text null` (for `kind="crypto"` stores provider id, currently CoinGecko id)
 
 Constraints:
 - `code` must be uppercase.
+- `provider_ref` is unique for crypto when not null.
+- Soft rule: crypto assets should have `provider_ref` (enforced gradually with `NOT VALID` check).
 
 Relations:
 - `assets.id` 1—* `subaccounts.asset_id`
@@ -155,6 +158,65 @@ Constraints:
 Client notes:
 - The client should cache the latest snapshot in-memory and avoid frequent reads (many rows).
 - Server refresh cadence is hourly; client conversions should be computed locally from the cached USD-pivot snapshot.
+
+---
+
+### Provider-layer tables (server-written)
+These tables are internal provider caches used by jobs and projection to `asset_rates_usd`.
+
+### `fx_rates_usd`
+- `code text` (PK, uppercase ISO)
+- `usd_price text not null` (decimal string)
+- `as_of timestamptz not null`
+- `source text not null default 'openexchangerates'`
+
+### `cg_coins_cache`
+- `coingecko_id text` (PK)
+- `symbol text not null`
+- `symbol_upper text not null`
+- `name text null`
+- `updated_at timestamptz not null`
+
+### `cg_top_coins`
+- `coingecko_id text` (PK)
+- `symbol_upper text not null`
+- `name text null`
+- `rank int not null`
+- `market_cap text null` (decimal string)
+- `updated_at timestamptz not null`
+
+### `crypto_rates_usd`
+- `coingecko_id text` (PK)
+- `usd_price text not null` (decimal string)
+- `as_of timestamptz not null`
+- `source text not null default 'coingecko'`
+
+---
+
+### Plan/ranking helper tables
+Used by RLS to constrain catalog/rates visibility for free vs paid.
+
+### `plan_limits`
+- `plan text` (PK, `free|paid`)
+- `fiat_limit int not null`
+- `crypto_limit int not null`
+- `allow_all bool not null default false`
+
+### `fiat_priority`
+- `code text` (PK, uppercase)
+- `rank int not null`
+
+### `asset_rankings` (view)
+- `asset_id uuid`
+- `kind text`
+- `code text`
+- `provider_ref text null`
+- `rank int`
+
+RLS note:
+- `assets` and `asset_rates_usd` remain client-readable via PostgREST, but row visibility is plan-aware:
+  - `anon` and users without profile are treated as `free`.
+  - `paid` follows `plan_limits` (default: top 100 fiat + top 100 crypto).
 
 ## Storage (buckets)
 

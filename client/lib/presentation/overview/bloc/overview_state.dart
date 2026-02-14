@@ -49,6 +49,7 @@ abstract class OverviewState with _$OverviewState {
     @Default(false) bool isOffline,
     DateTime? offlineCachedAt,
     String? failureCode,
+    String? failureMessage,
     OverviewNavigation? navigation,
   }) = _OverviewState;
 }

@@ -1,6 +1,6 @@
 # Asset Tuner — Integrations
 
-**Last updated:** 2026-02-10
+**Last updated:** 2026-02-14
 
 ## Supabase
 ### Auth
@@ -20,12 +20,13 @@ Used for:
 ## Rates providers (server-side only)
 ### OpenExchangeRates (FX)
 - Pulled hourly by a scheduled job
-- Stored in Supabase DB and served to clients from DB only
+- Stored in provider cache (`fx_rates_usd`) and projected to client-facing rates
 
 ### CoinGecko (crypto USD)
-- Pulled hourly by a scheduled job
-- Uses API key secret `COINGEKO_API_KEY`
-- Stored in Supabase DB and served to clients from DB only
+- Price endpoint pulled hourly by `rates_sync` (`/simple/price`)
+- Metadata endpoints pulled weekly by `coingecko_refresh_metadata` (`/coins/list`, `/coins/markets`)
+- Uses API key secret `COINGECKO_API_KEY` (legacy alias: `COINGEKO_API_KEY`)
+- Stored in provider caches (`cg_coins_cache`, `cg_top_coins`, `crypto_rates_usd`) and projected to client-facing rates
 
 ## Monetization (MVP)
 - Subscription (monthly + annual)

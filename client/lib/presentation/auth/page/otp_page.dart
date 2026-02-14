@@ -41,7 +41,7 @@ class OtpPage extends StatelessWidget {
             context.read<OtpCubit>().consumeNavigation();
             return;
           }
-          final message = _failureMessage(l10n, state.bannerFailureCode);
+          final message = _failureMessage(l10n, state.bannerFailureCode, state.bannerFailureMessage);
           if (message != null && context.mounted) {
             showDSSnackBar(
               context,
@@ -56,6 +56,7 @@ class OtpPage extends StatelessWidget {
           final isLoading = state.status == OtpStatus.loading;
 
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: DSAppBar(title: l10n.otpTitle),
             body: SafeArea(
               child: Column(
@@ -111,6 +112,20 @@ class OtpPage extends StatelessWidget {
                         ),
                         SizedBox(height: spacing.s12),
                         TextButton(
+                          onPressed: isLoading ||
+                                  state.isResendInProgress ||
+                                  state.resendCooldownUntil != null
+                              ? null
+                              : context.read<OtpCubit>().resend,
+                          child: Text(
+                            l10n.resendOtp,
+                            style: typography.body.copyWith(
+                              color: context.dsColors.primary,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: spacing.s8),
+                        TextButton(
                           onPressed: isLoading
                               ? null
                               : () => context.go(AppRoutes.signUp),
@@ -140,10 +155,9 @@ class OtpPage extends StatelessWidget {
     };
   }
 
-  String? _failureMessage(AppLocalizations l10n, String? code) {
-    if (code == null) {
-      return null;
-    }
+  String? _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (code == null) return null;
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'rate_limited' => l10n.errorRateLimited,
       'network' => l10n.errorNetwork,

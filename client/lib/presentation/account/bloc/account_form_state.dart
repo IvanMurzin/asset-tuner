@@ -25,6 +25,7 @@ abstract class AccountFormState with _$AccountFormState {
     AccountType? type,
     String? nameError,
     String? failureCode,
+    String? failureMessage,
     @Default(false) bool isSaving,
     AccountFormNavigation? navigation,
   }) = _AccountFormState;

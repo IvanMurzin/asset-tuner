@@ -18,6 +18,7 @@ abstract class ProfileState with _$ProfileState {
     String? baseCurrency,
     String? plan,
     String? failureCode,
+    String? failureMessage,
     @Default(false) bool isSigningOut,
     @Default(false) bool isDeletingAccount,
     ProfileNavigation? navigation,

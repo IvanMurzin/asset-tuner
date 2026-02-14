@@ -39,6 +39,7 @@ abstract class AnalyticsState with _$AnalyticsState {
     @Default([]) List<AnalyticsBreakdownItem> breakdown,
     @Default([]) List<AnalyticsUpdateItem> updates,
     String? failureCode,
+    String? failureMessage,
     AnalyticsNavigation? navigation,
   }) = _AnalyticsState;
 }

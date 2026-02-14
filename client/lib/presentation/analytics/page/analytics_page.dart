@@ -6,7 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
-import 'package:asset_tuner/core_ui/components/ds_empty_state.dart';
+import 'package:asset_tuner/core_ui/components/ds_empty_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_history_entry_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
@@ -76,21 +76,46 @@ class _Body extends StatelessWidget {
     if (state.status == AnalyticsStatus.error) {
       return DSInlineError(
         title: l10n.splashErrorTitle,
-        message: _failureMessage(l10n, state.failureCode),
+        message: _failureMessage(l10n, state.failureCode, state.failureMessage),
         actionLabel: l10n.splashRetry,
         onAction: () => context.read<AnalyticsCubit>().load(),
       );
     }
 
     if (state.breakdown.isEmpty && state.updates.isEmpty) {
-      return Center(
-        child: DSEmptyState(
-          title: l10n.analyticsEmptyTitle,
-          message: l10n.analyticsEmptyBody,
-          actionLabel: l10n.mainAddAccount,
-          onAction: () => context.push(AppRoutes.accountNew),
-          icon: Icons.pie_chart_outline,
-        ),
+      return ListView(
+        children: [
+          SizedBox(
+            height: 220,
+            child: PieChart(
+              PieChartData(
+                sections: [
+                  PieChartSectionData(
+                    value: 1,
+                    color: context.dsColors.neutral400,
+                    radius: 48,
+                    showTitle: false,
+                  ),
+                ],
+                centerSpaceRadius: 32,
+                sectionsSpace: 2,
+              ),
+            ),
+          ),
+          SizedBox(height: spacing.s24),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+            child: DSEmptyCard(
+              icon: Icons.pie_chart_outline,
+              title: l10n.analyticsEmptyTitle,
+              message: l10n.analyticsEmptyBody,
+              actionLabel: l10n.mainAddAccount,
+              actionLeadingIcon: Icons.add,
+              onAction: () => context.push(AppRoutes.accountNew),
+            ),
+          ),
+          SizedBox(height: spacing.s24),
+        ],
       );
     }
 
@@ -161,7 +186,8 @@ class _Body extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'network' => l10n.errorNetwork,
       'unauthorized' => l10n.errorUnauthorized,

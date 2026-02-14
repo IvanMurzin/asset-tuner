@@ -159,7 +159,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
           ),
         );
       case FailureResult<AccountEntity>(failure: final failure):
-        emit(state.copyWith(isSaving: false, failureCode: failure.code));
+        emit(state.copyWith(isSaving: false, failureCode: failure.code, failureMessage: failure.message));
     }
   }
 

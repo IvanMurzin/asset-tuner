@@ -1,7 +1,7 @@
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_empty_state.dart';
+import 'package:asset_tuner/core_ui/components/ds_empty_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
@@ -77,7 +77,7 @@ class OverviewBody extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: spacing.s24),
             child: DSInlineError(
               title: l10n.splashErrorTitle,
-              message: _failureMessage(l10n, state.failureCode),
+              message: _failureMessage(l10n, state.failureCode, state.failureMessage),
               actionLabel: l10n.splashRetry,
               onAction: () => context.read<OverviewCubit>().refresh(),
             ),
@@ -88,14 +88,33 @@ class OverviewBody extends StatelessWidget {
     }
 
     if (status == OverviewStatus.emptyNoAccounts) {
-      return Center(
-        child: DSEmptyState(
-          title: l10n.overviewEmptyNoAccountsTitle,
-          message: l10n.overviewEmptyNoAccountsBody,
-          actionLabel: l10n.mainAddAccount,
-          onAction: () => _openCreateAccountFlow(context),
-          icon: Icons.account_balance_outlined,
-        ),
+      return ListView(
+        children: [
+          SizedBox(height: spacing.s24),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+            child: OverviewSummaryCard(
+              totalLabel: l10n.overviewTotalLabel,
+              totalValue: context.dsFormatters.formatMoney(Decimal.zero, baseCurrency),
+              ratesText: ratesText,
+              pricedTotalLabel: null,
+              pricedTotalValue: null,
+            ),
+          ),
+          SizedBox(height: spacing.s24),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+            child: DSEmptyCard(
+              icon: Icons.account_balance_outlined,
+              title: l10n.overviewEmptyNoAccountsTitle,
+              message: l10n.overviewEmptyNoAccountsBody,
+              actionLabel: l10n.mainAddAccount,
+              actionLeadingIcon: Icons.add,
+              onAction: () => _openCreateAccountFlow(context),
+            ),
+          ),
+          SizedBox(height: spacing.s24),
+        ],
       );
     }
 
@@ -117,7 +136,8 @@ class OverviewBody extends StatelessWidget {
           SizedBox(height: spacing.s24),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: spacing.s24),
-            child: DSEmptyState(
+            child: DSEmptyCard(
+              icon: Icons.add_circle_outline,
               title: status == OverviewStatus.emptyNoAssets
                   ? l10n.subaccountEmptyTitle
                   : l10n.positionHistoryEmptyTitle,
@@ -125,8 +145,8 @@ class OverviewBody extends StatelessWidget {
                   ? l10n.subaccountEmptyBody
                   : l10n.positionHistoryEmptyBody,
               actionLabel: l10n.mainAddAccount,
+              actionLeadingIcon: Icons.add,
               onAction: () => _openCreateAccountFlow(context),
-              icon: Icons.add_circle_outline,
             ),
           ),
           SizedBox(height: spacing.s24),
@@ -212,7 +232,8 @@ class OverviewBody extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'network' => l10n.errorNetwork,
       'unauthorized' => l10n.errorUnauthorized,

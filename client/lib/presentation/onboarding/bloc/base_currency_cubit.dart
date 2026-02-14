@@ -28,6 +28,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
   final GetFiatCurrenciesUseCase _getFiatCurrenciesUseCase;
   final GetProfileUseCase _getProfileUseCase;
   final UpdateBaseCurrencyUseCase _updateBaseCurrencyUseCase;
+  static const _freeUnlockedByRank = 5;
 
   Future<void> load() async {
     emit(state.copyWith(status: BaseCurrencyStatus.loading));
@@ -55,6 +56,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
           state.copyWith(
             status: BaseCurrencyStatus.error,
             loadFailureCode: failure.code,
+            loadFailureMessage: failure.message,
           ),
         );
         return;
@@ -69,6 +71,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
           state.copyWith(
             status: BaseCurrencyStatus.error,
             loadFailureCode: failure.code,
+            loadFailureMessage: failure.message,
           ),
         );
         return;
@@ -111,7 +114,11 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
       return;
     }
 
-    if (!_isAllowedForEntitlements(selected, state.entitlements)) {
+    if (!_isAllowedForEntitlements(
+      selected,
+      state.entitlements,
+      state.currencies,
+    )) {
       emit(
         state.copyWith(
           navigation: const BaseCurrencyNavigation(
@@ -158,6 +165,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
             isSaving: false,
             bannerType: BaseCurrencyBannerType.saveFailure,
             bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
           ),
         );
       case Success():
@@ -175,6 +183,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
   bool _isAllowedForEntitlements(
     String code,
     EntitlementsEntity? entitlements,
+    List<CurrencyEntity> currencies,
   ) {
     if (entitlements == null) {
       return false;
@@ -182,6 +191,9 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     if (entitlements.anyBaseCurrency) {
       return true;
     }
-    return entitlements.freeBaseCurrencyCodes.contains(code.toUpperCase());
+    final index = currencies.indexWhere(
+      (currency) => currency.code.toUpperCase() == code.toUpperCase(),
+    );
+    return index >= 0 && index < _freeUnlockedByRank;
   }
 }

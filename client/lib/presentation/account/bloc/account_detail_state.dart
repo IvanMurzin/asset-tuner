@@ -26,7 +26,9 @@ abstract class AccountDetailState with _$AccountDetailState {
     @Default(false) bool isAccountActionBusy,
     @Default(false) bool isAccountArchived,
     String? failureCode,
+    String? failureMessage,
     String? bannerFailureCode,
+    String? bannerFailureMessage,
     AccountDetailNavigation? navigation,
   }) = _AccountDetailState;
 }

@@ -86,6 +86,7 @@ class SettingsCubit extends Cubit<SettingsState> {
             isSigningOut: false,
             status: SettingsStatus.ready,
             failureCode: failure.code,
+            failureMessage: failure.message,
           ),
         );
     }

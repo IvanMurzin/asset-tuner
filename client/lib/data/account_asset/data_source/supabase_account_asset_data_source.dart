@@ -46,7 +46,7 @@ class SupabaseAccountAssetDataSource {
         'name': name,
         'asset_id': assetId,
         'snapshot_amount': snapshotAmount.toString(),
-        'entry_date': _toDate(entryDate),
+        'entry_date': entryDate.toUtc().toIso8601String(),
       },
     );
     final subaccountJson = payload['subaccount'];
@@ -75,7 +75,4 @@ class SupabaseAccountAssetDataSource {
     );
   }
 
-  String _toDate(DateTime date) {
-    return '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-  }
 }

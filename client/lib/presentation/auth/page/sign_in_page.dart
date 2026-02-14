@@ -40,7 +40,7 @@ class SignInPage extends StatelessWidget {
             context.read<SignInCubit>().consumeNavigation();
             return;
           }
-          final message = _bannerText(l10n, state.bannerFailureCode);
+          final message = _bannerText(l10n, state.bannerFailureCode, state.bannerFailureMessage);
           if (message != null && context.mounted) {
             showDSSnackBar(
               context,
@@ -56,6 +56,7 @@ class SignInPage extends StatelessWidget {
           final providers = state.availableProviders;
 
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: DSAppBar(title: l10n.signInTitle),
             body: SafeArea(
               child: Column(
@@ -162,10 +163,9 @@ class SignInPage extends StatelessWidget {
     };
   }
 
-  String? _bannerText(AppLocalizations l10n, String? code) {
-    if (code == null) {
-      return null;
-    }
+  String? _bannerText(AppLocalizations l10n, String? code, String? message) {
+    if (code == null) return null;
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'rate_limited' => l10n.errorRateLimited,
       'network' => l10n.errorNetwork,

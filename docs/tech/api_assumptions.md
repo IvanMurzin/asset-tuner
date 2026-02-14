@@ -1,6 +1,6 @@
 # Asset Tuner — API Assumptions — v2 (breaking)
 
-**Last updated:** 2026-02-12
+**Last updated:** 2026-02-14
 
 ## Breaking change note
 This document is updated for **MVP v2** (rewrite):
@@ -39,7 +39,11 @@ Normalize backend errors into `Failure { code, message }` with codes:
 - All user-owned rows include `user_id uuid not null default auth.uid()`.
 - RLS policies:
   - `select/insert/update/delete` where `user_id = auth.uid()`.
-- Catalog/rates tables are read-only for clients (no user_id; public read policies).
+- Catalog/rates tables are read-only for clients (no user_id).
+- `assets` and `asset_rates_usd` use plan-aware read policies:
+  - `free` users are limited by configured rank caps (`plan_limits`),
+  - `paid` defaults to top-100 per kind (`allow_all=false` by default),
+  - `anon` is treated as `free`.
 
 ## Proposed domain objects (tables) — MVP
 Names may change, but the responsibilities should not.
@@ -53,6 +57,9 @@ Names may change, but the responsibilities should not.
 ### Public/read-only
 - `assets` (fiat + crypto catalog)
 - `asset_rates_usd` (latest `usd_price` per asset + timestamp; server-written)
+- Provider-layer caches:
+  - `fx_rates_usd`, `crypto_rates_usd`
+  - `cg_coins_cache`, `cg_top_coins`
 
 ## Edge Functions (suggested endpoints)
 - `POST /create_subaccount`
@@ -69,7 +76,9 @@ Names may change, but the responsibilities should not.
   - Input: `account_id`
   - Behavior: cascade delete account + subaccounts + balance_entries (authorized user only)
 - `POST /rates_sync` (cron only)
-  - Fetch providers and upsert into `asset_rates_usd`
+  - Fetch provider rates, upsert provider-layer tables, then project to `asset_rates_usd`
+- `POST /coingecko_refresh_metadata` (cron only, weekly)
+  - Refresh CoinGecko metadata caches and run idempotent assets autofill
 
 ## Deletion semantics
 - User-initiated deletion is supported in MVP:

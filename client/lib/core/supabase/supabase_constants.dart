@@ -18,3 +18,9 @@ abstract final class SupabaseFunctions {
   static const updateSubaccountBalance = 'update_subaccount_balance';
   static const updatePlan = 'update_plan';
 }
+
+abstract final class SupabaseRpc {
+  static const listFiatCurrenciesForPicker = 'list_fiat_currencies_for_picker';
+  static const listAssetsForSubaccountPicker =
+      'list_assets_for_subaccount_picker';
+}

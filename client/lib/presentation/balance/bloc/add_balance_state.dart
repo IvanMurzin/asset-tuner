@@ -21,6 +21,7 @@ abstract class AddBalanceState with _$AddBalanceState {
     String? amountError,
     String? dateError,
     String? failureCode,
+    String? failureMessage,
     @Default(false) bool isSaving,
     AddBalanceNavigation? navigation,
   }) = _AddBalanceState;

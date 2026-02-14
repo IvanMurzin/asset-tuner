@@ -41,7 +41,7 @@ class SupabaseBalanceDataSource {
       SupabaseFunctions.updateSubaccountBalance,
       body: {
         'subaccount_id': subaccountId,
-        'entry_date': _formatDate(entryDate),
+        'entry_date': entryDate.toUtc().toIso8601String(),
         'snapshot_amount': snapshotAmount.toString(),
       },
       decode: BalanceEntryDto.fromJson,
@@ -63,7 +63,4 @@ class SupabaseBalanceDataSource {
         .toList();
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-  }
 }

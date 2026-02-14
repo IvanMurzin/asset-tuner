@@ -148,6 +148,9 @@ class FakeCurrencyRepository implements ICurrencyRepository {
           ),
           CurrencyEntity(code: 'EUR', name: 'Euro', symbol: 'EUR'),
           CurrencyEntity(code: 'GBP', name: 'British Pound', symbol: 'GBP'),
+          CurrencyEntity(code: 'JPY', name: 'Japanese Yen', symbol: 'JPY'),
+          CurrencyEntity(code: 'CNY', name: 'Chinese Yuan', symbol: 'CNY'),
+          CurrencyEntity(code: 'AUD', name: 'Australian Dollar', symbol: 'AUD'),
         ]);
   }
 }
@@ -194,7 +197,7 @@ void main() {
     expect(cubit.state.loadFailureCode, 'unknown');
   });
 
-  test('free plan selection of blocked code routes to paywall', () async {
+  test('free plan selection of code outside top-5 routes to paywall', () async {
     final cubit = BaseCurrencySettingsCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
@@ -222,13 +225,13 @@ void main() {
 
     await cubit.load();
 
-    cubit.selectCurrency('GBP');
+    cubit.selectCurrency('AUD');
 
     expect(
       cubit.state.navigation?.destination,
       BaseCurrencySettingsDestination.paywall,
     );
-    expect(cubit.state.navigation?.requestedCode, 'GBP');
+    expect(cubit.state.navigation?.requestedCode, 'AUD');
     expect(cubit.state.selectedCode, 'USD');
   });
 
@@ -260,10 +263,10 @@ void main() {
 
     await cubit.load();
 
-    cubit.selectCurrency('GBP');
+    cubit.selectCurrency('AUD');
 
     expect(cubit.state.navigation, isNull);
-    expect(cubit.state.selectedCode, 'GBP');
+    expect(cubit.state.selectedCode, 'AUD');
   });
 
   test('save with unchanged selection navigates back', () async {

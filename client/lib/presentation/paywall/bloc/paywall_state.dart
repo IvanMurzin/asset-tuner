@@ -18,7 +18,9 @@ abstract class PaywallState with _$PaywallState {
     @Default(PaywallPlanOption.annual) PaywallPlanOption selectedPlan,
     @Default(false) bool entitlementsUnverified,
     String? loadFailureCode,
+    String? loadFailureMessage,
     String? upgradeFailureCode,
+    String? upgradeFailureMessage,
     @Default(false) bool isUpdating,
     PaywallNavigation? navigation,
   }) = _PaywallState;

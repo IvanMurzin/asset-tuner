@@ -4,7 +4,9 @@ import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/data/asset/data_source/supabase_asset_data_source.dart';
 import 'package:asset_tuner/data/asset/mapper/asset_mapper.dart';
+import 'package:asset_tuner/data/asset/mapper/asset_picker_item_mapper.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_picker_item_entity.dart';
 import 'package:asset_tuner/domain/asset/repository/i_asset_repository.dart';
 
 @LazySingleton(as: IAssetRepository)
@@ -26,6 +28,33 @@ class AssetRepository implements IAssetRepository {
         SupabaseFailureMapper.toFailure(
           error,
           fallbackMessage: 'Unable to load assets',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Result<List<AssetPickerItemEntity>>> fetchAssetsForSubaccountPicker({
+    required AssetKind kind,
+  }) async {
+    try {
+      final dtos = await _dataSource.fetchAssetsForSubaccountPicker(
+        kind: kind.name,
+      );
+      final entities = dtos.map(AssetPickerItemMapper.toEntity).toList();
+      logger.i(
+        'AssetRepository.fetchAssetsForSubaccountPicker success: ${entities.length}, kind=${kind.name}',
+      );
+      return Success(entities);
+    } catch (error) {
+      logger.e(
+        'AssetRepository.fetchAssetsForSubaccountPicker failed',
+        error: error,
+      );
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to load asset catalog',
         ),
       );
     }

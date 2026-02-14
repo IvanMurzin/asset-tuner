@@ -204,6 +204,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
           state.copyWith(
             status: AccountDetailStatus.error,
             failureCode: failure.code,
+            failureMessage: failure.message,
             account: account,
             baseCurrency: profile.baseCurrency,
             ratesAsOf: ratesSnapshot?.asOf,
@@ -248,6 +249,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
           state.copyWith(
             busyAssetIds: {...state.busyAssetIds}..remove(subaccountId),
             bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
           ),
         );
     }
@@ -279,6 +281,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
           state.copyWith(
             isAccountActionBusy: false,
             bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
           ),
         );
     }
@@ -308,6 +311,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
           state.copyWith(
             isAccountActionBusy: false,
             bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
           ),
         );
     }

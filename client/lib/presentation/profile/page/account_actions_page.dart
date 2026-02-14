@@ -41,7 +41,7 @@ class AccountActionsPage extends StatelessWidget {
           final colors = context.dsColors;
           final radius = context.dsRadius;
 
-          final bannerText = _bannerText(l10n, state.failureCode);
+          final bannerText = _bannerText(l10n, state.failureCode, state.failureMessage);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.profileSectionAccount),
@@ -139,10 +139,9 @@ class AccountActionsPage extends StatelessWidget {
     );
   }
 
-  String? _bannerText(AppLocalizations l10n, String? code) {
-    if (code == null) {
-      return null;
-    }
+  String? _bannerText(AppLocalizations l10n, String? code, String? message) {
+    if (code == null) return null;
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'entitlements' => l10n.settingsEntitlementsError,
       _ => l10n.errorGeneric,

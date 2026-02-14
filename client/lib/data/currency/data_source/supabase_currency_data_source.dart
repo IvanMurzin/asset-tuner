@@ -10,13 +10,21 @@ class SupabaseCurrencyDataSource {
   final SupabaseClient _client;
 
   Future<List<CurrencyDto>> fetchFiatCurrencies() async {
-    final rows = await _client
-        .from(SupabaseTables.assets)
-        .select('code,name')
-        .eq('kind', 'fiat')
-        .order('code', ascending: true);
-    return (rows as List)
-        .whereType<Map<String, dynamic>>()
+    final rows = await _client.rpc(SupabaseRpc.listFiatCurrenciesForPicker);
+
+    final sortedRows = (rows as List).whereType<Map<String, dynamic>>().toList()
+      ..sort((a, b) {
+        final aRank = (a['rank'] as num?)?.toInt() ?? 999999;
+        final bRank = (b['rank'] as num?)?.toInt() ?? 999999;
+        if (aRank != bRank) {
+          return aRank.compareTo(bRank);
+        }
+        final aCode = (a['code'] as String?)?.toUpperCase() ?? '';
+        final bCode = (b['code'] as String?)?.toUpperCase() ?? '';
+        return aCode.compareTo(bCode);
+      });
+
+    return sortedRows
         .map(
           (e) => CurrencyDto(
             code: (e['code'] as String?) ?? '',

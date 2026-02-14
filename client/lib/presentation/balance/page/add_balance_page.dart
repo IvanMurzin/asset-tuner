@@ -84,7 +84,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
               appBar: DSAppBar(title: l10n.subaccountUpdateBalanceCta),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: _failureMessage(l10n, state.failureCode),
+                message: _failureMessage(l10n, state.failureCode, state.failureMessage),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<AddBalanceCubit>().load(
                   subaccountId: widget.subaccountId,
@@ -115,7 +115,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
                         state.failureCode != 'validation') ...[
                       DSInlineBanner(
                         title: l10n.subaccountUpdateBalanceCta,
-                        message: _failureMessage(l10n, state.failureCode),
+                        message: _failureMessage(l10n, state.failureCode, state.failureMessage),
                         variant: DSInlineBannerVariant.danger,
                       ),
                       SizedBox(height: spacing.s16),
@@ -182,7 +182,8 @@ class _AddBalancePageState extends State<AddBalancePage> {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'network' => l10n.errorNetwork,
       'unauthorized' => l10n.errorUnauthorized,

@@ -19,7 +19,10 @@ abstract class OtpState with _$OtpState {
     @Default('') String code,
     OtpFieldError? codeError,
     String? bannerFailureCode,
+    String? bannerFailureMessage,
     @Default(OtpStatus.idle) OtpStatus status,
     OtpNavigation? navigation,
+    @Default(false) bool isResendInProgress,
+    DateTime? resendCooldownUntil,
   }) = _OtpState;
 }

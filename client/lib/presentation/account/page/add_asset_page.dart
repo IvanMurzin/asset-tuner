@@ -2,14 +2,18 @@ import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
 import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
+import 'package:asset_tuner/core_ui/components/ds_radio_row.dart';
+import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_picker_item_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/add_asset_cubit.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
@@ -145,7 +149,11 @@ class _AddAssetPageState extends State<AddAssetPage> {
               appBar: DSAppBar(title: l10n.subaccountCreateTitle),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: _failureMessage(l10n, state.failureCode),
+                message: _failureMessage(
+                  l10n,
+                  state.failureCode,
+                  state.failureMessage,
+                ),
                 actionLabel: l10n.splashRetry,
                 onAction: () =>
                     context.read<AddAssetCubit>().load(widget.accountId),
@@ -157,9 +165,10 @@ class _AddAssetPageState extends State<AddAssetPage> {
               state.selectedAssetId != null &&
               state.name.trim().isNotEmpty &&
               state.balanceText.trim().isNotEmpty &&
-              !state.isSaving;
+              !state.isSaving &&
+              !state.isCatalogLoading;
 
-          final options = _buildAssetOptions(l10n, state.assets);
+          final options = _buildAssetOptions(l10n, state.visibleAssets);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.subaccountCreateTitle),
@@ -177,7 +186,11 @@ class _AddAssetPageState extends State<AddAssetPage> {
                     if (state.failureCode != null) ...[
                       DSInlineBanner(
                         title: l10n.subaccountCreateTitle,
-                        message: _failureMessage(l10n, state.failureCode),
+                        message: _failureMessage(
+                          l10n,
+                          state.failureCode,
+                          state.failureMessage,
+                        ),
                         variant: DSInlineBannerVariant.danger,
                       ),
                       SizedBox(height: spacing.s16),
@@ -198,17 +211,54 @@ class _AddAssetPageState extends State<AddAssetPage> {
                       errorText: _balanceErrorText(l10n, state.balanceError),
                       onChanged: context.read<AddAssetCubit>().updateBalance,
                     ),
+                    SizedBox(height: spacing.s24),
+                    DSSectionTitle(title: l10n.accountsTypeLabel),
+                    SizedBox(height: spacing.s8),
+                    DSCard(
+                      padding: EdgeInsets.all(spacing.s8),
+                      child: Column(
+                        children: [
+                          DSRadioRow(
+                            title: l10n.assetKindFiat,
+                            selected: state.selectedKind == AssetKind.fiat,
+                            onTap: state.isSaving
+                                ? null
+                                : () => context
+                                      .read<AddAssetCubit>()
+                                      .selectKind(AssetKind.fiat),
+                          ),
+                          DSRadioRow(
+                            title: l10n.assetKindCrypto,
+                            selected: state.selectedKind == AssetKind.crypto,
+                            onTap: state.isSaving
+                                ? null
+                                : () => context
+                                      .read<AddAssetCubit>()
+                                      .selectKind(AssetKind.crypto),
+                          ),
+                        ],
+                      ),
+                    ),
                     SizedBox(height: spacing.s12),
+                    if (state.isCatalogLoading) ...[
+                      const LinearProgressIndicator(minHeight: 2),
+                      SizedBox(height: spacing.s12),
+                    ],
                     DSCurrencyPicker(
                       options: options,
                       selectedId: state.selectedAssetId,
-                      searchHintText: l10n.assetSearchHint,
+                      searchHintText: state.selectedKind == null
+                          ? '${l10n.accountsTypeLabel}: ${l10n.assetKindFiat} / ${l10n.assetKindCrypto}'
+                          : l10n.assetSearchHint,
                       recentTitleText: l10n.currencyPickerRecentTitle,
                       selectedTitleText: l10n.subaccountCurrencyLabel,
                       changeSelectionText: l10n.currencyPickerChangeAction,
                       emptyResultsTitle: l10n.assetNoMatchesTitle,
                       emptyResultsMessage: l10n.assetNoMatchesBody,
-                      enabled: !state.isSaving,
+                      enabled:
+                          !state.isSaving &&
+                          !state.isCatalogLoading &&
+                          state.selectedKind != null,
                       onSelect: (assetId) =>
                           context.read<AddAssetCubit>().selectAsset(assetId),
                     ),
@@ -233,7 +283,7 @@ class _AddAssetPageState extends State<AddAssetPage> {
 
   List<DSCurrencyPickerOption> _buildAssetOptions(
     AppLocalizations l10n,
-    List<AssetEntity> assets,
+    List<AssetPickerItemEntity> assets,
   ) {
     return assets
         .map(
@@ -242,13 +292,15 @@ class _AddAssetPageState extends State<AddAssetPage> {
             primaryText: asset.code,
             secondaryText: asset.name,
             tertiaryText: _kindLabel(l10n, asset.kind),
-            searchTerms: [asset.code, asset.name, _kindLabel(l10n, asset.kind)],
+            searchTerms: [asset.code, asset.name],
+            locked: !asset.isUnlocked,
           ),
         )
         .toList();
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'network' => l10n.errorNetwork,
       'unauthorized' => l10n.errorUnauthorized,

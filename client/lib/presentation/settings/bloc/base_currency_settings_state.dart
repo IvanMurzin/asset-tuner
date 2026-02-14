@@ -30,8 +30,10 @@ abstract class BaseCurrencySettingsState with _$BaseCurrencySettingsState {
     String? plan,
     EntitlementsEntity? entitlements,
     String? loadFailureCode,
+    String? loadFailureMessage,
     BaseCurrencySettingsBannerType? bannerType,
     String? bannerFailureCode,
+    String? bannerFailureMessage,
     @Default(false) bool isSaving,
     BaseCurrencySettingsNavigation? navigation,
   }) = _BaseCurrencySettingsState;

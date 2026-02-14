@@ -79,6 +79,7 @@ class PaywallCubit extends Cubit<PaywallState> {
             plan: bootProfile?.plan ?? 'free',
             entitlementsUnverified: true,
             loadFailureCode: failure.code,
+            loadFailureMessage: failure.message,
           ),
         );
     }
@@ -113,7 +114,11 @@ class PaywallCubit extends Cubit<PaywallState> {
           'purchase_failed plan=${state.selectedPlan.name} code=${failure.code}',
         );
         emit(
-          state.copyWith(isUpdating: false, upgradeFailureCode: failure.code),
+          state.copyWith(
+            isUpdating: false,
+            upgradeFailureCode: failure.code,
+            upgradeFailureMessage: failure.message,
+          ),
         );
     }
   }

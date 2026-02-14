@@ -26,19 +26,23 @@ export function normalizeName(value: unknown): string | null {
   return trimmed.length === 0 ? null : trimmed;
 }
 
+const isoDateOnly = /^\d{4}-\d{2}-\d{2}$/;
+const isoDateTime = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})?)?$/;
+
 export function parseIsoDate(value: unknown): string | null {
   if (typeof value !== 'string') {
     return null;
   }
   const trimmed = value.trim();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+  const date = isoDateOnly.test(trimmed)
+    ? new Date(`${trimmed}T00:00:00.000Z`)
+    : isoDateTime.test(trimmed)
+      ? new Date(trimmed)
+      : null;
+  if (date == null || Number.isNaN(date.getTime())) {
     return null;
   }
-  const date = new Date(`${trimmed}T00:00:00.000Z`);
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-  return trimmed;
+  return date.toISOString().slice(0, 10);
 }
 
 export function parseNumericString(value: unknown): string | null {

@@ -108,6 +108,7 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
             isUpdating: false,
             status: ManageSubscriptionStatus.ready,
             failureCode: failure.code,
+            failureMessage: failure.message,
             banner: ManageSubscriptionBanner.updateFailure,
           ),
         );

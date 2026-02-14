@@ -2,6 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asset_tuner/core/supabase/supabase_constants.dart';
 import 'package:asset_tuner/data/asset/dto/asset_dto.dart';
+import 'package:asset_tuner/data/asset/dto/asset_picker_item_dto.dart';
 
 @lazySingleton
 class SupabaseAssetDataSource {
@@ -18,6 +19,19 @@ class SupabaseAssetDataSource {
     return (rows as List)
         .whereType<Map<String, dynamic>>()
         .map(AssetDto.fromJson)
+        .toList();
+  }
+
+  Future<List<AssetPickerItemDto>> fetchAssetsForSubaccountPicker({
+    required String kind,
+  }) async {
+    final rows = await _client.rpc<List<dynamic>>(
+      SupabaseRpc.listAssetsForSubaccountPicker,
+      params: {'p_kind': kind},
+    );
+    return rows
+        .whereType<Map<String, dynamic>>()
+        .map(AssetPickerItemDto.fromJson)
         .toList();
   }
 }

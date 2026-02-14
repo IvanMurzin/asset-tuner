@@ -2,7 +2,7 @@
 
 This document defines the concrete client-facing API surface: Auth, PostgREST reads, Edge Function operations, filters/pagination, and the error model.
 
-**Last updated:** 2026-02-12
+**Last updated:** 2026-02-14
 
 ## Versioning / breaking changes
 This API surface is **v2** and is intentionally **breaking** vs earlier MVP drafts:
@@ -86,6 +86,9 @@ Contract notes:
 ### `assets`
 - `LIST assets`:
   - query: `assets?select=*&order=kind.asc,code.asc`
+  - notes:
+    - RLS is plan-aware; visible rows depend on current plan (`free|paid`).
+    - `anon` reads are allowed but treated as `free`.
 - `LIST fiat assets` (for base currency pickers):
   - query: `assets?kind=eq.fiat&select=*&order=code.asc`
 
@@ -97,6 +100,9 @@ Contract notes:
 ### `asset_rates_usd`
 - `GET latest rates snapshot`:
   - query: `asset_rates_usd?select=asset_id,usd_price,as_of`
+  - notes:
+    - RLS is plan-aware and mirrors visibility from `assets`.
+    - rates for hidden assets are not returned.
   - client caching:
     - Treat this read as **expensive** (many rows) and avoid calling it frequently.
     - Cache the latest snapshot in-memory app-wide and persist last-known snapshot for offline start.
@@ -294,4 +300,21 @@ Request:
 Response: updated `profiles` row.
 
 ### `POST /rates_sync` (server-only)
-Scheduled (cron) job; not callable by the client in MVP.
+Scheduled hourly (cron), secret-protected (`x-rates-sync-secret` or `{secret}` payload).
+
+Behavior:
+- Fetch OpenExchangeRates `latest.json` once per run.
+- Fetch CoinGecko prices via `/simple/price` using cached ids (no hourly `/coins/list`).
+- Upsert provider-layer tables (`fx_rates_usd`, `crypto_rates_usd`).
+- Project latest prices into `asset_rates_usd`.
+
+### `POST /coingecko_refresh_metadata` (server-only)
+Scheduled weekly (cron), secret-protected (`x-rates-sync-secret` or `{secret}` payload).
+
+Behavior:
+- Refresh CoinGecko metadata caches:
+  - `/coins/list` -> `cg_coins_cache`
+  - `/coins/markets` -> `cg_top_coins`
+- Run idempotent `assets` autofill:
+  - fiat from `fx_rates_usd` (+ OER currencies names fallback),
+  - crypto from top coins using stable `provider_ref` mapping.

@@ -8,6 +8,7 @@ abstract class UsdRatesState with _$UsdRatesState {
     @Default(UsdRatesStatus.idle) UsdRatesStatus status,
     RatesSnapshotEntity? snapshot,
     String? failureCode,
+    String? failureMessage,
     DateTime? lastRefreshAt,
   }) = _UsdRatesState;
 }

@@ -6,7 +6,8 @@ import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/add_asset_to_account_usecase.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/count_asset_positions_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
-import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_picker_item_entity.dart';
+import 'package:asset_tuner/domain/asset/usecase/get_assets_for_subaccount_picker_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
@@ -22,7 +23,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     this._getCachedSession,
     this._getProfile,
     this._bootstrapProfile,
-    this._getAssets,
+    this._getAssetsForSubaccountPicker,
     this._countPositions,
     this._addAssetToAccount,
   ) : super(const AddAssetState());
@@ -30,22 +31,28 @@ class AddAssetCubit extends Cubit<AddAssetState> {
   final GetCachedSessionUseCase _getCachedSession;
   final GetProfileUseCase _getProfile;
   final BootstrapProfileUseCase _bootstrapProfile;
-  final GetAssetsUseCase _getAssets;
+  final GetAssetsForSubaccountPickerUseCase _getAssetsForSubaccountPicker;
   final CountAssetPositionsUseCase _countPositions;
   final AddAssetToAccountUseCase _addAssetToAccount;
+  final Map<AssetKind, List<AssetPickerItemEntity>> _pickerCache = {};
 
   Future<void> load(String accountId) async {
     emit(
       state.copyWith(
         status: AddAssetStatus.loading,
         failureCode: null,
+        failureMessage: null,
         navigation: null,
+        selectedKind: null,
         selectedAssetId: null,
         query: '',
+        assets: const [],
+        visibleAssets: const [],
         name: '',
         balanceText: '',
         nameError: null,
         balanceError: null,
+        isCatalogLoading: false,
       ),
     );
 
@@ -73,27 +80,15 @@ class AddAssetCubit extends Cubit<AddAssetState> {
       return;
     }
 
-    final assets = await _getAssets();
     final positionCount = await _countPositions();
     if (isClosed) return;
 
-    final assetList = switch (assets) {
-      Success<List<AssetEntity>>(value: final list) => list,
-      FailureResult<List<AssetEntity>>() => const <AssetEntity>[],
-    };
     final count = switch (positionCount) {
       Success<int>(value: final v) => v,
       FailureResult<int>() => 0,
     };
 
-    if (assetList.isEmpty) {
-      emit(
-        state.copyWith(status: AddAssetStatus.error, failureCode: 'unknown'),
-      );
-      return;
-    }
-
-    final sortedAssets = [...assetList]..sort(_assetSort);
+    _pickerCache.clear();
 
     emit(
       state.copyWith(
@@ -101,8 +96,8 @@ class AddAssetCubit extends Cubit<AddAssetState> {
         accountId: accountId,
         plan: profile.plan,
         entitlements: profile.entitlements,
-        assets: sortedAssets,
-        visibleAssets: sortedAssets,
+        assets: const [],
+        visibleAssets: const [],
         totalPositionsCount: count,
       ),
     );
@@ -114,20 +109,104 @@ class AddAssetCubit extends Cubit<AddAssetState> {
 
   void updateQuery(String query) {
     final normalized = query.trim();
-    final assets = state.assets;
+    final source = state.assets;
+    if (source.isEmpty) {
+      emit(state.copyWith(query: query, visibleAssets: const []));
+      return;
+    }
     if (normalized.isEmpty) {
-      emit(state.copyWith(query: query, visibleAssets: assets));
+      emit(state.copyWith(query: query, visibleAssets: source));
       return;
     }
     final q = normalized.toLowerCase();
-    final filtered = assets.where((a) {
+    final filtered = source.where((a) {
       return a.code.toLowerCase().contains(q) ||
           a.name.toLowerCase().contains(q);
     }).toList();
     emit(state.copyWith(query: query, visibleAssets: filtered));
   }
 
+  Future<void> selectKind(AssetKind kind) async {
+    if (state.status != AddAssetStatus.ready) {
+      return;
+    }
+
+    final cached = _pickerCache[kind];
+    if (cached != null) {
+      final selectedAssetId = cached.any((a) => a.id == state.selectedAssetId)
+          ? state.selectedAssetId
+          : null;
+      emit(
+        state.copyWith(
+          selectedKind: kind,
+          selectedAssetId: selectedAssetId,
+          query: '',
+          assets: cached,
+          visibleAssets: cached,
+          failureCode: null,
+          failureMessage: null,
+          isCatalogLoading: false,
+        ),
+      );
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        selectedKind: kind,
+        selectedAssetId: null,
+        query: '',
+        assets: const [],
+        visibleAssets: const [],
+        failureCode: null,
+        failureMessage: null,
+        isCatalogLoading: true,
+      ),
+    );
+
+    final result = await _getAssetsForSubaccountPicker(kind: kind);
+    if (isClosed) return;
+    switch (result) {
+      case Success<List<AssetPickerItemEntity>>(value: final items):
+        final sorted = [...items]..sort(_assetSort);
+        _pickerCache[kind] = sorted;
+        emit(
+          state.copyWith(
+            assets: sorted,
+            visibleAssets: sorted,
+            isCatalogLoading: false,
+            failureCode: null,
+            failureMessage: null,
+          ),
+        );
+      case FailureResult<List<AssetPickerItemEntity>>(failure: final failure):
+        emit(
+          state.copyWith(
+            assets: const [],
+            visibleAssets: const [],
+            isCatalogLoading: false,
+            failureCode: failure.code,
+            failureMessage: failure.message,
+          ),
+        );
+    }
+  }
+
   void selectAsset(String assetId) {
+    final selected = _findAssetById(assetId);
+    if (selected == null) {
+      return;
+    }
+    if (!selected.isUnlocked) {
+      emit(
+        state.copyWith(
+          navigation: const AddAssetNavigation(
+            destination: AddAssetDestination.paywall,
+          ),
+        ),
+      );
+      return;
+    }
     emit(state.copyWith(selectedAssetId: assetId));
   }
 
@@ -145,6 +224,22 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     if (state.status != AddAssetStatus.ready ||
         accountId == null ||
         assetId == null) {
+      return;
+    }
+
+    final selectedAsset = _findAssetById(assetId);
+    if (selectedAsset == null) {
+      emit(state.copyWith(failureCode: 'validation'));
+      return;
+    }
+    if (!selectedAsset.isUnlocked) {
+      emit(
+        state.copyWith(
+          navigation: const AddAssetNavigation(
+            destination: AddAssetDestination.paywall,
+          ),
+        ),
+      );
       return;
     }
 
@@ -199,7 +294,13 @@ class AddAssetCubit extends Cubit<AddAssetState> {
           ),
         );
       case FailureResult(failure: final failure):
-        emit(state.copyWith(isSaving: false, failureCode: failure.code));
+        emit(
+          state.copyWith(
+            isSaving: false,
+            failureCode: failure.code,
+            failureMessage: failure.message,
+          ),
+        );
     }
   }
 
@@ -227,11 +328,19 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     }
   }
 
-  int _assetSort(AssetEntity a, AssetEntity b) {
-    final kindOrder = a.kind.index.compareTo(b.kind.index);
-    if (kindOrder != 0) {
-      return kindOrder;
+  int _assetSort(AssetPickerItemEntity a, AssetPickerItemEntity b) {
+    if (a.rank != b.rank) {
+      return a.rank.compareTo(b.rank);
     }
     return a.code.compareTo(b.code);
+  }
+
+  AssetPickerItemEntity? _findAssetById(String assetId) {
+    for (final asset in state.assets) {
+      if (asset.id == assetId) {
+        return asset;
+      }
+    }
+    return null;
   }
 }

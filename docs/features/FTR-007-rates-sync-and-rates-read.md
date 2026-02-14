@@ -3,6 +3,10 @@
 ## Summary
 Fetch fiat FX and crypto USD prices hourly via a Supabase scheduled job and store them in the DB as USD-pivot `usdPrice`, exposed to clients as read-only rates with a visible “last updated” timestamp.
 
+The implementation uses a two-layer backend model:
+- provider-layer caches (`fx_rates_usd`, `crypto_rates_usd`, CoinGecko metadata tables),
+- client-facing projection (`asset_rates_usd`) for compatibility with existing client reads.
+
 Source references:
 - Product: `docs/prd/prd.md` (rates sources + hourly refresh), `docs/prd/requirements.md` (FR-060..FR-064, FR-011)
 - Tech: `docs/tech/stack.md`, `docs/tech/integrations.md`, `docs/tech/api_assumptions.md` (`asset_rates_usd`, `POST /rates_sync`)
@@ -14,8 +18,9 @@ As a user, I want my totals to be converted using up-to-date rates, so that the 
 Scope:
 - Backend scheduled job runs at least hourly to:
   - fetch FX from OpenExchangeRates,
-  - fetch crypto USD prices from CoinGecko,
-  - upsert latest `usd_price` per supported asset.
+  - fetch crypto USD prices from CoinGecko (`/simple/price`, no hourly `/coins/list`),
+  - upsert provider-layer rates and project latest `usd_price` per visible asset.
+- Backend metadata scheduled job runs weekly to refresh CoinGecko caches (`coins/list`, `coins/markets`) and keep crypto mapping/ranking stable.
 - Persist rates timestamp (`as_of`) for display and debugging.
 - Client reads rates from Supabase DB only (no direct provider calls).
 
@@ -29,6 +34,9 @@ Out of scope:
 - Given a rates sync run fails due to provider errors, when the job completes, then:
   - the previous last-known rates remain available to clients,
   - failure is logged server-side (implementation detail) and does not delete existing rates (see NFR-004 in `docs/prd/requirements.md`).
+- Given the weekly metadata refresh runs, when it completes successfully, then:
+  - `cg_coins_cache` and `cg_top_coins` are updated,
+  - hourly sync can resolve crypto prices without calling `/coins/list`.
 - Given the client loads rates, when it queries the DB, then it receives the latest `usd_price` per asset and the corresponding `as_of` timestamp.
 - Given the Main screen is shown, when rates are available, then the UI displays “Rates updated at <timestamp>” using locale-aware formatting (see FTR-002).
 
@@ -50,6 +58,11 @@ Rates update server-side hourly, but the client may need to read them from multi
 - If a refresh fails, keep using the last-known snapshot (and show its `as_of` timestamp).
 
 ## Data needs (entities + fields)
+- Provider-layer (server-managed):
+  - `fx_rates_usd { code, usd_price, as_of, source }`
+  - `crypto_rates_usd { coingecko_id, usd_price, as_of, source }`
+  - `cg_coins_cache { coingecko_id, symbol, symbol_upper, name, updated_at }`
+  - `cg_top_coins { coingecko_id, symbol_upper, name, rank, market_cap, updated_at }`
 - Read-only `asset_rates_usd`
   - `asset_id: uuid`
   - `usd_price: text` (decimal string)
@@ -57,6 +70,7 @@ Rates update server-side hourly, but the client may need to read them from multi
   - Optional: `provider: text`, `source_ref: text`
 - Edge Function:
   - `POST /rates_sync` (cron-only; not callable by clients)
+  - `POST /coingecko_refresh_metadata` (weekly cron-only)
 
 ## Analytics (events, optional)
 Local logging only (no third-party in MVP per `docs/tech/integrations.md`):

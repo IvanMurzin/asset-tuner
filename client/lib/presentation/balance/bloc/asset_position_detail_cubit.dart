@@ -188,6 +188,7 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
           state.copyWith(
             status: AssetPositionDetailStatus.error,
             failureCode: failure.code,
+            failureMessage: failure.message,
           ),
         );
     }
@@ -298,7 +299,8 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
           ),
         );
       case FailureResult<BalanceHistoryPageEntity>(failure: final failure):
-        emit(state.copyWith(bannerFailureCode: failure.code));
+        emit(state.copyWith(bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message));
     }
   }
 
@@ -330,7 +332,8 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
         );
       case FailureResult<BalanceHistoryPageEntity>(failure: final failure):
         emit(
-          state.copyWith(isLoadingMore: false, bannerFailureCode: failure.code),
+          state.copyWith(isLoadingMore: false, bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message),
         );
     }
   }
@@ -353,7 +356,8 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
         emit(state.copyWith(isMutating: false, subaccountName: updated.name));
       case FailureResult<AccountAssetEntity>(failure: final failure):
         emit(
-          state.copyWith(isMutating: false, bannerFailureCode: failure.code),
+          state.copyWith(isMutating: false, bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message),
         );
     }
   }
@@ -379,7 +383,8 @@ class AssetPositionDetailCubit extends Cubit<AssetPositionDetailState> {
         );
       case FailureResult<void>(failure: final failure):
         emit(
-          state.copyWith(isMutating: false, bannerFailureCode: failure.code),
+          state.copyWith(isMutating: false, bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message),
         );
     }
   }

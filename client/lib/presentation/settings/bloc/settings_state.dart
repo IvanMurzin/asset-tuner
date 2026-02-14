@@ -18,6 +18,7 @@ abstract class SettingsState with _$SettingsState {
     String? baseCurrency,
     String? plan,
     String? failureCode,
+    String? failureMessage,
     @Default(false) bool isSigningOut,
     SettingsNavigation? navigation,
   }) = _SettingsState;

@@ -68,6 +68,7 @@ class SignInCubit extends Cubit<SignInState> {
           state.copyWith(
             status: SignInStatus.idle,
             bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
           ),
         );
       case Success():
@@ -85,6 +86,7 @@ class SignInCubit extends Cubit<SignInState> {
           state.copyWith(
             status: SignInStatus.idle,
             bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
           ),
         );
       case Success():
@@ -116,6 +118,7 @@ class SignInCubit extends Cubit<SignInState> {
           state.copyWith(
             status: SignInStatus.idle,
             bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
           ),
         );
       case Success(:final value):

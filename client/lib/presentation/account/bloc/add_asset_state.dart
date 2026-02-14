@@ -17,8 +17,9 @@ abstract class AddAssetState with _$AddAssetState {
     String? accountId,
     String? plan,
     EntitlementsEntity? entitlements,
-    @Default([]) List<AssetEntity> assets,
-    @Default([]) List<AssetEntity> visibleAssets,
+    AssetKind? selectedKind,
+    @Default([]) List<AssetPickerItemEntity> assets,
+    @Default([]) List<AssetPickerItemEntity> visibleAssets,
     @Default('') String query,
     String? selectedAssetId,
     @Default('') String name,
@@ -26,8 +27,10 @@ abstract class AddAssetState with _$AddAssetState {
     String? nameError,
     String? balanceError,
     String? failureCode,
+    String? failureMessage,
     @Default(0) int totalPositionsCount,
     @Default(false) bool isSaving,
+    @Default(false) bool isCatalogLoading,
     AddAssetNavigation? navigation,
   }) = _AddAssetState;
 }

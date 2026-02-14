@@ -15,6 +15,7 @@ abstract class ManageSubscriptionState with _$ManageSubscriptionState {
     @Default(ManageSubscriptionStatus.loading) ManageSubscriptionStatus status,
     String? plan,
     String? failureCode,
+    String? failureMessage,
     @Default(false) bool isUpdating,
     ManageSubscriptionBanner? banner,
   }) = _ManageSubscriptionState;

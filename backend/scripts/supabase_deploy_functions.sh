@@ -7,13 +7,14 @@ require_cmd supabase
 
 cd_backend
 
-supabase functions deploy bootstrap_profile
-supabase functions deploy create_account
-supabase functions deploy account
-supabase functions deploy create_subaccount
-supabase functions deploy rename_subaccount
-supabase functions deploy subaccount
-supabase functions deploy update_subaccount_balance
-supabase functions deploy update_base_currency
-supabase functions deploy update_plan
+supabase functions deploy bootstrap_profile --no-verify-jwt
+supabase functions deploy create_account --no-verify-jwt
+supabase functions deploy account --no-verify-jwt
+supabase functions deploy create_subaccount --no-verify-jwt
+supabase functions deploy rename_subaccount --no-verify-jwt
+supabase functions deploy subaccount --no-verify-jwt
+supabase functions deploy update_subaccount_balance --no-verify-jwt
+supabase functions deploy update_base_currency --no-verify-jwt
+supabase functions deploy update_plan --no-verify-jwt
 supabase functions deploy rates_sync --no-verify-jwt
+supabase functions deploy coingecko_refresh_metadata --no-verify-jwt

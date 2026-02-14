@@ -139,7 +139,11 @@ class FakeCurrencyRepository implements ICurrencyRepository {
             name: 'United States Dollar',
             symbol: '\$',
           ),
+          CurrencyEntity(code: 'EUR', name: 'Euro', symbol: 'EUR'),
           CurrencyEntity(code: 'GBP', name: 'British Pound', symbol: 'GBP'),
+          CurrencyEntity(code: 'JPY', name: 'Japanese Yen', symbol: 'JPY'),
+          CurrencyEntity(code: 'CNY', name: 'Chinese Yuan', symbol: 'CNY'),
+          CurrencyEntity(code: 'AUD', name: 'Australian Dollar', symbol: 'AUD'),
         ]);
   }
 }
@@ -158,41 +162,44 @@ void main() {
     expect(cubit.state.navigation?.destination, BaseCurrencyDestination.signIn);
   });
 
-  test('continueNext routes to paywall when currency blocked', () async {
-    final cubit = BaseCurrencyCubit(
-      GetCachedSessionUseCase(
-        FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
-        ),
-      ),
-      GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
-      GetProfileUseCase(
-        FakeProfileRepository(
-          profileResult: const Success(
-            ProfileEntity(
-              baseCurrency: 'USD',
-              plan: 'free',
-              entitlements: freeEntitlements,
+  test(
+    'continueNext routes to paywall when currency outside free top-5',
+    () async {
+      final cubit = BaseCurrencyCubit(
+        GetCachedSessionUseCase(
+          FakeAuthRepository(
+            cachedSession: const AuthSessionEntity(
+              userId: 'user_1',
+              email: 'user@example.com',
             ),
           ),
         ),
-      ),
-      UpdateBaseCurrencyUseCase(FakeProfileRepository()),
-    );
+        GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+        GetProfileUseCase(
+          FakeProfileRepository(
+            profileResult: const Success(
+              ProfileEntity(
+                baseCurrency: 'USD',
+                plan: 'free',
+                entitlements: freeEntitlements,
+              ),
+            ),
+          ),
+        ),
+        UpdateBaseCurrencyUseCase(FakeProfileRepository()),
+      );
 
-    await Future<void>.delayed(const Duration(milliseconds: 1));
+      await Future<void>.delayed(const Duration(milliseconds: 1));
 
-    cubit.selectCurrency('GBP');
-    await cubit.continueNext();
+      cubit.selectCurrency('AUD');
+      await cubit.continueNext();
 
-    expect(
-      cubit.state.navigation?.destination,
-      BaseCurrencyDestination.paywall,
-    );
-  });
+      expect(
+        cubit.state.navigation?.destination,
+        BaseCurrencyDestination.paywall,
+      );
+    },
+  );
 
   test('continueNext saves when currency allowed', () async {
     final cubit = BaseCurrencyCubit(

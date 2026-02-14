@@ -73,6 +73,7 @@ class SignUpCubit extends Cubit<SignUpState> {
           state.copyWith(
             status: SignUpStatus.idle,
             bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
             bannerType: SignUpBannerType.failure,
           ),
         );

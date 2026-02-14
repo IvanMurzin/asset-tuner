@@ -35,12 +35,12 @@ class SplashPage extends StatelessWidget {
             }
             return;
           }
-          if (state case SplashError(:final failureCode)) {
+          if (state case SplashError(:final failureCode, :final failureMessage)) {
             if (context.mounted) {
               showDSSnackBar(
                 context,
                 variant: DSSnackBarVariant.error,
-                message: _failureMessage(l10n, failureCode),
+                message: _failureMessage(l10n, failureCode, failureMessage),
               );
             }
           }
@@ -74,7 +74,8 @@ class SplashPage extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String code) {
+  String _failureMessage(AppLocalizations l10n, String code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'rate_limited' => l10n.errorRateLimited,
       'network' => l10n.errorNetwork,

@@ -183,6 +183,7 @@ class PaywallPage extends StatelessWidget {
                                 message: _failureMessage(
                                   l10n,
                                   state.upgradeFailureCode,
+                                  state.upgradeFailureMessage,
                                 ),
                                 variant: DSInlineBannerVariant.danger,
                               ),
@@ -293,7 +294,8 @@ class PaywallPage extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'network' => l10n.errorNetwork,
       'unauthorized' => l10n.errorUnauthorized,

@@ -31,3 +31,6 @@ Anything that cannot be automated via CLI/SQL is listed in `requirements.md`.
   - `./scripts/supabase_start_local.sh`
 - Reset local DB (re-applies migrations + runs `supabase/seed.sql`):
   - `./scripts/supabase_reset_local.sh`
+- Reset linked remote DB (destructive: drops all data, reapplies migrations + seed):
+  - `./scripts/supabase_reset_remote.sh dev`
+  - `./scripts/supabase_reset_remote.sh prod`

@@ -36,7 +36,7 @@ class SplashCubit extends Cubit<SplashState> {
           if (isClosed) return;
           emit(const SplashState.route(destination: SplashDestination.signIn));
         } else {
-          emit(SplashState.error(failureCode: failure.code));
+          emit(SplashState.error(failureCode: failure.code, failureMessage: failure.message));
         }
       case Success(:final value):
         if (value == null) {
@@ -55,7 +55,7 @@ class SplashCubit extends Cubit<SplashState> {
                 const SplashState.route(destination: SplashDestination.signIn),
               );
             } else {
-              emit(SplashState.error(failureCode: failure.code));
+              emit(SplashState.error(failureCode: failure.code, failureMessage: failure.message));
             }
           case Success(:final value):
             if (value.wasBaseCurrencyDefaulted) {

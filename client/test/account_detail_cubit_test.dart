@@ -12,6 +12,7 @@ import 'package:asset_tuner/domain/account_asset/repository/i_account_asset_repo
 import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
 import 'package:asset_tuner/domain/account_asset/usecase/remove_asset_from_account_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_picker_item_entity.dart';
 import 'package:asset_tuner/domain/asset/repository/i_asset_repository.dart';
 import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
@@ -178,6 +179,13 @@ class FakeAssetRepository implements IAssetRepository {
   @override
   Future<Result<List<AssetEntity>>> fetchAssets() async {
     return Success(assets);
+  }
+
+  @override
+  Future<Result<List<AssetPickerItemEntity>>> fetchAssetsForSubaccountPicker({
+    required AssetKind kind,
+  }) async {
+    return const Success([]);
   }
 }
 

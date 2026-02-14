@@ -38,7 +38,7 @@ class ArchivedAccountsPage extends StatelessWidget {
               appBar: DSAppBar(title: l10n.settingsArchivedAccounts),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: _failureMessage(l10n, state.failureCode),
+                message: _failureMessage(l10n, state.failureCode, state.failureMessage),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<ArchivedAccountsCubit>().load(),
               ),
@@ -106,7 +106,8 @@ class ArchivedAccountsPage extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code) {
+  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
+    if (message != null && message.trim().isNotEmpty) return message.trim();
     return switch (code) {
       'network' => l10n.errorNetwork,
       'unauthorized' => l10n.errorUnauthorized,

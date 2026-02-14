@@ -26,7 +26,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
   final GetFiatCurrenciesUseCase _getFiatCurrencies;
   final UpdateBaseCurrencyUseCase _updateBaseCurrency;
 
-  static const popularCodes = ['USD', 'EUR', 'RUB'];
+  static const _freeUnlockedByRank = 5;
   static const _minQueryLength = 2;
   static const _maxResults = 50;
 
@@ -106,6 +106,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
             plan: profile.plan,
             entitlements: profile.entitlements,
             loadFailureCode: failure.code,
+            loadFailureMessage: failure.message,
           ),
         );
     }
@@ -202,6 +203,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
             isSaving: false,
             bannerType: BaseCurrencySettingsBannerType.saveFailure,
             bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
           ),
         );
     }
@@ -215,7 +217,10 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     if (entitlements.anyBaseCurrency) {
       return true;
     }
-    return entitlements.freeBaseCurrencyCodes.contains(code.toUpperCase());
+    final index = state.currencies.indexWhere(
+      (currency) => currency.code.toUpperCase() == code.toUpperCase(),
+    );
+    return index >= 0 && index < _freeUnlockedByRank;
   }
 
   BaseCurrencySettingsState _recomputeVisible(BaseCurrencySettingsState input) {
@@ -226,44 +231,30 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
       return input.copyWith(visibleCurrencies: const [], hasMoreResults: false);
     }
 
-    final popular = popularCodes
-        .map(
-          (code) =>
-              currencies.where((c) => c.code.toUpperCase() == code).toList(),
-        )
-        .expand((list) => list)
-        .toList();
-    final popularSet = popularCodes.map((e) => e.toUpperCase()).toSet();
-
     if (input.showAll) {
-      final all = [
-        ...popular,
-        ...currencies.where((c) => !popularSet.contains(c.code.toUpperCase())),
-      ];
-      final visible = all.take(_maxResults).toList();
+      final visible = currencies.take(_maxResults).toList();
       return input.copyWith(
         visibleCurrencies: visible,
-        hasMoreResults: all.length > visible.length,
+        hasMoreResults: currencies.length > visible.length,
       );
     }
 
     if (query.length < _minQueryLength) {
-      return input.copyWith(visibleCurrencies: popular, hasMoreResults: false);
+      final visible = currencies.take(_maxResults).toList();
+      return input.copyWith(
+        visibleCurrencies: visible,
+        hasMoreResults: currencies.length > visible.length,
+      );
     }
 
     final matched = currencies.where((currency) {
       return currency.code.toLowerCase().contains(query) ||
           currency.name.toLowerCase().contains(query);
-    });
-    final restMatched = matched.where(
-      (c) => !popularSet.contains(c.code.toUpperCase()),
-    );
-    final remainingLimit = (_maxResults - popular.length).clamp(0, _maxResults);
-    final limitedRest = restMatched.take(remainingLimit).toList();
-    final limited = [...popular, ...limitedRest];
+    }).toList();
+    final limited = matched.take(_maxResults).toList();
     return input.copyWith(
       visibleCurrencies: limited,
-      hasMoreResults: restMatched.length > limitedRest.length,
+      hasMoreResults: matched.length > limited.length,
     );
   }
 }

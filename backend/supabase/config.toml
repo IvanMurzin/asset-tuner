@@ -40,3 +40,5 @@ enabled = true
   [functions.rates_sync]
   verify_jwt = false
 
+  [functions.coingecko_refresh_metadata]
+  verify_jwt = false

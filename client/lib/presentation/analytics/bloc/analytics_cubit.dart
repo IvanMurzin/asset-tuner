@@ -63,7 +63,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
   Future<void> _fetch({required bool silent}) async {
     if (!silent) {
-      emit(state.copyWith(status: AnalyticsStatus.loading, failureCode: null));
+      emit(state.copyWith(status: AnalyticsStatus.loading, failureCode: null, failureMessage: null));
     }
 
     final session = await _getCachedSession();
@@ -107,6 +107,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           state.copyWith(
             status: AnalyticsStatus.error,
             failureCode: failure.code,
+            failureMessage: failure.message,
           ),
         );
         return;
@@ -135,6 +136,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           state.copyWith(
             status: AnalyticsStatus.error,
             failureCode: failure.code,
+            failureMessage: failure.message,
           ),
         );
         return;
@@ -162,6 +164,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             state.copyWith(
               status: AnalyticsStatus.error,
               failureCode: failure.code,
+              failureMessage: failure.message,
             ),
           );
           return;
@@ -197,6 +200,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           state.copyWith(
             status: AnalyticsStatus.error,
             failureCode: failure.code,
+            failureMessage: failure.message,
           ),
         );
         return;

@@ -51,6 +51,7 @@ class UsdRatesCubit extends Cubit<UsdRatesState> {
                   ? UsdRatesStatus.error
                   : state.status,
               failureCode: failure.code,
+            failureMessage: failure.message,
               lastRefreshAt: DateTime.now(),
             ),
           );
