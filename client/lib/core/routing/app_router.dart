@@ -13,11 +13,12 @@ import 'package:asset_tuner/presentation/analytics/page/analytics_page.dart';
 import 'package:asset_tuner/presentation/auth/page/otp_page.dart';
 import 'package:asset_tuner/presentation/auth/page/sign_in_page.dart';
 import 'package:asset_tuner/presentation/auth/page/sign_up_page.dart';
-import 'package:asset_tuner/presentation/auth/page/splash_page.dart';
+import 'package:asset_tuner/presentation/auth/widget/home_gate_page.dart';
 import 'package:asset_tuner/presentation/balance/page/add_balance_page.dart';
 import 'package:asset_tuner/presentation/balance/page/asset_position_detail_page.dart';
 import 'package:asset_tuner/presentation/home/page/main_shell_page.dart';
 import 'package:asset_tuner/presentation/onboarding/page/base_currency_page.dart';
+import 'package:asset_tuner/presentation/onboarding/page/onboarding_carousel_page.dart';
 import 'package:asset_tuner/presentation/overview/page/overview_page.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
@@ -32,7 +33,7 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: AppRoutes.home,
-      builder: (context, state) => const SplashPage(),
+      builder: (context, state) => const HomeGatePage(),
     ),
     GoRoute(
       path: AppRoutes.designSystem,
@@ -50,6 +51,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.onboardingBaseCurrency,
       builder: (context, state) => const BaseCurrencyPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.onboardingCarousel,
+      builder: (context, state) => const OnboardingCarouselPage(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {

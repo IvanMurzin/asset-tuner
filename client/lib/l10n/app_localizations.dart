@@ -458,6 +458,54 @@ abstract class AppLocalizations {
   /// **'Upgrade required to select this currency.'**
   String get onboardingUpgradeRequired;
 
+  /// No description provided for @onboardingCarouselTitle1.
+  ///
+  /// In en, this message translates to:
+  /// **'One number for all your money'**
+  String get onboardingCarouselTitle1;
+
+  /// No description provided for @onboardingCarouselBody1.
+  ///
+  /// In en, this message translates to:
+  /// **'Banks, wallets, cash in different currencies — see your total wealth in one place.'**
+  String get onboardingCarouselBody1;
+
+  /// No description provided for @onboardingCarouselTitle2.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple and manual'**
+  String get onboardingCarouselTitle2;
+
+  /// No description provided for @onboardingCarouselBody2.
+  ///
+  /// In en, this message translates to:
+  /// **'No bank connections. Add accounts and balances yourself. Get instant totals in your chosen currency.'**
+  String get onboardingCarouselBody2;
+
+  /// No description provided for @onboardingCarouselTitle3.
+  ///
+  /// In en, this message translates to:
+  /// **'Always in sync'**
+  String get onboardingCarouselTitle3;
+
+  /// No description provided for @onboardingCarouselBody3.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates updated hourly. Your data syncs across devices.'**
+  String get onboardingCarouselBody3;
+
+  /// No description provided for @onboardingCarouselNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingCarouselNext;
+
+  /// No description provided for @onboardingCarouselGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingCarouselGetStarted;
+
   /// No description provided for @overviewTitle.
   ///
   /// In en, this message translates to:

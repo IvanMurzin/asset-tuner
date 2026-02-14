@@ -5,6 +5,7 @@ abstract final class AppRoutes {
   static const String signUp = '/sign-up';
   static const String otp = '/otp';
   static const String onboardingBaseCurrency = '/onboarding/base-currency';
+  static const String onboardingCarousel = '/onboarding/carousel';
 
   static const String main = '/main';
   static const String analytics = '/analytics';

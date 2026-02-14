@@ -196,6 +196,33 @@ class AppLocalizationsRu extends AppLocalizations {
       'Нужна подписка для выбора этой валюты.';
 
   @override
+  String get onboardingCarouselTitle1 => 'Одна цифра для всех ваших денег';
+
+  @override
+  String get onboardingCarouselBody1 =>
+      'Банки, кошельки, наличные в разных валютах — ваш общий баланс в одном месте.';
+
+  @override
+  String get onboardingCarouselTitle2 => 'Просто и вручную';
+
+  @override
+  String get onboardingCarouselBody2 =>
+      'Без подключения банков. Добавляйте счета и балансы сами. Мгновенный итог в выбранной валюте.';
+
+  @override
+  String get onboardingCarouselTitle3 => 'Всегда в синхронизации';
+
+  @override
+  String get onboardingCarouselBody3 =>
+      'Курсы обновляются каждый час. Данные синхронизируются между устройствами.';
+
+  @override
+  String get onboardingCarouselNext => 'Далее';
+
+  @override
+  String get onboardingCarouselGetStarted => 'Начать';
+
+  @override
   String get overviewTitle => 'Обзор';
 
   @override

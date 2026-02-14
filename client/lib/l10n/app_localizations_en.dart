@@ -197,6 +197,33 @@ class AppLocalizationsEn extends AppLocalizations {
       'Upgrade required to select this currency.';
 
   @override
+  String get onboardingCarouselTitle1 => 'One number for all your money';
+
+  @override
+  String get onboardingCarouselBody1 =>
+      'Banks, wallets, cash in different currencies — see your total wealth in one place.';
+
+  @override
+  String get onboardingCarouselTitle2 => 'Simple and manual';
+
+  @override
+  String get onboardingCarouselBody2 =>
+      'No bank connections. Add accounts and balances yourself. Get instant totals in your chosen currency.';
+
+  @override
+  String get onboardingCarouselTitle3 => 'Always in sync';
+
+  @override
+  String get onboardingCarouselBody3 =>
+      'Rates updated hourly. Your data syncs across devices.';
+
+  @override
+  String get onboardingCarouselNext => 'Next';
+
+  @override
+  String get onboardingCarouselGetStarted => 'Get started';
+
+  @override
   String get overviewTitle => 'Overview';
 
   @override
