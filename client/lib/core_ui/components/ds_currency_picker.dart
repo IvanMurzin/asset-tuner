@@ -1,5 +1,4 @@
 import 'package:asset_tuner/core_ui/components/ds_empty_state.dart';
-import 'package:asset_tuner/core_ui/components/ds_list_row.dart';
 import 'package:asset_tuner/core_ui/components/ds_search_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:flutter/material.dart';
@@ -203,6 +202,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
     final spacing = context.dsSpacing;
     final colors = context.dsColors;
     final typography = context.dsTypography;
+    final radius = context.dsRadius;
     final filtered = _filteredOptions(widget.options, _queryController.text);
 
     return SafeArea(
@@ -284,30 +284,96 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                         ),
                         itemCount: filtered.length,
                         separatorBuilder: (context, index) =>
-                            Divider(height: 1, color: colors.border),
+                            SizedBox(height: spacing.s8),
                         itemBuilder: (context, index) {
                           final option = filtered[index];
                           final isSelected = option.id == widget.selectedId;
-                          return DSListRow(
-                            title: _title(option),
-                            subtitle: option.tertiaryText,
-                            selected: isSelected,
-                            trailing: option.locked
-                                ? Icon(
-                                    Icons.lock_outline,
-                                    color: colors.textTertiary,
-                                  )
-                                : isSelected
-                                ? Icon(
-                                    Icons.check_circle,
-                                    color: colors.primary,
-                                  )
-                                : Icon(
-                                    Icons.arrow_outward,
-                                    color: colors.textTertiary,
-                                    size: 18,
+                          return Opacity(
+                            opacity: option.locked ? 0.6 : 1.0,
+                            child: Material(
+                              color: colors.surface,
+                              borderRadius: BorderRadius.circular(radius.r12),
+                              child: InkWell(
+                                onTap: () => Navigator.of(context).pop(option.id),
+                                borderRadius: BorderRadius.circular(radius.r12),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: spacing.s12,
+                                    vertical: spacing.s12,
                                   ),
-                            onTap: () => Navigator.of(context).pop(option.id),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(radius.r12),
+                                    border: Border.all(color: colors.border),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: colors.primary.withValues(alpha: 0.12),
+                                          borderRadius: BorderRadius.circular(radius.r8),
+                                        ),
+                                        child: Icon(
+                                          Icons.currency_exchange,
+                                          color: colors.primary,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      SizedBox(width: spacing.s12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              _title(option),
+                                              style: typography.body.copyWith(
+                                                fontWeight: isSelected
+                                                    ? FontWeight.w600
+                                                    : FontWeight.w400,
+                                                color: colors.textPrimary,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            if (option.tertiaryText != null &&
+                                                option.tertiaryText!.isNotEmpty) ...[
+                                              SizedBox(height: spacing.s4),
+                                              Text(
+                                                option.tertiaryText!,
+                                                style: typography.caption.copyWith(
+                                                  color: colors.textSecondary,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                      if (option.locked)
+                                        Icon(
+                                          Icons.lock_outline,
+                                          color: colors.textTertiary,
+                                          size: 20,
+                                        )
+                                      else if (isSelected)
+                                        Icon(
+                                          Icons.check_circle,
+                                          color: colors.primary,
+                                          size: 22,
+                                        )
+                                      else
+                                        Icon(
+                                          Icons.arrow_outward,
+                                          color: colors.textTertiary,
+                                          size: 18,
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           );
                         },
                       ),

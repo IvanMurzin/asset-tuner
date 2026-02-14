@@ -4,12 +4,16 @@ import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
+import 'package:asset_tuner/core_ui/components/ds_base_currency_value_card.dart';
+import 'package:asset_tuner/core_ui/components/ds_unlock_currencies_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/onboarding/bloc/base_currency_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -50,7 +54,6 @@ class BaseCurrencyPage extends StatelessWidget {
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
-          final typography = context.dsTypography;
 
           if (state.status == BaseCurrencyStatus.loading) {
             return const Scaffold(body: Center(child: DSLoader()));
@@ -61,7 +64,12 @@ class BaseCurrencyPage extends StatelessWidget {
               appBar: DSAppBar(title: l10n.onboardingBaseCurrencyTitle),
               body: DSInlineError(
                 title: l10n.onboardingLoadError,
-                message: _failureMessage(l10n, state.loadFailureCode, state.loadFailureMessage),
+                message: resolveFailureMessage(
+                  context,
+                  code: state.loadFailureCode,
+                  rawMessage: state.loadFailureMessage,
+                  service: ErrorService.database,
+                ),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<BaseCurrencyCubit>().load(),
               ),
@@ -69,7 +77,7 @@ class BaseCurrencyPage extends StatelessWidget {
           }
 
           final options = _buildOptions(state);
-          final bannerMessage = _bannerMessage(l10n, state);
+          final bannerMessage = _bannerMessage(context, l10n, state);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.onboardingBaseCurrencyTitle),
@@ -84,35 +92,11 @@ class BaseCurrencyPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(spacing.s24),
-                      decoration: BoxDecoration(
-                        color: context.dsColors.surface,
-                        borderRadius: BorderRadius.circular(
-                          context.dsRadius.r16,
-                        ),
-                        border: Border.all(
-                          color: context.dsColors.border.withValues(alpha: 0.7),
-                        ),
-                        boxShadow: context.dsElevation.e1,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.onboardingBaseCurrencyTitle,
-                            style: typography.h2,
-                          ),
-                          SizedBox(height: spacing.s8),
-                          Text(
-                            l10n.onboardingBaseCurrencyBody,
-                            style: typography.body.copyWith(
-                              color: context.dsColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
+                    DSBaseCurrencyValueCard(
+                      title: l10n.onboardingBaseCurrencyTitle,
+                      caption: l10n.baseCurrencyConversionCaption,
+                      currencyCode: state.selectedCode,
+                      codeFallback: l10n.notAvailable,
                     ),
                     SizedBox(height: spacing.s24),
                     if (bannerMessage != null)
@@ -126,6 +110,23 @@ class BaseCurrencyPage extends StatelessWidget {
                             : DSInlineBannerVariant.info,
                       ),
                     if (bannerMessage != null) SizedBox(height: spacing.s16),
+                    if (!(state.entitlements?.anyBaseCurrency ?? false)) ...[
+                      DSUnlockCurrenciesCard(
+                        title: l10n.baseCurrencySettingsPaywallHint,
+                        onTap: () async {
+                          await context.push<bool>(
+                            AppRoutes.paywall,
+                            extra: const PaywallArgs(
+                              reason: PaywallReason.baseCurrency,
+                            ),
+                          );
+                          if (context.mounted) {
+                            await context.read<BaseCurrencyCubit>().load();
+                          }
+                        },
+                      ),
+                      SizedBox(height: spacing.s16),
+                    ],
                     DSCurrencyPicker(
                       options: options,
                       selectedId: state.selectedCode?.toUpperCase(),
@@ -188,25 +189,17 @@ class BaseCurrencyPage extends StatelessWidget {
     }).toList();
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'rate_limited' => l10n.errorRateLimited,
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'conflict' => l10n.errorConflict,
-      _ => l10n.errorGeneric,
-    };
-  }
-
-  String? _bannerMessage(AppLocalizations l10n, BaseCurrencyState state) {
+  String? _bannerMessage(BuildContext context, AppLocalizations l10n, BaseCurrencyState state) {
     return switch (state.bannerType) {
       BaseCurrencyBannerType.selectCurrency => l10n.onboardingSelectCurrency,
-      BaseCurrencyBannerType.saveFailure => _failureMessage(
-        l10n,
-        state.bannerFailureCode,
-        state.bannerFailureMessage,
-      ),
+      BaseCurrencyBannerType.saveFailure => state.bannerFailureCode != null
+          ? resolveFailureMessage(
+              context,
+              code: state.bannerFailureCode,
+              rawMessage: state.bannerFailureMessage,
+              service: ErrorService.database,
+            )
+          : l10n.errorGeneric,
       null => null,
     };
   }

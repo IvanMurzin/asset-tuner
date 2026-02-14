@@ -12,6 +12,8 @@ import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class AccountActionsPage extends StatelessWidget {
   const AccountActionsPage({super.key});
@@ -41,7 +43,7 @@ class AccountActionsPage extends StatelessWidget {
           final colors = context.dsColors;
           final radius = context.dsRadius;
 
-          final bannerText = _bannerText(l10n, state.failureCode, state.failureMessage);
+          final bannerText = _bannerText(context, l10n, state.failureCode, state.failureMessage);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.profileSectionAccount),
@@ -139,12 +141,14 @@ class AccountActionsPage extends StatelessWidget {
     );
   }
 
-  String? _bannerText(AppLocalizations l10n, String? code, String? message) {
+  String? _bannerText(BuildContext context, AppLocalizations l10n, String? code, String? message) {
     if (code == null) return null;
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'entitlements' => l10n.settingsEntitlementsError,
-      _ => l10n.errorGeneric,
-    };
+    if (code == 'entitlements') return l10n.settingsEntitlementsError;
+    return resolveFailureMessage(
+      context,
+      code: code,
+      rawMessage: message,
+      service: ErrorService.database,
+    );
   }
 }

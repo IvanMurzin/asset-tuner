@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_loader.dart';
-import 'package:asset_tuner/core_ui/components/ds_radio_row.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
+import 'package:asset_tuner/presentation/account/widget/account_type_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
@@ -18,6 +18,8 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_form_cubit.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class AccountFormPage extends StatefulWidget {
   const AccountFormPage({super.key, this.accountId});
@@ -80,6 +82,10 @@ class _AccountFormPageState extends State<AccountFormPage> {
                 if (id != null && id.isNotEmpty) {
                   context.go(
                     AppRoutes.accountDetail.replaceFirst(':id', id),
+                    extra: AccountDetailExtra(
+                      initialTitle: state.name,
+                      initialAccountType: state.type,
+                    ),
                   );
                 }
               } else {
@@ -100,7 +106,12 @@ class _AccountFormPageState extends State<AccountFormPage> {
               appBar: DSAppBar(title: l10n.accountsTitle),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: _failureMessage(l10n, state.failureCode, state.failureMessage),
+                message: resolveFailureMessage(
+                  context,
+                  code: state.failureCode,
+                  rawMessage: state.failureMessage,
+                  service: ErrorService.database,
+                ),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<AccountFormCubit>().load(
                   accountId: widget.accountId,
@@ -121,7 +132,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
               title: isEdit ? l10n.accountsEditTitle : l10n.accountsNewTitle,
             ),
             body: SafeArea(
-              child: Padding(
+              child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
                   spacing.s24,
                   spacing.s24,
@@ -134,85 +145,97 @@ class _AccountFormPageState extends State<AccountFormPage> {
                     if (state.failureCode != null) ...[
                       DSInlineBanner(
                         title: l10n.accountsTitle,
-                        message: _failureMessage(l10n, state.failureCode, state.failureMessage),
+                        message: resolveFailureMessage(
+                          context,
+                          code: state.failureCode,
+                          rawMessage: state.failureMessage,
+                          service: ErrorService.database,
+                        ),
                         variant: DSInlineBannerVariant.danger,
                       ),
                       SizedBox(height: spacing.s16),
                     ],
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            DSTextField(
-                              label: l10n.accountsNameLabel,
-                              hintText: l10n.accountsNameHint,
-                              controller: _nameController,
-                              enabled: !state.isSaving,
-                              errorText: _nameErrorText(l10n, state.nameError),
-                              onChanged: context
-                                  .read<AccountFormCubit>()
-                                  .updateName,
-                            ),
-                            SizedBox(height: spacing.s24),
-                            DSSectionTitle(title: l10n.accountsTypeLabel),
-                            SizedBox(height: spacing.s12),
-                            DSCard(
-                              padding: EdgeInsets.all(spacing.s8),
-                              child: Column(
-                                children: [
-                                  DSRadioRow(
-                                    title: l10n.accountsTypeBank,
-                                    selected: state.type == AccountType.bank,
-                                    onTap: state.isSaving
-                                        ? null
-                                        : () => context
-                                              .read<AccountFormCubit>()
-                                              .selectType(AccountType.bank),
-                                  ),
-                                  DSRadioRow(
-                                    title: l10n.accountsTypeCryptoWallet,
-                                    selected: state.type == AccountType.wallet,
-                                    onTap: state.isSaving
-                                        ? null
-                                        : () => context
-                                              .read<AccountFormCubit>()
-                                              .selectType(AccountType.wallet),
-                                  ),
-                                  DSRadioRow(
-                                    title: l10n.accountsTypeExchange,
-                                    selected:
-                                        state.type == AccountType.exchange,
-                                    onTap: state.isSaving
-                                        ? null
-                                        : () => context
-                                              .read<AccountFormCubit>()
-                                              .selectType(AccountType.exchange),
-                                  ),
-                                  DSRadioRow(
-                                    title: l10n.accountsTypeCash,
-                                    selected: state.type == AccountType.cash,
-                                    onTap: state.isSaving
-                                        ? null
-                                        : () => context
-                                              .read<AccountFormCubit>()
-                                              .selectType(AccountType.cash),
-                                  ),
-                                  DSRadioRow(
-                                    title: l10n.accountsTypeOther,
-                                    selected: state.type == AccountType.other,
-                                    onTap: state.isSaving
-                                        ? null
-                                        : () => context
-                                              .read<AccountFormCubit>()
-                                              .selectType(AccountType.other),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                    if (!isEdit) ...[
+                      Text(
+                        l10n.accountsNewBody,
+                        style: context.dsTypography.body.copyWith(
+                          color: context.dsColors.textSecondary,
                         ),
                       ),
+                      SizedBox(height: spacing.s16),
+                    ],
+                    DSTextField(
+                      label: l10n.accountsNameLabel,
+                      hintText: l10n.accountsNameHint,
+                      controller: _nameController,
+                      enabled: !state.isSaving,
+                      errorText: _nameErrorText(l10n, state.nameError),
+                      onChanged: context
+                          .read<AccountFormCubit>()
+                          .updateName,
+                    ),
+                    SizedBox(height: spacing.s24),
+                    DSSectionTitle(title: l10n.accountsTypeLabel),
+                    SizedBox(height: spacing.s12),
+                    AccountTypeCard(
+                      type: AccountType.bank,
+                      title: l10n.accountsTypeBank,
+                      description: l10n.accountsTypeBankDescription,
+                      selected: state.type == AccountType.bank,
+                      onTap: state.isSaving
+                          ? null
+                          : () => context
+                                .read<AccountFormCubit>()
+                                .selectType(AccountType.bank),
+                    ),
+                    SizedBox(height: spacing.s8),
+                    AccountTypeCard(
+                      type: AccountType.wallet,
+                      title: l10n.accountsTypeCryptoWallet,
+                      description:
+                          l10n.accountsTypeCryptoWalletDescription,
+                      selected: state.type == AccountType.wallet,
+                      onTap: state.isSaving
+                          ? null
+                          : () => context
+                                .read<AccountFormCubit>()
+                                .selectType(AccountType.wallet),
+                    ),
+                    SizedBox(height: spacing.s8),
+                    AccountTypeCard(
+                      type: AccountType.exchange,
+                      title: l10n.accountsTypeExchange,
+                      description: l10n.accountsTypeExchangeDescription,
+                      selected: state.type == AccountType.exchange,
+                      onTap: state.isSaving
+                          ? null
+                          : () => context
+                                .read<AccountFormCubit>()
+                                .selectType(AccountType.exchange),
+                    ),
+                    SizedBox(height: spacing.s8),
+                    AccountTypeCard(
+                      type: AccountType.cash,
+                      title: l10n.accountsTypeCash,
+                      description: l10n.accountsTypeCashDescription,
+                      selected: state.type == AccountType.cash,
+                      onTap: state.isSaving
+                          ? null
+                          : () => context
+                                .read<AccountFormCubit>()
+                                .selectType(AccountType.cash),
+                    ),
+                    SizedBox(height: spacing.s8),
+                    AccountTypeCard(
+                      type: AccountType.other,
+                      title: l10n.accountsTypeOther,
+                      description: l10n.accountsTypeOtherDescription,
+                      selected: state.type == AccountType.other,
+                      onTap: state.isSaving
+                          ? null
+                          : () => context
+                                .read<AccountFormCubit>()
+                                .selectType(AccountType.other),
                     ),
                     SizedBox(height: spacing.s16),
                     DSButton(
@@ -230,6 +253,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                       variant: DSButtonVariant.secondary,
                       onPressed: state.isSaving ? null : () => context.pop(),
                     ),
+                    SizedBox(height: spacing.s12),
                   ],
                 ),
               ),
@@ -247,17 +271,4 @@ class _AccountFormPageState extends State<AccountFormPage> {
     };
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'forbidden' => l10n.errorForbidden,
-      'not_found' => l10n.errorNotFound,
-      'validation' => l10n.errorValidation,
-      'conflict' => l10n.errorConflict,
-      'rate_limited' => l10n.errorRateLimited,
-      _ => l10n.errorGeneric,
-    };
-  }
 }

@@ -29,7 +29,7 @@ class App extends StatelessWidget {
                 darkTheme: darkTheme,
                 themeMode: themeMode,
                 routerConfig: appRouter,
-                locale: context.read<LocaleCubit>().locale,
+                locale: context.read<LocaleCubit>().locale ?? const Locale('en'),
                 localizationsDelegates: const [
                   AppLocalizations.delegate,
                   GlobalMaterialLocalizations.delegate,

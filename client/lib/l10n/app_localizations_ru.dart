@@ -78,6 +78,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get resendOtp => 'Отправить снова';
 
   @override
+  String get otpResendSuccess => 'Код отправлен';
+
+  @override
+  String otpResendCooldown(int seconds) {
+    return 'Повторно через $seconds с';
+  }
+
+  @override
   String get changeEmail => 'Изменить почту';
 
   @override
@@ -177,6 +185,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get onboardingBaseCurrencyBody => 'Итоги будут в этой валюте.';
 
   @override
+  String get baseCurrencyConversionCaption =>
+      'В эту валюту конвертируются ваши сбережения.';
+
+  @override
   String get onboardingSearchHint => 'Поиск валюты';
 
   @override
@@ -221,6 +233,30 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onboardingCarouselGetStarted => 'Начать';
+
+  @override
+  String get onboardingCarouselSkip => 'Пропустить';
+
+  @override
+  String get onboardingCarouselBack => 'Назад';
+
+  @override
+  String get onboardingCarouselChip1First => 'Один итог';
+
+  @override
+  String get onboardingCarouselChip1Second => 'Быстро';
+
+  @override
+  String get onboardingCarouselChip2First => 'Любая валюта';
+
+  @override
+  String get onboardingCarouselChip2Second => 'Точные курсы';
+
+  @override
+  String get onboardingCarouselChip3First => 'Отслеживание изменений';
+
+  @override
+  String get onboardingCarouselChip3Second => 'Простой сценарий';
 
   @override
   String get overviewTitle => 'Обзор';
@@ -357,6 +393,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountsNewTitle => 'Новый счет';
 
   @override
+  String get accountsNewBody =>
+      'Дайте счету название и выберите тип: банк, кошелек, биржа, наличные или другое.';
+
+  @override
   String get accountsEditTitle => 'Редактировать счет';
 
   @override
@@ -385,6 +425,23 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accountsTypeOther => 'Другое';
+
+  @override
+  String get accountsTypeBankDescription => 'Банковский счет или сбережения';
+
+  @override
+  String get accountsTypeCryptoWalletDescription =>
+      'Криптокошелек или самостоятельное хранение';
+
+  @override
+  String get accountsTypeExchangeDescription => 'Торговый или биржевой счет';
+
+  @override
+  String get accountsTypeCashDescription => 'Наличные в наличии';
+
+  @override
+  String get accountsTypeOtherDescription =>
+      'Другие активы или произвольный тип';
 
   @override
   String get accountsEdit => 'Редактировать';

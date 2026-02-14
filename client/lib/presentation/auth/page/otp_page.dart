@@ -5,15 +5,36 @@ import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/components/ds_otp_input.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
-import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/auth/bloc/otp_cubit.dart';
 import 'package:asset_tuner/presentation/auth/widget/auth_hero.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
-class OtpPage extends StatelessWidget {
+class OtpPage extends StatefulWidget {
   const OtpPage({super.key});
+
+  @override
+  State<OtpPage> createState() => _OtpPageState();
+}
+
+class _OtpPageState extends State<OtpPage> {
+  late final TextEditingController _otpController;
+
+  @override
+  void initState() {
+    super.initState();
+    _otpController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +46,20 @@ class OtpPage extends StatelessWidget {
       child: BlocConsumer<OtpCubit, OtpState>(
         listenWhen: (prev, curr) =>
             curr.navigation != null ||
-            (curr.bannerFailureCode != null &&
-                curr.bannerFailureCode != prev.bannerFailureCode),
+            (curr.bannerFailureCode != null && curr.bannerFailureCode != prev.bannerFailureCode) ||
+            curr.resendSuccess,
         listener: (context, state) {
+          if (state.resendSuccess) {
+            context.read<OtpCubit>().clearResendSuccess();
+            if (context.mounted) {
+              showDSSnackBar(
+                context,
+                variant: DSSnackBarVariant.success,
+                message: l10n.otpResendSuccess,
+              );
+            }
+            return;
+          }
           final navigation = state.navigation;
           if (navigation != null) {
             switch (navigation.destination) {
@@ -41,19 +73,28 @@ class OtpPage extends StatelessWidget {
             context.read<OtpCubit>().consumeNavigation();
             return;
           }
-          final message = _failureMessage(l10n, state.bannerFailureCode, state.bannerFailureMessage);
+          final message = state.bannerFailureCode != null
+              ? resolveFailureMessage(
+                  context,
+                  code: state.bannerFailureCode,
+                  rawMessage: state.bannerFailureMessage,
+                  service: ErrorService.auth,
+                )
+              : null;
           if (message != null && context.mounted) {
-            showDSSnackBar(
-              context,
-              variant: DSSnackBarVariant.error,
-              message: message,
-            );
+            showDSSnackBar(context, variant: DSSnackBarVariant.error, message: message);
           }
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
           final typography = context.dsTypography;
           final isLoading = state.status == OtpStatus.loading;
+          final otpEnabled = !isLoading && !state.isResendInProgress;
+
+          if (_otpController.text != state.code) {
+            _otpController.text = state.code;
+            _otpController.selection = TextSelection.collapsed(offset: _otpController.text.length);
+          }
 
           return Scaffold(
             resizeToAvoidBottomInset: false,
@@ -73,20 +114,20 @@ class OtpPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          AuthHero(
-                            title: l10n.otpTitle,
-                            subtitle: l10n.otpBodyWithEmail(email),
-                          ),
-                          SizedBox(height: spacing.s24),
-                          Text(l10n.otpCodeLabel, style: typography.label),
-                          SizedBox(height: spacing.s8),
-                          DSTextField(
-                            label: null,
-                            hintText: l10n.otpCodeHint,
-                            enabled: !isLoading,
-                            errorText: _codeErrorText(l10n, state.codeError),
-                            keyboardType: TextInputType.number,
+                          AuthHero(title: l10n.otpTitle, subtitle: l10n.otpBodyWithEmail(email)),
+                          SizedBox(height: spacing.s32),
+                          DSOtpInput(
+                            controller: _otpController,
                             onChanged: context.read<OtpCubit>().updateCode,
+                            errorText: _codeErrorText(l10n, state.codeError),
+                            enabled: otpEnabled,
+                            autofocus: true,
+                          ),
+                          SizedBox(height: spacing.s16),
+                          _ResendCaption(
+                            isLoading: isLoading,
+                            isResendInProgress: state.isResendInProgress,
+                            onResend: () => context.read<OtpCubit>().resend(),
                           ),
                         ],
                       ),
@@ -106,34 +147,14 @@ class OtpPage extends StatelessWidget {
                           label: l10n.verifyOtp,
                           isLoading: isLoading,
                           fullWidth: true,
-                          onPressed: isLoading
-                              ? null
-                              : context.read<OtpCubit>().verify,
+                          onPressed: isLoading ? null : context.read<OtpCubit>().verify,
                         ),
                         SizedBox(height: spacing.s12),
                         TextButton(
-                          onPressed: isLoading ||
-                                  state.isResendInProgress ||
-                                  state.resendCooldownUntil != null
-                              ? null
-                              : context.read<OtpCubit>().resend,
-                          child: Text(
-                            l10n.resendOtp,
-                            style: typography.body.copyWith(
-                              color: context.dsColors.primary,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: spacing.s8),
-                        TextButton(
-                          onPressed: isLoading
-                              ? null
-                              : () => context.go(AppRoutes.signUp),
+                          onPressed: isLoading ? null : () => context.go(AppRoutes.signUp),
                           child: Text(
                             l10n.changeEmail,
-                            style: typography.body.copyWith(
-                              color: context.dsColors.primary,
-                            ),
+                            style: typography.body.copyWith(color: context.dsColors.primary),
                           ),
                         ),
                       ],
@@ -154,16 +175,47 @@ class OtpPage extends StatelessWidget {
       _ => null,
     };
   }
+}
 
-  String? _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (code == null) return null;
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'rate_limited' => l10n.errorRateLimited,
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'conflict' => l10n.errorConflict,
-      _ => l10n.errorGeneric,
-    };
+class _ResendCaption extends StatelessWidget {
+  const _ResendCaption({
+    required this.isLoading,
+    required this.isResendInProgress,
+    required this.onResend,
+  });
+
+  final bool isLoading;
+  final bool isResendInProgress;
+  final VoidCallback onResend;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final typography = context.dsTypography;
+    final colors = context.dsColors;
+    final disabled = isLoading || isResendInProgress;
+
+    if (disabled) {
+      return Align(
+        alignment: Alignment.center,
+        child: Text(
+          l10n.resendOtp,
+          style: typography.body.copyWith(color: colors.textTertiary),
+        ),
+      );
+    }
+
+    return Align(
+      alignment: Alignment.center,
+      child: TextButton(
+        onPressed: onResend,
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        child: Text(l10n.resendOtp, style: typography.body.copyWith(color: colors.primary)),
+      ),
+    );
   }
 }

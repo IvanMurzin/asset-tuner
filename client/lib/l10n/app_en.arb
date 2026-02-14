@@ -29,6 +29,15 @@
   "sendOtp": "Send code",
   "verifyOtp": "Verify",
   "resendOtp": "Resend",
+  "otpResendSuccess": "Code sent",
+  "otpResendCooldown": "Resend in {seconds}s",
+  "@otpResendCooldown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "changeEmail": "Change email",
   "forgotPassword": "Forgot password?",
   "signInWith": "Or continue with",
@@ -69,6 +78,7 @@
   "splashRetry": "Try again",
   "onboardingBaseCurrencyTitle": "Choose your base currency",
   "onboardingBaseCurrencyBody": "Totals will be converted to this currency.",
+  "baseCurrencyConversionCaption": "Your savings will be converted to this currency.",
   "onboardingSearchHint": "Search currency",
   "onboardingContinue": "Continue",
   "onboardingUseUsd": "Use USD for now",
@@ -83,6 +93,14 @@
   "onboardingCarouselBody3": "Rates updated hourly. Your data syncs across devices.",
   "onboardingCarouselNext": "Next",
   "onboardingCarouselGetStarted": "Get started",
+  "onboardingCarouselSkip": "Skip",
+  "onboardingCarouselBack": "Back",
+  "onboardingCarouselChip1First": "One total",
+  "onboardingCarouselChip1Second": "Fast",
+  "onboardingCarouselChip2First": "Any currency",
+  "onboardingCarouselChip2Second": "Accurate rates",
+  "onboardingCarouselChip3First": "Track changes",
+  "onboardingCarouselChip3Second": "Simple flow",
   "overviewTitle": "Overview",
   "mainTitle": "Main",
   "mainAddAccount": "Add account",
@@ -140,6 +158,7 @@
   "accountsEmptyBody": "Create an account to start tracking assets.",
   "accountsCreateAccount": "Create account",
   "accountsNewTitle": "New account",
+  "accountsNewBody": "Give your account a name and choose the type that best fits — bank, wallet, exchange, cash, or other.",
   "accountsEditTitle": "Edit account",
   "accountsNameLabel": "Account name",
   "accountsNameHint": "e.g., Cash USD",
@@ -150,6 +169,11 @@
   "accountsTypeExchange": "Exchange",
   "accountsTypeCash": "Cash",
   "accountsTypeOther": "Other",
+  "accountsTypeBankDescription": "Bank account or savings",
+  "accountsTypeCryptoWalletDescription": "Crypto wallet or self-custody",
+  "accountsTypeExchangeDescription": "Trading or exchange account",
+  "accountsTypeCashDescription": "Cash on hand",
+  "accountsTypeOtherDescription": "Other assets or custom",
   "accountsEdit": "Edit",
   "accountsArchive": "Archive",
   "accountsUnarchive": "Unarchive",

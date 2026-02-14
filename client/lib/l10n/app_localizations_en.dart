@@ -77,6 +77,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resendOtp => 'Resend';
 
   @override
+  String get otpResendSuccess => 'Code sent';
+
+  @override
+  String otpResendCooldown(int seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
   String get changeEmail => 'Change email';
 
   @override
@@ -178,6 +186,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Totals will be converted to this currency.';
 
   @override
+  String get baseCurrencyConversionCaption =>
+      'Your savings will be converted to this currency.';
+
+  @override
   String get onboardingSearchHint => 'Search currency';
 
   @override
@@ -222,6 +234,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingCarouselGetStarted => 'Get started';
+
+  @override
+  String get onboardingCarouselSkip => 'Skip';
+
+  @override
+  String get onboardingCarouselBack => 'Back';
+
+  @override
+  String get onboardingCarouselChip1First => 'One total';
+
+  @override
+  String get onboardingCarouselChip1Second => 'Fast';
+
+  @override
+  String get onboardingCarouselChip2First => 'Any currency';
+
+  @override
+  String get onboardingCarouselChip2Second => 'Accurate rates';
+
+  @override
+  String get onboardingCarouselChip3First => 'Track changes';
+
+  @override
+  String get onboardingCarouselChip3Second => 'Simple flow';
 
   @override
   String get overviewTitle => 'Overview';
@@ -358,6 +394,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsNewTitle => 'New account';
 
   @override
+  String get accountsNewBody =>
+      'Give your account a name and choose the type that best fits — bank, wallet, exchange, cash, or other.';
+
+  @override
   String get accountsEditTitle => 'Edit account';
 
   @override
@@ -386,6 +426,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountsTypeOther => 'Other';
+
+  @override
+  String get accountsTypeBankDescription => 'Bank account or savings';
+
+  @override
+  String get accountsTypeCryptoWalletDescription =>
+      'Crypto wallet or self-custody';
+
+  @override
+  String get accountsTypeExchangeDescription => 'Trading or exchange account';
+
+  @override
+  String get accountsTypeCashDescription => 'Cash on hand';
+
+  @override
+  String get accountsTypeOtherDescription => 'Other assets or custom';
 
   @override
   String get accountsEdit => 'Edit';

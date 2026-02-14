@@ -40,7 +40,7 @@ const DSElevation _elevation = DSElevation(
 
 const DSColors _lightColors = DSColors(
   primary: Color(0xFF2563EB),
-  primaryHover: Color(0xFF1D4ED8),
+  primaryHover: Color.fromARGB(255, 10, 49, 159),
   onPrimary: Color(0xFFFFFFFF),
   background: Color(0xFFF6F8FB),
   surface: Color(0xFFFFFFFF),
@@ -69,7 +69,7 @@ const DSColors _lightColors = DSColors(
 
 const DSColors _darkColors = DSColors(
   primary: Color(0xFF2563EB),
-  primaryHover: Color(0xFF1D4ED8),
+  primaryHover: Color.fromARGB(255, 7, 48, 159),
   onPrimary: Color(0xFFFFFFFF),
   background: Color(0xFF070C16),
   surface: Color(0xFF0B1220),

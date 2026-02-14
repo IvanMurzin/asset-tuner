@@ -207,6 +207,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     }
 
     final breakdownTotals = <String, Decimal>{};
+    final breakdownOriginalTotals = <String, Decimal>{};
     Decimal total = Decimal.zero;
 
     for (final subaccount in subaccounts) {
@@ -230,6 +231,11 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         (current) => current + priced,
         ifAbsent: () => priced,
       );
+      breakdownOriginalTotals.update(
+        asset.code,
+        (current) => current + amount,
+        ifAbsent: () => amount,
+      );
     }
 
     final breakdown = breakdownTotals.entries.map((entry) {
@@ -240,6 +246,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         assetCode: entry.key,
         value: entry.value,
         percent: percent,
+        originalAmount: breakdownOriginalTotals[entry.key] ?? Decimal.zero,
       );
     }).toList()..sort((a, b) => b.value.compareTo(a.value));
 

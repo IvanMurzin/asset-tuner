@@ -14,6 +14,8 @@ import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 import 'package:asset_tuner/presentation/analytics/widget/analytics_loading_skeleton.dart';
 
 class AnalyticsPage extends StatelessWidget {
@@ -76,7 +78,12 @@ class _Body extends StatelessWidget {
     if (state.status == AnalyticsStatus.error) {
       return DSInlineError(
         title: l10n.splashErrorTitle,
-        message: _failureMessage(l10n, state.failureCode, state.failureMessage),
+        message: resolveFailureMessage(
+        context,
+        code: state.failureCode,
+        rawMessage: state.failureMessage,
+        service: ErrorService.database,
+      ),
         actionLabel: l10n.splashRetry,
         onAction: () => context.read<AnalyticsCubit>().load(),
       );
@@ -132,26 +139,19 @@ class _Body extends StatelessWidget {
         ],
         DSSectionTitle(title: l10n.analyticsBreakdownTitle),
         SizedBox(height: spacing.s12),
-        DSCard(
-          child: Column(
-            children: state.breakdown
-                .toList()
-                .asMap()
-                .entries
-                .map(
-                  (entry) => Padding(
-                    padding: EdgeInsets.only(bottom: spacing.s12),
-                    child: _BreakdownRow(
-                      item: entry.value,
-                      index: entry.key,
-                      currency: currency,
-                      colors: context.dsColors,
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-        ),
+        ...state.breakdown.toList().asMap().entries.map((entry) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: spacing.s12),
+            child: DSCard(
+              child: _BreakdownCard(
+                item: entry.value,
+                index: entry.key,
+                currency: currency,
+                colors: context.dsColors,
+              ),
+            ),
+          );
+        }),
         SizedBox(height: spacing.s24),
         DSSectionTitle(title: l10n.analyticsUpdatesTitle),
         SizedBox(height: spacing.s12),
@@ -186,23 +186,10 @@ class _Body extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'forbidden' => l10n.errorForbidden,
-      'not_found' => l10n.errorNotFound,
-      'validation' => l10n.errorValidation,
-      'conflict' => l10n.errorConflict,
-      'rate_limited' => l10n.errorRateLimited,
-      _ => l10n.errorGeneric,
-    };
-  }
 }
 
-class _BreakdownRow extends StatelessWidget {
-  const _BreakdownRow({
+class _BreakdownCard extends StatelessWidget {
+  const _BreakdownCard({
     required this.item,
     required this.index,
     required this.currency,
@@ -217,21 +204,36 @@ class _BreakdownRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spacing = context.dsSpacing;
+    final typography = context.dsTypography;
     final percent = double.parse(item.percent.toString()).clamp(0, 100) / 100;
     final barColor = _breakdownBarColorAt(index, colors);
+    final originalText = context.dsFormatters.formatDecimalFromDecimal(
+      item.originalAmount,
+      maximumFractionDigits: 8,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            Expanded(child: Text(item.assetCode)),
-            Text(
-              context.dsFormatters.formatMoney(item.value, currency),
-            ),
-          ],
+        Text(
+          item.assetCode,
+          style: typography.h3,
         ),
         SizedBox(height: spacing.s8),
+        Text(
+          '$originalText ${item.assetCode}',
+          style: typography.body.copyWith(color: colors.textSecondary),
+        ),
+        SizedBox(height: spacing.s4),
+        Text(
+          context.dsFormatters.formatMoney(item.value, currency),
+          style: typography.body.copyWith(
+            color: colors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: spacing.s12),
         ClipRRect(
           borderRadius: BorderRadius.circular(context.dsRadius.r12),
           child: LinearProgressIndicator(

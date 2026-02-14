@@ -13,6 +13,8 @@ import 'package:asset_tuner/presentation/auth/widget/auth_hero.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_confirm_password_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_email_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_password_field.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
@@ -31,7 +33,7 @@ class SignUpPage extends StatelessWidget {
           final navigation = state.navigation;
           if (navigation != null) {
             if (state.bannerType == SignUpBannerType.success) {
-              final message = _bannerMessage(l10n, state);
+              final message = _bannerMessage(context, l10n, state);
               if (message != null && context.mounted) {
                 showDSSnackBar(
                   context,
@@ -47,7 +49,7 @@ class SignUpPage extends StatelessWidget {
             }
             return;
           }
-          final message = _bannerMessage(l10n, state);
+          final message = _bannerMessage(context, l10n, state);
           if (message != null && context.mounted) {
             showDSSnackBar(
               context,
@@ -174,26 +176,22 @@ class SignUpPage extends StatelessWidget {
     };
   }
 
-  String? _bannerMessage(AppLocalizations l10n, SignUpState state) {
+  String? _bannerMessage(BuildContext context, AppLocalizations l10n, SignUpState state) {
     switch (state.bannerType) {
       case SignUpBannerType.success:
         final email = state.bannerEmail ?? '';
         return l10n.bannerOtpSuccessBodyWithEmail(email);
       case SignUpBannerType.failure:
-        return _failureMessage(l10n, state.bannerFailureCode, state.bannerFailureMessage);
+        return state.bannerFailureCode != null
+            ? resolveFailureMessage(
+                context,
+                code: state.bannerFailureCode,
+                rawMessage: state.bannerFailureMessage,
+                service: ErrorService.auth,
+              )
+            : l10n.errorGeneric;
       case null:
         return null;
     }
-  }
-
-  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'rate_limited' => l10n.errorRateLimited,
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'conflict' => l10n.errorConflict,
-      _ => l10n.errorGeneric,
-    };
   }
 }

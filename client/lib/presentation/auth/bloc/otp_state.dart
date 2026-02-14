@@ -24,5 +24,6 @@ abstract class OtpState with _$OtpState {
     OtpNavigation? navigation,
     @Default(false) bool isResendInProgress,
     DateTime? resendCooldownUntil,
+    @Default(false) bool resendSuccess,
   }) = _OtpState;
 }

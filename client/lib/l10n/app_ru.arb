@@ -29,6 +29,15 @@
   "sendOtp": "Отправить код",
   "verifyOtp": "Подтвердить",
   "resendOtp": "Отправить снова",
+  "otpResendSuccess": "Код отправлен",
+  "otpResendCooldown": "Повторно через {seconds} с",
+  "@otpResendCooldown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "changeEmail": "Изменить почту",
   "forgotPassword": "Забыли пароль?",
   "signInWith": "Или продолжить с",
@@ -69,6 +78,7 @@
   "splashRetry": "Попробовать снова",
   "onboardingBaseCurrencyTitle": "Выберите базовую валюту",
   "onboardingBaseCurrencyBody": "Итоги будут в этой валюте.",
+  "baseCurrencyConversionCaption": "В эту валюту конвертируются ваши сбережения.",
   "onboardingSearchHint": "Поиск валюты",
   "onboardingContinue": "Продолжить",
   "onboardingUseUsd": "Пока использовать USD",
@@ -83,6 +93,14 @@
   "onboardingCarouselBody3": "Курсы обновляются каждый час. Данные синхронизируются между устройствами.",
   "onboardingCarouselNext": "Далее",
   "onboardingCarouselGetStarted": "Начать",
+  "onboardingCarouselSkip": "Пропустить",
+  "onboardingCarouselBack": "Назад",
+  "onboardingCarouselChip1First": "Один итог",
+  "onboardingCarouselChip1Second": "Быстро",
+  "onboardingCarouselChip2First": "Любая валюта",
+  "onboardingCarouselChip2Second": "Точные курсы",
+  "onboardingCarouselChip3First": "Отслеживание изменений",
+  "onboardingCarouselChip3Second": "Простой сценарий",
   "overviewTitle": "Обзор",
   "mainTitle": "Главная",
   "mainAddAccount": "Добавить аккаунт",
@@ -140,6 +158,7 @@
   "accountsEmptyBody": "Создайте счет, чтобы начать отслеживать активы.",
   "accountsCreateAccount": "Создать счет",
   "accountsNewTitle": "Новый счет",
+  "accountsNewBody": "Дайте счету название и выберите тип: банк, кошелек, биржа, наличные или другое.",
   "accountsEditTitle": "Редактировать счет",
   "accountsNameLabel": "Название счета",
   "accountsNameHint": "например, Cash USD",
@@ -150,6 +169,11 @@
   "accountsTypeExchange": "Биржа",
   "accountsTypeCash": "Наличные",
   "accountsTypeOther": "Другое",
+  "accountsTypeBankDescription": "Банковский счет или сбережения",
+  "accountsTypeCryptoWalletDescription": "Криптокошелек или самостоятельное хранение",
+  "accountsTypeExchangeDescription": "Торговый или биржевой счет",
+  "accountsTypeCashDescription": "Наличные в наличии",
+  "accountsTypeOtherDescription": "Другие активы или произвольный тип",
   "accountsEdit": "Редактировать",
   "accountsArchive": "В архив",
   "accountsUnarchive": "Из архива",

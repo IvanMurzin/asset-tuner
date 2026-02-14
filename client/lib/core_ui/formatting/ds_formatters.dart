@@ -44,11 +44,13 @@ class DSFormatters {
   }
 
   String formatDate(DateTime value) {
-    return DateFormat.yMMMd(locale.toLanguageTag()).format(value);
+    final local = value.isUtc ? value.toLocal() : value;
+    return DateFormat.yMMMd(locale.toLanguageTag()).format(local);
   }
 
   String formatDateTime(DateTime value) {
-    return DateFormat.yMMMd(locale.toLanguageTag()).add_Hm().format(value);
+    final local = value.isUtc ? value.toLocal() : value;
+    return DateFormat.yMMMd(locale.toLanguageTag()).add_Hm().format(local);
   }
 }
 

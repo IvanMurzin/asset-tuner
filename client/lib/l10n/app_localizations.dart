@@ -230,6 +230,18 @@ abstract class AppLocalizations {
   /// **'Resend'**
   String get resendOtp;
 
+  /// No description provided for @otpResendSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Code sent'**
+  String get otpResendSuccess;
+
+  /// No description provided for @otpResendCooldown.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String otpResendCooldown(int seconds);
+
   /// No description provided for @changeEmail.
   ///
   /// In en, this message translates to:
@@ -422,6 +434,12 @@ abstract class AppLocalizations {
   /// **'Totals will be converted to this currency.'**
   String get onboardingBaseCurrencyBody;
 
+  /// No description provided for @baseCurrencyConversionCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Your savings will be converted to this currency.'**
+  String get baseCurrencyConversionCaption;
+
   /// No description provided for @onboardingSearchHint.
   ///
   /// In en, this message translates to:
@@ -505,6 +523,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get started'**
   String get onboardingCarouselGetStarted;
+
+  /// No description provided for @onboardingCarouselSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingCarouselSkip;
+
+  /// No description provided for @onboardingCarouselBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get onboardingCarouselBack;
+
+  /// No description provided for @onboardingCarouselChip1First.
+  ///
+  /// In en, this message translates to:
+  /// **'One total'**
+  String get onboardingCarouselChip1First;
+
+  /// No description provided for @onboardingCarouselChip1Second.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast'**
+  String get onboardingCarouselChip1Second;
+
+  /// No description provided for @onboardingCarouselChip2First.
+  ///
+  /// In en, this message translates to:
+  /// **'Any currency'**
+  String get onboardingCarouselChip2First;
+
+  /// No description provided for @onboardingCarouselChip2Second.
+  ///
+  /// In en, this message translates to:
+  /// **'Accurate rates'**
+  String get onboardingCarouselChip2Second;
+
+  /// No description provided for @onboardingCarouselChip3First.
+  ///
+  /// In en, this message translates to:
+  /// **'Track changes'**
+  String get onboardingCarouselChip3First;
+
+  /// No description provided for @onboardingCarouselChip3Second.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple flow'**
+  String get onboardingCarouselChip3Second;
 
   /// No description provided for @overviewTitle.
   ///
@@ -752,6 +818,12 @@ abstract class AppLocalizations {
   /// **'New account'**
   String get accountsNewTitle;
 
+  /// No description provided for @accountsNewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Give your account a name and choose the type that best fits — bank, wallet, exchange, cash, or other.'**
+  String get accountsNewBody;
+
   /// No description provided for @accountsEditTitle.
   ///
   /// In en, this message translates to:
@@ -811,6 +883,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other'**
   String get accountsTypeOther;
+
+  /// No description provided for @accountsTypeBankDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank account or savings'**
+  String get accountsTypeBankDescription;
+
+  /// No description provided for @accountsTypeCryptoWalletDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto wallet or self-custody'**
+  String get accountsTypeCryptoWalletDescription;
+
+  /// No description provided for @accountsTypeExchangeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Trading or exchange account'**
+  String get accountsTypeExchangeDescription;
+
+  /// No description provided for @accountsTypeCashDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash on hand'**
+  String get accountsTypeCashDescription;
+
+  /// No description provided for @accountsTypeOtherDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Other assets or custom'**
+  String get accountsTypeOtherDescription;
 
   /// No description provided for @accountsEdit.
   ///

@@ -12,6 +12,8 @@ import 'package:asset_tuner/presentation/balance/widget/asset_position_detail_ac
 import 'package:asset_tuner/presentation/balance/widget/asset_position_detail_header_card.dart';
 import 'package:asset_tuner/presentation/balance/widget/asset_position_detail_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/balance/widget/asset_position_history_section.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -98,7 +100,12 @@ class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
               appBar: DSAppBar(title: title),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: _failureMessage(l10n, state.failureCode, state.failureMessage),
+                message: resolveFailureMessage(
+                context,
+                code: state.failureCode,
+                rawMessage: state.failureMessage,
+                service: ErrorService.database,
+              ),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<AssetPositionDetailCubit>().load(
                   subaccountId: subaccountId,
@@ -134,7 +141,14 @@ class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
                         if (state.bannerFailureCode != null) ...[
                           DSInlineBanner(
                             title: title,
-                            message: _failureMessage(l10n, state.bannerFailureCode, state.bannerFailureMessage),
+                            message: state.bannerFailureCode != null
+                            ? resolveFailureMessage(
+                                context,
+                                code: state.bannerFailureCode,
+                                rawMessage: state.bannerFailureMessage,
+                                service: ErrorService.database,
+                              )
+                            : l10n.errorGeneric,
                             variant: DSInlineBannerVariant.danger,
                           ),
                           SizedBox(height: spacing.s12),
@@ -213,7 +227,12 @@ class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
                       child: state.status == AssetPositionDetailStatus.error
                           ? DSInlineError(
                               title: l10n.splashErrorTitle,
-                              message: _failureMessage(l10n, state.failureCode, state.failureMessage),
+                              message: resolveFailureMessage(
+                context,
+                code: state.failureCode,
+                rawMessage: state.failureMessage,
+                service: ErrorService.database,
+              ),
                               actionLabel: l10n.splashRetry,
                               onAction: () => context
                                   .read<AssetPositionDetailCubit>()
@@ -255,20 +274,6 @@ class _AssetPositionDetailBodyState extends State<_AssetPositionDetailBody> {
           );
         },
     );
-  }
-
-  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'forbidden' => l10n.errorForbidden,
-      'not_found' => l10n.errorNotFound,
-      'validation' => l10n.errorValidation,
-      'conflict' => l10n.errorConflict,
-      'rate_limited' => l10n.errorRateLimited,
-      _ => l10n.errorGeneric,
-    };
   }
 
   Future<bool> _confirmDelete(

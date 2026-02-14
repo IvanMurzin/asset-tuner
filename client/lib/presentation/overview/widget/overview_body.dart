@@ -10,6 +10,8 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_account_card.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_summary_card.dart';
@@ -77,7 +79,12 @@ class OverviewBody extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: spacing.s24),
             child: DSInlineError(
               title: l10n.splashErrorTitle,
-              message: _failureMessage(l10n, state.failureCode, state.failureMessage),
+              message: resolveFailureMessage(
+              context,
+              code: state.failureCode,
+              rawMessage: state.failureMessage,
+              service: ErrorService.database,
+            ),
               actionLabel: l10n.splashRetry,
               onAction: () => context.read<OverviewCubit>().refresh(),
             ),
@@ -230,20 +237,6 @@ class OverviewBody extends StatelessWidget {
         SizedBox(height: spacing.s24),
       ],
     );
-  }
-
-  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'forbidden' => l10n.errorForbidden,
-      'not_found' => l10n.errorNotFound,
-      'validation' => l10n.errorValidation,
-      'conflict' => l10n.errorConflict,
-      'rate_limited' => l10n.errorRateLimited,
-      _ => l10n.errorGeneric,
-    };
   }
 
   List<({AccountType type, List<OverviewAccountItem> items})> _groupAccounts(

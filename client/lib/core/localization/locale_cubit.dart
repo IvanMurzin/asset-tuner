@@ -16,7 +16,11 @@ class LocaleCubit extends Cubit<LocaleState> {
 
   Future<void> load() async {
     final tag = await _storage.readLocaleTag();
-    emit(state.copyWith(localeTag: tag));
+    final effectiveTag = tag ?? 'en';
+    if (tag == null) {
+      await _storage.writeLocaleTag('en');
+    }
+    emit(state.copyWith(localeTag: effectiveTag));
   }
 
   Future<void> setSystem() async {

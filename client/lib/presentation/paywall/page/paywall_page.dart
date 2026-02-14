@@ -14,6 +14,8 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class PaywallPage extends StatelessWidget {
   const PaywallPage({super.key, required this.args});
@@ -180,11 +182,14 @@ class PaywallPage extends StatelessWidget {
                               SizedBox(height: spacing.s16),
                               DSInlineBanner(
                                 title: l10n.paywallTitle,
-                                message: _failureMessage(
-                                  l10n,
-                                  state.upgradeFailureCode,
-                                  state.upgradeFailureMessage,
-                                ),
+                                message: state.upgradeFailureCode != null
+                                    ? resolveFailureMessage(
+                                        context,
+                                        code: state.upgradeFailureCode,
+                                        rawMessage: state.upgradeFailureMessage,
+                                        service: ErrorService.database,
+                                      )
+                                    : l10n.errorGeneric,
                                 variant: DSInlineBannerVariant.danger,
                               ),
                             ],
@@ -294,19 +299,6 @@ class PaywallPage extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'forbidden' => l10n.errorForbidden,
-      'not_found' => l10n.errorNotFound,
-      'validation' => l10n.errorValidation,
-      'conflict' => l10n.errorConflict,
-      'rate_limited' => l10n.errorRateLimited,
-      _ => l10n.errorGeneric,
-    };
-  }
 }
 
 class _FeatureRow extends StatelessWidget {

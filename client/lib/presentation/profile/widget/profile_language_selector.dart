@@ -1,5 +1,3 @@
-import 'dart:ui' show PlatformDispatcher;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,24 +13,14 @@ class ProfileLanguageSelector extends StatelessWidget {
   static const String _assetLangEn = 'assets/icon/lang-en.svg';
   static const String _assetLangRu = 'assets/icon/lang-ru.svg';
 
-  String _systemIconPath() {
-    final locale = PlatformDispatcher.instance.locale;
-    return locale.languageCode == 'ru' ? _assetLangRu : _assetLangEn;
-  }
-
   String _currentLabel(AppLocalizations l10n, String? localeTag) {
     return switch (localeTag) {
-      null => l10n.profileLanguageSystem,
-      'en' => l10n.profileLanguageEnglish,
       'ru' => l10n.profileLanguageRussian,
-      _ => l10n.profileLanguageSystem,
+      _ => l10n.profileLanguageEnglish,
     };
   }
 
   String _currentIconPath(String? localeTag) {
-    if (localeTag == null) {
-      return _assetLangEn;
-    }
     return localeTag == 'ru' ? _assetLangRu : _assetLangEn;
   }
 
@@ -59,13 +47,6 @@ class ProfileLanguageSelector extends StatelessWidget {
       ),
       itemBuilder: (context) => [
         PopupMenuItem<int>(
-          value: 0,
-          child: _LanguageMenuItem(
-            iconPath: _systemIconPath(),
-            label: l10n.profileLanguageSystem,
-          ),
-        ),
-        PopupMenuItem<int>(
           value: 1,
           child: _LanguageMenuItem(
             iconPath: _assetLangEn,
@@ -83,9 +64,6 @@ class ProfileLanguageSelector extends StatelessWidget {
       onSelected: (value) {
         final cubit = context.read<LocaleCubit>();
         switch (value) {
-          case 0:
-            cubit.setSystem();
-            break;
           case 1:
             cubit.setLocale(const Locale('en'));
             break;

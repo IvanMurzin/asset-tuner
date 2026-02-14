@@ -18,6 +18,8 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/add_asset_cubit.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -149,10 +151,11 @@ class _AddAssetPageState extends State<AddAssetPage> {
               appBar: DSAppBar(title: l10n.subaccountCreateTitle),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: _failureMessage(
-                  l10n,
-                  state.failureCode,
-                  state.failureMessage,
+                message: resolveFailureMessage(
+                  context,
+                  code: state.failureCode,
+                  rawMessage: state.failureMessage,
+                  service: ErrorService.database,
                 ),
                 actionLabel: l10n.splashRetry,
                 onAction: () =>
@@ -186,10 +189,11 @@ class _AddAssetPageState extends State<AddAssetPage> {
                     if (state.failureCode != null) ...[
                       DSInlineBanner(
                         title: l10n.subaccountCreateTitle,
-                        message: _failureMessage(
-                          l10n,
-                          state.failureCode,
-                          state.failureMessage,
+                        message: resolveFailureMessage(
+                          context,
+                          code: state.failureCode,
+                          rawMessage: state.failureMessage,
+                          service: ErrorService.database,
                         ),
                         variant: DSInlineBannerVariant.danger,
                       ),
@@ -297,20 +301,6 @@ class _AddAssetPageState extends State<AddAssetPage> {
           ),
         )
         .toList();
-  }
-
-  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'forbidden' => l10n.errorForbidden,
-      'not_found' => l10n.errorNotFound,
-      'validation' => l10n.errorValidation,
-      'conflict' => l10n.errorConflict,
-      'rate_limited' => l10n.errorRateLimited,
-      _ => l10n.errorGeneric,
-    };
   }
 
   String? _nameErrorText(AppLocalizations l10n, String? code) {

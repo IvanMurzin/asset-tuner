@@ -19,6 +19,10 @@ abstract final class SupabaseFailureMapper {
 
     if (error is AuthException) {
       final message = error.message;
+      final code = error.code;
+      if (code != null && code.isNotEmpty) {
+        return Failure(code: code, message: message);
+      }
       final normalized = message.toLowerCase();
       if (normalized.contains('invalid login') ||
           normalized.contains('invalid') &&

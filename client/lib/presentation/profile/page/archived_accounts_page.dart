@@ -14,6 +14,8 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_account_card.dart';
 import 'package:asset_tuner/presentation/profile/bloc/archived_accounts_cubit.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class ArchivedAccountsPage extends StatelessWidget {
   const ArchivedAccountsPage({super.key});
@@ -38,7 +40,12 @@ class ArchivedAccountsPage extends StatelessWidget {
               appBar: DSAppBar(title: l10n.settingsArchivedAccounts),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: _failureMessage(l10n, state.failureCode, state.failureMessage),
+                message: resolveFailureMessage(
+                context,
+                code: state.failureCode,
+                rawMessage: state.failureMessage,
+                service: ErrorService.database,
+              ),
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<ArchivedAccountsCubit>().load(),
               ),
@@ -106,14 +113,4 @@ class ArchivedAccountsPage extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String? code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'forbidden' => l10n.errorForbidden,
-      'not_found' => l10n.errorNotFound,
-      _ => l10n.errorGeneric,
-    };
-  }
 }

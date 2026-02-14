@@ -9,6 +9,8 @@ import 'package:asset_tuner/core_ui/components/ds_splash_layout.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/auth/bloc/splash_cubit.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -40,7 +42,12 @@ class SplashPage extends StatelessWidget {
               showDSSnackBar(
                 context,
                 variant: DSSnackBarVariant.error,
-                message: _failureMessage(l10n, failureCode, failureMessage),
+                message: resolveFailureMessage(
+                  context,
+                  code: failureCode,
+                  rawMessage: failureMessage,
+                  service: ErrorService.auth,
+                ),
               );
             }
           }
@@ -74,14 +81,4 @@ class SplashPage extends StatelessWidget {
     );
   }
 
-  String _failureMessage(AppLocalizations l10n, String code, String? message) {
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'rate_limited' => l10n.errorRateLimited,
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'conflict' => l10n.errorConflict,
-      _ => l10n.errorGeneric,
-    };
-  }
 }

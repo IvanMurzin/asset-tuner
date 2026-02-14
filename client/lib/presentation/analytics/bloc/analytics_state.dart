@@ -15,6 +15,7 @@ abstract class AnalyticsBreakdownItem with _$AnalyticsBreakdownItem {
     required String assetCode,
     required Decimal value,
     required Decimal percent,
+    required Decimal originalAmount,
   }) = _AnalyticsBreakdownItem;
 }
 

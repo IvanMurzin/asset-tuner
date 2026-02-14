@@ -42,10 +42,20 @@ class DSButton extends StatelessWidget {
 
     Widget content;
     if (isLoading) {
-      content = DSLoader(
-        size: spacing.s16,
-        strokeWidth: 2,
-        color: baseForeground,
+      content = Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          Opacity(
+            opacity: 0,
+            child: Text(label, style: labelStyle),
+          ),
+          DSLoader(
+            size: spacing.s16,
+            strokeWidth: 2,
+            color: baseForeground,
+          ),
+        ],
       );
     } else if (leadingIcon != null) {
       content = Row(
@@ -68,8 +78,12 @@ class DSButton extends StatelessWidget {
           ? LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [colors.primary, colors.primaryHover],
-              stops: const [0.0, 1.0],
+              colors: [
+                colors.primary,
+                Color.lerp(colors.primary, colors.primaryHover, 0.5)!,
+                colors.primaryHover,
+              ],
+              stops: const [0.0, 0.45, 1.0],
             )
           : null,
       borderRadius: BorderRadius.circular(radius.r12),

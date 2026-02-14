@@ -13,6 +13,8 @@ import 'package:asset_tuner/presentation/auth/widget/auth_hero.dart';
 import 'package:asset_tuner/presentation/auth/widget/oauth_section.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_in_email_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_in_password_field.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -40,7 +42,14 @@ class SignInPage extends StatelessWidget {
             context.read<SignInCubit>().consumeNavigation();
             return;
           }
-          final message = _bannerText(l10n, state.bannerFailureCode, state.bannerFailureMessage);
+          final message = state.bannerFailureCode != null
+              ? resolveFailureMessage(
+                  context,
+                  code: state.bannerFailureCode,
+                  rawMessage: state.bannerFailureMessage,
+                  service: ErrorService.auth,
+                )
+              : null;
           if (message != null && context.mounted) {
             showDSSnackBar(
               context,
@@ -163,15 +172,4 @@ class SignInPage extends StatelessWidget {
     };
   }
 
-  String? _bannerText(AppLocalizations l10n, String? code, String? message) {
-    if (code == null) return null;
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'rate_limited' => l10n.errorRateLimited,
-      'network' => l10n.errorNetwork,
-      'unauthorized' => l10n.errorUnauthorized,
-      'conflict' => l10n.errorConflict,
-      _ => l10n.errorGeneric,
-    };
-  }
 }

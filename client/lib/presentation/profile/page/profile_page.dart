@@ -17,6 +17,8 @@ import 'package:asset_tuner/presentation/profile/widget/profile_header_card.dart
 import 'package:asset_tuner/presentation/profile/widget/profile_language_selector.dart';
 import 'package:asset_tuner/presentation/profile/widget/profile_theme_selector.dart';
 import 'package:asset_tuner/presentation/settings/widget/settings_row_trailing.dart';
+import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -43,7 +45,7 @@ class ProfilePage extends StatelessWidget {
         builder: (context, state) {
           final spacing = context.dsSpacing;
 
-          final bannerText = _bannerText(l10n, state.failureCode, state.failureMessage);
+          final bannerText = _bannerText(context, l10n, state.failureCode, state.failureMessage);
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.profileTitle),
@@ -167,13 +169,15 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  String? _bannerText(AppLocalizations l10n, String? code, String? message) {
+  String? _bannerText(BuildContext context, AppLocalizations l10n, String? code, String? message) {
     if (code == null) return null;
-    if (message != null && message.trim().isNotEmpty) return message.trim();
-    return switch (code) {
-      'entitlements' => l10n.settingsEntitlementsError,
-      _ => null,
-    };
+    if (code == 'entitlements') return l10n.settingsEntitlementsError;
+    return resolveFailureMessage(
+      context,
+      code: code,
+      rawMessage: message,
+      service: ErrorService.database,
+    );
   }
 
 }

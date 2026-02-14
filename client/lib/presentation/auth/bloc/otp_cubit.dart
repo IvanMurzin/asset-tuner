@@ -106,6 +106,7 @@ class OtpCubit extends Cubit<OtpState> {
           state.copyWith(
             isResendInProgress: false,
             resendCooldownUntil: until,
+            resendSuccess: true,
           ),
         );
         Future<void>.delayed(_resendCooldown, () {
@@ -114,5 +115,9 @@ class OtpCubit extends Cubit<OtpState> {
           }
         });
     }
+  }
+
+  void clearResendSuccess() {
+    emit(state.copyWith(resendSuccess: false));
   }
 }
