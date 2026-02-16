@@ -4,9 +4,10 @@ import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
-import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
-import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_plan_usecase.dart';
+import 'package:asset_tuner/domain/subscription/entity/subscription_info_entity.dart';
+import 'package:asset_tuner/domain/subscription/usecase/get_customer_info_usecase.dart';
+import 'package:asset_tuner/domain/subscription/usecase/restore_purchases_usecase.dart';
 
 part 'manage_subscription_cubit.freezed.dart';
 part 'manage_subscription_state.dart';
@@ -15,14 +16,14 @@ part 'manage_subscription_state.dart';
 class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
   ManageSubscriptionCubit(
     this._getCachedSession,
-    this._getProfile,
-    this._bootstrapProfile,
+    this._getCustomerInfo,
+    this._restorePurchases,
     this._updatePlan,
   ) : super(const ManageSubscriptionState());
 
   final GetCachedSessionUseCase _getCachedSession;
-  final GetProfileUseCase _getProfile;
-  final BootstrapProfileUseCase _bootstrapProfile;
+  final GetCustomerInfoUseCase _getCustomerInfo;
+  final RestorePurchasesUseCase _restorePurchases;
   final UpdatePlanUseCase _updatePlan;
 
   Future<void> load() async {
@@ -46,67 +47,83 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
       return;
     }
 
-    final profile = await _loadProfile();
+    final result = await _getCustomerInfo();
     if (isClosed) return;
-    if (profile == null) {
-      emit(
-        state.copyWith(
-          status: ManageSubscriptionStatus.error,
-          failureCode: 'unknown',
-        ),
-      );
-      return;
+    switch (result) {
+      case Success<SubscriptionInfoEntity>(value: final info):
+        emit(
+          state.copyWith(
+            status: ManageSubscriptionStatus.ready,
+            plan: info.isPro ? 'paid' : 'free',
+          ),
+        );
+      case FailureResult<SubscriptionInfoEntity>(failure: final failure):
+        emit(
+          state.copyWith(
+            status: ManageSubscriptionStatus.error,
+            failureCode: failure.code,
+            failureMessage: failure.message,
+          ),
+        );
     }
-
-    emit(
-      state.copyWith(
-        status: ManageSubscriptionStatus.ready,
-        plan: profile.plan,
-      ),
-    );
   }
 
-  Future<void> manage() async {
-    await _setPlan('paid', banner: ManageSubscriptionBanner.manageSuccess);
+  void onCustomerCenterClosed() async {
+    if (state.status != ManageSubscriptionStatus.ready) return;
+    final result = await _getCustomerInfo();
+    if (isClosed) return;
+    switch (result) {
+      case Success<SubscriptionInfoEntity>(value: final info):
+        emit(
+          state.copyWith(plan: info.isPro ? 'paid' : 'free'),
+        );
+      case FailureResult<SubscriptionInfoEntity>():
+        break;
+    }
   }
 
   Future<void> restore() async {
-    await _setPlan('paid', banner: ManageSubscriptionBanner.restoreSuccess);
-  }
-
-  Future<void> cancel() async {
-    await _setPlan('free', banner: ManageSubscriptionBanner.cancelSuccess);
-  }
-
-  void dismissBanner() {
-    emit(state.copyWith(banner: null));
-  }
-
-  Future<void> _setPlan(
-    String plan, {
-    required ManageSubscriptionBanner banner,
-  }) async {
-    if (state.status != ManageSubscriptionStatus.ready) {
-      return;
-    }
+    if (state.status != ManageSubscriptionStatus.ready) return;
     emit(state.copyWith(isUpdating: true, banner: null));
-    final result = await _updatePlan(plan);
+    final result = await _restorePurchases();
     if (isClosed) return;
     switch (result) {
-      case Success<ProfileEntity>(value: final profile):
+      case Success<SubscriptionInfoEntity>(value: final info):
+        final plan = info.isPro ? 'paid' : 'free';
+        if (info.isPro) {
+          final syncResult = await _updatePlan('paid');
+          if (isClosed) return;
+          switch (syncResult) {
+            case Success<ProfileEntity>(value: final profile):
+              emit(
+                state.copyWith(
+                  isUpdating: false,
+                  plan: profile.plan,
+                  banner: ManageSubscriptionBanner.restoreSuccess,
+                ),
+              );
+            case FailureResult<ProfileEntity>():
+              emit(
+                state.copyWith(
+                  isUpdating: false,
+                  plan: plan,
+                  banner: ManageSubscriptionBanner.restoreSuccess,
+                ),
+              );
+          }
+        } else {
+          emit(
+            state.copyWith(
+              isUpdating: false,
+              plan: plan,
+              banner: ManageSubscriptionBanner.restoreSuccess,
+            ),
+          );
+        }
+      case FailureResult<SubscriptionInfoEntity>(failure: final failure):
         emit(
           state.copyWith(
             isUpdating: false,
-            status: ManageSubscriptionStatus.ready,
-            plan: profile.plan,
-            banner: banner,
-          ),
-        );
-      case FailureResult<ProfileEntity>(failure: final failure):
-        emit(
-          state.copyWith(
-            isUpdating: false,
-            status: ManageSubscriptionStatus.ready,
             failureCode: failure.code,
             failureMessage: failure.message,
             banner: ManageSubscriptionBanner.updateFailure,
@@ -115,19 +132,7 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
     }
   }
 
-  Future<ProfileEntity?> _loadProfile() async {
-    final result = await _getProfile();
-    switch (result) {
-      case Success<ProfileEntity>(value: final profile):
-        return profile;
-      case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile();
-        switch (bootstrap) {
-          case Success(value: final data):
-            return data.profile;
-          case FailureResult():
-            return null;
-        }
-    }
+  void dismissBanner() {
+    emit(state.copyWith(banner: null));
   }
 }

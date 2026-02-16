@@ -20,8 +20,8 @@ abstract class BaseCurrencySettingsState with _$BaseCurrencySettingsState {
   const factory BaseCurrencySettingsState({
     @Default(BaseCurrencySettingsStatus.loading)
     BaseCurrencySettingsStatus status,
-    @Default([]) List<CurrencyEntity> currencies,
-    @Default([]) List<CurrencyEntity> visibleCurrencies,
+    @Default([]) List<AssetPickerItemEntity> currencies,
+    @Default([]) List<AssetPickerItemEntity> visibleCurrencies,
     @Default(false) bool hasMoreResults,
     @Default(false) bool showAll,
     @Default('') String query,

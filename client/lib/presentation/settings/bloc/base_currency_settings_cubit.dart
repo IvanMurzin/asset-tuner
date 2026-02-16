@@ -2,9 +2,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_picker_item_entity.dart';
+import 'package:asset_tuner/domain/asset/usecase/get_assets_for_subaccount_picker_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
-import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
-import 'package:asset_tuner/domain/currency/usecase/get_fiat_currencies_usecase.dart';
 import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
@@ -17,16 +18,15 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
   BaseCurrencySettingsCubit(
     this._getCachedSession,
     this._bootstrapProfile,
-    this._getFiatCurrencies,
+    this._getAssetsForPicker,
     this._updateBaseCurrency,
   ) : super(const BaseCurrencySettingsState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final BootstrapProfileUseCase _bootstrapProfile;
-  final GetFiatCurrenciesUseCase _getFiatCurrencies;
+  final GetAssetsForSubaccountPickerUseCase _getAssetsForPicker;
   final UpdateBaseCurrencyUseCase _updateBaseCurrency;
 
-  static const _freeUnlockedByRank = 5;
   static const _minQueryLength = 2;
   static const _maxResults = 50;
 
@@ -71,10 +71,10 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
       return;
     }
 
-    final catalog = await _getFiatCurrencies();
+    final catalog = await _getAssetsForPicker.call(kind: AssetKind.fiat);
     if (isClosed) return;
     switch (catalog) {
-      case Success<List<CurrencyEntity>>(value: final currencies):
+      case Success<List<AssetPickerItemEntity>>(value: final currencies):
         if (currencies.isEmpty) {
           emit(
             state.copyWith(
@@ -97,7 +97,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
           currencies: currencies,
         );
         emit(_recomputeVisible(next));
-      case FailureResult<List<CurrencyEntity>>(failure: final failure):
+      case FailureResult<List<AssetPickerItemEntity>>(failure: final failure):
         emit(
           state.copyWith(
             status: BaseCurrencySettingsStatus.error,
@@ -217,10 +217,9 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     if (entitlements.anyBaseCurrency) {
       return true;
     }
-    final index = state.currencies.indexWhere(
-      (currency) => currency.code.toUpperCase() == code.toUpperCase(),
-    );
-    return index >= 0 && index < _freeUnlockedByRank;
+    final match = state.currencies
+        .where((e) => e.code.toUpperCase() == code.toUpperCase());
+    return match.isNotEmpty && match.first.isUnlocked;
   }
 
   BaseCurrencySettingsState _recomputeVisible(BaseCurrencySettingsState input) {
@@ -247,9 +246,9 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
       );
     }
 
-    final matched = currencies.where((currency) {
-      return currency.code.toLowerCase().contains(query) ||
-          currency.name.toLowerCase().contains(query);
+    final matched = currencies.where((item) {
+      return item.code.toLowerCase().contains(query) ||
+          item.name.toLowerCase().contains(query);
     }).toList();
     final limited = matched.take(_maxResults).toList();
     return input.copyWith(

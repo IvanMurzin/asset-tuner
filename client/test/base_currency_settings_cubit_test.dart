@@ -6,9 +6,10 @@ import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
-import 'package:asset_tuner/domain/currency/entity/currency_entity.dart';
-import 'package:asset_tuner/domain/currency/repository/i_currency_repository.dart';
-import 'package:asset_tuner/domain/currency/usecase/get_fiat_currencies_usecase.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_picker_item_entity.dart';
+import 'package:asset_tuner/domain/asset/repository/i_asset_repository.dart';
+import 'package:asset_tuner/domain/asset/usecase/get_assets_for_subaccount_picker_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
@@ -132,26 +133,72 @@ class FakeProfileRepository implements IProfileRepository {
   }
 }
 
-class FakeCurrencyRepository implements ICurrencyRepository {
-  FakeCurrencyRepository({this.currencyResult});
+List<AssetPickerItemEntity> _fiatPickerItems() => [
+      const AssetPickerItemEntity(
+        id: 'a1',
+        kind: AssetKind.fiat,
+        code: 'USD',
+        name: 'United States Dollar',
+        rank: 1,
+        isUnlocked: true,
+      ),
+      const AssetPickerItemEntity(
+        id: 'a2',
+        kind: AssetKind.fiat,
+        code: 'EUR',
+        name: 'Euro',
+        rank: 2,
+        isUnlocked: true,
+      ),
+      const AssetPickerItemEntity(
+        id: 'a3',
+        kind: AssetKind.fiat,
+        code: 'GBP',
+        name: 'British Pound',
+        rank: 3,
+        isUnlocked: true,
+      ),
+      const AssetPickerItemEntity(
+        id: 'a4',
+        kind: AssetKind.fiat,
+        code: 'JPY',
+        name: 'Japanese Yen',
+        rank: 4,
+        isUnlocked: true,
+      ),
+      const AssetPickerItemEntity(
+        id: 'a5',
+        kind: AssetKind.fiat,
+        code: 'CNY',
+        name: 'Chinese Yuan',
+        rank: 5,
+        isUnlocked: true,
+      ),
+      const AssetPickerItemEntity(
+        id: 'a6',
+        kind: AssetKind.fiat,
+        code: 'AUD',
+        name: 'Australian Dollar',
+        rank: 6,
+        isUnlocked: false,
+      ),
+    ];
 
-  final Result<List<CurrencyEntity>>? currencyResult;
+class FakeAssetRepository implements IAssetRepository {
+  FakeAssetRepository({this.pickerResult});
+
+  final Result<List<AssetPickerItemEntity>>? pickerResult;
 
   @override
-  Future<Result<List<CurrencyEntity>>> fetchFiatCurrencies() async {
-    return currencyResult ??
-        const Success([
-          CurrencyEntity(
-            code: 'USD',
-            name: 'United States Dollar',
-            symbol: 'USD',
-          ),
-          CurrencyEntity(code: 'EUR', name: 'Euro', symbol: 'EUR'),
-          CurrencyEntity(code: 'GBP', name: 'British Pound', symbol: 'GBP'),
-          CurrencyEntity(code: 'JPY', name: 'Japanese Yen', symbol: 'JPY'),
-          CurrencyEntity(code: 'CNY', name: 'Chinese Yuan', symbol: 'CNY'),
-          CurrencyEntity(code: 'AUD', name: 'Australian Dollar', symbol: 'AUD'),
-        ]);
+  Future<Result<List<AssetEntity>>> fetchAssets() async {
+    return const Success([]);
+  }
+
+  @override
+  Future<Result<List<AssetPickerItemEntity>>> fetchAssetsForPicker({
+    required AssetKind kind,
+  }) async {
+    return pickerResult ?? Success(_fiatPickerItems());
   }
 }
 
@@ -160,7 +207,7 @@ void main() {
     final cubit = BaseCurrencySettingsCubit(
       GetCachedSessionUseCase(FakeAuthRepository()),
       BootstrapProfileUseCase(FakeProfileRepository()),
-      GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetAssetsForSubaccountPickerUseCase(FakeAssetRepository()),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -184,8 +231,8 @@ void main() {
         ),
       ),
       BootstrapProfileUseCase(FakeProfileRepository()),
-      GetFiatCurrenciesUseCase(
-        FakeCurrencyRepository(currencyResult: const Success([])),
+      GetAssetsForSubaccountPickerUseCase(
+        FakeAssetRepository(pickerResult: const Success([])),
       ),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
@@ -218,7 +265,7 @@ void main() {
           ),
         ),
       ),
-      GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetAssetsForSubaccountPickerUseCase(FakeAssetRepository()),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -256,7 +303,7 @@ void main() {
           ),
         ),
       ),
-      GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetAssetsForSubaccountPickerUseCase(FakeAssetRepository()),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -280,7 +327,7 @@ void main() {
         ),
       ),
       BootstrapProfileUseCase(FakeProfileRepository()),
-      GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetAssetsForSubaccountPickerUseCase(FakeAssetRepository()),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -306,7 +353,7 @@ void main() {
         ),
       ),
       BootstrapProfileUseCase(profileRepo),
-      GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetAssetsForSubaccountPickerUseCase(FakeAssetRepository()),
       UpdateBaseCurrencyUseCase(profileRepo),
     );
     addTearDown(cubit.close);
@@ -339,7 +386,7 @@ void main() {
         ),
       ),
       BootstrapProfileUseCase(profileRepo),
-      GetFiatCurrenciesUseCase(FakeCurrencyRepository()),
+      GetAssetsForSubaccountPickerUseCase(FakeAssetRepository()),
       UpdateBaseCurrencyUseCase(profileRepo),
     );
     addTearDown(cubit.close);

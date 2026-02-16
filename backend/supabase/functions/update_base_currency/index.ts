@@ -5,8 +5,6 @@ import { json, jsonError } from '../_shared/responses.ts';
 import { getServiceClient } from '../_shared/supabase.ts';
 import { normalizeCode } from '../_shared/validators.ts';
 
-const FREE_BASE_CURRENCY_RANK_LIMIT = 5;
-
 Deno.serve(async (req) => {
   const cors = handleCors(req);
   if (cors) {
@@ -51,10 +49,23 @@ Deno.serve(async (req) => {
       return jsonError('validation', 'Unsupported currency', 400, { field: 'base_currency' });
     }
 
-    if (!entitlements.any_base_currency && Number(fiatRank.rank) > FREE_BASE_CURRENCY_RANK_LIMIT) {
-      return jsonError('forbidden', 'Base currency not allowed', 403, {
-        reason: 'base_currency',
-      });
+    if (!entitlements.any_base_currency) {
+      const { data: limits, error: limitsError } = await service
+        .from('plan_limits')
+        .select('fiat_limit')
+        .eq('plan', plan)
+        .maybeSingle();
+      if (limitsError) {
+        return jsonError('unknown', 'Failed to validate plan limits', 500);
+      }
+      const fiatLimit = Number.isFinite(Number(limits?.fiat_limit))
+        ? Number(limits.fiat_limit)
+        : 5;
+      if (Number(fiatRank.rank) > fiatLimit) {
+        return jsonError('forbidden', 'Base currency not allowed', 403, {
+          reason: 'base_currency',
+        });
+      }
     }
 
     const { data: fiat, error: fiatError } = await service

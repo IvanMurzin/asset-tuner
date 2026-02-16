@@ -12,6 +12,9 @@ import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart'
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_plan_usecase.dart';
+import 'package:asset_tuner/domain/subscription/entity/subscription_info_entity.dart';
+import 'package:asset_tuner/domain/subscription/repository/i_subscription_repository.dart';
+import 'package:asset_tuner/domain/subscription/usecase/get_is_pro_usecase.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 import 'test_fixtures.dart';
@@ -133,6 +136,35 @@ class FakeProfileRepository implements IProfileRepository {
   }
 }
 
+class FakeSubscriptionRepository implements ISubscriptionRepository {
+  FakeSubscriptionRepository({this.isPro = false});
+
+  final bool isPro;
+
+  @override
+  Future<Result<SubscriptionInfoEntity>> getCustomerInfo() async {
+    return Success(
+      SubscriptionInfoEntity(
+        isPro: isPro,
+        activeProductIds: const [],
+      ),
+    );
+  }
+
+  @override
+  Future<bool> hasProEntitlement() async => isPro;
+
+  @override
+  Future<Result<SubscriptionInfoEntity>> restorePurchases() async {
+    return Success(
+      SubscriptionInfoEntity(
+        isPro: isPro,
+        activeProductIds: const [],
+      ),
+    );
+  }
+}
+
 void main() {
   test(
     'load uses free plan and shows entitlementsUnverified on network',
@@ -153,6 +185,7 @@ void main() {
         ),
       );
 
+      final subscriptionRepo = FakeSubscriptionRepository(isPro: false);
       final cubit = PaywallCubit(
         GetCachedSessionUseCase(
           FakeAuthRepository(
@@ -165,6 +198,7 @@ void main() {
         GetProfileUseCase(repo),
         BootstrapProfileUseCase(repo),
         UpdatePlanUseCase(repo),
+        GetIsProUseCase(subscriptionRepo),
       );
       addTearDown(cubit.close);
 
@@ -188,6 +222,7 @@ void main() {
       ),
     );
 
+    final subscriptionRepo = FakeSubscriptionRepository(isPro: false);
     final cubit = PaywallCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
@@ -200,6 +235,7 @@ void main() {
       GetProfileUseCase(repo),
       BootstrapProfileUseCase(repo),
       UpdatePlanUseCase(repo),
+      GetIsProUseCase(subscriptionRepo),
     );
     addTearDown(cubit.close);
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
@@ -156,9 +157,10 @@ class ManageSubscriptionPage extends StatelessWidget {
                                     isLoading: state.isUpdating,
                                     onPressed: state.isUpdating
                                         ? null
-                                        : () => context
-                                              .read<ManageSubscriptionCubit>()
-                                              .manage(),
+                                        : () => _onManageOrUpgrade(
+                                              context,
+                                              isPaid,
+                                            ),
                                   ),
                                   SizedBox(height: spacing.s12),
                                   DSButton(
@@ -172,20 +174,6 @@ class ManageSubscriptionPage extends StatelessWidget {
                                               .read<ManageSubscriptionCubit>()
                                               .restore(),
                                   ),
-                                  if (isPaid) ...[
-                                    SizedBox(height: spacing.s12),
-                                    DSButton(
-                                      label: l10n.subscriptionCancel,
-                                      variant: DSButtonVariant.secondary,
-                                      fullWidth: true,
-                                      isLoading: state.isUpdating,
-                                      onPressed: state.isUpdating
-                                          ? null
-                                          : () => context
-                                                .read<ManageSubscriptionCubit>()
-                                                .cancel(),
-                                    ),
-                                  ],
                                 ],
                               ),
                             ),
@@ -201,6 +189,20 @@ class ManageSubscriptionPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _onManageOrUpgrade(
+    BuildContext context,
+    bool isPaid,
+  ) async {
+    final cubit = context.read<ManageSubscriptionCubit>();
+    if (isPaid) {
+      await RevenueCatUI.presentCustomerCenter();
+      cubit.onCustomerCenterClosed();
+    } else {
+      await RevenueCatUI.presentPaywall(displayCloseButton: true);
+      cubit.load();
+    }
   }
 
   String? _bannerText(AppLocalizations l10n, ManageSubscriptionBanner? banner) {

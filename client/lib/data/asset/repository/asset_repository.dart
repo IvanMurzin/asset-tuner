@@ -34,21 +34,19 @@ class AssetRepository implements IAssetRepository {
   }
 
   @override
-  Future<Result<List<AssetPickerItemEntity>>> fetchAssetsForSubaccountPicker({
+  Future<Result<List<AssetPickerItemEntity>>> fetchAssetsForPicker({
     required AssetKind kind,
   }) async {
     try {
-      final dtos = await _dataSource.fetchAssetsForSubaccountPicker(
-        kind: kind.name,
-      );
+      final dtos = await _dataSource.fetchAssetsForPicker(kind: kind.name);
       final entities = dtos.map(AssetPickerItemMapper.toEntity).toList();
       logger.i(
-        'AssetRepository.fetchAssetsForSubaccountPicker success: ${entities.length}, kind=${kind.name}',
+        'AssetRepository.fetchAssetsForPicker success: ${entities.length}, kind=${kind.name}',
       );
       return Success(entities);
     } catch (error) {
       logger.e(
-        'AssetRepository.fetchAssetsForSubaccountPicker failed',
+        'AssetRepository.fetchAssetsForPicker failed',
         error: error,
       );
       return FailureResult(

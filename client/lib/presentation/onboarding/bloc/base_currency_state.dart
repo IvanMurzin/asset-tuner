@@ -17,7 +17,7 @@ abstract class BaseCurrencyNavigation with _$BaseCurrencyNavigation {
 abstract class BaseCurrencyState with _$BaseCurrencyState {
   const factory BaseCurrencyState({
     @Default(BaseCurrencyStatus.loading) BaseCurrencyStatus status,
-    @Default([]) List<CurrencyEntity> currencies,
+    @Default([]) List<AssetPickerItemEntity> currencies,
     @Default('') String query,
     String? selectedCode,
     String? loadFailureCode,

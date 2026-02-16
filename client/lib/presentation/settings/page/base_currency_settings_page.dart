@@ -190,21 +190,15 @@ class BaseCurrencySettingsPage extends StatelessWidget {
   }
 
   List<DSCurrencyPickerOption> _buildOptions(BaseCurrencySettingsState state) {
-    const freeUnlockedByRank = 5;
-    return state.currencies.asMap().entries.map((entry) {
-      final index = entry.key;
-      final currency = entry.value;
-      final code = currency.code.toUpperCase();
-      final allowed =
-          (state.entitlements?.anyBaseCurrency ?? false) ||
-          index < freeUnlockedByRank;
+    return state.currencies.map((item) {
+      final code = item.code.toUpperCase();
       return DSCurrencyPickerOption(
         id: code,
         primaryText: code,
-        secondaryText: currency.name,
-        tertiaryText: currency.symbol,
-        searchTerms: [currency.name, currency.symbol],
-        locked: !allowed,
+        secondaryText: item.name,
+        tertiaryText: code,
+        searchTerms: [item.name, code],
+        locked: !item.isUnlocked,
       );
     }).toList();
   }

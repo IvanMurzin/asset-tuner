@@ -267,7 +267,7 @@ class FakeAssetRepository implements IAssetRepository {
   }
 
   @override
-  Future<Result<List<AssetPickerItemEntity>>> fetchAssetsForSubaccountPicker({
+  Future<Result<List<AssetPickerItemEntity>>> fetchAssetsForPicker({
     required AssetKind kind,
   }) async {
     return const Success([]);

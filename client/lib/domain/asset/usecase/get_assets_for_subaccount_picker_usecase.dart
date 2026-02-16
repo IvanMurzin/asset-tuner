@@ -11,6 +11,6 @@ class GetAssetsForSubaccountPickerUseCase {
   final IAssetRepository _repository;
 
   Future<Result<List<AssetPickerItemEntity>>> call({required AssetKind kind}) {
-    return _repository.fetchAssetsForSubaccountPicker(kind: kind);
+    return _repository.fetchAssetsForPicker(kind: kind);
   }
 }

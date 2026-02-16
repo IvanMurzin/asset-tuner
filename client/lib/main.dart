@@ -5,6 +5,7 @@ import 'package:asset_tuner/app.dart';
 import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/di/di.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
+import 'package:asset_tuner/core/revenuecat/revenuecat_initializer.dart';
 import 'package:asset_tuner/core/supabase/supabase_initializer.dart';
 
 Future<void> main() async {
@@ -13,6 +14,7 @@ Future<void> main() async {
       WidgetsFlutterBinding.ensureInitialized();
       final config = AppConfig.requireFromEnvironment();
       await SupabaseInitializer.init(config);
+      await RevenueCatInitializer.init(config);
       await configureDependencies();
 
       final locale = WidgetsBinding.instance.platformDispatcher.locale;

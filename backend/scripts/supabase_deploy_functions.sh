@@ -15,6 +15,7 @@ supabase functions deploy rename_subaccount --no-verify-jwt
 supabase functions deploy subaccount --no-verify-jwt
 supabase functions deploy update_subaccount_balance --no-verify-jwt
 supabase functions deploy update_base_currency --no-verify-jwt
+supabase functions deploy get_assets_for_picker --no-verify-jwt
 supabase functions deploy update_plan --no-verify-jwt
 supabase functions deploy rates_sync --no-verify-jwt
 supabase functions deploy coingecko_refresh_metadata --no-verify-jwt
