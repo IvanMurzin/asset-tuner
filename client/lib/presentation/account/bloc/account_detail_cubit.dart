@@ -89,9 +89,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
         state.copyWith(
           status: AccountDetailStatus.error,
           failureCode: 'unauthorized',
-          navigation: const AccountDetailNavigation(
-            destination: AccountDetailDestination.signIn,
-          ),
+          navigation: const AccountDetailNavigation(destination: AccountDetailDestination.signIn),
         ),
       );
       return;
@@ -99,12 +97,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
 
     final profile = await _loadProfile();
     if (profile == null) {
-      maybeEmit(
-        state.copyWith(
-          status: AccountDetailStatus.error,
-          failureCode: 'unknown',
-        ),
-      );
+      maybeEmit(state.copyWith(status: AccountDetailStatus.error, failureCode: 'unknown'));
       return;
     }
 
@@ -121,12 +114,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
       FailureResult<List<AccountEntity>>() => null,
     };
     if (account == null) {
-      maybeEmit(
-        state.copyWith(
-          status: AccountDetailStatus.error,
-          failureCode: 'not_found',
-        ),
-      );
+      maybeEmit(state.copyWith(status: AccountDetailStatus.error, failureCode: 'not_found'));
       return;
     }
 
@@ -136,9 +124,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
       FailureResult<List<AssetEntity>>() => const <AssetEntity>[],
     };
     final assetsById = {for (final a in assets) a.id: a};
-    final baseAsset = assets
-        .where((a) => a.code == profile.baseCurrency)
-        .firstOrNull;
+    final baseAsset = assets.where((a) => a.code == profile.baseCurrency).firstOrNull;
 
     final positions = await _getAccountAssets(accountId: accountId);
 
@@ -225,10 +211,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     }
 
     emit(
-      state.copyWith(
-        busyAssetIds: {...state.busyAssetIds, subaccountId},
-        bannerFailureCode: null,
-      ),
+      state.copyWith(busyAssetIds: {...state.busyAssetIds, subaccountId}, bannerFailureCode: null),
     );
 
     final result = await _removeAssetFromAccount(subaccountId: subaccountId);
@@ -239,9 +222,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
         emit(
           state.copyWith(
             busyAssetIds: {...state.busyAssetIds}..remove(subaccountId),
-            items: state.items
-                .where((i) => i.subaccountId != subaccountId)
-                .toList(),
+            items: state.items.where((i) => i.subaccountId != subaccountId).toList(),
           ),
         );
       case FailureResult<void>(failure: final failure):
@@ -255,10 +236,7 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     }
   }
 
-  Future<void> setArchived({
-    required String accountId,
-    required bool archived,
-  }) async {
+  Future<void> setArchived({required String accountId, required bool archived}) async {
     if (state.status != AccountDetailStatus.ready) {
       return;
     }
@@ -331,13 +309,8 @@ class AccountDetailCubit extends Cubit<AccountDetailState> {
     final hasAmount = originalAmount != Decimal.zero;
     final assetUsd = ratesSnapshot?.usdPriceByAssetId[position.assetId];
     final canConvert =
-        baseUsdPrice != null &&
-        ratesSnapshot != null &&
-        assetUsd != null &&
-        hasAmount;
-    final converted = canConvert
-        ? divideToDecimal(originalAmount * assetUsd, baseUsdPrice)
-        : null;
+        baseUsdPrice != null && ratesSnapshot != null && assetUsd != null && hasAmount;
+    final converted = canConvert ? divideToDecimal(originalAmount * assetUsd, baseUsdPrice) : null;
 
     return AccountAssetViewItem(
       subaccountId: position.id,

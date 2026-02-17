@@ -12,8 +12,6 @@ import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class AccountActionsPage extends StatelessWidget {
   const AccountActionsPage({super.key});
@@ -78,31 +76,24 @@ class AccountActionsPage extends StatelessWidget {
                             SizedBox(height: spacing.s12),
                             DSCard(
                               child: DSButton(
-                                    label: l10n.settingsSignOut,
-                                    variant: DSButtonVariant.secondary,
-                                    fullWidth: true,
-                                    isLoading: state.isSigningOut,
-                                    onPressed: state.isSigningOut
-                                        ? null
-                                        : () => context
-                                            .read<ProfileCubit>()
-                                            .signOut(),
-                                  ),
+                                label: l10n.settingsSignOut,
+                                variant: DSButtonVariant.secondary,
+                                fullWidth: true,
+                                isLoading: state.isSigningOut,
+                                onPressed: state.isSigningOut
+                                    ? null
+                                    : () => context.read<ProfileCubit>().signOut(),
+                              ),
                             ),
                             SizedBox(height: spacing.s24),
-                            DSSectionTitle(
-                              title: l10n.profileDeleteAccountTitle,
-                            ),
+                            DSSectionTitle(title: l10n.profileDeleteAccountTitle),
                             SizedBox(height: spacing.s12),
                             DSCard(
                               padding: EdgeInsets.zero,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(radius.r12),
-                                  border: Border.all(
-                                    color: colors.danger.withValues(alpha: 0.45),
-                                  ),
+                                  borderRadius: BorderRadius.circular(radius.r12),
+                                  border: Border.all(color: colors.danger.withValues(alpha: 0.45)),
                                 ),
                                 padding: EdgeInsets.all(spacing.s16),
                                 child: Column(
@@ -110,9 +101,7 @@ class AccountActionsPage extends StatelessWidget {
                                   children: [
                                     Text(
                                       l10n.profileDeleteAccountBody,
-                                      style: typography.body.copyWith(
-                                        color: colors.textSecondary,
-                                      ),
+                                      style: typography.body.copyWith(color: colors.textSecondary),
                                     ),
                                     SizedBox(height: spacing.s16),
                                     DSButton(
@@ -122,9 +111,8 @@ class AccountActionsPage extends StatelessWidget {
                                       isLoading: state.isDeletingAccount,
                                       onPressed: state.isDeletingAccount
                                           ? null
-                                          : () => context
-                                              .read<ProfileCubit>()
-                                              .confirmDelete(context),
+                                          : () =>
+                                                context.read<ProfileCubit>().confirmDelete(context),
                                     ),
                                   ],
                                 ),
@@ -144,11 +132,6 @@ class AccountActionsPage extends StatelessWidget {
   String? _bannerText(BuildContext context, AppLocalizations l10n, String? code, String? message) {
     if (code == null) return null;
     if (code == 'entitlements') return l10n.settingsEntitlementsError;
-    return resolveFailureMessage(
-      context,
-      code: code,
-      rawMessage: message,
-      service: ErrorService.database,
-    );
+    return message;
   }
 }

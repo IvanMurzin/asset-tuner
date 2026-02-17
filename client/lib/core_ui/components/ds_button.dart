@@ -46,15 +46,8 @@ class DSButton extends StatelessWidget {
         alignment: Alignment.center,
         clipBehavior: Clip.none,
         children: [
-          Opacity(
-            opacity: 0,
-            child: Text(label, style: labelStyle),
-          ),
-          DSLoader(
-            size: spacing.s16,
-            strokeWidth: 2,
-            color: baseForeground,
-          ),
+          Opacity(opacity: 0, child: Text(label, style: labelStyle)),
+          DSLoader(size: spacing.s16, strokeWidth: 2, color: baseForeground),
         ],
       );
     } else if (leadingIcon != null) {
@@ -108,15 +101,10 @@ class DSButton extends StatelessWidget {
             onTap: isInteractive ? onPressed : null,
             borderRadius: BorderRadius.circular(radius.r12),
             overlayColor: WidgetStateProperty.resolveWith(
-              (states) => states.contains(WidgetState.pressed)
-                  ? overlayColor
-                  : Colors.transparent,
+              (states) => states.contains(WidgetState.pressed) ? overlayColor : Colors.transparent,
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: spacing.s16,
-                vertical: spacing.s12,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: spacing.s16, vertical: spacing.s12),
               child: Row(
                 mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -1,13 +1,6 @@
 part of 'overview_cubit.dart';
 
-enum OverviewStatus {
-  loading,
-  ready,
-  emptyNoAccounts,
-  emptyNoAssets,
-  emptyNoBalances,
-  error,
-}
+enum OverviewStatus { loading, ready, emptyNoAccounts, emptyNoAssets, emptyNoBalances, error }
 
 @freezed
 abstract class OverviewNavigation with _$OverviewNavigation {
@@ -29,10 +22,8 @@ abstract class OverviewAccountItem with _$OverviewAccountItem {
 
 @freezed
 abstract class OverviewUnpricedHolding with _$OverviewUnpricedHolding {
-  const factory OverviewUnpricedHolding({
-    required String assetCode,
-    required Decimal amount,
-  }) = _OverviewUnpricedHolding;
+  const factory OverviewUnpricedHolding({required String assetCode, required Decimal amount}) =
+      _OverviewUnpricedHolding;
 }
 
 @freezed

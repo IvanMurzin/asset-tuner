@@ -11,16 +11,12 @@ part 'add_balance_state.dart';
 
 @injectable
 class AddBalanceCubit extends Cubit<AddBalanceState> {
-  AddBalanceCubit(this._getCachedSession, this._updateBalance)
-    : super(const AddBalanceState());
+  AddBalanceCubit(this._getCachedSession, this._updateBalance) : super(const AddBalanceState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final UpdateBalanceUseCase _updateBalance;
 
-  Future<void> load({
-    required String subaccountId,
-    DateTime? initialDate,
-  }) async {
+  Future<void> load({required String subaccountId, DateTime? initialDate}) async {
     emit(
       state.copyWith(
         status: AddBalanceStatus.loading,
@@ -39,9 +35,7 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
         state.copyWith(
           status: AddBalanceStatus.error,
           failureCode: 'unauthorized',
-          navigation: const AddBalanceNavigation(
-            destination: AddBalanceDestination.signIn,
-          ),
+          navigation: const AddBalanceNavigation(destination: AddBalanceDestination.signIn),
         ),
       );
       return;
@@ -71,9 +65,7 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
   Future<void> save() async {
     final subaccountId = state.subaccountId;
     final date = state.entryDate;
-    if (state.status != AddBalanceStatus.ready ||
-        subaccountId == null ||
-        date == null) {
+    if (state.status != AddBalanceStatus.ready || subaccountId == null || date == null) {
       return;
     }
 
@@ -101,21 +93,23 @@ class AddBalanceCubit extends Cubit<AddBalanceState> {
         emit(
           state.copyWith(
             isSaving: false,
-            navigation: const AddBalanceNavigation(
-              destination: AddBalanceDestination.backSaved,
-            ),
+            navigation: const AddBalanceNavigation(destination: AddBalanceDestination.backSaved),
           ),
         );
       case FailureResult(failure: final failure):
-        emit(state.copyWith(isSaving: false, failureCode: failure.code, failureMessage: failure.message));
+        emit(
+          state.copyWith(
+            isSaving: false,
+            failureCode: failure.code,
+            failureMessage: failure.message,
+          ),
+        );
     }
   }
 
   Decimal? _parseDecimal(String input) {
     final trimmed = input.trim();
-    final withoutPlus = trimmed.startsWith('+')
-        ? trimmed.substring(1)
-        : trimmed;
+    final withoutPlus = trimmed.startsWith('+') ? trimmed.substring(1) : trimmed;
     final normalized = withoutPlus.replaceAll(',', '.');
     try {
       return Decimal.parse(normalized);

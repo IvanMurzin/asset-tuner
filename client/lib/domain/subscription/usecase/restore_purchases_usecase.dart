@@ -9,6 +9,5 @@ class RestorePurchasesUseCase {
 
   final ISubscriptionRepository _repository;
 
-  Future<Result<SubscriptionInfoEntity>> call() =>
-      _repository.restorePurchases();
+  Future<Result<SubscriptionInfoEntity>> call() => _repository.restorePurchases();
 }

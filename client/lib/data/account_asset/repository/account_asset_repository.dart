@@ -15,23 +15,15 @@ class AccountAssetRepository implements IAccountAssetRepository {
   final SupabaseAccountAssetDataSource _dataSource;
 
   @override
-  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
-    required String accountId,
-  }) async {
+  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({required String accountId}) async {
     try {
       final dtos = await _dataSource.fetchAccountAssets(accountId: accountId);
       logger.i('AccountAssetRepository.fetchAccountAssets success');
       return Success(dtos.map(AccountAssetMapper.toEntity).toList());
     } catch (error) {
-      logger.e(
-        'AccountAssetRepository.fetchAccountAssets failed',
-        error: error,
-      );
+      logger.e('AccountAssetRepository.fetchAccountAssets failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to load subaccounts',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load subaccounts'),
       );
     }
   }
@@ -43,15 +35,9 @@ class AccountAssetRepository implements IAccountAssetRepository {
       logger.i('AccountAssetRepository.countAssetPositions success: $count');
       return Success(count);
     } catch (error) {
-      logger.e(
-        'AccountAssetRepository.countAssetPositions failed',
-        error: error,
-      );
+      logger.e('AccountAssetRepository.countAssetPositions failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to count subaccounts',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to count subaccounts'),
       );
     }
   }
@@ -77,10 +63,7 @@ class AccountAssetRepository implements IAccountAssetRepository {
     } catch (error) {
       logger.e('AccountAssetRepository.addAssetToAccount failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to create subaccount',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to create subaccount'),
       );
     }
   }
@@ -91,41 +74,27 @@ class AccountAssetRepository implements IAccountAssetRepository {
     required String name,
   }) async {
     try {
-      final dto = await _dataSource.renameSubaccount(
-        subaccountId: subaccountId,
-        name: name,
-      );
+      final dto = await _dataSource.renameSubaccount(subaccountId: subaccountId, name: name);
       logger.i('AccountAssetRepository.renameSubaccount success');
       return Success(AccountAssetMapper.toEntity(dto));
     } catch (error) {
       logger.e('AccountAssetRepository.renameSubaccount failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to rename subaccount',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to rename subaccount'),
       );
     }
   }
 
   @override
-  Future<Result<void>> removeAssetFromAccount({
-    required String subaccountId,
-  }) async {
+  Future<Result<void>> removeAssetFromAccount({required String subaccountId}) async {
     try {
       await _dataSource.removeAssetFromAccount(subaccountId: subaccountId);
       logger.i('AccountAssetRepository.removeAssetFromAccount success');
       return const Success(null);
     } catch (error) {
-      logger.e(
-        'AccountAssetRepository.removeAssetFromAccount failed',
-        error: error,
-      );
+      logger.e('AccountAssetRepository.removeAssetFromAccount failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to delete subaccount',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to delete subaccount'),
       );
     }
   }

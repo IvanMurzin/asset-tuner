@@ -69,8 +69,7 @@ class _OnboardingCarouselPageState extends State<OnboardingCarouselPage> {
     final spacing = context.dsSpacing;
     final colors = context.dsColors;
     final isLast = _currentPage == _pageCount - 1;
-    final primaryLabel =
-        isLast ? l10n.onboardingCarouselGetStarted : l10n.onboardingCarouselNext;
+    final primaryLabel = isLast ? l10n.onboardingCarouselGetStarted : l10n.onboardingCarouselNext;
 
     final slides = _OnboardingSlideData.buildAll(l10n);
 
@@ -87,10 +86,7 @@ class _OnboardingCarouselPageState extends State<OnboardingCarouselPage> {
           SafeArea(
             child: Column(
               children: [
-                OnboardingCarouselHeader(
-                  isLastPage: isLast,
-                  onSkip: _goToLast,
-                ),
+                OnboardingCarouselHeader(isLastPage: isLast, onSkip: _goToLast),
                 Expanded(
                   child: AnimatedBuilder(
                     animation: _pageController,
@@ -101,13 +97,11 @@ class _OnboardingCarouselPageState extends State<OnboardingCarouselPage> {
 
                       return PageView.builder(
                         controller: _pageController,
-                        onPageChanged: (index) =>
-                            setState(() => _currentPage = index),
+                        onPageChanged: (index) => setState(() => _currentPage = index),
                         itemCount: _pageCount,
                         physics: const BouncingScrollPhysics(),
                         itemBuilder: (context, index) {
-                          final delta =
-                              (page - index).clamp(-1.0, 1.0);
+                          final delta = (page - index).clamp(-1.0, 1.0);
                           final t = 1.0 - delta.abs();
                           final scale = lerpDouble(0.92, 1.0, t)!;
                           final opacity = lerpDouble(0.55, 1.0, t)!;
@@ -118,8 +112,7 @@ class _OnboardingCarouselPageState extends State<OnboardingCarouselPage> {
                             child: Transform.scale(
                               scale: scale,
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: spacing.s24),
+                                padding: EdgeInsets.symmetric(horizontal: spacing.s24),
                                 child: OnboardingGlassCard(
                                   child: Padding(
                                     padding: EdgeInsets.all(spacing.s24),
@@ -183,28 +176,19 @@ class _OnboardingSlideData {
         icon: Icons.savings_rounded,
         title: l10n.onboardingCarouselTitle1,
         body: l10n.onboardingCarouselBody1,
-        chipLabels: [
-          l10n.onboardingCarouselChip1First,
-          l10n.onboardingCarouselChip1Second,
-        ],
+        chipLabels: [l10n.onboardingCarouselChip1First, l10n.onboardingCarouselChip1Second],
       ),
       _OnboardingSlideData(
         icon: Icons.currency_exchange_rounded,
         title: l10n.onboardingCarouselTitle2,
         body: l10n.onboardingCarouselBody2,
-        chipLabels: [
-          l10n.onboardingCarouselChip2First,
-          l10n.onboardingCarouselChip2Second,
-        ],
+        chipLabels: [l10n.onboardingCarouselChip2First, l10n.onboardingCarouselChip2Second],
       ),
       _OnboardingSlideData(
         icon: Icons.auto_graph_rounded,
         title: l10n.onboardingCarouselTitle3,
         body: l10n.onboardingCarouselBody3,
-        chipLabels: [
-          l10n.onboardingCarouselChip3First,
-          l10n.onboardingCarouselChip3Second,
-        ],
+        chipLabels: [l10n.onboardingCarouselChip3First, l10n.onboardingCarouselChip3Second],
       ),
     ];
   }

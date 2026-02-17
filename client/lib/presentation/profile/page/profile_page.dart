@@ -17,8 +17,6 @@ import 'package:asset_tuner/presentation/profile/widget/profile_header_card.dart
 import 'package:asset_tuner/presentation/profile/widget/profile_language_selector.dart';
 import 'package:asset_tuner/presentation/profile/widget/profile_theme_selector.dart';
 import 'package:asset_tuner/presentation/settings/widget/settings_row_trailing.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -65,8 +63,7 @@ class ProfilePage extends StatelessWidget {
                     ],
                     Expanded(
                       child: RefreshIndicator(
-                        onRefresh: () =>
-                            context.read<ProfileCubit>().refresh(),
+                        onRefresh: () => context.read<ProfileCubit>().refresh(),
                         child: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           child: AnimatedSwitcher(
@@ -75,85 +72,68 @@ class ProfilePage extends StatelessWidget {
                             switchOutCurve: Curves.easeIn,
                             child: switch (state.status) {
                               ProfileStatus.loading => Column(
-                                    key: const ValueKey('profile_loading'),
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      DSCard(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            DSSkeleton(height: 26),
-                                            SizedBox(height: spacing.s12),
-                                            DSSkeleton(height: 18),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: spacing.s24),
-                                      DSSkeleton(height: 20),
-                                      SizedBox(height: spacing.s12),
-                                      DSSkeleton(height: 80),
-                                      SizedBox(height: spacing.s12),
-                                      DSSkeleton(height: 80),
-                                    ],
+                                key: const ValueKey('profile_loading'),
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  DSCard(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        DSSkeleton(height: 26),
+                                        SizedBox(height: spacing.s12),
+                                        DSSkeleton(height: 18),
+                                      ],
+                                    ),
                                   ),
+                                  SizedBox(height: spacing.s24),
+                                  DSSkeleton(height: 20),
+                                  SizedBox(height: spacing.s12),
+                                  DSSkeleton(height: 80),
+                                  SizedBox(height: spacing.s12),
+                                  DSSkeleton(height: 80),
+                                ],
+                              ),
                               ProfileStatus.error => Column(
-                                    key: const ValueKey('profile_error'),
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      DSInlineError(
-                                        title: l10n.splashErrorTitle,
-                                        message: l10n.errorGeneric,
-                                        actionLabel: l10n.splashRetry,
-                                        onAction: () => context
-                                            .read<ProfileCubit>()
-                                            .load(),
-                                      ),
-                                    ],
+                                key: const ValueKey('profile_error'),
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  DSInlineError(
+                                    title: l10n.splashErrorTitle,
+                                    message: l10n.errorGeneric,
+                                    actionLabel: l10n.splashRetry,
+                                    onAction: () => context.read<ProfileCubit>().load(),
                                   ),
+                                ],
+                              ),
                               ProfileStatus.ready => _ProfileReadyContent(
-                                    key: const ValueKey('profile_ready'),
-                                    state: state,
-                                    l10n: l10n,
-                                    onManageSubscriptionTap: () async {
-                                      final result = await context.push<
-                                          String>(
-                                        AppRoutes.manageSubscription,
-                                      );
-                                      if (context.mounted) {
-                                        if (result != null) {
-                                          context
-                                              .read<ProfileCubit>()
-                                              .setPlan(result);
-                                        }
-                                        await context
-                                            .read<ProfileCubit>()
-                                            .refresh();
-                                      }
-                                    },
-                                    onBaseCurrencyTap: () async {
-                                        final result = await context
-                                            .push<String>(
-                                              AppRoutes.baseCurrencySettings,
-                                            );
-                                        if (context.mounted) {
-                                          if (result != null) {
-                                            context
-                                                .read<ProfileCubit>()
-                                                .setBaseCurrency(result);
-                                          }
-                                          await context
-                                              .read<ProfileCubit>()
-                                              .refresh();
-                                        }
-                                      },
-                                    onArchivedTap: () => context
-                                        .push(AppRoutes.archivedAccounts),
-                                    onAccountActionsTap: () => context
-                                        .push(AppRoutes.accountActions),
-                                  ),
+                                key: const ValueKey('profile_ready'),
+                                state: state,
+                                l10n: l10n,
+                                onManageSubscriptionTap: () async {
+                                  final result = await context.push<String>(
+                                    AppRoutes.manageSubscription,
+                                  );
+                                  if (context.mounted) {
+                                    if (result != null) {
+                                      context.read<ProfileCubit>().setPlan(result);
+                                    }
+                                    await context.read<ProfileCubit>().refresh();
+                                  }
+                                },
+                                onBaseCurrencyTap: () async {
+                                  final result = await context.push<String>(
+                                    AppRoutes.baseCurrencySettings,
+                                  );
+                                  if (context.mounted) {
+                                    if (result != null) {
+                                      context.read<ProfileCubit>().setBaseCurrency(result);
+                                    }
+                                    await context.read<ProfileCubit>().refresh();
+                                  }
+                                },
+                                onArchivedTap: () => context.push(AppRoutes.archivedAccounts),
+                                onAccountActionsTap: () => context.push(AppRoutes.accountActions),
+                              ),
                             },
                           ),
                         ),
@@ -172,14 +152,8 @@ class ProfilePage extends StatelessWidget {
   String? _bannerText(BuildContext context, AppLocalizations l10n, String? code, String? message) {
     if (code == null) return null;
     if (code == 'entitlements') return l10n.settingsEntitlementsError;
-    return resolveFailureMessage(
-      context,
-      code: code,
-      rawMessage: message,
-      service: ErrorService.database,
-    );
+    return message;
   }
-
 }
 
 class _ProfileReadyContent extends StatelessWidget {
@@ -225,9 +199,7 @@ class _ProfileReadyContent extends StatelessWidget {
             children: [
               DSListRow(
                 title: l10n.settingsBaseCurrency,
-                trailing: SettingsRowTrailing(
-                  value: state.baseCurrency ?? l10n.notAvailable,
-                ),
+                trailing: SettingsRowTrailing(value: state.baseCurrency ?? l10n.notAvailable),
                 showDivider: true,
                 onTap: onBaseCurrencyTap,
               ),
@@ -243,14 +215,8 @@ class _ProfileReadyContent extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: DSListRow(
             title: l10n.settingsArchivedAccounts,
-            leading: Icon(
-              Icons.archive_outlined,
-              color: context.dsColors.textTertiary,
-            ),
-            trailing: Icon(
-              Icons.chevron_right,
-              color: context.dsColors.textTertiary,
-            ),
+            leading: Icon(Icons.archive_outlined, color: context.dsColors.textTertiary),
+            trailing: Icon(Icons.chevron_right, color: context.dsColors.textTertiary),
             onTap: onArchivedTap,
           ),
         ),
@@ -262,14 +228,8 @@ class _ProfileReadyContent extends StatelessWidget {
           child: DSListRow(
             title: l10n.profileAccountActionsTitle,
             subtitle: l10n.profileAccountActionsSubtitle,
-            leading: Icon(
-              Icons.security_outlined,
-              color: context.dsColors.textTertiary,
-            ),
-            trailing: Icon(
-              Icons.chevron_right,
-              color: context.dsColors.textTertiary,
-            ),
+            leading: Icon(Icons.security_outlined, color: context.dsColors.textTertiary),
+            trailing: Icon(Icons.chevron_right, color: context.dsColors.textTertiary),
             onTap: onAccountActionsTap,
           ),
         ),

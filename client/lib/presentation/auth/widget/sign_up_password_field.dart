@@ -5,12 +5,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/presentation/auth/bloc/sign_up_cubit.dart';
 
 class SignUpPasswordField extends StatefulWidget {
-  const SignUpPasswordField({
-    super.key,
-    required this.label,
-    required this.hint,
-    this.errorText,
-  });
+  const SignUpPasswordField({super.key, required this.label, required this.hint, this.errorText});
 
   final String label;
   final String hint;

@@ -33,28 +33,32 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: AppRoutes.home,
-      builder: (context, state) => const HomeGatePage(),
+      pageBuilder: (context, state) => slideTransition(context, state, const HomeGatePage()),
     ),
     GoRoute(
       path: AppRoutes.designSystem,
-      builder: (context, state) => const DSPreviewPage(),
+      pageBuilder: (context, state) => slideTransition(context, state, const DSPreviewPage()),
     ),
     GoRoute(
       path: AppRoutes.signIn,
-      builder: (context, state) => const SignInPage(),
+      pageBuilder: (context, state) => slideTransition(context, state, const SignInPage()),
     ),
     GoRoute(
       path: AppRoutes.signUp,
-      builder: (context, state) => const SignUpPage(),
+      pageBuilder: (context, state) => slideTransition(context, state, const SignUpPage()),
     ),
-    GoRoute(path: AppRoutes.otp, builder: (context, state) => const OtpPage()),
+    GoRoute(
+      path: AppRoutes.otp,
+      pageBuilder: (context, state) => slideTransition(context, state, const OtpPage()),
+    ),
     GoRoute(
       path: AppRoutes.onboardingBaseCurrency,
-      builder: (context, state) => const BaseCurrencyPage(),
+      pageBuilder: (context, state) => slideTransition(context, state, const BaseCurrencyPage()),
     ),
     GoRoute(
       path: AppRoutes.onboardingCarousel,
-      builder: (context, state) => const OnboardingCarouselPage(),
+      pageBuilder: (context, state) =>
+          slideTransition(context, state, const OnboardingCarouselPage()),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -65,18 +69,16 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.main,
-              builder: (context, state) => const OverviewPage(),
+              pageBuilder: (context, state) =>
+                  slideTransition(context, state, const OverviewPage()),
               routes: [
                 GoRoute(
-                  path: 'accounts/new',
-                  pageBuilder: (context, state) => slideTransition(
-                    context,
-                    state,
-                    const AccountFormPage(),
-                  ),
+                  path: AppRoutes.accountsNewPath,
+                  pageBuilder: (context, state) =>
+                      slideTransition(context, state, const AccountFormPage()),
                 ),
                 GoRoute(
-                  path: 'accounts/:id',
+                  path: AppRoutes.accountIdPath,
                   pageBuilder: (context, state) {
                     final id = state.pathParameters['id']!;
                     final extra = state.extra is AccountDetailExtra
@@ -94,29 +96,25 @@ final appRouter = GoRouter(
                   },
                   routes: [
                     GoRoute(
-                      path: 'edit',
+                      path: AppRoutes.editPath,
                       pageBuilder: (context, state) => slideTransition(
                         context,
                         state,
-                        AccountFormPage(
-                          accountId: state.pathParameters['id'],
-                        ),
+                        AccountFormPage(accountId: state.pathParameters['id']),
                       ),
                     ),
                     GoRoute(
-                      path: 'subaccounts/new',
+                      path: AppRoutes.subaccountsNewPath,
                       pageBuilder: (context, state) => slideTransition(
                         context,
                         state,
-                        AddAssetPage(
-                          accountId: state.pathParameters['id']!,
-                        ),
+                        AddAssetPage(accountId: state.pathParameters['id']!),
                       ),
                     ),
                   ],
                 ),
                 GoRoute(
-                  path: 'subaccounts/:id',
+                  path: AppRoutes.subaccountIdPath,
                   pageBuilder: (context, state) {
                     final id = state.pathParameters['id']!;
                     final extra = state.extra is SubaccountDetailExtra
@@ -126,8 +124,7 @@ final appRouter = GoRouter(
                       context,
                       state,
                       BlocProvider(
-                        create: (_) =>
-                            getIt<AssetPositionDetailCubit>()..load(subaccountId: id),
+                        create: (_) => getIt<AssetPositionDetailCubit>()..load(subaccountId: id),
                         child: AssetPositionDetailPage(
                           subaccountId: id,
                           initialTitle: extra?.initialTitle,
@@ -137,13 +134,11 @@ final appRouter = GoRouter(
                   },
                   routes: [
                     GoRoute(
-                      path: 'update-balance',
+                      path: AppRoutes.updateBalancePath,
                       pageBuilder: (context, state) => slideTransition(
                         context,
                         state,
-                        AddBalancePage(
-                          subaccountId: state.pathParameters['id']!,
-                        ),
+                        AddBalancePage(subaccountId: state.pathParameters['id']!),
                       ),
                     ),
                   ],
@@ -156,7 +151,8 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.analytics,
-              builder: (context, state) => const AnalyticsPage(),
+              pageBuilder: (context, state) =>
+                  slideTransition(context, state, const AnalyticsPage()),
             ),
           ],
         ),
@@ -164,7 +160,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.profile,
-              builder: (context, state) => const ProfilePage(),
+              pageBuilder: (context, state) => slideTransition(context, state, const ProfilePage()),
             ),
           ],
         ),
@@ -181,8 +177,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.accountActions,
-      pageBuilder: (context, state) =>
-          slideTransition(context, state, const AccountActionsPage()),
+      pageBuilder: (context, state) => slideTransition(context, state, const AccountActionsPage()),
     ),
     GoRoute(
       path: AppRoutes.archivedAccounts,
@@ -191,19 +186,13 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.baseCurrencySettings,
-      pageBuilder: (context, state) => slideTransition(
-        context,
-        state,
-        const BaseCurrencySettingsPage(),
-      ),
+      pageBuilder: (context, state) =>
+          slideTransition(context, state, const BaseCurrencySettingsPage()),
     ),
     GoRoute(
       path: AppRoutes.manageSubscription,
-      pageBuilder: (context, state) => slideTransition(
-        context,
-        state,
-        const ManageSubscriptionPage(),
-      ),
+      pageBuilder: (context, state) =>
+          slideTransition(context, state, const ManageSubscriptionPage()),
     ),
   ],
 );

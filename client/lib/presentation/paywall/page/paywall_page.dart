@@ -45,8 +45,7 @@ class PaywallPage extends StatelessWidget {
                 title: l10n.splashErrorTitle,
                 message: l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
-                onAction: () =>
-                    context.read<PaywallCubit>().load(reason: args.reason),
+                onAction: () => context.read<PaywallCubit>().load(reason: args.reason),
               ),
             );
           }

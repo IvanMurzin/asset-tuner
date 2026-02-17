@@ -63,9 +63,7 @@ class ManageSubscriptionPage extends StatelessWidget {
                       DSInlineBanner(
                         title: l10n.subscriptionTitle,
                         message: bannerText,
-                        variant:
-                            state.banner ==
-                                ManageSubscriptionBanner.updateFailure
+                        variant: state.banner == ManageSubscriptionBanner.updateFailure
                             ? DSInlineBannerVariant.danger
                             : DSInlineBannerVariant.success,
                       ),
@@ -106,14 +104,11 @@ class ManageSubscriptionPage extends StatelessWidget {
                                             borderRadius: BorderRadius.circular(
                                               context.dsRadius.r16,
                                             ),
-                                            border: Border.all(
-                                              color: colors.border,
-                                            ),
+                                            border: Border.all(color: colors.border),
                                           ),
                                           child: Icon(
                                             isPaid
-                                                ? Icons
-                                                      .workspace_premium_outlined
+                                                ? Icons.workspace_premium_outlined
                                                 : Icons.lock_open_outlined,
                                             color: colors.primary,
                                           ),
@@ -134,9 +129,7 @@ class ManageSubscriptionPage extends StatelessWidget {
                                       isPaid
                                           ? l10n.subscriptionPaidBody
                                           : l10n.subscriptionFreeBody,
-                                      style: typography.body.copyWith(
-                                        color: colors.textSecondary,
-                                      ),
+                                      style: typography.body.copyWith(color: colors.textSecondary),
                                     ),
                                   ],
                                 ),
@@ -157,10 +150,7 @@ class ManageSubscriptionPage extends StatelessWidget {
                                     isLoading: state.isUpdating,
                                     onPressed: state.isUpdating
                                         ? null
-                                        : () => _onManageOrUpgrade(
-                                              context,
-                                              isPaid,
-                                            ),
+                                        : () => _onManageOrUpgrade(context, isPaid),
                                   ),
                                   SizedBox(height: spacing.s12),
                                   DSButton(
@@ -170,9 +160,7 @@ class ManageSubscriptionPage extends StatelessWidget {
                                     isLoading: state.isUpdating,
                                     onPressed: state.isUpdating
                                         ? null
-                                        : () => context
-                                              .read<ManageSubscriptionCubit>()
-                                              .restore(),
+                                        : () => context.read<ManageSubscriptionCubit>().restore(),
                                   ),
                                 ],
                               ),
@@ -191,10 +179,7 @@ class ManageSubscriptionPage extends StatelessWidget {
     );
   }
 
-  Future<void> _onManageOrUpgrade(
-    BuildContext context,
-    bool isPaid,
-  ) async {
+  Future<void> _onManageOrUpgrade(BuildContext context, bool isPaid) async {
     final cubit = context.read<ManageSubscriptionCubit>();
     if (isPaid) {
       await RevenueCatUI.presentCustomerCenter();
@@ -208,8 +193,7 @@ class ManageSubscriptionPage extends StatelessWidget {
   String? _bannerText(AppLocalizations l10n, ManageSubscriptionBanner? banner) {
     return switch (banner) {
       ManageSubscriptionBanner.manageSuccess => l10n.subscriptionManageSuccess,
-      ManageSubscriptionBanner.restoreSuccess =>
-        l10n.subscriptionRestoreSuccess,
+      ManageSubscriptionBanner.restoreSuccess => l10n.subscriptionRestoreSuccess,
       ManageSubscriptionBanner.cancelSuccess => l10n.subscriptionCancelSuccess,
       ManageSubscriptionBanner.updateFailure => l10n.settingsEntitlementsError,
       null => null,

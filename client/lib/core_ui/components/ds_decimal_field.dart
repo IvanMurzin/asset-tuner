@@ -32,9 +32,7 @@ class DSDecimalField extends StatelessWidget {
       enabled: enabled,
       readOnly: readOnly,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9.,+-]')),
-      ],
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,+-]'))],
       textAlign: TextAlign.end,
       onChanged: onChanged,
     );

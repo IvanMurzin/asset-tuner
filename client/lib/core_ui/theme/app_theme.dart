@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
-const DSSpacing _spacing = DSSpacing(
-  s4: 4,
-  s8: 8,
-  s12: 12,
-  s16: 16,
-  s24: 24,
-  s32: 32,
-);
+const DSSpacing _spacing = DSSpacing(s4: 4, s8: 8, s12: 12, s16: 16, s24: 24, s32: 32);
 
 const DSRadius _radius = DSRadius(r8: 8, r12: 12, r16: 16);
 
@@ -145,26 +138,17 @@ ThemeData _buildTheme(DSColors colors, Brightness brightness) {
       titleTextStyle: typography.h2.copyWith(color: colors.textPrimary),
       iconTheme: IconThemeData(color: colors.textPrimary),
     ),
-    dividerTheme: DividerThemeData(
-      color: colors.border,
-      thickness: 1,
-      space: 1,
-    ),
+    dividerTheme: DividerThemeData(color: colors.border, thickness: 1, space: 1),
     dialogTheme: DialogThemeData(
       backgroundColor: colors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(_radius.r12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_radius.r12)),
       titleTextStyle: typography.h2.copyWith(color: colors.textPrimary),
       contentTextStyle: typography.body.copyWith(color: colors.textSecondary),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: colors.surface,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: _spacing.s16,
-        vertical: _spacing.s12,
-      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: _spacing.s16, vertical: _spacing.s12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(_radius.r12),
         borderSide: BorderSide(color: colors.border),
@@ -193,9 +177,7 @@ ThemeData _buildTheme(DSColors colors, Brightness brightness) {
       color: colors.surface,
       elevation: 0,
       margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(_radius.r12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_radius.r12)),
     ),
     extensions: [colors, _spacing, _radius, _elevation, typography],
   );

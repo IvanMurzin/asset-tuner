@@ -18,14 +18,12 @@ class MainShellPage extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<OverviewCubit>(
-          create: (_) => getIt<OverviewCubit>()..load(),
-        ),
-        BlocProvider<AnalyticsCubit>(
-          create: (_) => getIt<AnalyticsCubit>()..load(),
-        ),
+        // TODO: add profile cubit
+        BlocProvider<OverviewCubit>(create: (_) => getIt<OverviewCubit>()..load()),
+        BlocProvider<AnalyticsCubit>(create: (_) => getIt<AnalyticsCubit>()..load()),
       ],
       child: BlocListener<OverviewCubit, OverviewState>(
+        // TODO: refactor this
         listenWhen: (prev, curr) {
           if (curr.status != OverviewStatus.ready) {
             return false;
@@ -41,35 +39,35 @@ class MainShellPage extends StatelessWidget {
           context.read<AnalyticsCubit>().refresh();
         },
         child: Scaffold(
-        body: navigationShell,
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: navigationShell.currentIndex,
-          onDestinationSelected: (index) {
-            navigationShell.goBranch(
-              index,
-              initialLocation: index == navigationShell.currentIndex,
-            );
-          },
-          destinations: [
-            NavigationDestination(
-              icon: const Icon(Icons.home_outlined),
-              selectedIcon: const Icon(Icons.home),
-              label: l10n.mainTitle,
-            ),
-            NavigationDestination(
-              icon: const Icon(Icons.pie_chart_outline),
-              selectedIcon: const Icon(Icons.pie_chart),
-              label: l10n.analyticsTitle,
-            ),
-            NavigationDestination(
-              icon: const Icon(Icons.person_outline),
-              selectedIcon: const Icon(Icons.person),
-              label: l10n.profileTitle,
-            ),
-          ],
+          body: navigationShell,
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: navigationShell.currentIndex,
+            onDestinationSelected: (index) {
+              navigationShell.goBranch(
+                index,
+                initialLocation: index == navigationShell.currentIndex,
+              );
+            },
+            destinations: [
+              NavigationDestination(
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: const Icon(Icons.home),
+                label: l10n.mainTitle,
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.pie_chart_outline),
+                selectedIcon: const Icon(Icons.pie_chart),
+                label: l10n.analyticsTitle,
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.person_outline),
+                selectedIcon: const Icon(Icons.person),
+                label: l10n.profileTitle,
+              ),
+            ],
+          ),
+          backgroundColor: context.dsColors.background,
         ),
-        backgroundColor: context.dsColors.background,
-      ),
       ),
     );
   }

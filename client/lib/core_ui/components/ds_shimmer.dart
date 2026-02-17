@@ -19,15 +19,13 @@ class DSShimmer extends StatefulWidget {
   State<DSShimmer> createState() => _DSShimmerState();
 }
 
-class _DSShimmerState extends State<DSShimmer>
-    with SingleTickerProviderStateMixin {
+class _DSShimmerState extends State<DSShimmer> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: widget.period)
-      ..repeat();
+    _controller = AnimationController(vsync: this, duration: widget.period)..repeat();
   }
 
   @override
@@ -53,9 +51,7 @@ class _DSShimmerState extends State<DSShimmer>
               end: Alignment.centerRight,
               colors: [base, highlight, base],
               stops: const [0.1, 0.5, 0.9],
-              transform: _SlidingGradientTransform(
-                slidePercent: _controller.value * 2 - 1,
-              ),
+              transform: _SlidingGradientTransform(slidePercent: _controller.value * 2 - 1),
             ).createShader(bounds);
           },
           child: child,

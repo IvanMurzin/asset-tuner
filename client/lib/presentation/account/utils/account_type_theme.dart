@@ -5,25 +5,25 @@ import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 List<Color> accountTypeGradientColors(DSColors colors, AccountType type) {
   return switch (type) {
     AccountType.bank => [
-        colors.primary.withValues(alpha: 0.22),
-        colors.primary.withValues(alpha: 0.06),
-      ],
+      colors.primary.withValues(alpha: 0.22),
+      colors.primary.withValues(alpha: 0.06),
+    ],
     AccountType.wallet => [
-        colors.info.withValues(alpha: 0.22),
-        colors.info.withValues(alpha: 0.06),
-      ],
+      colors.info.withValues(alpha: 0.22),
+      colors.info.withValues(alpha: 0.06),
+    ],
     AccountType.exchange => [
-        colors.success.withValues(alpha: 0.22),
-        colors.success.withValues(alpha: 0.06),
-      ],
+      colors.success.withValues(alpha: 0.22),
+      colors.success.withValues(alpha: 0.06),
+    ],
     AccountType.cash => [
-        colors.warning.withValues(alpha: 0.25),
-        colors.warning.withValues(alpha: 0.08),
-      ],
+      colors.warning.withValues(alpha: 0.25),
+      colors.warning.withValues(alpha: 0.08),
+    ],
     AccountType.other => [
-        colors.textTertiary.withValues(alpha: 0.2),
-        colors.textTertiary.withValues(alpha: 0.06),
-      ],
+      colors.textTertiary.withValues(alpha: 0.2),
+      colors.textTertiary.withValues(alpha: 0.06),
+    ],
   };
 }
 

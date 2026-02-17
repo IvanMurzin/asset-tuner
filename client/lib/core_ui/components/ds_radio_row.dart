@@ -26,10 +26,7 @@ class DSRadioRow extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(radius.r12),
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: spacing.s12,
-          vertical: spacing.s12,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
         child: Row(
           children: [
             Container(
@@ -53,9 +50,7 @@ class DSRadioRow extends StatelessWidget {
                     SizedBox(height: spacing.s4),
                     Text(
                       subtitle!,
-                      style: typography.caption.copyWith(
-                        color: colors.textSecondary,
-                      ),
+                      style: typography.caption.copyWith(color: colors.textSecondary),
                     ),
                   ],
                 ],

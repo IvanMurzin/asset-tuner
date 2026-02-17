@@ -12,9 +12,7 @@ class SupabaseAccountAssetDataSource {
   final SupabaseClient _client;
   final SupabaseEdgeFunctions _edgeFunctions;
 
-  Future<List<AccountAssetDto>> fetchAccountAssets({
-    required String accountId,
-  }) async {
+  Future<List<AccountAssetDto>> fetchAccountAssets({required String accountId}) async {
     final rows = await _client
         .from(SupabaseTables.accountAssets)
         .select()
@@ -22,10 +20,7 @@ class SupabaseAccountAssetDataSource {
         .eq('archived', false)
         .order('sort_order', ascending: true)
         .order('created_at', ascending: true);
-    return (rows as List)
-        .whereType<Map<String, dynamic>>()
-        .map(AccountAssetDto.fromJson)
-        .toList();
+    return (rows as List).whereType<Map<String, dynamic>>().map(AccountAssetDto.fromJson).toList();
   }
 
   Future<int> countAssetPositions() async {
@@ -56,10 +51,7 @@ class SupabaseAccountAssetDataSource {
     return AccountAssetDto.fromJson(subaccountJson);
   }
 
-  Future<AccountAssetDto> renameSubaccount({
-    required String subaccountId,
-    required String name,
-  }) {
+  Future<AccountAssetDto> renameSubaccount({required String subaccountId, required String name}) {
     return _edgeFunctions.invoke(
       SupabaseFunctions.renameSubaccount,
       body: {'subaccount_id': subaccountId, 'name': name},
@@ -74,5 +66,4 @@ class SupabaseAccountAssetDataSource {
       body: {'subaccount_id': subaccountId},
     );
   }
-
 }

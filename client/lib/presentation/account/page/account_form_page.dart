@@ -18,8 +18,6 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_form_cubit.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class AccountFormPage extends StatefulWidget {
   const AccountFormPage({super.key, this.accountId});
@@ -51,8 +49,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
     final l10n = AppLocalizations.of(context)!;
 
     return BlocProvider(
-      create: (_) =>
-          getIt<AccountFormCubit>()..load(accountId: widget.accountId),
+      create: (_) => getIt<AccountFormCubit>()..load(accountId: widget.accountId),
       child: BlocConsumer<AccountFormCubit, AccountFormState>(
         listener: (context, state) async {
           final navigation = state.navigation;
@@ -70,9 +67,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                 extra: const PaywallArgs(reason: PaywallReason.accountsLimit),
               );
               if (context.mounted && upgraded == true) {
-                await context.read<AccountFormCubit>().load(
-                  accountId: widget.accountId,
-                );
+                await context.read<AccountFormCubit>().load(accountId: widget.accountId);
               }
               break;
             case AccountFormDestination.backSaved:
@@ -106,16 +101,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
               appBar: DSAppBar(title: l10n.accountsTitle),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: resolveFailureMessage(
-                  context,
-                  code: state.failureCode,
-                  rawMessage: state.failureMessage,
-                  service: ErrorService.database,
-                ),
+                message: state.failureMessage ?? l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
-                onAction: () => context.read<AccountFormCubit>().load(
-                  accountId: widget.accountId,
-                ),
+                onAction: () => context.read<AccountFormCubit>().load(accountId: widget.accountId),
               ),
             );
           }
@@ -128,29 +116,17 @@ class _AccountFormPageState extends State<AccountFormPage> {
           }
 
           return Scaffold(
-            appBar: DSAppBar(
-              title: isEdit ? l10n.accountsEditTitle : l10n.accountsNewTitle,
-            ),
+            appBar: DSAppBar(title: isEdit ? l10n.accountsEditTitle : l10n.accountsNewTitle),
             body: SafeArea(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s16,
-                ),
+                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (state.failureCode != null) ...[
                       DSInlineBanner(
                         title: l10n.accountsTitle,
-                        message: resolveFailureMessage(
-                          context,
-                          code: state.failureCode,
-                          rawMessage: state.failureMessage,
-                          service: ErrorService.database,
-                        ),
+                        message: state.failureMessage ?? l10n.errorGeneric,
                         variant: DSInlineBannerVariant.danger,
                       ),
                       SizedBox(height: spacing.s16),
@@ -170,9 +146,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                       controller: _nameController,
                       enabled: !state.isSaving,
                       errorText: _nameErrorText(l10n, state.nameError),
-                      onChanged: context
-                          .read<AccountFormCubit>()
-                          .updateName,
+                      onChanged: context.read<AccountFormCubit>().updateName,
                     ),
                     SizedBox(height: spacing.s24),
                     DSSectionTitle(title: l10n.accountsTypeLabel),
@@ -184,22 +158,17 @@ class _AccountFormPageState extends State<AccountFormPage> {
                       selected: state.type == AccountType.bank,
                       onTap: state.isSaving
                           ? null
-                          : () => context
-                                .read<AccountFormCubit>()
-                                .selectType(AccountType.bank),
+                          : () => context.read<AccountFormCubit>().selectType(AccountType.bank),
                     ),
                     SizedBox(height: spacing.s8),
                     AccountTypeCard(
                       type: AccountType.wallet,
                       title: l10n.accountsTypeCryptoWallet,
-                      description:
-                          l10n.accountsTypeCryptoWalletDescription,
+                      description: l10n.accountsTypeCryptoWalletDescription,
                       selected: state.type == AccountType.wallet,
                       onTap: state.isSaving
                           ? null
-                          : () => context
-                                .read<AccountFormCubit>()
-                                .selectType(AccountType.wallet),
+                          : () => context.read<AccountFormCubit>().selectType(AccountType.wallet),
                     ),
                     SizedBox(height: spacing.s8),
                     AccountTypeCard(
@@ -209,9 +178,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                       selected: state.type == AccountType.exchange,
                       onTap: state.isSaving
                           ? null
-                          : () => context
-                                .read<AccountFormCubit>()
-                                .selectType(AccountType.exchange),
+                          : () => context.read<AccountFormCubit>().selectType(AccountType.exchange),
                     ),
                     SizedBox(height: spacing.s8),
                     AccountTypeCard(
@@ -221,9 +188,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                       selected: state.type == AccountType.cash,
                       onTap: state.isSaving
                           ? null
-                          : () => context
-                                .read<AccountFormCubit>()
-                                .selectType(AccountType.cash),
+                          : () => context.read<AccountFormCubit>().selectType(AccountType.cash),
                     ),
                     SizedBox(height: spacing.s8),
                     AccountTypeCard(
@@ -233,18 +198,14 @@ class _AccountFormPageState extends State<AccountFormPage> {
                       selected: state.type == AccountType.other,
                       onTap: state.isSaving
                           ? null
-                          : () => context
-                                .read<AccountFormCubit>()
-                                .selectType(AccountType.other),
+                          : () => context.read<AccountFormCubit>().selectType(AccountType.other),
                     ),
                     SizedBox(height: spacing.s16),
                     DSButton(
                       label: l10n.save,
                       fullWidth: true,
                       isLoading: state.isSaving,
-                      onPressed: state.isSaving
-                          ? null
-                          : context.read<AccountFormCubit>().save,
+                      onPressed: state.isSaving ? null : context.read<AccountFormCubit>().save,
                     ),
                     SizedBox(height: spacing.s12),
                     DSButton(
@@ -270,5 +231,4 @@ class _AccountFormPageState extends State<AccountFormPage> {
       _ => null,
     };
   }
-
 }

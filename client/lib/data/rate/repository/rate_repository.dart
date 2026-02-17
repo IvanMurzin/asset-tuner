@@ -34,8 +34,7 @@ class RateRepository implements IRateRepository {
     if (cached != null) {
       final lastAttempt = _lastRefreshAttemptAt;
       final canAttemptRefresh =
-          lastAttempt == null ||
-          now.difference(lastAttempt) >= _minRefreshInterval;
+          lastAttempt == null || now.difference(lastAttempt) >= _minRefreshInterval;
 
       if (canAttemptRefresh) {
         _startRefreshIfNeeded(now);
@@ -88,10 +87,7 @@ class RateRepository implements IRateRepository {
         prices[dto.assetId] = dto.usdPrice;
       }
       logger.i('RateRepository.fetchLatestUsdRates success: ${prices.length}');
-      final snapshot = RatesSnapshotEntity(
-        usdPriceByAssetId: prices,
-        asOf: asOf,
-      );
+      final snapshot = RatesSnapshotEntity(usdPriceByAssetId: prices, asOf: asOf);
 
       _cached = snapshot;
       final stored = <String, StoredAssetRateUsd>{};
@@ -112,10 +108,7 @@ class RateRepository implements IRateRepository {
         return Success(cached);
       }
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to load rates',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load rates'),
       );
     }
   }

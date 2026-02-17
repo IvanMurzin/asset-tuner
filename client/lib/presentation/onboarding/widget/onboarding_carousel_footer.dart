@@ -28,12 +28,7 @@ class OnboardingCarouselFooter extends StatelessWidget {
     final typography = context.dsTypography;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        spacing.s24,
-        spacing.s8,
-        spacing.s24,
-        spacing.s24,
-      ),
+      padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s8, spacing.s24, spacing.s24),
       child: Column(
         children: [
           OnboardingCarouselPageIndicator(
@@ -61,20 +56,14 @@ class OnboardingCarouselFooter extends StatelessWidget {
                         ),
                         child: Text(
                           l10n.onboardingCarouselBack,
-                          style: typography.body.copyWith(
-                            color: colors.textSecondary,
-                          ),
+                          style: typography.body.copyWith(color: colors.textSecondary),
                         ),
                       ),
               ),
               const Spacer(),
               Expanded(
                 flex: 2,
-                child: DSButton(
-                  label: primaryLabel,
-                  fullWidth: true,
-                  onPressed: onPrimary,
-                ),
+                child: DSButton(label: primaryLabel, fullWidth: true, onPressed: onPrimary),
               ),
             ],
           ),

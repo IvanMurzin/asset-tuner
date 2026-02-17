@@ -24,4 +24,11 @@ abstract final class AppRoutes {
   static const String manageSubscription = '/profile/subscription';
   static const String accountActions = '/profile/account';
   static const String archivedAccounts = '/profile/archived-accounts';
+
+  static const String accountsNewPath = 'accounts/new';
+  static const String accountIdPath = 'accounts/:id';
+  static const String editPath = 'edit';
+  static const String subaccountsNewPath = 'subaccounts/new';
+  static const String subaccountIdPath = 'subaccounts/:id';
+  static const String updateBalancePath = 'update-balance';
 }

@@ -14,16 +14,8 @@ void main() {
     final en = DSFormatters(const Locale('en'));
     final ru = DSFormatters(const Locale('ru'));
 
-    final enText = en.formatDecimal(
-      123456.78,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    );
-    final ruText = ru.formatDecimal(
-      123456.78,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    );
+    final enText = en.formatDecimal(123456.78, minimumFractionDigits: 2, maximumFractionDigits: 2);
+    final ruText = ru.formatDecimal(123456.78, minimumFractionDigits: 2, maximumFractionDigits: 2);
 
     expect(enText, contains(','));
     expect(enText, contains('.'));

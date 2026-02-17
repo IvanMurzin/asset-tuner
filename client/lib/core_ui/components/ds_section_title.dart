@@ -11,9 +11,6 @@ class DSSectionTitle extends StatelessWidget {
     final typography = context.dsTypography;
     final colors = context.dsColors;
 
-    return Text(
-      title,
-      style: typography.h3.copyWith(color: colors.textPrimary),
-    );
+    return Text(title, style: typography.h3.copyWith(color: colors.textPrimary));
   }
 }

@@ -8,9 +8,8 @@ enum BaseCurrencyDestination { main, signIn, paywall }
 
 @freezed
 abstract class BaseCurrencyNavigation with _$BaseCurrencyNavigation {
-  const factory BaseCurrencyNavigation({
-    required BaseCurrencyDestination destination,
-  }) = _BaseCurrencyNavigation;
+  const factory BaseCurrencyNavigation({required BaseCurrencyDestination destination}) =
+      _BaseCurrencyNavigation;
 }
 
 @freezed

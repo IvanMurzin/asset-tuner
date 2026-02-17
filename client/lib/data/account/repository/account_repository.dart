@@ -22,10 +22,7 @@ class AccountRepository implements IAccountRepository {
     } catch (error) {
       logger.e('AccountRepository.fetchAccounts failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to load accounts',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load accounts'),
       );
     }
   }
@@ -36,19 +33,13 @@ class AccountRepository implements IAccountRepository {
     required AccountType type,
   }) async {
     try {
-      final dto = await _dataSource.createAccount(
-        name: name,
-        type: _typeToWire(type),
-      );
+      final dto = await _dataSource.createAccount(name: name, type: _typeToWire(type));
       logger.i('AccountRepository.createAccount success');
       return Success(AccountMapper.toEntity(dto));
     } catch (error) {
       logger.e('AccountRepository.createAccount failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to create account',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to create account'),
       );
     }
   }
@@ -70,10 +61,7 @@ class AccountRepository implements IAccountRepository {
     } catch (error) {
       logger.e('AccountRepository.updateAccount failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to update account',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to update account'),
       );
     }
   }
@@ -84,19 +72,13 @@ class AccountRepository implements IAccountRepository {
     required bool archived,
   }) async {
     try {
-      final dto = await _dataSource.setArchived(
-        accountId: accountId,
-        archived: archived,
-      );
+      final dto = await _dataSource.setArchived(accountId: accountId, archived: archived);
       logger.i('AccountRepository.setArchived success');
       return Success(AccountMapper.toEntity(dto));
     } catch (error) {
       logger.e('AccountRepository.setArchived failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to update account',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to update account'),
       );
     }
   }
@@ -110,10 +92,7 @@ class AccountRepository implements IAccountRepository {
     } catch (error) {
       logger.e('AccountRepository.deleteAccount failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to delete account',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to delete account'),
       );
     }
   }

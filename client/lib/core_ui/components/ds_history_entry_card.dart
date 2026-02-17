@@ -46,9 +46,7 @@ class DSHistoryEntryCard extends StatelessWidget {
               children: [
                 Text(
                   dateText,
-                  style: typography.caption.copyWith(
-                    color: colors.textSecondary,
-                  ),
+                  style: typography.caption.copyWith(color: colors.textSecondary),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -56,18 +54,13 @@ class DSHistoryEntryCard extends StatelessWidget {
                   SizedBox(height: spacing.s8),
                   Text(
                     subtitleText!,
-                    style: typography.caption.copyWith(
-                      color: colors.textSecondary,
-                    ),
+                    style: typography.caption.copyWith(color: colors.textSecondary),
                   ),
                 ],
                 SizedBox(height: spacing.s4),
                 Text(
                   deltaText,
-                  style: typography.body.copyWith(
-                    color: deltaColor,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: typography.body.copyWith(color: deltaColor, fontWeight: FontWeight.w700),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -89,9 +82,7 @@ class DSHistoryEntryCard extends StatelessWidget {
                 if (trailingTitle != null) ...[
                   Text(
                     trailingTitle!,
-                    style: typography.caption.copyWith(
-                      color: colors.textSecondary,
-                    ),
+                    style: typography.caption.copyWith(color: colors.textSecondary),
                   ),
                   SizedBox(height: spacing.s4),
                 ],
@@ -106,9 +97,7 @@ class DSHistoryEntryCard extends StatelessWidget {
                   Text(
                     trailingSecondaryText!,
                     textAlign: TextAlign.right,
-                    style: typography.body.copyWith(
-                      color: colors.textSecondary,
-                    ),
+                    style: typography.body.copyWith(color: colors.textSecondary),
                   ),
                 ],
               ],

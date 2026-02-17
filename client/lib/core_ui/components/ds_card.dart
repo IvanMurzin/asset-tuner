@@ -41,10 +41,7 @@ class DSCard extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: borderRadius,
-        child: Padding(
-          padding: padding ?? EdgeInsets.all(spacing.s16),
-          child: child,
-        ),
+        child: Padding(padding: padding ?? EdgeInsets.all(spacing.s16), child: child),
       ),
     );
   }

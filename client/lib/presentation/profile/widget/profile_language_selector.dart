@@ -34,31 +34,21 @@ class ProfileLanguageSelector extends StatelessWidget {
       position: PopupMenuPosition.under,
       offset: Offset(0, spacing.s4),
       padding: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(context.dsRadius.r12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(context.dsRadius.r12)),
       child: DSListRow(
         title: l10n.profileLanguage,
         leading: _LangIcon(assetPath: _currentIconPath(localeTag), size: 24),
-        trailing: SettingsRowTrailing(
-          value: _currentLabel(l10n, localeTag),
-        ),
+        trailing: SettingsRowTrailing(value: _currentLabel(l10n, localeTag)),
         showDivider: true,
       ),
       itemBuilder: (context) => [
         PopupMenuItem<int>(
           value: 1,
-          child: _LanguageMenuItem(
-            iconPath: _assetLangEn,
-            label: l10n.profileLanguageEnglish,
-          ),
+          child: _LanguageMenuItem(iconPath: _assetLangEn, label: l10n.profileLanguageEnglish),
         ),
         PopupMenuItem<int>(
           value: 2,
-          child: _LanguageMenuItem(
-            iconPath: _assetLangRu,
-            label: l10n.profileLanguageRussian,
-          ),
+          child: _LanguageMenuItem(iconPath: _assetLangRu, label: l10n.profileLanguageRussian),
         ),
       ],
       onSelected: (value) {
@@ -93,21 +83,15 @@ class _LangIcon extends StatelessWidget {
         height: size,
         fit: BoxFit.contain,
         clipBehavior: Clip.antiAlias,
-        placeholderBuilder: (context) => Icon(
-          Icons.language_rounded,
-          size: size,
-          color: context.dsColors.textTertiary,
-        ),
+        placeholderBuilder: (context) =>
+            Icon(Icons.language_rounded, size: size, color: context.dsColors.textTertiary),
       ),
     );
   }
 }
 
 class _LanguageMenuItem extends StatelessWidget {
-  const _LanguageMenuItem({
-    required this.iconPath,
-    required this.label,
-  });
+  const _LanguageMenuItem({required this.iconPath, required this.label});
 
   final String iconPath;
   final String label;

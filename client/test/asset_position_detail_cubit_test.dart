@@ -51,57 +51,37 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> requestEmailOtp(String email) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(provider) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<void>> signInWithPassword(String email, String password) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  ) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(
-    String email,
-    String code,
-  ) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<void>> signOut() async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -111,9 +91,7 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> deleteAccount() async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
@@ -132,9 +110,7 @@ class FakeAccountRepository implements IAccountRepository {
     required String name,
     required AccountType type,
   }) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -143,9 +119,7 @@ class FakeAccountRepository implements IAccountRepository {
     required String name,
     required AccountType type,
   }) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -153,16 +127,12 @@ class FakeAccountRepository implements IAccountRepository {
     required String accountId,
     required bool archived,
   }) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<void>> deleteAccount({required String accountId}) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
@@ -172,17 +142,13 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
   final Map<String, List<AccountAssetEntity>> positionsByAccount;
 
   @override
-  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
-    required String accountId,
-  }) async {
+  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({required String accountId}) async {
     return Success(positionsByAccount[accountId] ?? []);
   }
 
   @override
   Future<Result<int>> countAssetPositions() async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -193,18 +159,12 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
     required Decimal snapshotAmount,
     required DateTime entryDate,
   }) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
-  Future<Result<void>> removeAssetFromAccount({
-    required String subaccountId,
-  }) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<void>> removeAssetFromAccount({required String subaccountId}) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -212,9 +172,7 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
     required String subaccountId,
     required String name,
   }) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
@@ -255,13 +213,12 @@ class FakeBalanceRepository implements IBalanceRepository {
     int? offset,
   }) async {
     final all =
-        <BalanceEntryEntity>[
-          ...(entriesByPosition[subaccountId] ?? const <BalanceEntryEntity>[]),
-        ]..sort((a, b) {
-          final dateCmp = b.entryDate.compareTo(a.entryDate);
-          if (dateCmp != 0) return dateCmp;
-          return b.createdAt.compareTo(a.createdAt);
-        });
+        <BalanceEntryEntity>[...(entriesByPosition[subaccountId] ?? const <BalanceEntryEntity>[])]
+          ..sort((a, b) {
+            final dateCmp = b.entryDate.compareTo(a.entryDate);
+            if (dateCmp != 0) return dateCmp;
+            return b.createdAt.compareTo(a.createdAt);
+          });
     final start = offset ?? 0;
     final page = all.skip(start).take(limit).toList();
     final next = start + page.length < all.length ? start + page.length : null;
@@ -274,9 +231,7 @@ class FakeBalanceRepository implements IBalanceRepository {
     required DateTime entryDate,
     required Decimal snapshotAmount,
   }) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
@@ -288,11 +243,7 @@ class FakeProfileRepository implements IProfileRepository {
   @override
   Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return Success(
-      ProfileBootstrapEntity(
-        profile: profile,
-        isNew: false,
-        wasBaseCurrencyDefaulted: false,
-      ),
+      ProfileBootstrapEntity(profile: profile, isNew: false, wasBaseCurrencyDefaulted: false),
     );
   }
 
@@ -303,16 +254,12 @@ class FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<ProfileEntity>> updatePlan(String plan) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
@@ -344,10 +291,7 @@ void main() {
 
     await cubit.load(subaccountId: 'sub_1');
 
-    expect(
-      cubit.state.navigation?.destination,
-      AssetPositionDetailDestination.signIn,
-    );
+    expect(cubit.state.navigation?.destination, AssetPositionDetailDestination.signIn);
   });
 
   test('load computes current balance from snapshots and deltas', () async {
@@ -378,12 +322,7 @@ void main() {
       ],
     };
     final assets = const [
-      AssetEntity(
-        id: 'asset_usd',
-        kind: AssetKind.fiat,
-        code: 'USD',
-        name: 'United States Dollar',
-      ),
+      AssetEntity(id: 'asset_usd', kind: AssetKind.fiat, code: 'USD', name: 'United States Dollar'),
     ];
 
     final entries = {

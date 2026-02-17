@@ -28,10 +28,7 @@ class DSOtpInput extends StatelessWidget {
     final defaultPinTheme = PinTheme(
       width: 44,
       height: 52,
-      textStyle: typography.h3.copyWith(
-        color: colors.textPrimary,
-        fontWeight: FontWeight.w600,
-      ),
+      textStyle: typography.h3.copyWith(color: colors.textPrimary, fontWeight: FontWeight.w600),
       decoration: BoxDecoration(
         color: enabled ? colors.surface : colors.surfaceAlt,
         borderRadius: BorderRadius.circular(radius.r12),
@@ -46,9 +43,7 @@ class DSOtpInput extends StatelessWidget {
     );
 
     final errorPinTheme = defaultPinTheme.copyWith(
-      decoration: defaultPinTheme.decoration!.copyWith(
-        border: Border.all(color: colors.danger),
-      ),
+      decoration: defaultPinTheme.decoration!.copyWith(border: Border.all(color: colors.danger)),
     );
 
     return Column(
@@ -61,9 +56,7 @@ class DSOtpInput extends StatelessWidget {
           defaultPinTheme: defaultPinTheme,
           focusedPinTheme: focusedPinTheme,
           disabledPinTheme: defaultPinTheme.copyWith(
-            decoration: defaultPinTheme.decoration!.copyWith(
-              color: colors.surfaceAlt,
-            ),
+            decoration: defaultPinTheme.decoration!.copyWith(color: colors.surfaceAlt),
           ),
           errorPinTheme: errorPinTheme,
           onChanged: onChanged,

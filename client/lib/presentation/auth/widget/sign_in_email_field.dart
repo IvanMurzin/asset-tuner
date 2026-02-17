@@ -5,12 +5,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/presentation/auth/bloc/sign_in_cubit.dart';
 
 class SignInEmailField extends StatefulWidget {
-  const SignInEmailField({
-    super.key,
-    required this.label,
-    required this.hint,
-    this.errorText,
-  });
+  const SignInEmailField({super.key, required this.label, required this.hint, this.errorText});
 
   final String label;
   final String hint;

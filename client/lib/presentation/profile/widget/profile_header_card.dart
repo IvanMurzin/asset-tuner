@@ -113,8 +113,7 @@ class ProfileHeaderCard extends StatelessWidget {
                             color: isPaid
                                 ? colors.success.withValues(alpha: 0.28)
                                 : colors.onPrimary.withValues(alpha: 0.22),
-                            borderRadius:
-                                BorderRadius.circular(radius.r16),
+                            borderRadius: BorderRadius.circular(radius.r16),
                             border: Border.all(
                               color: isPaid
                                   ? colors.success.withValues(alpha: 0.6)
@@ -149,10 +148,7 @@ class ProfileHeaderCard extends StatelessWidget {
               ),
               if (onManageSubscriptionTap != null) ...[
                 SizedBox(height: spacing.s16),
-                Divider(
-                  height: 1,
-                  color: colors.onPrimary.withValues(alpha: 0.25),
-                ),
+                Divider(height: 1, color: colors.onPrimary.withValues(alpha: 0.25)),
                 SizedBox(height: spacing.s12),
                 Material(
                   color: Colors.transparent,
@@ -160,10 +156,7 @@ class ProfileHeaderCard extends StatelessWidget {
                     onTap: onManageSubscriptionTap,
                     borderRadius: BorderRadius.circular(radius.r8),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: spacing.s8,
-                        horizontal: spacing.s4,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: spacing.s8, horizontal: spacing.s4),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -210,10 +203,7 @@ class ProfileHeaderCard extends StatelessWidget {
     if (name.isEmpty) {
       return '?';
     }
-    final parts = name
-        .split(RegExp(r'[._\\-\\s]+'))
-        .where((p) => p.isNotEmpty)
-        .toList();
+    final parts = name.split(RegExp(r'[._\\-\\s]+')).where((p) => p.isNotEmpty).toList();
     if (parts.isEmpty) {
       return _firstCharUpper(name);
     }

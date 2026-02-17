@@ -47,11 +47,9 @@ class UsdRatesCubit extends Cubit<UsdRatesState> {
         case FailureResult<RatesSnapshotEntity?>(failure: final failure):
           emit(
             state.copyWith(
-              status: state.snapshot == null
-                  ? UsdRatesStatus.error
-                  : state.status,
+              status: state.snapshot == null ? UsdRatesStatus.error : state.status,
               failureCode: failure.code,
-            failureMessage: failure.message,
+              failureMessage: failure.message,
               lastRefreshAt: DateTime.now(),
             ),
           );

@@ -6,9 +6,8 @@ enum AccountDetailDestination { signIn, backDeleted }
 
 @freezed
 abstract class AccountDetailNavigation with _$AccountDetailNavigation {
-  const factory AccountDetailNavigation({
-    required AccountDetailDestination destination,
-  }) = _AccountDetailNavigation;
+  const factory AccountDetailNavigation({required AccountDetailDestination destination}) =
+      _AccountDetailNavigation;
 }
 
 @freezed

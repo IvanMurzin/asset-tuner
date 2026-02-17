@@ -27,11 +27,7 @@ class DSErrorState extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon ?? Icons.error_outline,
-          size: spacing.s32,
-          color: colors.danger,
-        ),
+        Icon(icon ?? Icons.error_outline, size: spacing.s32, color: colors.danger),
         SizedBox(height: spacing.s12),
         Text(
           title,
@@ -46,11 +42,7 @@ class DSErrorState extends StatelessWidget {
         ),
         if (actionLabel != null && onAction != null) ...[
           SizedBox(height: spacing.s16),
-          DSButton(
-            label: actionLabel!,
-            variant: DSButtonVariant.secondary,
-            onPressed: onAction,
-          ),
+          DSButton(label: actionLabel!, variant: DSButtonVariant.secondary, onPressed: onAction),
         ],
       ],
     );

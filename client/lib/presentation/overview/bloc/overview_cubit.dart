@@ -24,6 +24,7 @@ part 'overview_state.dart';
 
 enum OverviewDestination { signIn }
 
+// todo: get rid of cache
 @injectable
 class OverviewCubit extends Cubit<OverviewState> {
   OverviewCubit(
@@ -75,9 +76,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         state.copyWith(
           status: OverviewStatus.error,
           failureCode: 'unauthorized',
-          navigation: const OverviewNavigation(
-            destination: OverviewDestination.signIn,
-          ),
+          navigation: const OverviewNavigation(destination: OverviewDestination.signIn),
         ),
       );
       return;
@@ -101,8 +100,7 @@ class OverviewCubit extends Cubit<OverviewState> {
       FailureResult<List<AccountEntity>>() => null,
     };
     if (accountsList == null) {
-      final failure =
-          (accounts as FailureResult<List<AccountEntity>>).failure;
+      final failure = (accounts as FailureResult<List<AccountEntity>>).failure;
       await _tryUseCache(
         session.userId,
         failureCode: failure.code,
@@ -130,8 +128,7 @@ class OverviewCubit extends Cubit<OverviewState> {
       FailureResult<List<AssetEntity>>() => null,
     };
     if (assets == null) {
-      final failure =
-          (assetsResult as FailureResult<List<AssetEntity>>).failure;
+      final failure = (assetsResult as FailureResult<List<AssetEntity>>).failure;
       await _tryUseCache(
         session.userId,
         failureCode: failure.code,
@@ -141,9 +138,7 @@ class OverviewCubit extends Cubit<OverviewState> {
       return;
     }
     final assetsById = {for (final a in assets) a.id: a};
-    final baseAsset = assets
-        .where((a) => a.code == profile.baseCurrency)
-        .firstOrNull;
+    final baseAsset = assets.where((a) => a.code == profile.baseCurrency).firstOrNull;
 
     final positionsByAccount = <String, List<AccountAssetEntity>>{};
     for (final account in activeAccounts) {
@@ -162,9 +157,7 @@ class OverviewCubit extends Cubit<OverviewState> {
       }
     }
 
-    final allPositionIds = positionsByAccount.values
-        .expand((e) => e.map((p) => p.id))
-        .toSet();
+    final allPositionIds = positionsByAccount.values.expand((e) => e.map((p) => p.id)).toSet();
     Map<String, Decimal> currentByPosition = const <String, Decimal>{};
     if (allPositionIds.isNotEmpty) {
       final balances = await _getCurrentBalances(subaccountIds: allPositionIds);
@@ -173,8 +166,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         FailureResult<Map<String, Decimal>>() => null,
       };
       if (balancesMap == null) {
-        final failure =
-            (balances as FailureResult<Map<String, Decimal>>).failure;
+        final failure = (balances as FailureResult<Map<String, Decimal>>).failure;
         await _tryUseCache(
           session.userId,
           failureCode: failure.code,
@@ -213,9 +205,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         if (baseUsdPrice == null || ratesSnapshot == null || assetUsd == null) {
           hasUnpriced = true;
           accountHasUnpriced = true;
-          unpriced.add(
-            OverviewUnpricedHolding(assetCode: assetCode, amount: original),
-          );
+          unpriced.add(OverviewUnpricedHolding(assetCode: assetCode, amount: original));
           continue;
         }
         final baseValue = divideToDecimal(original * assetUsd, baseUsdPrice);
@@ -257,12 +247,7 @@ class OverviewCubit extends Cubit<OverviewState> {
             )
             .toList(),
         unpricedHoldings: unpriced
-            .map(
-              (u) => StoredUnpricedHolding(
-                assetCode: u.assetCode,
-                amount: u.amount.toString(),
-              ),
-            )
+            .map((u) => StoredUnpricedHolding(assetCode: u.assetCode, amount: u.amount.toString()))
             .toList(),
       ),
     );
@@ -275,8 +260,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         fullTotal: globalFullTotal,
         pricedTotal: hasUnpriced ? globalPricedTotal : null,
         hasUnpricedHoldings: hasUnpriced,
-        accounts: accountItems
-          ..sort((a, b) => a.accountName.compareTo(b.accountName)),
+        accounts: accountItems..sort((a, b) => a.accountName.compareTo(b.accountName)),
         unpricedHoldings: unpriced,
         isOffline: false,
         offlineCachedAt: null,
@@ -347,12 +331,7 @@ class OverviewCubit extends Cubit<OverviewState> {
                 .toList()
               ..sort((a, b) => a.accountName.compareTo(b.accountName)),
         unpricedHoldings: cached.unpricedHoldings
-            .map(
-              (u) => OverviewUnpricedHolding(
-                assetCode: u.assetCode,
-                amount: u.amountDecimal,
-              ),
-            )
+            .map((u) => OverviewUnpricedHolding(assetCode: u.assetCode, amount: u.amountDecimal))
             .toList(),
         isOffline: true,
         offlineCachedAt: cached.computedAt,

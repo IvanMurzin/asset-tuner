@@ -49,23 +49,14 @@ class SubscriptionRepository implements ISubscriptionRepository {
     final pro = customerInfo.entitlements.all[_proEntitlementId];
     final isPro = pro?.isActive ?? false;
     final activeProductIds = customerInfo.activeSubscriptions;
-    return SubscriptionInfoEntity(
-      isPro: isPro,
-      activeProductIds: activeProductIds,
-    );
+    return SubscriptionInfoEntity(isPro: isPro, activeProductIds: activeProductIds);
   }
 
   Failure _toFailure(Object error) {
     if (error is PlatformException) {
       final code = PurchasesErrorHelper.getErrorCode(error);
-      return Failure(
-        code: code.name,
-        message: error.message ?? code.name,
-      );
+      return Failure(code: code.name, message: error.message ?? code.name);
     }
-    return Failure(
-      code: 'subscription_error',
-      message: error.toString(),
-    );
+    return Failure(code: 'subscription_error', message: error.toString());
   }
 }

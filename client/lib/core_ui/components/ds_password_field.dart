@@ -47,10 +47,7 @@ class _DSPasswordFieldState extends State<DSPasswordField> {
         errorText: widget.errorText,
         filled: true,
         fillColor: fillColor,
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: spacing.s16,
-          vertical: spacing.s12,
-        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: spacing.s16, vertical: spacing.s12),
         labelStyle: typography.body.copyWith(color: colors.textSecondary),
         hintStyle: typography.body.copyWith(color: colors.textTertiary),
         errorStyle: typography.caption.copyWith(color: colors.danger),
@@ -75,9 +72,7 @@ class _DSPasswordFieldState extends State<DSPasswordField> {
           borderSide: BorderSide(color: colors.danger, width: 1.5),
         ),
         suffixIcon: IconButton(
-          onPressed: widget.enabled
-              ? () => setState(() => _obscured = !_obscured)
-              : null,
+          onPressed: widget.enabled ? () => setState(() => _obscured = !_obscured) : null,
           icon: Icon(
             _obscured ? Icons.visibility_off : Icons.visibility,
             color: colors.textTertiary,

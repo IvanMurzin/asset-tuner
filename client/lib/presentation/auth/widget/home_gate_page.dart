@@ -38,12 +38,7 @@ class _HomeGatePageState extends State<HomeGatePage> {
   Widget build(BuildContext context) {
     if (_carouselCompleted != true) {
       final l10n = AppLocalizations.of(context)!;
-      return Scaffold(
-        body: DSSplashLayout(
-          title: l10n.appTitle,
-          status: null,
-        ),
-      );
+      return Scaffold(body: DSSplashLayout(title: l10n.appTitle, status: null));
     }
     return const SplashPage();
   }

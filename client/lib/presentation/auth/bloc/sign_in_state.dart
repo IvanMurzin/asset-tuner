@@ -8,8 +8,7 @@ enum SignInDestination { onboardingBaseCurrency, overview }
 
 @freezed
 abstract class SignInNavigation with _$SignInNavigation {
-  const factory SignInNavigation({required SignInDestination destination}) =
-      _SignInNavigation;
+  const factory SignInNavigation({required SignInDestination destination}) = _SignInNavigation;
 }
 
 @freezed

@@ -31,28 +31,17 @@ class OnboardingCarouselSlideContent extends StatelessWidget {
       children: [
         Transform.translate(
           offset: Offset(parallaxOffset * -14.0, 0),
-          child: OnboardingCarouselIconBubble(
-            icon: icon,
-            tint: colors.primary,
-          ),
+          child: OnboardingCarouselIconBubble(icon: icon, tint: colors.primary),
         ),
         SizedBox(height: spacing.s24),
         Text(title, style: typography.h2),
         SizedBox(height: spacing.s12),
-        Text(
-          body,
-          style: typography.body.copyWith(
-            color: colors.textSecondary,
-            height: 1.35,
-          ),
-        ),
+        Text(body, style: typography.body.copyWith(color: colors.textSecondary, height: 1.35)),
         SizedBox(height: spacing.s24),
         Wrap(
           spacing: spacing.s8,
           runSpacing: spacing.s8,
-          children: chipLabels
-              .map((label) => OnboardingCarouselChip(label: label))
-              .toList(),
+          children: chipLabels.map((label) => OnboardingCarouselChip(label: label)).toList(),
         ),
       ],
     );

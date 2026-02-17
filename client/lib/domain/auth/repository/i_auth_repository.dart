@@ -9,10 +9,7 @@ abstract interface class IAuthRepository {
   Future<Result<void>> requestEmailOtp(String email);
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email);
   Future<Result<void>> signInWithPassword(String email, String password);
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  );
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password);
   Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code);
   Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider);
   Future<List<AuthProvider>> getAvailableProviders();

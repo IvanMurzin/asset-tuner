@@ -78,9 +78,7 @@ class AccountDetailHeaderCard extends StatelessWidget {
                     SizedBox(height: spacing.s4),
                     Text(
                       _typeLabel(l10n, account.type),
-                      style: typography.caption.copyWith(
-                        color: colors.textSecondary,
-                      ),
+                      style: typography.caption.copyWith(color: colors.textSecondary),
                     ),
                   ],
                 ),
@@ -105,9 +103,7 @@ class AccountDetailHeaderCard extends StatelessWidget {
           Text(
             ratesAsOf == null
                 ? l10n.overviewRatesUnavailable
-                : l10n.overviewRatesUpdatedAt(
-                    context.dsFormatters.formatDateTime(ratesAsOf!),
-                  ),
+                : l10n.overviewRatesUpdatedAt(context.dsFormatters.formatDateTime(ratesAsOf!)),
             style: typography.caption.copyWith(color: colors.textSecondary),
           ),
         ],

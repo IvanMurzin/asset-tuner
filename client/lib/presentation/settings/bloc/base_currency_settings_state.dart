@@ -7,8 +7,7 @@ enum BaseCurrencySettingsBannerType { saveFailure }
 enum BaseCurrencySettingsDestination { back, signIn, paywall }
 
 @freezed
-abstract class BaseCurrencySettingsNavigation
-    with _$BaseCurrencySettingsNavigation {
+abstract class BaseCurrencySettingsNavigation with _$BaseCurrencySettingsNavigation {
   const factory BaseCurrencySettingsNavigation({
     required BaseCurrencySettingsDestination destination,
     String? requestedCode,
@@ -18,8 +17,7 @@ abstract class BaseCurrencySettingsNavigation
 @freezed
 abstract class BaseCurrencySettingsState with _$BaseCurrencySettingsState {
   const factory BaseCurrencySettingsState({
-    @Default(BaseCurrencySettingsStatus.loading)
-    BaseCurrencySettingsStatus status,
+    @Default(BaseCurrencySettingsStatus.loading) BaseCurrencySettingsStatus status,
     @Default([]) List<AssetPickerItemEntity> currencies,
     @Default([]) List<AssetPickerItemEntity> visibleCurrencies,
     @Default(false) bool hasMoreResults,

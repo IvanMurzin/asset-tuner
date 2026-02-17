@@ -30,20 +30,14 @@ class OverviewSummaryCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colors.primary.withValues(alpha: 0.22),
-            colors.info.withValues(alpha: 0.16),
-          ],
+          colors: [colors.primary.withValues(alpha: 0.22), colors.info.withValues(alpha: 0.16)],
         ),
         borderRadius: BorderRadius.circular(context.dsRadius.r16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            totalLabel,
-            style: typography.caption.copyWith(color: colors.textSecondary),
-          ),
+          Text(totalLabel, style: typography.caption.copyWith(color: colors.textSecondary)),
           SizedBox(height: spacing.s8),
           Text(totalValue, style: typography.h1),
           if (pricedTotalLabel != null && pricedTotalValue != null) ...[
@@ -54,10 +48,7 @@ class OverviewSummaryCard extends StatelessWidget {
             ),
           ],
           SizedBox(height: spacing.s12),
-          Text(
-            ratesText,
-            style: typography.caption.copyWith(color: colors.textSecondary),
-          ),
+          Text(ratesText, style: typography.caption.copyWith(color: colors.textSecondary)),
         ],
       ),
     );

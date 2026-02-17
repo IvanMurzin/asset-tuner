@@ -23,13 +23,9 @@ class SupabaseEdgeFunctions {
     Map<String, dynamic>? body,
     HttpMethod method = HttpMethod.post,
   }) async {
-    logger.i('edge_fn_request fn=$functionName method=${method.name}');
+    logger.i({'function': '${method.name} $functionName', 'body': body});
     try {
-      final response = await _client.functions.invoke(
-        functionName,
-        body: body,
-        method: method,
-      );
+      final response = await _client.functions.invoke(functionName, body: body, method: method);
 
       final data = response.data;
       if (data is Map<String, dynamic>) {
@@ -37,21 +33,24 @@ class SupabaseEdgeFunctions {
         if (error is Map<String, dynamic>) {
           final code = (error['code'] as String?) ?? 'unknown';
           final message = (error['message'] as String?) ?? 'Request failed';
-          logger.w('edge_fn_failure fn=$functionName code=$code');
-          throw EdgeFunctionException(
-            code: code,
-            message: message,
-            details: error['details'],
-          );
+          logger.e({
+            'function': '${method.name} $functionName',
+            'code': code,
+            'message': message,
+          }, error: error);
+          throw EdgeFunctionException(code: code, message: message, details: error['details']);
         }
-        logger.i('edge_fn_success fn=$functionName');
+        logger.i({'function': '${method.name} $functionName', 'data': data});
         return data;
       }
 
-      logger.w('edge_fn_failure fn=$functionName code=unknown');
+      logger.e({
+        'function': '${method.name} $functionName',
+        'code': 'unknown',
+      }, error: StateError('Unexpected edge function response'));
       throw StateError('Unexpected edge function response');
     } catch (error) {
-      logger.e('edge_fn_exception fn=$functionName', error: error);
+      logger.e({'function': '${method.name} $functionName', 'error': error}, error: error);
       rethrow;
     }
   }
@@ -66,11 +65,7 @@ class SupabaseEdgeFunctions {
 }
 
 final class EdgeFunctionException implements Exception {
-  const EdgeFunctionException({
-    required this.code,
-    required this.message,
-    this.details,
-  });
+  const EdgeFunctionException({required this.code, required this.message, this.details});
 
   final String code;
   final String message;

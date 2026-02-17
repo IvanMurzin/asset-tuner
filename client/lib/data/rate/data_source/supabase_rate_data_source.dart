@@ -11,9 +11,6 @@ class SupabaseRateDataSource {
 
   Future<List<AssetRateUsdDto>> fetchLatestUsdRates() async {
     final rows = await _client.from(SupabaseTables.assetRatesUsd).select();
-    return (rows as List)
-        .whereType<Map<String, dynamic>>()
-        .map(AssetRateUsdDto.fromJson)
-        .toList();
+    return (rows as List).whereType<Map<String, dynamic>>().map(AssetRateUsdDto.fromJson).toList();
   }
 }

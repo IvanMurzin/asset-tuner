@@ -26,10 +26,7 @@ class SupabaseBalanceDataSource {
         .order('entry_date', ascending: false)
         .order('created_at', ascending: false)
         .range(start, end);
-    return (rows as List)
-        .whereType<Map<String, dynamic>>()
-        .map(BalanceEntryDto.fromJson)
-        .toList();
+    return (rows as List).whereType<Map<String, dynamic>>().map(BalanceEntryDto.fromJson).toList();
   }
 
   Future<BalanceEntryDto> updateBalance({
@@ -48,19 +45,13 @@ class SupabaseBalanceDataSource {
     );
   }
 
-  Future<List<BalanceEntryDto>> fetchEntriesForPositions(
-    Set<String> subaccountIds,
-  ) async {
+  Future<List<BalanceEntryDto>> fetchEntriesForPositions(Set<String> subaccountIds) async {
     final rows = await _client
         .from(SupabaseTables.balanceEntries)
         .select()
         .inFilter('subaccount_id', subaccountIds.toList())
         .order('entry_date', ascending: true)
         .order('created_at', ascending: true);
-    return (rows as List)
-        .whereType<Map<String, dynamic>>()
-        .map(BalanceEntryDto.fromJson)
-        .toList();
+    return (rows as List).whereType<Map<String, dynamic>>().map(BalanceEntryDto.fromJson).toList();
   }
-
 }

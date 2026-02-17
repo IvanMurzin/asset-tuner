@@ -16,15 +16,7 @@ class AnalyticsLoadingSkeleton extends StatelessWidget {
         const DSSkeleton(height: 16, width: 120),
         SizedBox(height: spacing.s12),
         DSCard(
-          child: SizedBox(
-            height: 220,
-            child: Center(
-              child: DSSkeleton(
-                height: 180,
-                width: 180,
-              ),
-            ),
-          ),
+          child: SizedBox(height: 220, child: Center(child: DSSkeleton(height: 180, width: 180))),
         ),
         SizedBox(height: spacing.s24),
         const DSSkeleton(height: 16, width: 100),

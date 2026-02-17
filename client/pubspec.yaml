@@ -25,7 +25,6 @@ dependencies:
   shared_preferences: ^2.3.3
   supabase_flutter: ^2.10.0
   pinput: ^3.0.0
-  supabase_error_translator_flutter: ^1.0.2
   purchases_flutter: ^9.10.0
   purchases_ui_flutter: ^9.10.0
 

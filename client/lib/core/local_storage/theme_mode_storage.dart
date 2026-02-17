@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// TODO: move to repository, not presentation
 @lazySingleton
 class ThemeModeStorage {
   static const _key = 'theme_mode';

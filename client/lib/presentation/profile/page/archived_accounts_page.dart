@@ -14,8 +14,6 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_account_card.dart';
 import 'package:asset_tuner/presentation/profile/bloc/archived_accounts_cubit.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class ArchivedAccountsPage extends StatelessWidget {
   const ArchivedAccountsPage({super.key});
@@ -40,12 +38,7 @@ class ArchivedAccountsPage extends StatelessWidget {
               appBar: DSAppBar(title: l10n.settingsArchivedAccounts),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: resolveFailureMessage(
-                context,
-                code: state.failureCode,
-                rawMessage: state.failureMessage,
-                service: ErrorService.database,
-              ),
+                message: state.failureMessage ?? l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<ArchivedAccountsCubit>().load(),
               ),
@@ -83,9 +76,7 @@ class ArchivedAccountsPage extends StatelessWidget {
                 );
                 return Padding(
                   padding: EdgeInsets.only(
-                    bottom: index < state.accounts.length - 1
-                        ? spacing.s12
-                        : 0,
+                    bottom: index < state.accounts.length - 1 ? spacing.s12 : 0,
                   ),
                   child: OverviewAccountCard(
                     item: item,
@@ -106,11 +97,7 @@ class ArchivedAccountsPage extends StatelessWidget {
   void _openAccountDetail(BuildContext context, AccountEntity account) {
     context.go(
       AppRoutes.accountDetail.replaceFirst(':id', account.id),
-      extra: AccountDetailExtra(
-        initialTitle: account.name,
-        initialAccountType: account.type,
-      ),
+      extra: AccountDetailExtra(initialTitle: account.name, initialAccountType: account.type),
     );
   }
-
 }

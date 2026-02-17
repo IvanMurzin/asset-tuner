@@ -25,10 +25,7 @@ class AssetRepository implements IAssetRepository {
     } catch (error) {
       logger.e('AssetRepository.fetchAssets failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to load assets',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load assets'),
       );
     }
   }
@@ -45,15 +42,9 @@ class AssetRepository implements IAssetRepository {
       );
       return Success(entities);
     } catch (error) {
-      logger.e(
-        'AssetRepository.fetchAssetsForPicker failed',
-        error: error,
-      );
+      logger.e('AssetRepository.fetchAssetsForPicker failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to load asset catalog',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load asset catalog'),
       );
     }
   }

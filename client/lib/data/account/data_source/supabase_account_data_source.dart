@@ -16,16 +16,10 @@ class SupabaseAccountDataSource {
         .from(SupabaseTables.accounts)
         .select()
         .order('updated_at', ascending: false);
-    return (rows as List)
-        .whereType<Map<String, dynamic>>()
-        .map(AccountDto.fromJson)
-        .toList();
+    return (rows as List).whereType<Map<String, dynamic>>().map(AccountDto.fromJson).toList();
   }
 
-  Future<AccountDto> createAccount({
-    required String name,
-    required String type,
-  }) {
+  Future<AccountDto> createAccount({required String name, required String type}) {
     return _edgeFunctions.invoke(
       SupabaseFunctions.createAccount,
       body: {'name': name, 'type': type},
@@ -47,10 +41,7 @@ class SupabaseAccountDataSource {
     return AccountDto.fromJson(updated);
   }
 
-  Future<AccountDto> setArchived({
-    required String accountId,
-    required bool archived,
-  }) async {
+  Future<AccountDto> setArchived({required String accountId, required bool archived}) async {
     final updated = await _client
         .from(SupabaseTables.accounts)
         .update({'archived': archived})

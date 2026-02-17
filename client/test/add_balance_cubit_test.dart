@@ -30,57 +30,37 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> requestEmailOtp(String email) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(provider) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<void>> signInWithPassword(String email, String password) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  ) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(
-    String email,
-    String code,
-  ) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<void>> signOut() async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -90,9 +70,7 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> deleteAccount() async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
@@ -110,9 +88,7 @@ class FakeBalanceRepository implements IBalanceRepository {
     required int limit,
     int? offset,
   }) async {
-    return const Success(
-      BalanceHistoryPageEntity(entries: [], nextOffset: null),
-    );
+    return const Success(BalanceHistoryPageEntity(entries: [], nextOffset: null));
   }
 
   @override
@@ -150,10 +126,7 @@ void main() {
     final cubit = AddBalanceCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       UpdateBalanceUseCase(FakeBalanceRepository()),
@@ -170,10 +143,7 @@ void main() {
     final cubit = AddBalanceCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       UpdateBalanceUseCase(FakeBalanceRepository()),
@@ -183,9 +153,6 @@ void main() {
     cubit.updateAmount('-10.5');
     await cubit.save();
 
-    expect(
-      cubit.state.navigation?.destination,
-      AddBalanceDestination.backSaved,
-    );
+    expect(cubit.state.navigation?.destination, AddBalanceDestination.backSaved);
   });
 }

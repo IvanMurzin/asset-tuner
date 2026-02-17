@@ -90,31 +90,21 @@ class _ActionCircle extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: onTap == null
-                    ? colors.surfaceAlt
-                    : accent.withValues(alpha: 0.12),
+                color: onTap == null ? colors.surfaceAlt : accent.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(26),
                 border: Border.all(
-                  color: onTap == null
-                      ? colors.border
-                      : accent.withValues(alpha: 0.25),
+                  color: onTap == null ? colors.border : accent.withValues(alpha: 0.25),
                 ),
               ),
               alignment: Alignment.center,
-              child: Icon(
-                icon,
-                color: onTap == null ? colors.textTertiary : accent,
-                size: 22,
-              ),
+              child: Icon(icon, color: onTap == null ? colors.textTertiary : accent, size: 22),
             ),
             SizedBox(height: spacing.s8),
             Text(
               label,
               textAlign: TextAlign.center,
               style: typography.caption.copyWith(
-                color: onTap == null
-                    ? colors.textTertiary
-                    : colors.textSecondary,
+                color: onTap == null ? colors.textTertiary : colors.textSecondary,
               ),
             ),
           ],

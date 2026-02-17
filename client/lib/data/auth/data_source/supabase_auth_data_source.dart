@@ -41,15 +41,8 @@ class SupabaseAuthDataSource {
     return _client.auth.signUp(email: email, password: password);
   }
 
-  Future<AuthSessionDto?> verifySignUpOtp({
-    required String email,
-    required String token,
-  }) async {
-    final response = await _client.auth.verifyOTP(
-      email: email,
-      token: token,
-      type: OtpType.signup,
-    );
+  Future<AuthSessionDto?> verifySignUpOtp({required String email, required String token}) async {
+    final response = await _client.auth.verifyOTP(email: email, token: token, type: OtpType.signup);
     final user = response.session?.user;
     if (user == null) {
       return null;

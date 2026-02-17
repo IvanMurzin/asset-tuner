@@ -15,12 +15,8 @@ final class AppConfig {
     final env = const String.fromEnvironment('ENV');
     final supabaseUrl = const String.fromEnvironment('SUPABASE_URL');
     final supabaseAnonKey = const String.fromEnvironment('SUPABASE_ANON_KEY');
-    final revenueCatApiKey =
-        const String.fromEnvironment('REVENUECAT_API_KEY');
-    if (env.isEmpty ||
-        supabaseUrl.isEmpty ||
-        supabaseAnonKey.isEmpty ||
-        revenueCatApiKey.isEmpty) {
+    final revenueCatApiKey = const String.fromEnvironment('REVENUECAT_API_KEY');
+    if (env.isEmpty || supabaseUrl.isEmpty || supabaseAnonKey.isEmpty || revenueCatApiKey.isEmpty) {
       return null;
     }
     return AppConfig(

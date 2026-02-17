@@ -16,12 +16,7 @@ class DSOverflowMenuItem {
 }
 
 class DSOverflowMenu extends StatelessWidget {
-  const DSOverflowMenu({
-    super.key,
-    required this.items,
-    this.enabled = true,
-    this.tooltip,
-  });
+  const DSOverflowMenu({super.key, required this.items, this.enabled = true, this.tooltip});
 
   final List<DSOverflowMenuItem> items;
   final bool enabled;
@@ -35,10 +30,7 @@ class DSOverflowMenu extends StatelessWidget {
     return PopupMenuButton<int>(
       enabled: enabled,
       tooltip: tooltip,
-      icon: Icon(
-        Icons.more_vert,
-        color: enabled ? colors.textTertiary : colors.textTertiary,
-      ),
+      icon: Icon(Icons.more_vert, color: enabled ? colors.textTertiary : colors.textTertiary),
       onSelected: (index) => items[index].onTap(),
       itemBuilder: (context) {
         return [
@@ -51,18 +43,14 @@ class DSOverflowMenu extends StatelessWidget {
                     Icon(
                       items[i].icon,
                       size: 18,
-                      color: items[i].isDestructive
-                          ? colors.danger
-                          : colors.textSecondary,
+                      color: items[i].isDestructive ? colors.danger : colors.textSecondary,
                     ),
                     const SizedBox(width: 10),
                   ],
                   Text(
                     items[i].label,
                     style: typography.body.copyWith(
-                      color: items[i].isDestructive
-                          ? colors.danger
-                          : colors.textPrimary,
+                      color: items[i].isDestructive ? colors.danger : colors.textPrimary,
                     ),
                   ),
                 ],

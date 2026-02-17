@@ -14,15 +14,9 @@ import 'package:asset_tuner/core_ui/components/ds_loader.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/balance/bloc/add_balance_cubit.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class AddBalancePage extends StatefulWidget {
-  const AddBalancePage({
-    super.key,
-    required this.subaccountId,
-    this.initialDate,
-  });
+  const AddBalancePage({super.key, required this.subaccountId, this.initialDate});
 
   final String subaccountId;
   final DateTime? initialDate;
@@ -51,11 +45,9 @@ class _AddBalancePageState extends State<AddBalancePage> {
     final l10n = AppLocalizations.of(context)!;
 
     return BlocProvider(
-      create: (_) => getIt<AddBalanceCubit>()
-        ..load(
-          subaccountId: widget.subaccountId,
-          initialDate: widget.initialDate,
-        ),
+      create: (_) =>
+          getIt<AddBalanceCubit>()
+            ..load(subaccountId: widget.subaccountId, initialDate: widget.initialDate),
       child: BlocConsumer<AddBalanceCubit, AddBalanceState>(
         listener: (context, state) {
           final navigation = state.navigation;
@@ -80,18 +72,12 @@ class _AddBalancePageState extends State<AddBalancePage> {
             return const Scaffold(body: Center(child: DSLoader()));
           }
 
-          if (state.status == AddBalanceStatus.error &&
-              state.subaccountId == null) {
+          if (state.status == AddBalanceStatus.error && state.subaccountId == null) {
             return Scaffold(
               appBar: DSAppBar(title: l10n.subaccountUpdateBalanceCta),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: resolveFailureMessage(
-                context,
-                code: state.failureCode,
-                rawMessage: state.failureMessage,
-                service: ErrorService.database,
-              ),
+                message: state.failureMessage ?? l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<AddBalanceCubit>().load(
                   subaccountId: widget.subaccountId,
@@ -109,25 +95,14 @@ class _AddBalancePageState extends State<AddBalancePage> {
             appBar: DSAppBar(title: l10n.subaccountUpdateBalanceCta),
             body: SafeArea(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s16,
-                ),
+                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (state.failureCode != null &&
-                        state.failureCode != 'validation') ...[
+                    if (state.failureCode != null && state.failureCode != 'validation') ...[
                       DSInlineBanner(
                         title: l10n.subaccountUpdateBalanceCta,
-                        message: resolveFailureMessage(
-                context,
-                code: state.failureCode,
-                rawMessage: state.failureMessage,
-                service: ErrorService.database,
-              ),
+                        message: state.failureMessage ?? l10n.errorGeneric,
                         variant: DSInlineBannerVariant.danger,
                       ),
                       SizedBox(height: spacing.s16),
@@ -149,26 +124,16 @@ class _AddBalancePageState extends State<AddBalancePage> {
                                 label: l10n.addBalanceDateLabel,
                                 value: state.entryDate,
                                 enabled: !state.isSaving,
-                                errorText: _dateErrorText(
-                                  l10n,
-                                  state.dateError,
-                                ),
-                                onChanged: context
-                                    .read<AddBalanceCubit>()
-                                    .selectDate,
+                                errorText: _dateErrorText(l10n, state.dateError),
+                                onChanged: context.read<AddBalanceCubit>().selectDate,
                               ),
                               SizedBox(height: spacing.s16),
                               DSDecimalField(
                                 label: l10n.addBalanceAmountLabel,
                                 controller: _amountController,
                                 enabled: !state.isSaving,
-                                errorText: _amountErrorText(
-                                  l10n,
-                                  state.amountError,
-                                ),
-                                onChanged: context
-                                    .read<AddBalanceCubit>()
-                                    .updateAmount,
+                                errorText: _amountErrorText(l10n, state.amountError),
+                                onChanged: context.read<AddBalanceCubit>().updateAmount,
                               ),
                             ],
                           ),
@@ -180,9 +145,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
                       label: l10n.save,
                       fullWidth: true,
                       isLoading: state.isSaving,
-                      onPressed: state.isSaving
-                          ? null
-                          : context.read<AddBalanceCubit>().save,
+                      onPressed: state.isSaving ? null : context.read<AddBalanceCubit>().save,
                     ),
                   ],
                 ),

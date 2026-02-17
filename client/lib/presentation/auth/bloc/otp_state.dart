@@ -8,8 +8,7 @@ enum OtpDestination { onboardingBaseCurrency, overview, signIn }
 
 @freezed
 abstract class OtpNavigation with _$OtpNavigation {
-  const factory OtpNavigation({required OtpDestination destination}) =
-      _OtpNavigation;
+  const factory OtpNavigation({required OtpDestination destination}) = _OtpNavigation;
 }
 
 @freezed

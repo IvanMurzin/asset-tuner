@@ -62,12 +62,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     };
     if (isClosed) return;
     if (profile == null) {
-      emit(
-        state.copyWith(
-          status: BaseCurrencySettingsStatus.error,
-          loadFailureCode: 'unknown',
-        ),
-      );
+      emit(state.copyWith(status: BaseCurrencySettingsStatus.error, loadFailureCode: 'unknown'));
       return;
     }
 
@@ -122,13 +117,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
 
   void selectCurrency(String code) {
     if (_isAllowed(code)) {
-      emit(
-        state.copyWith(
-          selectedCode: code,
-          bannerType: null,
-          bannerFailureCode: null,
-        ),
-      );
+      emit(state.copyWith(selectedCode: code, bannerType: null, bannerFailureCode: null));
       return;
     }
 
@@ -150,9 +139,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     final selected = state.selectedCode;
     final current = state.currentCode;
 
-    if (state.status != BaseCurrencySettingsStatus.ready ||
-        selected == null ||
-        current == null) {
+    if (state.status != BaseCurrencySettingsStatus.ready || selected == null || current == null) {
       return;
     }
 
@@ -179,9 +166,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
       return;
     }
 
-    emit(
-      state.copyWith(isSaving: true, bannerType: null, bannerFailureCode: null),
-    );
+    emit(state.copyWith(isSaving: true, bannerType: null, bannerFailureCode: null));
 
     final result = await _updateBaseCurrency(selected);
     if (isClosed) return;
@@ -217,8 +202,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     if (entitlements.anyBaseCurrency) {
       return true;
     }
-    final match = state.currencies
-        .where((e) => e.code.toUpperCase() == code.toUpperCase());
+    final match = state.currencies.where((e) => e.code.toUpperCase() == code.toUpperCase());
     return match.isNotEmpty && match.first.isUnlocked;
   }
 
@@ -247,8 +231,7 @@ class BaseCurrencySettingsCubit extends Cubit<BaseCurrencySettingsState> {
     }
 
     final matched = currencies.where((item) {
-      return item.code.toLowerCase().contains(query) ||
-          item.name.toLowerCase().contains(query);
+      return item.code.toLowerCase().contains(query) || item.name.toLowerCase().contains(query);
     }).toList();
     final limited = matched.take(_maxResults).toList();
     return input.copyWith(

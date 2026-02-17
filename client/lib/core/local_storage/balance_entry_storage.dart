@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// TODO: rewrite via hive, move to data layer
 @lazySingleton
 class BalanceEntryStorage {
   static const _key = 'balance_entries';
@@ -16,10 +17,7 @@ class BalanceEntryStorage {
     return jsonList.map(StoredBalanceEntry.fromJson).toList();
   }
 
-  Future<void> writeEntries(
-    String userId,
-    List<StoredBalanceEntry> entries,
-  ) async {
+  Future<void> writeEntries(String userId, List<StoredBalanceEntry> entries) async {
     final data = await _readAll();
     data[userId] = entries.map((e) => e.toJson()).toList();
     final prefs = await SharedPreferences.getInstance();
@@ -46,10 +44,8 @@ class BalanceEntryStorage {
     }
     final decoded = jsonDecode(raw) as Map<String, dynamic>;
     return decoded.map(
-      (key, value) => MapEntry(
-        key,
-        (value as List<dynamic>).map((e) => e as Map<String, dynamic>).toList(),
-      ),
+      (key, value) =>
+          MapEntry(key, (value as List<dynamic>).map((e) => e as Map<String, dynamic>).toList()),
     );
   }
 }

@@ -61,7 +61,7 @@ class OtpCubit extends Cubit<OtpState> {
               state.copyWith(
                 status: OtpStatus.idle,
                 bannerFailureCode: failure.code,
-            bannerFailureMessage: failure.message,
+                bannerFailureMessage: failure.message,
               ),
             );
           case Success(:final value):

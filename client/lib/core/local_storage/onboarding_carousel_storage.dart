@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// TODO: move to repository, not presentation
 @lazySingleton
 class OnboardingCarouselStorage {
   static const _key = 'onboarding_carousel_completed';

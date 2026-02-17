@@ -4,9 +4,8 @@ enum AnalyticsStatus { loading, ready, error }
 
 @freezed
 abstract class AnalyticsNavigation with _$AnalyticsNavigation {
-  const factory AnalyticsNavigation({
-    required AnalyticsDestination destination,
-  }) = _AnalyticsNavigation;
+  const factory AnalyticsNavigation({required AnalyticsDestination destination}) =
+      _AnalyticsNavigation;
 }
 
 @freezed

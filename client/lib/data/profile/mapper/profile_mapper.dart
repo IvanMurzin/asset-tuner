@@ -25,12 +25,8 @@ abstract final class ProfileMapper {
       maxAccounts: dto.maxAccounts,
       maxSubaccounts: dto.maxSubaccounts,
       anyBaseCurrency: dto.anyBaseCurrency,
-      freeBaseCurrencyCodes: dto.allowedBaseCurrencyCodes
-          .map((e) => e.toUpperCase())
-          .toSet(),
-      expiresAt: dto.expiresAtIso == null
-          ? null
-          : DateTime.parse(dto.expiresAtIso!),
+      freeBaseCurrencyCodes: dto.allowedBaseCurrencyCodes.map((e) => e.toUpperCase()).toSet(),
+      expiresAt: dto.expiresAtIso == null ? null : DateTime.parse(dto.expiresAtIso!),
     );
   }
 
@@ -39,9 +35,7 @@ abstract final class ProfileMapper {
       maxAccounts: entity.maxAccounts,
       maxSubaccounts: entity.maxSubaccounts,
       anyBaseCurrency: entity.anyBaseCurrency,
-      allowedBaseCurrencyCodes: entity.freeBaseCurrencyCodes
-          .map((e) => e.toUpperCase())
-          .toList(),
+      allowedBaseCurrencyCodes: entity.freeBaseCurrencyCodes.map((e) => e.toUpperCase()).toList(),
       expiresAtIso: entity.expiresAt?.toIso8601String(),
     );
   }

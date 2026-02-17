@@ -10,8 +10,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
+
 import 'package:asset_tuner/presentation/overview/widget/overview_account_card.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_summary_card.dart';
@@ -34,14 +33,10 @@ class OverviewBody extends StatelessWidget {
 
   Future<void> _openCreateAccountFlow(BuildContext context) async {
     final createdAccountId = await context.push<String>(AppRoutes.accountNew);
-    if (!context.mounted ||
-        createdAccountId == null ||
-        createdAccountId.isEmpty) {
+    if (!context.mounted || createdAccountId == null || createdAccountId.isEmpty) {
       return;
     }
-    await context.push<bool>(
-      AppRoutes.accountDetail.replaceFirst(':id', createdAccountId),
-    );
+    await context.push<bool>(AppRoutes.accountDetail.replaceFirst(':id', createdAccountId));
   }
 
   Future<void> _openAccountDetail(
@@ -53,10 +48,7 @@ class OverviewBody extends StatelessWidget {
     await context.push<bool>(
       AppRoutes.accountDetail.replaceFirst(':id', accountId),
       extra: accountName != null || accountType != null
-          ? AccountDetailExtra(
-              initialTitle: accountName,
-              initialAccountType: accountType,
-            )
+          ? AccountDetailExtra(initialTitle: accountName, initialAccountType: accountType)
           : null,
     );
   }
@@ -79,12 +71,7 @@ class OverviewBody extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: spacing.s24),
             child: DSInlineError(
               title: l10n.splashErrorTitle,
-              message: resolveFailureMessage(
-              context,
-              code: state.failureCode,
-              rawMessage: state.failureMessage,
-              service: ErrorService.database,
-            ),
+              message: state.failureMessage ?? l10n.errorGeneric,
               actionLabel: l10n.splashRetry,
               onAction: () => context.read<OverviewCubit>().refresh(),
             ),
@@ -125,8 +112,7 @@ class OverviewBody extends StatelessWidget {
       );
     }
 
-    if (status == OverviewStatus.emptyNoAssets ||
-        status == OverviewStatus.emptyNoBalances) {
+    if (status == OverviewStatus.emptyNoAssets || status == OverviewStatus.emptyNoBalances) {
       return ListView(
         children: [
           SizedBox(height: spacing.s24),
@@ -178,9 +164,7 @@ class OverviewBody extends StatelessWidget {
             child: DSInlineBanner(
               title: l10n.offlineTitle,
               message: l10n.offlineShowingLastSaved(
-                context.dsFormatters.formatDateTime(
-                  state.offlineCachedAt ?? DateTime.now(),
-                ),
+                context.dsFormatters.formatDateTime(state.offlineCachedAt ?? DateTime.now()),
               ),
               variant: DSInlineBannerVariant.warning,
             ),
@@ -192,9 +176,7 @@ class OverviewBody extends StatelessWidget {
           child: OverviewSummaryCard(
             totalLabel: l10n.overviewTotalLabel,
             totalValue: totalText,
-            pricedTotalLabel: state.hasUnpricedHoldings
-                ? l10n.overviewPricedTotalLabel
-                : null,
+            pricedTotalLabel: state.hasUnpricedHoldings ? l10n.overviewPricedTotalLabel : null,
             pricedTotalValue: state.hasUnpricedHoldings ? pricedTotalText : null,
             ratesText: ratesText,
           ),
@@ -213,11 +195,11 @@ class OverviewBody extends StatelessWidget {
                     item: section.items[i],
                     baseCurrency: baseCurrency,
                     onTap: () => _openAccountDetail(
-                        context,
-                        section.items[i].accountId,
-                        section.items[i].accountName,
-                        section.items[i].accountType,
-                      ),
+                      context,
+                      section.items[i].accountId,
+                      section.items[i].accountName,
+                      section.items[i].accountType,
+                    ),
                   ),
                   if (i != section.items.length - 1) const SizedBox(height: 10),
                 ],

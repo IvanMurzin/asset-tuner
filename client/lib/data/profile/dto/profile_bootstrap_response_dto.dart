@@ -10,8 +10,7 @@ abstract class ProfileBootstrapResponseDto with _$ProfileBootstrapResponseDto {
   const factory ProfileBootstrapResponseDto({
     required ProfileDto profile,
     @JsonName('is_new') required bool isNew,
-    @JsonName('was_base_currency_defaulted')
-    required bool wasBaseCurrencyDefaulted,
+    @JsonName('was_base_currency_defaulted') required bool wasBaseCurrencyDefaulted,
   }) = _ProfileBootstrapResponseDto;
 
   factory ProfileBootstrapResponseDto.fromJson(Map<String, dynamic> json) {

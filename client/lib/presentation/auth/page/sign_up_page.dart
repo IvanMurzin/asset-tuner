@@ -13,8 +13,6 @@ import 'package:asset_tuner/presentation/auth/widget/auth_hero.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_confirm_password_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_email_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_password_field.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
@@ -51,11 +49,7 @@ class SignUpPage extends StatelessWidget {
           }
           final message = _bannerMessage(context, l10n, state);
           if (message != null && context.mounted) {
-            showDSSnackBar(
-              context,
-              variant: DSSnackBarVariant.error,
-              message: message,
-            );
+            showDSSnackBar(context, variant: DSSnackBarVariant.error, message: message);
           }
         },
         builder: (context, state) {
@@ -81,10 +75,7 @@ class SignUpPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          AuthHero(
-                            title: l10n.signUpTitle,
-                            subtitle: l10n.signUpBody,
-                          ),
+                          AuthHero(title: l10n.signUpTitle, subtitle: l10n.signUpBody),
                           SizedBox(height: spacing.s24),
                           SignUpEmailField(
                             label: l10n.emailLabel,
@@ -95,19 +86,13 @@ class SignUpPage extends StatelessWidget {
                           SignUpPasswordField(
                             label: l10n.passwordLabel,
                             hint: l10n.passwordHint,
-                            errorText: _passwordErrorText(
-                              l10n,
-                              state.passwordError,
-                            ),
+                            errorText: _passwordErrorText(l10n, state.passwordError),
                           ),
                           SizedBox(height: spacing.s16),
                           SignUpConfirmPasswordField(
                             label: l10n.confirmPasswordLabel,
                             hint: l10n.confirmPasswordHint,
-                            errorText: _confirmErrorText(
-                              l10n,
-                              state.confirmPasswordError,
-                            ),
+                            errorText: _confirmErrorText(l10n, state.confirmPasswordError),
                           ),
                         ],
                       ),
@@ -127,20 +112,14 @@ class SignUpPage extends StatelessWidget {
                           label: l10n.signUpPrimary,
                           isLoading: isLoading,
                           fullWidth: true,
-                          onPressed: isLoading
-                              ? null
-                              : context.read<SignUpCubit>().submit,
+                          onPressed: isLoading ? null : context.read<SignUpCubit>().submit,
                         ),
                         SizedBox(height: spacing.s16),
                         TextButton(
-                          onPressed: isLoading
-                              ? null
-                              : () => context.go(AppRoutes.signIn),
+                          onPressed: isLoading ? null : () => context.go(AppRoutes.signIn),
                           child: Text(
                             l10n.switchToSignIn,
-                            style: typography.body.copyWith(
-                              color: context.dsColors.primary,
-                            ),
+                            style: typography.body.copyWith(color: context.dsColors.primary),
                           ),
                         ),
                       ],
@@ -183,12 +162,7 @@ class SignUpPage extends StatelessWidget {
         return l10n.bannerOtpSuccessBodyWithEmail(email);
       case SignUpBannerType.failure:
         return state.bannerFailureCode != null
-            ? resolveFailureMessage(
-                context,
-                code: state.bannerFailureCode,
-                rawMessage: state.bannerFailureMessage,
-                service: ErrorService.auth,
-              )
+            ? (state.bannerFailureMessage ?? l10n.errorGeneric)
             : l10n.errorGeneric;
       case null:
         return null;

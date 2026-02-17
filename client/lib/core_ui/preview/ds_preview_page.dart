@@ -36,14 +36,8 @@ class DSPreviewPage extends StatelessWidget {
     );
     final percent =
         '+${formatters.formatDecimal(4.2, minimumFractionDigits: 1, maximumFractionDigits: 1)}%';
-    final smallAmount = formatters.formatDecimal(
-      2450,
-      maximumFractionDigits: 0,
-    );
-    final mediumAmount = formatters.formatDecimal(
-      38120,
-      maximumFractionDigits: 0,
-    );
+    final smallAmount = formatters.formatDecimal(2450, maximumFractionDigits: 0);
+    final mediumAmount = formatters.formatDecimal(38120, maximumFractionDigits: 0);
     final tinyAmount = formatters.formatDecimal(120, maximumFractionDigits: 0);
 
     return Scaffold(
@@ -57,12 +51,7 @@ class DSPreviewPage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(
-          spacing.s16,
-          spacing.s16,
-          spacing.s16,
-          spacing.s32,
-        ),
+        padding: EdgeInsets.fromLTRB(spacing.s16, spacing.s16, spacing.s16, spacing.s32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -70,9 +59,7 @@ class DSPreviewPage extends StatelessWidget {
               title: l10n.dsPreviewTotalBalanceLabel,
               amountText: '€$total',
               badgeText: l10n.dsPreviewPercentThisMonth(percent),
-              updatedText: l10n.dsPreviewUpdatedAt(
-                formatters.formatDateTime(updatedAt),
-              ),
+              updatedText: l10n.dsPreviewUpdatedAt(formatters.formatDateTime(updatedAt)),
             ),
             SizedBox(height: spacing.s24),
             Row(
@@ -112,10 +99,7 @@ class DSPreviewPage extends StatelessWidget {
                     SizedBox(height: spacing.s8),
                     Text(l10n.dsPreviewTypographyBody, style: typography.body),
                     SizedBox(height: spacing.s8),
-                    Text(
-                      l10n.dsPreviewTypographyCaption,
-                      style: typography.caption,
-                    ),
+                    Text(l10n.dsPreviewTypographyCaption, style: typography.caption),
                     SizedBox(height: spacing.s8),
                     Text(
                       formatters.formatDecimal(
@@ -186,16 +170,11 @@ class DSPreviewPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      l10n.dsPreviewCardPortfolioTitle,
-                      style: typography.h3,
-                    ),
+                    Text(l10n.dsPreviewCardPortfolioTitle, style: typography.h3),
                     SizedBox(height: spacing.s8),
                     Text(
                       l10n.dsPreviewCardPortfolioBody,
-                      style: typography.body.copyWith(
-                        color: colors.textSecondary,
-                      ),
+                      style: typography.body.copyWith(color: colors.textSecondary),
                     ),
                     SizedBox(height: spacing.s12),
                     Row(
@@ -209,10 +188,7 @@ class DSPreviewPage extends StatelessWidget {
                         ),
                         SizedBox(width: spacing.s12),
                         Expanded(
-                          child: DSButton(
-                            label: l10n.dsPreviewCardRebalance,
-                            onPressed: () {},
-                          ),
+                          child: DSButton(label: l10n.dsPreviewCardRebalance, onPressed: () {}),
                         ),
                       ],
                     ),
@@ -274,10 +250,7 @@ class DSPreviewPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: spacing.s24),
-            DSPreviewSection(
-              title: l10n.dsPreviewSectionLoaders,
-              child: const DSLoader(),
-            ),
+            DSPreviewSection(title: l10n.dsPreviewSectionLoaders, child: const DSLoader()),
             SizedBox(height: spacing.s24),
             DSPreviewSection(
               title: l10n.dsPreviewSectionShimmers,
@@ -285,10 +258,7 @@ class DSPreviewPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DSSkeleton(
-                      height: 120,
-                      borderRadius: BorderRadius.circular(radius.r16),
-                    ),
+                    DSSkeleton(height: 120, borderRadius: BorderRadius.circular(radius.r16)),
                     SizedBox(height: spacing.s16),
                     Row(
                       children: [
@@ -372,9 +342,7 @@ class DSThemeSwitcher extends StatelessWidget {
             Switch(
               value: isDark,
               onChanged: (value) {
-                context.read<ThemeModeCubit>().set(
-                  value ? ThemeMode.dark : ThemeMode.light,
-                );
+                context.read<ThemeModeCubit>().set(value ? ThemeMode.dark : ThemeMode.light);
               },
               activeThumbColor: colors.onPrimary,
               activeTrackColor: colors.primary,
@@ -455,38 +423,25 @@ class DSPreviewHeroCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: typography.caption.copyWith(
-              color: colors.onPrimary.withValues(alpha: 0.85),
-            ),
+            style: typography.caption.copyWith(color: colors.onPrimary.withValues(alpha: 0.85)),
           ),
           SizedBox(height: spacing.s8),
-          Text(
-            amountText,
-            style: typography.totalNumeric.copyWith(color: colors.onPrimary),
-          ),
+          Text(amountText, style: typography.totalNumeric.copyWith(color: colors.onPrimary)),
           SizedBox(height: spacing.s12),
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: spacing.s8,
-                  vertical: spacing.s4,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s4),
                 decoration: BoxDecoration(
                   color: colors.onPrimary.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(radius.r8),
                 ),
-                child: Text(
-                  badgeText,
-                  style: typography.caption.copyWith(color: colors.onPrimary),
-                ),
+                child: Text(badgeText, style: typography.caption.copyWith(color: colors.onPrimary)),
               ),
               SizedBox(width: spacing.s12),
               Text(
                 updatedText,
-                style: typography.caption.copyWith(
-                  color: colors.onPrimary.withValues(alpha: 0.75),
-                ),
+                style: typography.caption.copyWith(color: colors.onPrimary.withValues(alpha: 0.75)),
               ),
             ],
           ),
@@ -534,12 +489,7 @@ class DSPreviewStatCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: typography.caption.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
+                Text(label, style: typography.caption.copyWith(color: colors.textSecondary)),
                 SizedBox(height: spacing.s4),
                 Text(value, style: typography.h3),
               ],

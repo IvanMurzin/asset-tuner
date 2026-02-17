@@ -9,6 +9,5 @@ class GetCustomerInfoUseCase {
 
   final ISubscriptionRepository _repository;
 
-  Future<Result<SubscriptionInfoEntity>> call() =>
-      _repository.getCustomerInfo();
+  Future<Result<SubscriptionInfoEntity>> call() => _repository.getCustomerInfo();
 }

@@ -68,10 +68,7 @@ class DSCurrencyPicker extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         width: double.infinity,
-        padding: EdgeInsets.symmetric(
-          horizontal: spacing.s12,
-          vertical: spacing.s12,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
         decoration: BoxDecoration(
           color: enabled ? colors.surface : colors.surfaceAlt,
           borderRadius: BorderRadius.circular(context.dsRadius.r12),
@@ -87,11 +84,7 @@ class DSCurrencyPicker extends StatelessWidget {
                 borderRadius: BorderRadius.circular(context.dsRadius.r8),
               ),
               alignment: Alignment.center,
-              child: Icon(
-                Icons.currency_exchange,
-                color: colors.primary,
-                size: 20,
-              ),
+              child: Icon(Icons.currency_exchange, color: colors.primary, size: 20),
             ),
             SizedBox(width: spacing.s12),
             Expanded(
@@ -100,9 +93,7 @@ class DSCurrencyPicker extends StatelessWidget {
                 children: [
                   Text(
                     selectedTitleText,
-                    style: typography.caption.copyWith(
-                      color: colors.textSecondary,
-                    ),
+                    style: typography.caption.copyWith(color: colors.textSecondary),
                   ),
                   SizedBox(height: spacing.s4),
                   Text(
@@ -110,12 +101,8 @@ class DSCurrencyPicker extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: typography.body.copyWith(
-                      color: selected == null
-                          ? colors.textTertiary
-                          : colors.textPrimary,
-                      fontWeight: selected == null
-                          ? FontWeight.w400
-                          : FontWeight.w700,
+                      color: selected == null ? colors.textTertiary : colors.textPrimary,
+                      fontWeight: selected == null ? FontWeight.w400 : FontWeight.w700,
                     ),
                   ),
                 ],
@@ -208,16 +195,12 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
     return SafeArea(
       top: false,
       child: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
           height: MediaQuery.of(context).size.height * 0.84,
           decoration: BoxDecoration(
             color: colors.background,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(context.dsRadius.r16),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(context.dsRadius.r16)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,9 +221,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                 padding: EdgeInsets.symmetric(horizontal: spacing.s16),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: Text(widget.titleText, style: typography.h3),
-                    ),
+                    Expanded(child: Text(widget.titleText, style: typography.h3)),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
                       icon: Icon(Icons.close, color: colors.textSecondary),
@@ -249,12 +230,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s16,
-                  spacing.s8,
-                  spacing.s16,
-                  spacing.s12,
-                ),
+                padding: EdgeInsets.fromLTRB(spacing.s16, spacing.s8, spacing.s16, spacing.s12),
                 child: DSSearchField(
                   controller: _queryController,
                   hintText: widget.searchHintText,
@@ -265,9 +241,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                 child: filtered.isEmpty
                     ? Center(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: spacing.s16,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: spacing.s16),
                           child: DSEmptyState(
                             title: widget.emptyResultsTitle,
                             message: widget.emptyResultsMessage,
@@ -276,15 +250,9 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                         ),
                       )
                     : ListView.separated(
-                        padding: EdgeInsets.fromLTRB(
-                          spacing.s16,
-                          0,
-                          spacing.s16,
-                          spacing.s16,
-                        ),
+                        padding: EdgeInsets.fromLTRB(spacing.s16, 0, spacing.s16, spacing.s16),
                         itemCount: filtered.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: spacing.s8),
+                        separatorBuilder: (context, index) => SizedBox(height: spacing.s8),
                         itemBuilder: (context, index) {
                           final option = filtered[index];
                           final isSelected = option.id == widget.selectedId;
@@ -358,11 +326,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                                           size: 20,
                                         )
                                       else if (isSelected)
-                                        Icon(
-                                          Icons.check_circle,
-                                          color: colors.primary,
-                                          size: 22,
-                                        )
+                                        Icon(Icons.check_circle, color: colors.primary, size: 22)
                                       else
                                         Icon(
                                           Icons.arrow_outward,
@@ -385,10 +349,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
     );
   }
 
-  List<DSCurrencyPickerOption> _filteredOptions(
-    List<DSCurrencyPickerOption> source,
-    String query,
-  ) {
+  List<DSCurrencyPickerOption> _filteredOptions(List<DSCurrencyPickerOption> source, String query) {
     final normalized = query.trim().toLowerCase();
     if (normalized.isEmpty) {
       return source;
@@ -398,9 +359,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
       return option.primaryText.toLowerCase().contains(normalized) ||
           (option.secondaryText ?? '').toLowerCase().contains(normalized) ||
           (option.tertiaryText ?? '').toLowerCase().contains(normalized) ||
-          option.searchTerms.any(
-            (term) => term.toLowerCase().contains(normalized),
-          );
+          option.searchTerms.any((term) => term.toLowerCase().contains(normalized));
     }).toList();
   }
 

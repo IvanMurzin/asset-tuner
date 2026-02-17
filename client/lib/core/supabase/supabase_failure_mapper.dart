@@ -2,47 +2,46 @@ import 'dart:io';
 
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/supabase/supabase_edge_functions.dart';
+import 'package:asset_tuner/core/supabase/supabase_error_message.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract final class SupabaseFailureMapper {
   static Failure toFailure(Object error, {String? fallbackMessage}) {
     if (error is SocketException) {
-      return Failure(
+      return _createLocalizedFailure(
         code: 'network',
-        message: fallbackMessage ?? 'Network error',
+        rawMessage: fallbackMessage ?? 'Network error',
       );
     }
 
     if (error is EdgeFunctionException) {
-      return Failure(code: error.code, message: error.message);
+      return _createLocalizedFailure(code: error.code, rawMessage: error.message);
     }
 
     if (error is AuthException) {
       final message = error.message;
       final code = error.code;
       if (code != null && code.isNotEmpty) {
-        return Failure(code: code, message: message);
+        return _createLocalizedFailure(code: code, rawMessage: message);
       }
       final normalized = message.toLowerCase();
       if (normalized.contains('invalid login') ||
-          normalized.contains('invalid') &&
-              normalized.contains('credentials')) {
-        return Failure(code: 'unauthorized', message: message);
+          normalized.contains('invalid') && normalized.contains('credentials')) {
+        return _createLocalizedFailure(code: 'unauthorized', rawMessage: message);
       }
-      if (normalized.contains('rate limit') ||
-          normalized.contains('too many')) {
-        return Failure(code: 'rate_limited', message: message);
+      if (normalized.contains('rate limit') || normalized.contains('too many')) {
+        return _createLocalizedFailure(code: 'rate_limited', rawMessage: message);
       }
       if (normalized.contains('already') && normalized.contains('registered')) {
-        return Failure(code: 'conflict', message: message);
+        return _createLocalizedFailure(code: 'conflict', rawMessage: message);
       }
-      return Failure(code: 'unknown', message: message);
+      return _createLocalizedFailure(code: 'unknown', rawMessage: message);
     }
 
     if (error is PostgrestException) {
       final message = error.message;
       final code = _mapPostgresCode(error.code);
-      return Failure(code: code, message: message);
+      return _createLocalizedFailure(code: code, rawMessage: message);
     }
 
     if (error is FunctionException) {
@@ -50,28 +49,28 @@ abstract final class SupabaseFailureMapper {
       if (details is Map<String, dynamic>) {
         final edgeError = details['error'];
         if (edgeError is Map<String, dynamic>) {
-          final code =
-              (edgeError['code'] as String?) ?? _mapHttpStatus(error.status);
+          final code = (edgeError['code'] as String?) ?? _mapHttpStatus(error.status);
           final message =
-              (edgeError['message'] as String?) ??
-              (fallbackMessage ?? 'Request failed');
-          return Failure(code: code, message: message);
+              (edgeError['message'] as String?) ?? (fallbackMessage ?? 'Request failed');
+          return _createLocalizedFailure(code: code, rawMessage: message);
         }
       }
-      return Failure(
+      return _createLocalizedFailure(
         code: _mapHttpStatus(error.status),
-        message: fallbackMessage ?? 'Request failed',
+        rawMessage: fallbackMessage ?? 'Request failed',
       );
     }
 
     if (error is StorageException) {
-      return Failure(code: 'unknown', message: error.message);
+      return _createLocalizedFailure(code: 'unknown', rawMessage: error.message);
     }
 
-    return Failure(
-      code: 'unknown',
-      message: fallbackMessage ?? 'Unknown error',
-    );
+    return _createLocalizedFailure(code: 'unknown', rawMessage: fallbackMessage ?? 'Unknown error');
+  }
+
+  static Failure _createLocalizedFailure({required String code, required String rawMessage}) {
+    final localizedMessage = resolveFailureMessage(code: code, rawMessage: rawMessage);
+    return Failure(code: code, message: localizedMessage);
   }
 
   static String _mapPostgresCode(String? postgresCode) {

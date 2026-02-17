@@ -27,23 +27,12 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
   final UpdatePlanUseCase _updatePlan;
 
   Future<void> load() async {
-    emit(
-      state.copyWith(
-        status: ManageSubscriptionStatus.loading,
-        failureCode: null,
-        banner: null,
-      ),
-    );
+    emit(state.copyWith(status: ManageSubscriptionStatus.loading, failureCode: null, banner: null));
 
     final session = await _getCachedSession();
     if (isClosed) return;
     if (session == null) {
-      emit(
-        state.copyWith(
-          status: ManageSubscriptionStatus.error,
-          failureCode: 'unauthorized',
-        ),
-      );
+      emit(state.copyWith(status: ManageSubscriptionStatus.error, failureCode: 'unauthorized'));
       return;
     }
 
@@ -74,9 +63,7 @@ class ManageSubscriptionCubit extends Cubit<ManageSubscriptionState> {
     if (isClosed) return;
     switch (result) {
       case Success<SubscriptionInfoEntity>(value: final info):
-        emit(
-          state.copyWith(plan: info.isPro ? 'paid' : 'free'),
-        );
+        emit(state.copyWith(plan: info.isPro ? 'paid' : 'free'));
       case FailureResult<SubscriptionInfoEntity>():
         break;
     }

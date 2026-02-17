@@ -14,8 +14,7 @@ import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/settings/bloc/settings_cubit.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
+
 import 'package:asset_tuner/presentation/settings/widget/settings_row_trailing.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -67,9 +66,7 @@ class SettingsPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            DSSectionTitle(
-                              title: l10n.settingsSectionPreferences,
-                            ),
+                            DSSectionTitle(title: l10n.settingsSectionPreferences),
                             SizedBox(height: spacing.s12),
                             DSCard(
                               padding: EdgeInsets.zero,
@@ -88,30 +85,23 @@ class SettingsPage extends StatelessWidget {
                                   title: l10n.splashErrorTitle,
                                   message: l10n.errorGeneric,
                                   actionLabel: l10n.splashRetry,
-                                  onAction: () =>
-                                      context.read<SettingsCubit>().load(),
+                                  onAction: () => context.read<SettingsCubit>().load(),
                                 ),
                                 SettingsStatus.ready => Column(
                                   children: [
                                     DSListRow(
                                       title: l10n.settingsBaseCurrency,
                                       trailing: SettingsRowTrailing(
-                                        value:
-                                            state.baseCurrency ??
-                                            l10n.notAvailable,
+                                        value: state.baseCurrency ?? l10n.notAvailable,
                                       ),
-                                      onTap: () => context.push(
-                                        AppRoutes.baseCurrencySettings,
-                                      ),
+                                      onTap: () => context.push(AppRoutes.baseCurrencySettings),
                                     ),
                                   ],
                                 ),
                               },
                             ),
                             SizedBox(height: spacing.s24),
-                            DSSectionTitle(
-                              title: l10n.settingsSectionSubscription,
-                            ),
+                            DSSectionTitle(title: l10n.settingsSectionSubscription),
                             SizedBox(height: spacing.s12),
                             DSCard(
                               padding: EdgeInsets.zero,
@@ -130,8 +120,7 @@ class SettingsPage extends StatelessWidget {
                                   title: l10n.splashErrorTitle,
                                   message: l10n.errorGeneric,
                                   actionLabel: l10n.splashRetry,
-                                  onAction: () =>
-                                      context.read<SettingsCubit>().load(),
+                                  onAction: () => context.read<SettingsCubit>().load(),
                                 ),
                                 SettingsStatus.ready => Column(
                                   children: [
@@ -153,9 +142,7 @@ class SettingsPage extends StatelessWidget {
                                         Icons.chevron_right,
                                         color: colors.textTertiary,
                                       ),
-                                      onTap: () => context.push(
-                                        AppRoutes.manageSubscription,
-                                      ),
+                                      onTap: () => context.push(AppRoutes.manageSubscription),
                                     ),
                                   ],
                                 ),
@@ -188,11 +175,6 @@ class SettingsPage extends StatelessWidget {
   String? _bannerText(BuildContext context, AppLocalizations l10n, String? code, String? message) {
     if (code == null) return null;
     if (code == 'entitlements') return l10n.settingsEntitlementsError;
-    return resolveFailureMessage(
-      context,
-      code: code,
-      rawMessage: message,
-      service: ErrorService.database,
-    );
+    return message;
   }
 }

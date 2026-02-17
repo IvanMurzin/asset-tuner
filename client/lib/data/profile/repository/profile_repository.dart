@@ -31,10 +31,7 @@ class ProfileRepository implements IProfileRepository {
     } catch (error) {
       logger.e('ProfileRepository.ensureProfile failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to load profile',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load profile'),
       );
     }
   }
@@ -45,19 +42,14 @@ class ProfileRepository implements IProfileRepository {
       final dto = await _dataSource.fetchProfile();
       if (dto == null) {
         logger.w('ProfileRepository.getProfile not found');
-        return const FailureResult(
-          Failure(code: 'not_found', message: 'Profile not found'),
-        );
+        return const FailureResult(Failure(code: 'not_found', message: 'Profile not found'));
       }
       logger.i('ProfileRepository.getProfile success');
       return Success(ProfileMapper.toEntity(dto));
     } catch (error) {
       logger.e('ProfileRepository.getProfile failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to load profile',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load profile'),
       );
     }
   }
@@ -71,10 +63,7 @@ class ProfileRepository implements IProfileRepository {
     } catch (error) {
       logger.e('ProfileRepository.updateBaseCurrency failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to update profile',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to update profile'),
       );
     }
   }
@@ -88,10 +77,7 @@ class ProfileRepository implements IProfileRepository {
     } catch (error) {
       logger.e('ProfileRepository.updatePlan failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to update profile',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to update profile'),
       );
     }
   }

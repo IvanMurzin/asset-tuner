@@ -37,17 +37,14 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     if (session == null) {
       emit(
         state.copyWith(
-          navigation: const BaseCurrencyNavigation(
-            destination: BaseCurrencyDestination.signIn,
-          ),
+          navigation: const BaseCurrencyNavigation(destination: BaseCurrencyDestination.signIn),
         ),
       );
       return;
     }
 
     final profileResult = await _getProfileUseCase();
-    final currenciesResult =
-        await _getAssetsForPickerUseCase.call(kind: AssetKind.fiat);
+    final currenciesResult = await _getAssetsForPickerUseCase.call(kind: AssetKind.fiat);
     if (isClosed) return;
 
     late final ProfileEntity profile;
@@ -78,12 +75,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
         return;
       case Success(:final value):
         if (value.isEmpty) {
-          emit(
-            state.copyWith(
-              status: BaseCurrencyStatus.error,
-              loadFailureCode: 'unknown',
-            ),
-          );
+          emit(state.copyWith(status: BaseCurrencyStatus.error, loadFailureCode: 'unknown'));
           return;
         }
         currencies = value;
@@ -115,16 +107,10 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
       return;
     }
 
-    if (!_isAllowedForEntitlements(
-      selected,
-      state.entitlements,
-      state.currencies,
-    )) {
+    if (!_isAllowedForEntitlements(selected, state.entitlements, state.currencies)) {
       emit(
         state.copyWith(
-          navigation: const BaseCurrencyNavigation(
-            destination: BaseCurrencyDestination.paywall,
-          ),
+          navigation: const BaseCurrencyNavigation(destination: BaseCurrencyDestination.paywall),
         ),
       );
       return;
@@ -149,9 +135,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
       emit(
         state.copyWith(
           isSaving: false,
-          navigation: const BaseCurrencyNavigation(
-            destination: BaseCurrencyDestination.signIn,
-          ),
+          navigation: const BaseCurrencyNavigation(destination: BaseCurrencyDestination.signIn),
         ),
       );
       return;
@@ -173,9 +157,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
         emit(
           state.copyWith(
             isSaving: false,
-            navigation: const BaseCurrencyNavigation(
-              destination: BaseCurrencyDestination.main,
-            ),
+            navigation: const BaseCurrencyNavigation(destination: BaseCurrencyDestination.main),
           ),
         );
     }
@@ -192,8 +174,7 @@ class BaseCurrencyCubit extends Cubit<BaseCurrencyState> {
     if (entitlements.anyBaseCurrency) {
       return true;
     }
-    final match = currencies
-        .where((e) => e.code.toUpperCase() == code.toUpperCase());
+    final match = currencies.where((e) => e.code.toUpperCase() == code.toUpperCase());
     return match.isNotEmpty && match.first.isUnlocked;
   }
 }

@@ -6,8 +6,7 @@ enum ProfileDestination { signIn }
 
 @freezed
 abstract class ProfileNavigation with _$ProfileNavigation {
-  const factory ProfileNavigation({required ProfileDestination destination}) =
-      _ProfileNavigation;
+  const factory ProfileNavigation({required ProfileDestination destination}) = _ProfileNavigation;
 }
 
 @freezed

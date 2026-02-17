@@ -13,12 +13,8 @@ part 'settings_state.dart';
 
 @injectable
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit(
-    this._getCachedSession,
-    this._getProfile,
-    this._bootstrapProfile,
-    this._signOut,
-  ) : super(const SettingsState());
+  SettingsCubit(this._getCachedSession, this._getProfile, this._bootstrapProfile, this._signOut)
+    : super(const SettingsState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final GetProfileUseCase _getProfile;
@@ -35,9 +31,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         state.copyWith(
           status: SettingsStatus.error,
           failureCode: 'unauthorized',
-          navigation: const SettingsNavigation(
-            destination: SettingsDestination.signIn,
-          ),
+          navigation: const SettingsNavigation(destination: SettingsDestination.signIn),
         ),
       );
       return;
@@ -46,9 +40,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     final profile = await _loadProfile();
     if (isClosed) return;
     if (profile == null) {
-      emit(
-        state.copyWith(status: SettingsStatus.error, failureCode: 'unknown'),
-      );
+      emit(state.copyWith(status: SettingsStatus.error, failureCode: 'unknown'));
       return;
     }
 
@@ -75,9 +67,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         emit(
           state.copyWith(
             isSigningOut: false,
-            navigation: const SettingsNavigation(
-              destination: SettingsDestination.signIn,
-            ),
+            navigation: const SettingsNavigation(destination: SettingsDestination.signIn),
           ),
         );
       case FailureResult<void>(failure: final failure):

@@ -14,10 +14,6 @@ class UpdateAccountUseCase {
     required String name,
     required AccountType type,
   }) {
-    return _repository.updateAccount(
-      accountId: accountId,
-      name: name,
-      type: type,
-    );
+    return _repository.updateAccount(accountId: accountId, name: name, type: type);
   }
 }

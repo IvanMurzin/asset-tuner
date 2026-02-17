@@ -6,9 +6,8 @@ enum AddBalanceDestination { signIn, backSaved }
 
 @freezed
 abstract class AddBalanceNavigation with _$AddBalanceNavigation {
-  const factory AddBalanceNavigation({
-    required AddBalanceDestination destination,
-  }) = _AddBalanceNavigation;
+  const factory AddBalanceNavigation({required AddBalanceDestination destination}) =
+      _AddBalanceNavigation;
 }
 
 @freezed

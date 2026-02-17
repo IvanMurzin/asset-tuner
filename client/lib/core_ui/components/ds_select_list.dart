@@ -58,11 +58,7 @@ class DSSelectList extends StatelessWidget {
 }
 
 class _DSSelectListItem extends StatelessWidget {
-  const _DSSelectListItem({
-    required this.option,
-    required this.selected,
-    required this.onTap,
-  });
+  const _DSSelectListItem({required this.option, required this.selected, required this.onTap});
 
   final DSSelectOption option;
   final bool selected;

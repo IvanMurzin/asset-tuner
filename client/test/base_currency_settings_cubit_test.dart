@@ -40,43 +40,27 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(provider) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<void>> signInWithPassword(String email, String password) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  ) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(
-    String email,
-    String code,
-  ) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -115,9 +99,7 @@ class FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileEntity>> getProfile() async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -127,62 +109,60 @@ class FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileEntity>> updatePlan(String plan) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
 List<AssetPickerItemEntity> _fiatPickerItems() => [
-      const AssetPickerItemEntity(
-        id: 'a1',
-        kind: AssetKind.fiat,
-        code: 'USD',
-        name: 'United States Dollar',
-        rank: 1,
-        isUnlocked: true,
-      ),
-      const AssetPickerItemEntity(
-        id: 'a2',
-        kind: AssetKind.fiat,
-        code: 'EUR',
-        name: 'Euro',
-        rank: 2,
-        isUnlocked: true,
-      ),
-      const AssetPickerItemEntity(
-        id: 'a3',
-        kind: AssetKind.fiat,
-        code: 'GBP',
-        name: 'British Pound',
-        rank: 3,
-        isUnlocked: true,
-      ),
-      const AssetPickerItemEntity(
-        id: 'a4',
-        kind: AssetKind.fiat,
-        code: 'JPY',
-        name: 'Japanese Yen',
-        rank: 4,
-        isUnlocked: true,
-      ),
-      const AssetPickerItemEntity(
-        id: 'a5',
-        kind: AssetKind.fiat,
-        code: 'CNY',
-        name: 'Chinese Yuan',
-        rank: 5,
-        isUnlocked: true,
-      ),
-      const AssetPickerItemEntity(
-        id: 'a6',
-        kind: AssetKind.fiat,
-        code: 'AUD',
-        name: 'Australian Dollar',
-        rank: 6,
-        isUnlocked: false,
-      ),
-    ];
+  const AssetPickerItemEntity(
+    id: 'a1',
+    kind: AssetKind.fiat,
+    code: 'USD',
+    name: 'United States Dollar',
+    rank: 1,
+    isUnlocked: true,
+  ),
+  const AssetPickerItemEntity(
+    id: 'a2',
+    kind: AssetKind.fiat,
+    code: 'EUR',
+    name: 'Euro',
+    rank: 2,
+    isUnlocked: true,
+  ),
+  const AssetPickerItemEntity(
+    id: 'a3',
+    kind: AssetKind.fiat,
+    code: 'GBP',
+    name: 'British Pound',
+    rank: 3,
+    isUnlocked: true,
+  ),
+  const AssetPickerItemEntity(
+    id: 'a4',
+    kind: AssetKind.fiat,
+    code: 'JPY',
+    name: 'Japanese Yen',
+    rank: 4,
+    isUnlocked: true,
+  ),
+  const AssetPickerItemEntity(
+    id: 'a5',
+    kind: AssetKind.fiat,
+    code: 'CNY',
+    name: 'Chinese Yuan',
+    rank: 5,
+    isUnlocked: true,
+  ),
+  const AssetPickerItemEntity(
+    id: 'a6',
+    kind: AssetKind.fiat,
+    code: 'AUD',
+    name: 'Australian Dollar',
+    rank: 6,
+    isUnlocked: false,
+  ),
+];
 
 class FakeAssetRepository implements IAssetRepository {
   FakeAssetRepository({this.pickerResult});
@@ -214,26 +194,18 @@ void main() {
 
     await cubit.load();
 
-    expect(
-      cubit.state.navigation?.destination,
-      BaseCurrencySettingsDestination.signIn,
-    );
+    expect(cubit.state.navigation?.destination, BaseCurrencySettingsDestination.signIn);
   });
 
   test('load treats empty catalog as error', () async {
     final cubit = BaseCurrencySettingsCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       BootstrapProfileUseCase(FakeProfileRepository()),
-      GetAssetsForSubaccountPickerUseCase(
-        FakeAssetRepository(pickerResult: const Success([])),
-      ),
+      GetAssetsForSubaccountPickerUseCase(FakeAssetRepository(pickerResult: const Success([]))),
       UpdateBaseCurrencyUseCase(FakeProfileRepository()),
     );
     addTearDown(cubit.close);
@@ -248,10 +220,7 @@ void main() {
     final cubit = BaseCurrencySettingsCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       BootstrapProfileUseCase(
@@ -274,10 +243,7 @@ void main() {
 
     cubit.selectCurrency('AUD');
 
-    expect(
-      cubit.state.navigation?.destination,
-      BaseCurrencySettingsDestination.paywall,
-    );
+    expect(cubit.state.navigation?.destination, BaseCurrencySettingsDestination.paywall);
     expect(cubit.state.navigation?.requestedCode, 'AUD');
     expect(cubit.state.selectedCode, 'USD');
   });
@@ -286,10 +252,7 @@ void main() {
     final cubit = BaseCurrencySettingsCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       BootstrapProfileUseCase(
@@ -320,10 +283,7 @@ void main() {
     final cubit = BaseCurrencySettingsCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       BootstrapProfileUseCase(FakeProfileRepository()),
@@ -335,10 +295,7 @@ void main() {
     await cubit.load();
     await cubit.save();
 
-    expect(
-      cubit.state.navigation?.destination,
-      BaseCurrencySettingsDestination.back,
-    );
+    expect(cubit.state.navigation?.destination, BaseCurrencySettingsDestination.back);
   });
 
   test('save persists allowed selection and navigates back', () async {
@@ -346,10 +303,7 @@ void main() {
     final cubit = BaseCurrencySettingsCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       BootstrapProfileUseCase(profileRepo),
@@ -364,25 +318,17 @@ void main() {
 
     expect(cubit.state.currentCode, 'EUR');
     expect(cubit.state.selectedCode, 'EUR');
-    expect(
-      cubit.state.navigation?.destination,
-      BaseCurrencySettingsDestination.back,
-    );
+    expect(cubit.state.navigation?.destination, BaseCurrencySettingsDestination.back);
   });
 
   test('save shows banner when update fails', () async {
     final profileRepo = FakeProfileRepository(
-      updateResult: const FailureResult(
-        Failure(code: 'network', message: 'No connection'),
-      ),
+      updateResult: const FailureResult(Failure(code: 'network', message: 'No connection')),
     );
     final cubit = BaseCurrencySettingsCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       BootstrapProfileUseCase(profileRepo),

@@ -28,9 +28,7 @@ class DSPlanCard extends StatelessWidget {
         ? colors.primary.withValues(alpha: 0.65)
         : colors.border.withValues(alpha: 0.9);
 
-    final background = selected
-        ? colors.primary.withValues(alpha: 0.08)
-        : colors.surface;
+    final background = selected ? colors.primary.withValues(alpha: 0.08) : colors.surface;
 
     return Material(
       color: background,
@@ -77,12 +75,7 @@ class DSPlanCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: spacing.s4),
-                    Text(
-                      subtitle,
-                      style: typography.caption.copyWith(
-                        color: colors.textSecondary,
-                      ),
-                    ),
+                    Text(subtitle, style: typography.caption.copyWith(color: colors.textSecondary)),
                   ],
                 ),
               ),
@@ -107,10 +100,7 @@ class _Badge extends StatelessWidget {
     final radius = context.dsRadius;
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: spacing.s8,
-        vertical: spacing.s4,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s4),
       decoration: BoxDecoration(
         color: colors.success.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(radius.r16),
@@ -118,10 +108,7 @@ class _Badge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: typography.caption.copyWith(
-          color: colors.textPrimary,
-          fontWeight: FontWeight.w700,
-        ),
+        style: typography.caption.copyWith(color: colors.textPrimary, fontWeight: FontWeight.w700),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),

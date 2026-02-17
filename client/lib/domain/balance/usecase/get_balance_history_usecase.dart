@@ -14,10 +14,6 @@ class GetBalanceHistoryUseCase {
     int limit = 50,
     int? offset,
   }) {
-    return _repository.fetchHistory(
-      subaccountId: subaccountId,
-      limit: limit,
-      offset: offset,
-    );
+    return _repository.fetchHistory(subaccountId: subaccountId, limit: limit, offset: offset);
   }
 }

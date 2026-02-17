@@ -40,57 +40,37 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> requestEmailOtp(String email) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(provider) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<void>> signInWithPassword(String email, String password) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  ) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(
-    String email,
-    String code,
-  ) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<void>> signOut() async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -100,9 +80,7 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> deleteAccount() async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
@@ -114,11 +92,7 @@ class FakeProfileRepository implements IProfileRepository {
   @override
   Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return Success(
-      ProfileBootstrapEntity(
-        profile: profile,
-        isNew: false,
-        wasBaseCurrencyDefaulted: false,
-      ),
+      ProfileBootstrapEntity(profile: profile, isNew: false, wasBaseCurrencyDefaulted: false),
     );
   }
 
@@ -129,16 +103,12 @@ class FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
   Future<Result<ProfileEntity>> updatePlan(String plan) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
@@ -161,18 +131,13 @@ class FakeAssetRepository implements IAssetRepository {
 }
 
 class FakeAccountAssetRepository implements IAccountAssetRepository {
-  FakeAccountAssetRepository({
-    required this.positionsByAccount,
-    required this.totalPositionsCount,
-  });
+  FakeAccountAssetRepository({required this.positionsByAccount, required this.totalPositionsCount});
 
   final Map<String, List<AccountAssetEntity>> positionsByAccount;
   int totalPositionsCount;
 
   @override
-  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
-    required String accountId,
-  }) async {
+  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({required String accountId}) async {
     return Success(positionsByAccount[accountId] ?? []);
   }
 
@@ -199,22 +164,15 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
       createdAt: now,
       updatedAt: now,
     );
-    final list = <AccountAssetEntity>[
-      ...(positionsByAccount[accountId] ?? const []),
-      created,
-    ];
+    final list = <AccountAssetEntity>[...(positionsByAccount[accountId] ?? const []), created];
     positionsByAccount[accountId] = list;
     totalPositionsCount += 1;
     return Success(created);
   }
 
   @override
-  Future<Result<void>> removeAssetFromAccount({
-    required String subaccountId,
-  }) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+  Future<Result<void>> removeAssetFromAccount({required String subaccountId}) async {
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 
   @override
@@ -222,9 +180,7 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
     required String subaccountId,
     required String name,
   }) async {
-    return const FailureResult(
-      Failure(code: 'validation', message: 'Not used'),
-    );
+    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
   }
 }
 
@@ -249,16 +205,10 @@ void main() {
         }),
       ),
       CountAssetPositionsUseCase(
-        FakeAccountAssetRepository(
-          positionsByAccount: {},
-          totalPositionsCount: 0,
-        ),
+        FakeAccountAssetRepository(positionsByAccount: {}, totalPositionsCount: 0),
       ),
       AddAssetToAccountUseCase(
-        FakeAccountAssetRepository(
-          positionsByAccount: {},
-          totalPositionsCount: 0,
-        ),
+        FakeAccountAssetRepository(positionsByAccount: {}, totalPositionsCount: 0),
       ),
     );
 
@@ -267,53 +217,47 @@ void main() {
     expect(cubit.state.navigation?.destination, AddAssetDestination.signIn);
   });
 
-  test(
-    'addSelected routes to paywall when free and positions limit reached',
-    () async {
-      final repo = FakeAccountAssetRepository(
-        positionsByAccount: {'acc_1': []},
-        totalPositionsCount: 20,
-      );
+  test('addSelected routes to paywall when free and positions limit reached', () async {
+    final repo = FakeAccountAssetRepository(
+      positionsByAccount: {'acc_1': []},
+      totalPositionsCount: 20,
+    );
 
-      final cubit = AddAssetCubit(
-        GetCachedSessionUseCase(
-          FakeAuthRepository(
-            cachedSession: const AuthSessionEntity(
-              userId: 'user_1',
-              email: 'user@example.com',
+    final cubit = AddAssetCubit(
+      GetCachedSessionUseCase(
+        FakeAuthRepository(
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+        ),
+      ),
+      GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
+      BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
+      GetAssetsForSubaccountPickerUseCase(
+        FakeAssetRepository({
+          AssetKind.crypto: const [
+            AssetPickerItemEntity(
+              id: 'asset_btc',
+              kind: AssetKind.crypto,
+              code: 'BTC',
+              name: 'Bitcoin',
+              rank: 1,
+              isUnlocked: true,
             ),
-          ),
-        ),
-        GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
-        BootstrapProfileUseCase(FakeProfileRepository(profile: freeProfile())),
-        GetAssetsForSubaccountPickerUseCase(
-          FakeAssetRepository({
-            AssetKind.crypto: const [
-              AssetPickerItemEntity(
-                id: 'asset_btc',
-                kind: AssetKind.crypto,
-                code: 'BTC',
-                name: 'Bitcoin',
-                rank: 1,
-                isUnlocked: true,
-              ),
-            ],
-          }),
-        ),
-        CountAssetPositionsUseCase(repo),
-        AddAssetToAccountUseCase(repo),
-      );
+          ],
+        }),
+      ),
+      CountAssetPositionsUseCase(repo),
+      AddAssetToAccountUseCase(repo),
+    );
 
-      await cubit.load('acc_1');
-      await cubit.selectKind(AssetKind.crypto);
-      cubit.selectAsset('asset_btc');
-      cubit.updateName('Bitcoin');
-      cubit.updateBalance('1');
-      await cubit.addSelected();
+    await cubit.load('acc_1');
+    await cubit.selectKind(AssetKind.crypto);
+    cubit.selectAsset('asset_btc');
+    cubit.updateName('Bitcoin');
+    cubit.updateBalance('1');
+    await cubit.addSelected();
 
-      expect(cubit.state.navigation?.destination, AddAssetDestination.paywall);
-    },
-  );
+    expect(cubit.state.navigation?.destination, AddAssetDestination.paywall);
+  });
 
   test('addSelected navigates backAdded on success', () async {
     final repo = FakeAccountAssetRepository(
@@ -324,10 +268,7 @@ void main() {
     final cubit = AddAssetCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       GetProfileUseCase(FakeProfileRepository(profile: paidProfile())),
@@ -364,10 +305,7 @@ void main() {
     final cubit = AddAssetCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       GetProfileUseCase(FakeProfileRepository(profile: paidProfile())),
@@ -397,16 +335,10 @@ void main() {
         }),
       ),
       CountAssetPositionsUseCase(
-        FakeAccountAssetRepository(
-          positionsByAccount: {},
-          totalPositionsCount: 0,
-        ),
+        FakeAccountAssetRepository(positionsByAccount: {}, totalPositionsCount: 0),
       ),
       AddAssetToAccountUseCase(
-        FakeAccountAssetRepository(
-          positionsByAccount: {},
-          totalPositionsCount: 0,
-        ),
+        FakeAccountAssetRepository(positionsByAccount: {}, totalPositionsCount: 0),
       ),
     );
 
@@ -416,19 +348,14 @@ void main() {
 
     await cubit.selectKind(AssetKind.fiat);
     expect(cubit.state.selectedKind, AssetKind.fiat);
-    expect(cubit.state.visibleAssets.map((e) => e.kind).toSet(), {
-      AssetKind.fiat,
-    });
+    expect(cubit.state.visibleAssets.map((e) => e.kind).toSet(), {AssetKind.fiat});
   });
 
   test('locked asset selection routes to paywall before submit', () async {
     final cubit = AddAssetCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(
-            userId: 'user_1',
-            email: 'user@example.com',
-          ),
+          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
         ),
       ),
       GetProfileUseCase(FakeProfileRepository(profile: freeProfile())),
@@ -448,16 +375,10 @@ void main() {
         }),
       ),
       CountAssetPositionsUseCase(
-        FakeAccountAssetRepository(
-          positionsByAccount: {},
-          totalPositionsCount: 0,
-        ),
+        FakeAccountAssetRepository(positionsByAccount: {}, totalPositionsCount: 0),
       ),
       AddAssetToAccountUseCase(
-        FakeAccountAssetRepository(
-          positionsByAccount: {},
-          totalPositionsCount: 0,
-        ),
+        FakeAccountAssetRepository(positionsByAccount: {}, totalPositionsCount: 0),
       ),
     );
 

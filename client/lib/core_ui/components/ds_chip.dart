@@ -22,10 +22,7 @@ class DSChip extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(radius.r16),
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: spacing.s12,
-            vertical: spacing.s8,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s8),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

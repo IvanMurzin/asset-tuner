@@ -18,8 +18,7 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/add_asset_cubit.dart';
 import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -71,9 +70,7 @@ class _AddAssetPageState extends State<AddAssetPage> {
             case AddAssetDestination.paywall:
               final upgraded = await context.push<bool>(
                 AppRoutes.paywall,
-                extra: const PaywallArgs(
-                  reason: PaywallReason.subaccountsLimit,
-                ),
+                extra: const PaywallArgs(reason: PaywallReason.subaccountsLimit),
               );
               if (context.mounted && upgraded == true) {
                 await context.read<AddAssetCubit>().load(widget.accountId);
@@ -97,9 +94,7 @@ class _AddAssetPageState extends State<AddAssetPage> {
           if (_balanceController.text != state.balanceText) {
             _balanceController.value = _balanceController.value.copyWith(
               text: state.balanceText,
-              selection: TextSelection.collapsed(
-                offset: state.balanceText.length,
-              ),
+              selection: TextSelection.collapsed(offset: state.balanceText.length),
             );
           }
 
@@ -108,12 +103,7 @@ class _AddAssetPageState extends State<AddAssetPage> {
               appBar: DSAppBar(title: l10n.subaccountCreateTitle),
               body: SafeArea(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    spacing.s24,
-                    spacing.s24,
-                    spacing.s24,
-                    spacing.s16,
-                  ),
+                  padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -126,9 +116,7 @@ class _AddAssetPageState extends State<AddAssetPage> {
                         height: 52,
                         decoration: BoxDecoration(
                           color: context.dsColors.surface,
-                          borderRadius: BorderRadius.circular(
-                            context.dsRadius.r12,
-                          ),
+                          borderRadius: BorderRadius.circular(context.dsRadius.r12),
                           border: Border.all(color: context.dsColors.border),
                         ),
                         padding: EdgeInsets.symmetric(
@@ -151,15 +139,9 @@ class _AddAssetPageState extends State<AddAssetPage> {
               appBar: DSAppBar(title: l10n.subaccountCreateTitle),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: resolveFailureMessage(
-                  context,
-                  code: state.failureCode,
-                  rawMessage: state.failureMessage,
-                  service: ErrorService.database,
-                ),
+                message: state.failureMessage ?? l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
-                onAction: () =>
-                    context.read<AddAssetCubit>().load(widget.accountId),
+                onAction: () => context.read<AddAssetCubit>().load(widget.accountId),
               ),
             );
           }
@@ -177,24 +159,14 @@ class _AddAssetPageState extends State<AddAssetPage> {
             appBar: DSAppBar(title: l10n.subaccountCreateTitle),
             body: SafeArea(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s16,
-                ),
+                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (state.failureCode != null) ...[
                       DSInlineBanner(
                         title: l10n.subaccountCreateTitle,
-                        message: resolveFailureMessage(
-                          context,
-                          code: state.failureCode,
-                          rawMessage: state.failureMessage,
-                          service: ErrorService.database,
-                        ),
+                        message: state.failureMessage ?? l10n.errorGeneric,
                         variant: DSInlineBannerVariant.danger,
                       ),
                       SizedBox(height: spacing.s16),
@@ -227,18 +199,14 @@ class _AddAssetPageState extends State<AddAssetPage> {
                             selected: state.selectedKind == AssetKind.fiat,
                             onTap: state.isSaving
                                 ? null
-                                : () => context
-                                      .read<AddAssetCubit>()
-                                      .selectKind(AssetKind.fiat),
+                                : () => context.read<AddAssetCubit>().selectKind(AssetKind.fiat),
                           ),
                           DSRadioRow(
                             title: l10n.assetKindCrypto,
                             selected: state.selectedKind == AssetKind.crypto,
                             onTap: state.isSaving
                                 ? null
-                                : () => context
-                                      .read<AddAssetCubit>()
-                                      .selectKind(AssetKind.crypto),
+                                : () => context.read<AddAssetCubit>().selectKind(AssetKind.crypto),
                           ),
                         ],
                       ),
@@ -260,20 +228,15 @@ class _AddAssetPageState extends State<AddAssetPage> {
                       emptyResultsTitle: l10n.assetNoMatchesTitle,
                       emptyResultsMessage: l10n.assetNoMatchesBody,
                       enabled:
-                          !state.isSaving &&
-                          !state.isCatalogLoading &&
-                          state.selectedKind != null,
-                      onSelect: (assetId) =>
-                          context.read<AddAssetCubit>().selectAsset(assetId),
+                          !state.isSaving && !state.isCatalogLoading && state.selectedKind != null,
+                      onSelect: (assetId) => context.read<AddAssetCubit>().selectAsset(assetId),
                     ),
                     SizedBox(height: spacing.s16),
                     DSButton(
                       label: l10n.subaccountCreateCta,
                       fullWidth: true,
                       isLoading: state.isSaving,
-                      onPressed: canAdd
-                          ? context.read<AddAssetCubit>().addSelected
-                          : null,
+                      onPressed: canAdd ? context.read<AddAssetCubit>().addSelected : null,
                     ),
                   ],
                 ),

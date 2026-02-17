@@ -17,12 +17,10 @@ class SignUpConfirmPasswordField extends StatefulWidget {
   final String? errorText;
 
   @override
-  State<SignUpConfirmPasswordField> createState() =>
-      _SignUpConfirmPasswordFieldState();
+  State<SignUpConfirmPasswordField> createState() => _SignUpConfirmPasswordFieldState();
 }
 
-class _SignUpConfirmPasswordFieldState
-    extends State<SignUpConfirmPasswordField> {
+class _SignUpConfirmPasswordFieldState extends State<SignUpConfirmPasswordField> {
   late final TextEditingController _controller;
 
   @override

@@ -17,8 +17,16 @@ class OnboardingCarouselBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = page.clamp(0, 2);
-    final a = (p == 0) ? 0.10 : (p == 1) ? 0.14 : 0.18;
-    final b = (p == 0) ? 0.08 : (p == 1) ? 0.12 : 0.10;
+    final a = (p == 0)
+        ? 0.10
+        : (p == 1)
+        ? 0.14
+        : 0.18;
+    final b = (p == 0)
+        ? 0.08
+        : (p == 1)
+        ? 0.12
+        : 0.10;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -93,10 +101,7 @@ class _OnboardingBlob extends StatelessWidget {
           child: Container(
             width: size,
             height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: color,
-            ),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: color),
           ),
         ),
       ),

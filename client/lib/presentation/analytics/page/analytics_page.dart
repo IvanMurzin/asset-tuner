@@ -14,8 +14,7 @@ import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
+
 import 'package:asset_tuner/presentation/analytics/widget/analytics_loading_skeleton.dart';
 
 class AnalyticsPage extends StatelessWidget {
@@ -78,12 +77,7 @@ class _Body extends StatelessWidget {
     if (state.status == AnalyticsStatus.error) {
       return DSInlineError(
         title: l10n.splashErrorTitle,
-        message: resolveFailureMessage(
-        context,
-        code: state.failureCode,
-        rawMessage: state.failureMessage,
-        service: ErrorService.database,
-      ),
+        message: state.failureMessage ?? l10n.errorGeneric,
         actionLabel: l10n.splashRetry,
         onAction: () => context.read<AnalyticsCubit>().load(),
       );
@@ -131,10 +125,7 @@ class _Body extends StatelessWidget {
     return ListView(
       children: [
         if (state.breakdown.isNotEmpty) ...[
-          _AnalyticsPieChart(
-            breakdown: state.breakdown,
-            colors: context.dsColors,
-          ),
+          _AnalyticsPieChart(breakdown: state.breakdown, colors: context.dsColors),
           SizedBox(height: spacing.s24),
         ],
         DSSectionTitle(title: l10n.analyticsBreakdownTitle),
@@ -171,21 +162,14 @@ class _Body extends StatelessWidget {
               subtitleText: '${item.accountName} · ${item.subaccountName}',
               deltaText: '$sign$diffStr ${item.assetCode}',
               deltaColor: deltaColor,
-              baseLineText: context.dsFormatters.formatMoney(
-                item.diffBaseAmount,
-                currency,
-              ),
-              trailingPrimaryText: context.dsFormatters.formatMoney(
-                item.diffBaseAmount,
-                currency,
-              ),
+              baseLineText: context.dsFormatters.formatMoney(item.diffBaseAmount, currency),
+              trailingPrimaryText: context.dsFormatters.formatMoney(item.diffBaseAmount, currency),
             ),
           );
         }),
       ],
     );
   }
-
 }
 
 class _BreakdownCard extends StatelessWidget {
@@ -216,10 +200,7 @@ class _BreakdownCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          item.assetCode,
-          style: typography.h3,
-        ),
+        Text(item.assetCode, style: typography.h3),
         SizedBox(height: spacing.s8),
         Text(
           '$originalText ${item.assetCode}',
@@ -228,10 +209,7 @@ class _BreakdownCard extends StatelessWidget {
         SizedBox(height: spacing.s4),
         Text(
           context.dsFormatters.formatMoney(item.value, currency),
-          style: typography.body.copyWith(
-            color: colors.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
+          style: typography.body.copyWith(color: colors.textPrimary, fontWeight: FontWeight.w600),
         ),
         SizedBox(height: spacing.s12),
         ClipRRect(
@@ -266,10 +244,7 @@ Color _breakdownBarColorAt(int index, DSColors colors) {
 }
 
 class _AnalyticsPieChart extends StatelessWidget {
-  const _AnalyticsPieChart({
-    required this.breakdown,
-    required this.colors,
-  });
+  const _AnalyticsPieChart({required this.breakdown, required this.colors});
 
   final List<AnalyticsBreakdownItem> breakdown;
   final DSColors colors;
@@ -305,23 +280,13 @@ class _AnalyticsPieChart extends StatelessWidget {
         title: item.assetCode,
         showTitle: true,
         radius: 48,
-        titleStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: colors.textPrimary,
-        ),
+        titleStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textPrimary),
       );
     }).toList();
 
     return SizedBox(
       height: 220,
-      child: PieChart(
-        PieChartData(
-          sections: sections,
-          sectionsSpace: 2,
-          centerSpaceRadius: 32,
-        ),
-      ),
+      child: PieChart(PieChartData(sections: sections, sectionsSpace: 2, centerSpaceRadius: 32)),
     );
   }
 

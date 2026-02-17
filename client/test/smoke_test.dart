@@ -12,9 +12,7 @@ void main() {
         locale: const Locale('en'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: Builder(
-          builder: (context) => Text(AppLocalizations.of(context)!.signInTitle),
-        ),
+        home: Builder(builder: (context) => Text(AppLocalizations.of(context)!.signInTitle)),
       ),
     );
     await tester.pumpAndSettle();
@@ -31,9 +29,7 @@ void main() {
         locale: const Locale('ru'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: Builder(
-          builder: (context) => Text(AppLocalizations.of(context)!.signInTitle),
-        ),
+        home: Builder(builder: (context) => Text(AppLocalizations.of(context)!.signInTitle)),
       ),
     );
     await tester.pumpAndSettle();

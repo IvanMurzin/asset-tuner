@@ -44,10 +44,7 @@ class _SummarySkeleton extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colors.primary.withValues(alpha: 0.16),
-            colors.info.withValues(alpha: 0.1),
-          ],
+          colors: [colors.primary.withValues(alpha: 0.16), colors.info.withValues(alpha: 0.1)],
         ),
         borderRadius: BorderRadius.circular(context.dsRadius.r16),
       ),
@@ -74,11 +71,7 @@ class _AccountsSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final spacing = context.dsSpacing;
 
-    final types = [
-      AccountType.bank,
-      AccountType.wallet,
-      AccountType.exchange,
-    ];
+    final types = [AccountType.bank, AccountType.wallet, AccountType.exchange];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

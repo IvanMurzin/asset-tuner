@@ -5,8 +5,7 @@ enum AssetPositionDetailStatus { loading, ready, error }
 enum AssetPositionDetailDestination { signIn, backDeleted }
 
 @freezed
-abstract class AssetPositionDetailNavigation
-    with _$AssetPositionDetailNavigation {
+abstract class AssetPositionDetailNavigation with _$AssetPositionDetailNavigation {
   const factory AssetPositionDetailNavigation({
     required AssetPositionDetailDestination destination,
   }) = _AssetPositionDetailNavigation;
@@ -15,8 +14,7 @@ abstract class AssetPositionDetailNavigation
 @freezed
 abstract class AssetPositionDetailState with _$AssetPositionDetailState {
   const factory AssetPositionDetailState({
-    @Default(AssetPositionDetailStatus.loading)
-    AssetPositionDetailStatus status,
+    @Default(AssetPositionDetailStatus.loading) AssetPositionDetailStatus status,
     String? accountId,
     String? subaccountId,
     String? accountName,

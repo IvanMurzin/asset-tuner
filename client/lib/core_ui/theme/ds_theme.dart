@@ -126,19 +126,15 @@ class DSColors extends ThemeExtension<DSColors> {
 
     return DSColors(
       primary: Color.lerp(primary, other.primary, t) ?? primary,
-      primaryHover:
-          Color.lerp(primaryHover, other.primaryHover, t) ?? primaryHover,
+      primaryHover: Color.lerp(primaryHover, other.primaryHover, t) ?? primaryHover,
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t) ?? onPrimary,
       background: Color.lerp(background, other.background, t) ?? background,
       surface: Color.lerp(surface, other.surface, t) ?? surface,
       surfaceAlt: Color.lerp(surfaceAlt, other.surfaceAlt, t) ?? surfaceAlt,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t) ?? textPrimary,
-      textSecondary:
-          Color.lerp(textSecondary, other.textSecondary, t) ?? textSecondary,
-      textTertiary:
-          Color.lerp(textTertiary, other.textTertiary, t) ?? textTertiary,
-      textOnPrimary:
-          Color.lerp(textOnPrimary, other.textOnPrimary, t) ?? textOnPrimary,
+      textSecondary: Color.lerp(textSecondary, other.textSecondary, t) ?? textSecondary,
+      textTertiary: Color.lerp(textTertiary, other.textTertiary, t) ?? textTertiary,
+      textOnPrimary: Color.lerp(textOnPrimary, other.textOnPrimary, t) ?? textOnPrimary,
       border: Color.lerp(border, other.border, t) ?? border,
       success: Color.lerp(success, other.success, t) ?? success,
       warning: Color.lerp(warning, other.warning, t) ?? warning,
@@ -177,14 +173,7 @@ class DSSpacing extends ThemeExtension<DSSpacing> {
   final double s32;
 
   @override
-  DSSpacing copyWith({
-    double? s4,
-    double? s8,
-    double? s12,
-    double? s16,
-    double? s24,
-    double? s32,
-  }) {
+  DSSpacing copyWith({double? s4, double? s8, double? s12, double? s16, double? s24, double? s32}) {
     return DSSpacing(
       s4: s4 ?? this.s4,
       s8: s8 ?? this.s8,
@@ -221,11 +210,7 @@ class DSRadius extends ThemeExtension<DSRadius> {
 
   @override
   DSRadius copyWith({double? r8, double? r12, double? r16}) {
-    return DSRadius(
-      r8: r8 ?? this.r8,
-      r12: r12 ?? this.r12,
-      r16: r16 ?? this.r16,
-    );
+    return DSRadius(r8: r8 ?? this.r8, r12: r12 ?? this.r12, r16: r16 ?? this.r16);
   }
 
   @override
@@ -250,11 +235,7 @@ class DSElevation extends ThemeExtension<DSElevation> {
   final List<BoxShadow> e2;
 
   @override
-  DSElevation copyWith({
-    List<BoxShadow>? e0,
-    List<BoxShadow>? e1,
-    List<BoxShadow>? e2,
-  }) {
+  DSElevation copyWith({List<BoxShadow>? e0, List<BoxShadow>? e1, List<BoxShadow>? e2}) {
     return DSElevation(e0: e0 ?? this.e0, e1: e1 ?? this.e1, e2: e2 ?? this.e2);
   }
 
@@ -397,8 +378,7 @@ class DSTypography extends ThemeExtension<DSTypography> {
       caption: TextStyle.lerp(caption, other.caption, t) ?? caption,
       button: TextStyle.lerp(button, other.button, t) ?? button,
       label: TextStyle.lerp(label, other.label, t) ?? label,
-      totalNumeric:
-          TextStyle.lerp(totalNumeric, other.totalNumeric, t) ?? totalNumeric,
+      totalNumeric: TextStyle.lerp(totalNumeric, other.totalNumeric, t) ?? totalNumeric,
     );
   }
 }

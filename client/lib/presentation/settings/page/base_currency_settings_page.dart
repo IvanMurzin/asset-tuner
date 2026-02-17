@@ -13,8 +13,6 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
 import 'package:asset_tuner/presentation/settings/bloc/base_currency_settings_cubit.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -54,9 +52,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                 await context.read<BaseCurrencySettingsCubit>().load();
                 final requested = navigation.requestedCode;
                 if (requested != null && context.mounted) {
-                  context.read<BaseCurrencySettingsCubit>().selectCurrency(
-                    requested,
-                  );
+                  context.read<BaseCurrencySettingsCubit>().selectCurrency(requested);
                 }
               }
               break;
@@ -69,21 +65,14 @@ class BaseCurrencySettingsPage extends StatelessWidget {
             return const Scaffold(body: Center(child: DSLoader()));
           }
 
-          if (state.status == BaseCurrencySettingsStatus.error &&
-              state.currencies.isEmpty) {
+          if (state.status == BaseCurrencySettingsStatus.error && state.currencies.isEmpty) {
             return Scaffold(
               appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
               body: DSInlineError(
                 title: l10n.baseCurrencySettingsLoadErrorTitle,
-                message: resolveFailureMessage(
-                    context,
-                    code: state.loadFailureCode,
-                    rawMessage: state.loadFailureMessage,
-                    service: ErrorService.database,
-                  ),
+                message: state.loadFailureMessage ?? l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
-                onAction: () =>
-                    context.read<BaseCurrencySettingsCubit>().load(),
+                onAction: () => context.read<BaseCurrencySettingsCubit>().load(),
               ),
             );
           }
@@ -103,9 +92,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    DSSectionTitle(
-                      title: l10n.baseCurrencySettingsCurrentTitle,
-                    ),
+                    DSSectionTitle(title: l10n.baseCurrencySettingsCurrentTitle),
                     SizedBox(height: spacing.s12),
                     DSBaseCurrencyValueCard(
                       title: l10n.baseCurrencySettingsCurrentTitle,
@@ -116,21 +103,13 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                     SizedBox(height: spacing.s24),
                     DSSectionTitle(title: l10n.baseCurrencySettingsPickerTitle),
                     SizedBox(height: spacing.s12),
-                    if (state.bannerType ==
-                            BaseCurrencySettingsBannerType.saveFailure &&
+                    if (state.bannerType == BaseCurrencySettingsBannerType.saveFailure &&
                         state.bannerFailureCode != null) ...[
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: spacing.s24),
                         child: DSInlineBanner(
                           title: l10n.baseCurrencySettingsTitle,
-                          message: state.bannerFailureCode != null
-                              ? resolveFailureMessage(
-                                  context,
-                                  code: state.bannerFailureCode,
-                                  rawMessage: state.bannerFailureMessage,
-                                  service: ErrorService.database,
-                                )
-                              : l10n.errorGeneric,
+                          message: state.bannerFailureMessage ?? l10n.errorGeneric,
                           variant: DSInlineBannerVariant.danger,
                         ),
                       ),
@@ -142,9 +121,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                         onTap: () async {
                           final upgraded = await context.push<bool>(
                             AppRoutes.paywall,
-                            extra: const PaywallArgs(
-                              reason: PaywallReason.baseCurrency,
-                            ),
+                            extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
                           );
                           if (context.mounted && upgraded == true) {
                             await context.read<BaseCurrencySettingsCubit>().load();
@@ -163,9 +140,8 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                       emptyResultsTitle: l10n.currencyPickerNoResultsTitle,
                       emptyResultsMessage: l10n.currencyPickerNoResultsBody,
                       enabled: !state.isSaving,
-                      onSelect: (code) => context
-                          .read<BaseCurrencySettingsCubit>()
-                          .selectCurrency(code),
+                      onSelect: (code) =>
+                          context.read<BaseCurrencySettingsCubit>().selectCurrency(code),
                     ),
                     Spacer(),
                     DSButton(
@@ -174,9 +150,7 @@ class BaseCurrencySettingsPage extends StatelessWidget {
                       isLoading: state.isSaving,
                       onPressed: state.isSaving
                           ? null
-                          : () => context
-                                .read<BaseCurrencySettingsCubit>()
-                                .save(),
+                          : () => context.read<BaseCurrencySettingsCubit>().save(),
                     ),
                     SizedBox(height: spacing.s16),
                   ],
@@ -202,5 +176,4 @@ class BaseCurrencySettingsPage extends StatelessWidget {
       );
     }).toList();
   }
-
 }

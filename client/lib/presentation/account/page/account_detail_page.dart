@@ -14,8 +14,7 @@ import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_header_card.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_positions_section.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
+//
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -76,12 +75,7 @@ class AccountDetailPage extends StatelessWidget {
               appBar: DSAppBar(title: initialTitle ?? l10n.accountsTitle),
               body: DSInlineError(
                 title: l10n.splashErrorTitle,
-                message: resolveFailureMessage(
-                context,
-                code: state.failureCode,
-                rawMessage: state.failureMessage,
-                service: ErrorService.database,
-              ),
+                message: state.failureMessage ?? l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<AccountDetailCubit>().load(accountId),
               ),
@@ -109,13 +103,8 @@ class AccountDetailPage extends StatelessWidget {
                             DSInlineBanner(
                               title: account.name,
                               message: state.bannerFailureCode != null
-                              ? resolveFailureMessage(
-                                  context,
-                                  code: state.bannerFailureCode,
-                                  rawMessage: state.bannerFailureMessage,
-                                  service: ErrorService.database,
-                                )
-                              : l10n.errorGeneric,
+                                  ? (state.bannerFailureMessage ?? l10n.errorGeneric)
+                                  : l10n.errorGeneric,
                               variant: DSInlineBannerVariant.danger,
                             ),
                             SizedBox(height: spacing.s12),
@@ -188,12 +177,7 @@ class AccountDetailPage extends StatelessWidget {
                           if (state.status == AccountDetailStatus.error)
                             DSInlineError(
                               title: l10n.splashErrorTitle,
-                              message: resolveFailureMessage(
-                context,
-                code: state.failureCode,
-                rawMessage: state.failureMessage,
-                service: ErrorService.database,
-              ),
+                              message: state.failureMessage ?? l10n.errorGeneric,
                               actionLabel: l10n.splashRetry,
                               onAction: () => context.read<AccountDetailCubit>().load(accountId),
                             )

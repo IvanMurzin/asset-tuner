@@ -3,9 +3,7 @@ import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
 
 abstract interface class IAccountAssetRepository {
-  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
-    required String accountId,
-  });
+  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({required String accountId});
 
   Future<Result<int>> countAssetPositions();
 

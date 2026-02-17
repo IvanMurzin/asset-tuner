@@ -32,15 +32,8 @@ class AssetPositionDetailHeaderCard extends StatelessWidget {
     final colors = context.dsColors;
 
     final assetText = (assetCode ?? '').isEmpty
-        ? context.dsFormatters.formatDecimalFromDecimal(
-            currentBalance,
-            maximumFractionDigits: 8,
-          )
-        : context.dsFormatters.formatMoney(
-            currentBalance,
-            assetCode!,
-            maximumFractionDigits: 8,
-          );
+        ? context.dsFormatters.formatDecimalFromDecimal(currentBalance, maximumFractionDigits: 8)
+        : context.dsFormatters.formatMoney(currentBalance, assetCode!, maximumFractionDigits: 8);
     final convertedText = convertedValue == null
         ? l10n.unpriced
         : context.dsFormatters.formatMoney(convertedValue!, baseCurrency);
@@ -52,10 +45,7 @@ class AssetPositionDetailHeaderCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colors.info.withValues(alpha: 0.2),
-            colors.success.withValues(alpha: 0.08),
-          ],
+          colors: [colors.info.withValues(alpha: 0.2), colors.success.withValues(alpha: 0.08)],
         ),
         borderRadius: BorderRadius.circular(context.dsRadius.r16),
         border: Border.all(color: colors.border),
@@ -91,9 +81,7 @@ class AssetPositionDetailHeaderCard extends StatelessWidget {
                       accountName ?? l10n.notAvailable,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: typography.caption.copyWith(
-                        color: colors.textSecondary,
-                      ),
+                      style: typography.caption.copyWith(color: colors.textSecondary),
                     ),
                   ],
                 ),
@@ -109,22 +97,14 @@ class AssetPositionDetailHeaderCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          Text(
-            assetText,
-            style: typography.h2.copyWith(fontWeight: FontWeight.w700),
-          ),
+          Text(assetText, style: typography.h2.copyWith(fontWeight: FontWeight.w700)),
           SizedBox(height: spacing.s4),
-          Text(
-            convertedText,
-            style: typography.body.copyWith(color: colors.textSecondary),
-          ),
+          Text(convertedText, style: typography.body.copyWith(color: colors.textSecondary)),
           SizedBox(height: spacing.s8),
           Text(
             ratesAsOf == null
                 ? l10n.overviewRatesUnavailable
-                : l10n.overviewRatesUpdatedAt(
-                    context.dsFormatters.formatDateTime(ratesAsOf!),
-                  ),
+                : l10n.overviewRatesUpdatedAt(context.dsFormatters.formatDateTime(ratesAsOf!)),
             style: typography.caption.copyWith(color: colors.textSecondary),
           ),
         ],

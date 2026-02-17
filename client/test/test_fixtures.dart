@@ -16,17 +16,9 @@ const paidEntitlements = EntitlementsEntity(
 );
 
 ProfileEntity freeProfile({String baseCurrency = 'USD'}) {
-  return ProfileEntity(
-    baseCurrency: baseCurrency,
-    plan: 'free',
-    entitlements: freeEntitlements,
-  );
+  return ProfileEntity(baseCurrency: baseCurrency, plan: 'free', entitlements: freeEntitlements);
 }
 
 ProfileEntity paidProfile({String baseCurrency = 'USD'}) {
-  return ProfileEntity(
-    baseCurrency: baseCurrency,
-    plan: 'paid',
-    entitlements: paidEntitlements,
-  );
+  return ProfileEntity(baseCurrency: baseCurrency, plan: 'paid', entitlements: paidEntitlements);
 }

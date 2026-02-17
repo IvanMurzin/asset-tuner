@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// TODO: rewrite via hive, move to data layer
+
 @lazySingleton
 class AssetRatesStorage {
   static const _key = 'asset_rates_usd_latest';
@@ -15,10 +17,7 @@ class AssetRatesStorage {
     }
     final decoded = jsonDecode(raw) as Map<String, dynamic>;
     return decoded.map(
-      (key, value) => MapEntry(
-        key,
-        StoredAssetRateUsd.fromJson(value as Map<String, dynamic>),
-      ),
+      (key, value) => MapEntry(key, StoredAssetRateUsd.fromJson(value as Map<String, dynamic>)),
     );
   }
 
@@ -35,11 +34,7 @@ class AssetRatesStorage {
 }
 
 class StoredAssetRateUsd {
-  const StoredAssetRateUsd({
-    required this.assetId,
-    required this.usdPrice,
-    required this.asOfIso,
-  });
+  const StoredAssetRateUsd({required this.assetId, required this.usdPrice, required this.asOfIso});
 
   final String assetId;
   final String usdPrice;

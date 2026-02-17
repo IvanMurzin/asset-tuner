@@ -25,26 +25,18 @@ class BaseCurrencySettingsCurrencyRow extends StatelessWidget {
     final spacing = context.dsSpacing;
     final typography = context.dsTypography;
 
-    final background = selected
-        ? colors.primary.withValues(alpha: 0.08)
-        : colors.surface;
+    final background = selected ? colors.primary.withValues(alpha: 0.08) : colors.surface;
 
     return Material(
       color: background,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: spacing.s12,
-            vertical: spacing.s12,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: spacing.s12,
-                  vertical: spacing.s4,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s4),
                 decoration: BoxDecoration(
                   color: colors.surfaceAlt,
                   borderRadius: BorderRadius.circular(context.dsRadius.r12),
@@ -65,9 +57,7 @@ class BaseCurrencySettingsCurrencyRow extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: typography.body.copyWith(
-                        color: colors.textPrimary,
-                      ),
+                      style: typography.body.copyWith(color: colors.textPrimary),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -75,9 +65,7 @@ class BaseCurrencySettingsCurrencyRow extends StatelessWidget {
                       SizedBox(height: spacing.s4),
                       Text(
                         symbol!,
-                        style: typography.caption.copyWith(
-                          color: colors.textSecondary,
-                        ),
+                        style: typography.caption.copyWith(color: colors.textSecondary),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

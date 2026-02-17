@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 
 class OnboardingGlassCard extends StatelessWidget {
-  const OnboardingGlassCard({
-    super.key,
-    required this.child,
-  });
+  const OnboardingGlassCard({super.key, required this.child});
 
   final Widget child;
 
@@ -31,9 +28,7 @@ class OnboardingGlassCard extends StatelessWidget {
               ],
             ),
             borderRadius: BorderRadius.circular(radius.r16),
-            border: Border.all(
-              color: colors.border.withValues(alpha: 0.55),
-            ),
+            border: Border.all(color: colors.border.withValues(alpha: 0.55)),
           ),
           child: child,
         ),

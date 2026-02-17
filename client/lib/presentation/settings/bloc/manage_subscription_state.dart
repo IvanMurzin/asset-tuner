@@ -2,12 +2,7 @@ part of 'manage_subscription_cubit.dart';
 
 enum ManageSubscriptionStatus { loading, ready, error }
 
-enum ManageSubscriptionBanner {
-  manageSuccess,
-  restoreSuccess,
-  cancelSuccess,
-  updateFailure,
-}
+enum ManageSubscriptionBanner { manageSuccess, restoreSuccess, cancelSuccess, updateFailure }
 
 @freezed
 abstract class ManageSubscriptionState with _$ManageSubscriptionState {

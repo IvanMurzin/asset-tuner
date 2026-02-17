@@ -63,9 +63,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
         state.copyWith(
           status: AddAssetStatus.error,
           failureCode: 'unauthorized',
-          navigation: const AddAssetNavigation(
-            destination: AddAssetDestination.signIn,
-          ),
+          navigation: const AddAssetNavigation(destination: AddAssetDestination.signIn),
         ),
       );
       return;
@@ -74,9 +72,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     final profile = await _loadProfile();
     if (isClosed) return;
     if (profile == null) {
-      emit(
-        state.copyWith(status: AddAssetStatus.error, failureCode: 'unknown'),
-      );
+      emit(state.copyWith(status: AddAssetStatus.error, failureCode: 'unknown'));
       return;
     }
 
@@ -120,8 +116,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     }
     final q = normalized.toLowerCase();
     final filtered = source.where((a) {
-      return a.code.toLowerCase().contains(q) ||
-          a.name.toLowerCase().contains(q);
+      return a.code.toLowerCase().contains(q) || a.name.toLowerCase().contains(q);
     }).toList();
     emit(state.copyWith(query: query, visibleAssets: filtered));
   }
@@ -200,9 +195,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     if (!selected.isUnlocked) {
       emit(
         state.copyWith(
-          navigation: const AddAssetNavigation(
-            destination: AddAssetDestination.paywall,
-          ),
+          navigation: const AddAssetNavigation(destination: AddAssetDestination.paywall),
         ),
       );
       return;
@@ -221,9 +214,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
   Future<void> addSelected() async {
     final accountId = state.accountId;
     final assetId = state.selectedAssetId;
-    if (state.status != AddAssetStatus.ready ||
-        accountId == null ||
-        assetId == null) {
+    if (state.status != AddAssetStatus.ready || accountId == null || assetId == null) {
       return;
     }
 
@@ -235,9 +226,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     if (!selectedAsset.isUnlocked) {
       emit(
         state.copyWith(
-          navigation: const AddAssetNavigation(
-            destination: AddAssetDestination.paywall,
-          ),
+          navigation: const AddAssetNavigation(destination: AddAssetDestination.paywall),
         ),
       );
       return;
@@ -262,13 +251,10 @@ class AddAssetCubit extends Cubit<AddAssetState> {
     }
 
     final entitlements = state.entitlements;
-    if (entitlements != null &&
-        state.totalPositionsCount >= entitlements.maxSubaccounts) {
+    if (entitlements != null && state.totalPositionsCount >= entitlements.maxSubaccounts) {
       emit(
         state.copyWith(
-          navigation: const AddAssetNavigation(
-            destination: AddAssetDestination.paywall,
-          ),
+          navigation: const AddAssetNavigation(destination: AddAssetDestination.paywall),
         ),
       );
       return;
@@ -288,9 +274,7 @@ class AddAssetCubit extends Cubit<AddAssetState> {
         emit(
           state.copyWith(
             isSaving: false,
-            navigation: const AddAssetNavigation(
-              destination: AddAssetDestination.backAdded,
-            ),
+            navigation: const AddAssetNavigation(destination: AddAssetDestination.backAdded),
           ),
         );
       case FailureResult(failure: final failure):

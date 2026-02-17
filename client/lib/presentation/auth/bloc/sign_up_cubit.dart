@@ -14,14 +14,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   final SignUpWithPasswordUseCase _signUpWithPasswordUseCase;
 
   void updateEmail(String value) {
-    emit(
-      state.copyWith(
-        email: value,
-        emailError: null,
-        bannerFailureCode: null,
-        bannerType: null,
-      ),
-    );
+    emit(state.copyWith(email: value, emailError: null, bannerFailureCode: null, bannerType: null));
   }
 
   void updatePassword(String value) {
@@ -55,17 +48,8 @@ class SignUpCubit extends Cubit<SignUpState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        status: SignUpStatus.loading,
-        bannerFailureCode: null,
-        bannerType: null,
-      ),
-    );
-    final result = await _signUpWithPasswordUseCase(
-      state.email.trim(),
-      state.password,
-    );
+    emit(state.copyWith(status: SignUpStatus.loading, bannerFailureCode: null, bannerType: null));
+    final result = await _signUpWithPasswordUseCase(state.email.trim(), state.password);
     if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):

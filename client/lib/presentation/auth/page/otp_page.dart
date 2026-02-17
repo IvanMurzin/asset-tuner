@@ -11,8 +11,6 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/auth/bloc/otp_cubit.dart';
 import 'package:asset_tuner/presentation/auth/widget/auth_hero.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 
 class OtpPage extends StatefulWidget {
   const OtpPage({super.key});
@@ -74,12 +72,7 @@ class _OtpPageState extends State<OtpPage> {
             return;
           }
           final message = state.bannerFailureCode != null
-              ? resolveFailureMessage(
-                  context,
-                  code: state.bannerFailureCode,
-                  rawMessage: state.bannerFailureMessage,
-                  service: ErrorService.auth,
-                )
+              ? (state.bannerFailureMessage ?? l10n.errorGeneric)
               : null;
           if (message != null && context.mounted) {
             showDSSnackBar(context, variant: DSSnackBarVariant.error, message: message);
@@ -198,10 +191,7 @@ class _ResendCaption extends StatelessWidget {
     if (disabled) {
       return Align(
         alignment: Alignment.center,
-        child: Text(
-          l10n.resendOtp,
-          style: typography.body.copyWith(color: colors.textTertiary),
-        ),
+        child: Text(l10n.resendOtp, style: typography.body.copyWith(color: colors.textTertiary)),
       );
     }
 

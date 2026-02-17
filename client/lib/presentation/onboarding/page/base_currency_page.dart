@@ -12,8 +12,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/onboarding/bloc/base_currency_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
-import 'package:asset_tuner/presentation/utils/supabase_error_message.dart';
-import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -64,12 +63,7 @@ class BaseCurrencyPage extends StatelessWidget {
               appBar: DSAppBar(title: l10n.onboardingBaseCurrencyTitle),
               body: DSInlineError(
                 title: l10n.onboardingLoadError,
-                message: resolveFailureMessage(
-                  context,
-                  code: state.loadFailureCode,
-                  rawMessage: state.loadFailureMessage,
-                  service: ErrorService.database,
-                ),
+                message: state.loadFailureMessage ?? l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
                 onAction: () => context.read<BaseCurrencyCubit>().load(),
               ),
@@ -83,12 +77,7 @@ class BaseCurrencyPage extends StatelessWidget {
             appBar: DSAppBar(title: l10n.onboardingBaseCurrencyTitle),
             body: SafeArea(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s24,
-                  spacing.s32,
-                ),
+                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -103,9 +92,7 @@ class BaseCurrencyPage extends StatelessWidget {
                       DSInlineBanner(
                         title: l10n.onboardingBaseCurrencyTitle,
                         message: bannerMessage,
-                        variant:
-                            state.bannerType ==
-                                BaseCurrencyBannerType.saveFailure
+                        variant: state.bannerType == BaseCurrencyBannerType.saveFailure
                             ? DSInlineBannerVariant.danger
                             : DSInlineBannerVariant.info,
                       ),
@@ -116,9 +103,7 @@ class BaseCurrencyPage extends StatelessWidget {
                         onTap: () async {
                           await context.push<bool>(
                             AppRoutes.paywall,
-                            extra: const PaywallArgs(
-                              reason: PaywallReason.baseCurrency,
-                            ),
+                            extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
                           );
                           if (context.mounted) {
                             await context.read<BaseCurrencyCubit>().load();
@@ -137,9 +122,7 @@ class BaseCurrencyPage extends StatelessWidget {
                       emptyResultsTitle: l10n.currencyPickerNoResultsTitle,
                       emptyResultsMessage: l10n.currencyPickerNoResultsBody,
                       enabled: !state.isSaving,
-                      onSelect: (code) => context
-                          .read<BaseCurrencyCubit>()
-                          .selectCurrency(code),
+                      onSelect: (code) => context.read<BaseCurrencyCubit>().selectCurrency(code),
                     ),
                     SizedBox(height: spacing.s24),
                     DSButton(
@@ -186,14 +169,7 @@ class BaseCurrencyPage extends StatelessWidget {
   String? _bannerMessage(BuildContext context, AppLocalizations l10n, BaseCurrencyState state) {
     return switch (state.bannerType) {
       BaseCurrencyBannerType.selectCurrency => l10n.onboardingSelectCurrency,
-      BaseCurrencyBannerType.saveFailure => state.bannerFailureCode != null
-          ? resolveFailureMessage(
-              context,
-              code: state.bannerFailureCode,
-              rawMessage: state.bannerFailureMessage,
-              service: ErrorService.database,
-            )
-          : l10n.errorGeneric,
+      BaseCurrencyBannerType.saveFailure => state.bannerFailureMessage ?? l10n.errorGeneric,
       null => null,
     };
   }

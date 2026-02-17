@@ -20,10 +20,7 @@ class SupabaseProfileDataSource {
   }
 
   Future<ProfileDto?> fetchProfile() async {
-    final row = await _client
-        .from(SupabaseTables.profiles)
-        .select()
-        .maybeSingle();
+    final row = await _client.from(SupabaseTables.profiles).select().maybeSingle();
     if (row == null) {
       return null;
     }

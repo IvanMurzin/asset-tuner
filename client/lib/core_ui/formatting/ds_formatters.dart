@@ -7,11 +7,7 @@ class DSFormatters {
 
   final Locale locale;
 
-  String formatDecimal(
-    num value, {
-    int? minimumFractionDigits,
-    int? maximumFractionDigits,
-  }) {
+  String formatDecimal(num value, {int? minimumFractionDigits, int? maximumFractionDigits}) {
     final formatter = NumberFormat.decimalPattern(locale.toLanguageTag());
     if (minimumFractionDigits != null) {
       formatter.minimumFractionDigits = minimumFractionDigits;
@@ -35,11 +31,7 @@ class DSFormatters {
   }
 
   /// Returns "amount currency" (e.g. "1 234.56 USD").
-  String formatMoney(
-    Decimal amount,
-    String currency, {
-    int maximumFractionDigits = 2,
-  }) {
+  String formatMoney(Decimal amount, String currency, {int maximumFractionDigits = 2}) {
     return '${formatDecimalFromDecimal(amount, maximumFractionDigits: maximumFractionDigits)} $currency';
   }
 

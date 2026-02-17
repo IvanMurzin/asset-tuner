@@ -18,15 +18,10 @@ class SupabaseAssetDataSource {
         .select()
         .order('kind', ascending: true)
         .order('code', ascending: true);
-    return (rows as List)
-        .whereType<Map<String, dynamic>>()
-        .map(AssetDto.fromJson)
-        .toList();
+    return (rows as List).whereType<Map<String, dynamic>>().map(AssetDto.fromJson).toList();
   }
 
-  Future<List<AssetPickerItemDto>> fetchAssetsForPicker({
-    required String kind,
-  }) async {
+  Future<List<AssetPickerItemDto>> fetchAssetsForPicker({required String kind}) async {
     final data = await _edgeFunctions.invokeJson(
       SupabaseFunctions.getAssetsForPicker,
       body: {'kind': kind},
@@ -35,9 +30,6 @@ class SupabaseAssetDataSource {
     if (items is! List) {
       return [];
     }
-    return items
-        .whereType<Map<String, dynamic>>()
-        .map(AssetPickerItemDto.fromJson)
-        .toList();
+    return items.whereType<Map<String, dynamic>>().map(AssetPickerItemDto.fromJson).toList();
   }
 }

@@ -7,11 +7,7 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 class ProfileThemeSelector extends StatelessWidget {
   const ProfileThemeSelector({super.key});
 
-  static const List<ThemeMode> _modes = [
-    ThemeMode.system,
-    ThemeMode.light,
-    ThemeMode.dark,
-  ];
+  static const List<ThemeMode> _modes = [ThemeMode.system, ThemeMode.light, ThemeMode.dark];
 
   @override
   Widget build(BuildContext context) {
@@ -20,25 +16,15 @@ class ProfileThemeSelector extends StatelessWidget {
     final typography = context.dsTypography;
     final colors = context.dsColors;
     final mode = context.watch<ThemeModeCubit>().state;
-    final labels = [
-      l10n.profileThemeSystem,
-      l10n.profileThemeLight,
-      l10n.profileThemeDark,
-    ];
+    final labels = [l10n.profileThemeSystem, l10n.profileThemeLight, l10n.profileThemeDark];
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: spacing.s16,
-        vertical: spacing.s12,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: spacing.s16, vertical: spacing.s12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            l10n.profileTheme,
-            style: typography.body.copyWith(color: colors.textPrimary),
-          ),
+          Text(l10n.profileTheme, style: typography.body.copyWith(color: colors.textPrimary)),
           SizedBox(height: spacing.s12),
           Row(
             children: [
@@ -49,8 +35,7 @@ class ProfileThemeSelector extends StatelessWidget {
                     icon: _iconFor(_modes[i]),
                     label: labels[i],
                     selected: mode == _modes[i],
-                    onTap: () =>
-                        context.read<ThemeModeCubit>().set(_modes[i]),
+                    onTap: () => context.read<ThemeModeCubit>().set(_modes[i]),
                   ),
                 ),
               ],
@@ -91,35 +76,24 @@ class _ThemeChip extends StatelessWidget {
     final spacing = context.dsSpacing;
 
     return Material(
-      color: selected
-          ? colors.primary.withValues(alpha: 0.12)
-          : colors.surfaceAlt,
+      color: selected ? colors.primary.withValues(alpha: 0.12) : colors.surfaceAlt,
       borderRadius: BorderRadius.circular(radius.r12),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(radius.r12),
         child: Container(
-          padding: EdgeInsets.symmetric(
-            vertical: spacing.s12,
-            horizontal: spacing.s8,
-          ),
+          padding: EdgeInsets.symmetric(vertical: spacing.s12, horizontal: spacing.s8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(radius.r12),
             border: Border.all(
-              color: selected
-                  ? colors.primary.withValues(alpha: 0.6)
-                  : colors.border,
+              color: selected ? colors.primary.withValues(alpha: 0.6) : colors.border,
               width: selected ? 1.5 : 1,
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                size: 22,
-                color: selected ? colors.primary : colors.textTertiary,
-              ),
+              Icon(icon, size: 22, color: selected ? colors.primary : colors.textTertiary),
               SizedBox(height: spacing.s4),
               Text(
                 label,

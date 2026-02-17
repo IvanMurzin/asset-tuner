@@ -4,6 +4,7 @@ import 'package:decimal/decimal.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// TODO: remove and reimplement with hidrated cubit or hive, use cache only in repos and move to data
 @lazySingleton
 class OverviewCacheStorage {
   Future<StoredOverviewSnapshot?> readSnapshot(String userId) async {
@@ -16,10 +17,7 @@ class OverviewCacheStorage {
     return StoredOverviewSnapshot.fromJson(decoded);
   }
 
-  Future<void> writeSnapshot(
-    String userId,
-    StoredOverviewSnapshot snapshot,
-  ) async {
+  Future<void> writeSnapshot(String userId, StoredOverviewSnapshot snapshot) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_key(userId), jsonEncode(snapshot.toJson()));
   }
@@ -75,10 +73,7 @@ class StoredOverviewSnapshot {
       hasUnpricedHoldings: json['hasUnpricedHoldings'] as bool,
       ratesAsOfIso: json['ratesAsOfIso'] as String?,
       accountTotals: (json['accountTotals'] as List<dynamic>)
-          .map(
-            (e) =>
-                StoredOverviewAccountTotal.fromJson(e as Map<String, dynamic>),
-          )
+          .map((e) => StoredOverviewAccountTotal.fromJson(e as Map<String, dynamic>))
           .toList(),
       unpricedHoldings: (json['unpricedHoldings'] as List<dynamic>)
           .map((e) => StoredUnpricedHolding.fromJson(e as Map<String, dynamic>))
@@ -87,13 +82,10 @@ class StoredOverviewSnapshot {
   }
 
   DateTime get computedAt => DateTime.parse(computedAtIso);
-  DateTime? get ratesAsOf =>
-      ratesAsOfIso == null ? null : DateTime.parse(ratesAsOfIso!);
+  DateTime? get ratesAsOf => ratesAsOfIso == null ? null : DateTime.parse(ratesAsOfIso!);
 
-  Decimal? get fullTotalDecimal =>
-      fullTotal == null ? null : Decimal.parse(fullTotal!);
-  Decimal? get pricedTotalDecimal =>
-      pricedTotal == null ? null : Decimal.parse(pricedTotal!);
+  Decimal? get fullTotalDecimal => fullTotal == null ? null : Decimal.parse(fullTotal!);
+  Decimal? get pricedTotalDecimal => pricedTotal == null ? null : Decimal.parse(pricedTotal!);
 }
 
 class StoredOverviewAccountTotal {

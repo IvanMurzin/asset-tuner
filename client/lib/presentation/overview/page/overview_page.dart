@@ -13,17 +13,11 @@ import 'package:go_router/go_router.dart';
 class OverviewPage extends StatelessWidget {
   const OverviewPage({super.key});
 
-  String _ratesText(
-    BuildContext context,
-    AppLocalizations l10n,
-    DateTime? asOf,
-  ) {
+  String _ratesText(BuildContext context, AppLocalizations l10n, DateTime? asOf) {
     if (asOf == null) {
       return l10n.overviewRatesUnavailable;
     }
-    return l10n.overviewRatesUpdatedAt(
-      context.dsFormatters.formatDateTime(asOf),
-    );
+    return l10n.overviewRatesUpdatedAt(context.dsFormatters.formatDateTime(asOf));
   }
 
   @override
@@ -57,9 +51,7 @@ class OverviewPage extends StatelessWidget {
                     label: baseCurrency,
                     icon: Icons.currency_exchange,
                     onTap: () async {
-                      await context.push<String>(
-                        AppRoutes.baseCurrencySettings,
-                      );
+                      await context.push<String>(AppRoutes.baseCurrencySettings);
                       if (context.mounted) {
                         await context.read<OverviewCubit>().refresh();
                       }

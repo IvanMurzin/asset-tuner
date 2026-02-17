@@ -34,19 +34,14 @@ void showDSSnackBar(
           Icon(icon, color: contentColor, size: 22),
           SizedBox(width: spacing.s12),
           Expanded(
-            child: Text(
-              message,
-              style: typography.body.copyWith(color: contentColor),
-            ),
+            child: Text(message, style: typography.body.copyWith(color: contentColor)),
           ),
         ],
       ),
       backgroundColor: backgroundColor,
       behavior: SnackBarBehavior.floating,
       margin: EdgeInsets.fromLTRB(spacing.s16, spacing.s8, spacing.s16, spacing.s24),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(radius.r12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius.r12)),
       duration: duration,
     ),
   );

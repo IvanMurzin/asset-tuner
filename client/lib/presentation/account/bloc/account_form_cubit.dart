@@ -50,9 +50,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
         state.copyWith(
           status: AccountFormStatus.error,
           failureCode: 'unauthorized',
-          navigation: const AccountFormNavigation(
-            destination: AccountFormDestination.signIn,
-          ),
+          navigation: const AccountFormNavigation(destination: AccountFormDestination.signIn),
         ),
       );
       return;
@@ -61,17 +59,14 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     final profile = await _loadProfile();
     if (isClosed) return;
     if (profile == null) {
-      emit(
-        state.copyWith(status: AccountFormStatus.error, failureCode: 'unknown'),
-      );
+      emit(state.copyWith(status: AccountFormStatus.error, failureCode: 'unknown'));
       return;
     }
 
     final accounts = await _getAccounts();
     if (isClosed) return;
     final activeCount = switch (accounts) {
-      Success<List<AccountEntity>>(value: final list) =>
-        list.where((a) => !a.archived).length,
+      Success<List<AccountEntity>>(value: final list) => list.where((a) => !a.archived).length,
       FailureResult<List<AccountEntity>>() => 0,
     };
 
@@ -129,9 +124,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
         state.activeAccountCount >= entitlements.maxAccounts) {
       emit(
         state.copyWith(
-          navigation: const AccountFormNavigation(
-            destination: AccountFormDestination.paywall,
-          ),
+          navigation: const AccountFormNavigation(destination: AccountFormDestination.paywall),
         ),
       );
       return;
@@ -141,11 +134,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
 
     final result = isCreating
         ? await _createAccount(name: normalized, type: type)
-        : await _updateAccount(
-            accountId: state.accountId!,
-            name: normalized,
-            type: type,
-          );
+        : await _updateAccount(accountId: state.accountId!, name: normalized, type: type);
     if (isClosed) return;
     switch (result) {
       case Success<AccountEntity>(value: final account):
@@ -159,7 +148,13 @@ class AccountFormCubit extends Cubit<AccountFormState> {
           ),
         );
       case FailureResult<AccountEntity>(failure: final failure):
-        emit(state.copyWith(isSaving: false, failureCode: failure.code, failureMessage: failure.message));
+        emit(
+          state.copyWith(
+            isSaving: false,
+            failureCode: failure.code,
+            failureMessage: failure.message,
+          ),
+        );
     }
   }
 

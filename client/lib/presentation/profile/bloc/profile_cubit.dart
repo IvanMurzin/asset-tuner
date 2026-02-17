@@ -58,9 +58,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         state.copyWith(
           status: ProfileStatus.error,
           failureCode: 'unauthorized',
-          navigation: const ProfileNavigation(
-            destination: ProfileDestination.signIn,
-          ),
+          navigation: const ProfileNavigation(destination: ProfileDestination.signIn),
         ),
       );
       return;
@@ -109,9 +107,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         emit(
           state.copyWith(
             isSigningOut: false,
-            navigation: const ProfileNavigation(
-              destination: ProfileDestination.signIn,
-            ),
+            navigation: const ProfileNavigation(destination: ProfileDestination.signIn),
           ),
         );
       case FailureResult<void>(failure: final failure):
@@ -154,9 +150,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         emit(
           state.copyWith(
             isDeletingAccount: false,
-            navigation: const ProfileNavigation(
-              destination: ProfileDestination.signIn,
-            ),
+            navigation: const ProfileNavigation(destination: ProfileDestination.signIn),
           ),
         );
       case FailureResult<void>(failure: final failure):

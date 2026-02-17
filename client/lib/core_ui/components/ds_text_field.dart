@@ -61,10 +61,7 @@ class DSTextField extends StatelessWidget {
         errorText: errorText,
         filled: true,
         fillColor: fillColor,
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: spacing.s16,
-          vertical: spacing.s12,
-        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: spacing.s16, vertical: spacing.s12),
         labelStyle: typography.body.copyWith(color: colors.textSecondary),
         hintStyle: typography.body.copyWith(color: colors.textTertiary),
         errorStyle: typography.caption.copyWith(color: colors.danger),

@@ -47,10 +47,7 @@ class AccountTypeCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                gradientColors[0],
-                gradientColors[1],
-              ],
+              colors: [gradientColors[0], gradientColors[1]],
             ),
           ),
           child: Row(
@@ -81,21 +78,14 @@ class AccountTypeCard extends StatelessWidget {
                     SizedBox(height: spacing.s4),
                     Text(
                       description,
-                      style: typography.caption.copyWith(
-                        color: colors.textSecondary,
-                      ),
+                      style: typography.caption.copyWith(color: colors.textSecondary),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-              if (selected)
-                Icon(
-                  Icons.check_circle_rounded,
-                  color: accentColor,
-                  size: 24,
-                ),
+              if (selected) Icon(Icons.check_circle_rounded, color: accentColor, size: 24),
             ],
           ),
         ),

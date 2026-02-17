@@ -27,16 +27,8 @@ void main() {
       expect(enValue, isA<String>(), reason: 'en:$key is not a String');
       expect(ruValue, isA<String>(), reason: 'ru:$key is not a String');
 
-      expect(
-        (enValue as String).trim(),
-        isNotEmpty,
-        reason: 'en:$key is empty',
-      );
-      expect(
-        (ruValue as String).trim(),
-        isNotEmpty,
-        reason: 'ru:$key is empty',
-      );
+      expect((enValue as String).trim(), isNotEmpty, reason: 'en:$key is empty');
+      expect((ruValue as String).trim(), isNotEmpty, reason: 'ru:$key is empty');
     }
   });
 }

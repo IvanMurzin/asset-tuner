@@ -6,8 +6,7 @@ enum PaywallDestination { closeUpgraded }
 
 @freezed
 abstract class PaywallNavigation with _$PaywallNavigation {
-  const factory PaywallNavigation(PaywallDestination destination) =
-      _PaywallNavigation;
+  const factory PaywallNavigation(PaywallDestination destination) = _PaywallNavigation;
 }
 
 @freezed

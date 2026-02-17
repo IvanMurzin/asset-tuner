@@ -9,10 +9,8 @@ part 'archived_accounts_state.dart';
 
 @injectable
 class ArchivedAccountsCubit extends Cubit<ArchivedAccountsState> {
-  ArchivedAccountsCubit(
-    this._getCachedSession,
-    this._getAccounts,
-  ) : super(const ArchivedAccountsState());
+  ArchivedAccountsCubit(this._getCachedSession, this._getAccounts)
+    : super(const ArchivedAccountsState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final GetAccountsUseCase _getAccounts;
@@ -23,12 +21,7 @@ class ArchivedAccountsCubit extends Cubit<ArchivedAccountsState> {
     final session = await _getCachedSession();
     if (isClosed) return;
     if (session == null) {
-      emit(
-        state.copyWith(
-          status: ArchivedAccountsStatus.error,
-          failureCode: 'unauthorized',
-        ),
-      );
+      emit(state.copyWith(status: ArchivedAccountsStatus.error, failureCode: 'unauthorized'));
       return;
     }
 
@@ -37,11 +30,13 @@ class ArchivedAccountsCubit extends Cubit<ArchivedAccountsState> {
     switch (result) {
       case Success<List<AccountEntity>>(value: final list):
         final archived = list.where((a) => a.archived).toList();
-        emit(ArchivedAccountsState(
-          status: ArchivedAccountsStatus.ready,
-          accounts: archived,
-          failureCode: null,
-        ));
+        emit(
+          ArchivedAccountsState(
+            status: ArchivedAccountsStatus.ready,
+            accounts: archived,
+            failureCode: null,
+          ),
+        );
       case FailureResult<List<AccountEntity>>(failure: final failure):
         emit(
           state.copyWith(

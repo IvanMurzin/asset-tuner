@@ -9,10 +9,7 @@ class RenameSubaccountUseCase {
 
   final IAccountAssetRepository _repository;
 
-  Future<Result<AccountAssetEntity>> call({
-    required String subaccountId,
-    required String name,
-  }) {
+  Future<Result<AccountAssetEntity>> call({required String subaccountId, required String name}) {
     return _repository.renameSubaccount(subaccountId: subaccountId, name: name);
   }
 }

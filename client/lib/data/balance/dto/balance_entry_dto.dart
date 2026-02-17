@@ -12,12 +12,8 @@ abstract class BalanceEntryDto with _$BalanceEntryDto {
     required String id,
     @JsonName('subaccount_id') required String subaccountId,
     @JsonName('entry_date') required String entryDateIso,
-    @JsonName('snapshot_amount')
-    @DecimalJsonConverter()
-    required Decimal snapshotAmount,
-    @JsonName('diff_amount')
-    @NullableDecimalJsonConverter()
-    Decimal? diffAmount,
+    @JsonName('snapshot_amount') @DecimalJsonConverter() required Decimal snapshotAmount,
+    @JsonName('diff_amount') @NullableDecimalJsonConverter() Decimal? diffAmount,
     @JsonName('created_at') required String createdAtIso,
   }) = _BalanceEntryDto;
 

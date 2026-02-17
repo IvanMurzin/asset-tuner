@@ -64,29 +64,21 @@ class AssetPositionHistorySection extends StatelessWidget {
                 Expanded(
                   child: ListView.separated(
                     itemCount: entries.length,
-                    separatorBuilder: (context, index) =>
-                        SizedBox(height: spacing.s8),
+                    separatorBuilder: (context, index) => SizedBox(height: spacing.s8),
                     itemBuilder: (context, index) {
                       final entry = entries[index];
-                      final factor = _conversionFactor(
-                        currentBalance,
-                        convertedValue,
-                      );
+                      final factor = _conversionFactor(currentBalance, convertedValue);
                       final convertedSnapshot = factor == null
                           ? null
                           : entry.snapshotAmount * factor;
                       final diff = entry.diffAmount;
-                      final convertedDiff = factor == null || diff == null
-                          ? null
-                          : diff * factor;
+                      final convertedDiff = factor == null || diff == null ? null : diff * factor;
                       final deltaColor = diff == null
                           ? context.dsColors.textTertiary
                           : (diff.compareTo(Decimal.zero) >= 0
-                              ? context.dsColors.success
-                              : context.dsColors.danger);
-                      final code = (assetCode ?? '').isEmpty
-                          ? l10n.notAvailable
-                          : assetCode!;
+                                ? context.dsColors.success
+                                : context.dsColors.danger);
+                      final code = (assetCode ?? '').isEmpty ? l10n.notAvailable : assetCode!;
                       final snapshotAsset = code == l10n.notAvailable
                           ? context.dsFormatters.formatDecimalFromDecimal(
                               entry.snapshotAmount,
@@ -99,22 +91,13 @@ class AssetPositionHistorySection extends StatelessWidget {
                             );
                       final snapshotBase = convertedSnapshot == null
                           ? l10n.unpriced
-                          : context.dsFormatters.formatMoney(
-                              convertedSnapshot,
-                              baseCurrency,
-                            );
+                          : context.dsFormatters.formatMoney(convertedSnapshot, baseCurrency);
                       return DSHistoryEntryCard(
-                        dateText: context.dsFormatters.formatDateTime(
-                          entry.entryDate,
-                        ),
+                        dateText: context.dsFormatters.formatDateTime(entry.entryDate),
                         subtitleText: l10n.balanceEntryImpliedDeltaLabel,
                         deltaText: _assetDeltaText(context, diff, code, l10n),
                         deltaColor: deltaColor,
-                        baseLineText: _baseDeltaText(
-                          context,
-                          convertedDiff,
-                          baseCurrency,
-                        ),
+                        baseLineText: _baseDeltaText(context, convertedDiff, baseCurrency),
                         trailingTitle: l10n.balanceEntrySnapshot,
                         trailingPrimaryText: snapshotAsset,
                         trailingSecondaryText: snapshotBase,
@@ -122,10 +105,7 @@ class AssetPositionHistorySection extends StatelessWidget {
                     },
                   ),
                 ),
-                if (isLoadingMore) ...[
-                  SizedBox(height: spacing.s12),
-                  const DSLoader(),
-                ],
+                if (isLoadingMore) ...[SizedBox(height: spacing.s12), const DSLoader()],
                 if (canLoadMore) ...[
                   SizedBox(height: spacing.s12),
                   DSButton(
@@ -151,12 +131,7 @@ class AssetPositionHistorySection extends StatelessWidget {
     return divideToDecimal(converted, current);
   }
 
-  String _assetDeltaText(
-    BuildContext context,
-    Decimal? diff,
-    String code,
-    AppLocalizations l10n,
-  ) {
+  String _assetDeltaText(BuildContext context, Decimal? diff, String code, AppLocalizations l10n) {
     if (diff == null) {
       return '-';
     }
@@ -166,11 +141,7 @@ class AssetPositionHistorySection extends StatelessWidget {
         : '${_signed(context, diff, digits: 8)} $code';
   }
 
-  String _baseDeltaText(
-    BuildContext context,
-    Decimal? diff,
-    String baseCurrency,
-  ) {
+  String _baseDeltaText(BuildContext context, Decimal? diff, String baseCurrency) {
     if (diff == null) {
       return '-';
     }
