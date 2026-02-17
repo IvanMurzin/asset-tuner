@@ -10,3 +10,8 @@ backend/supabase/.cache/
 backend/supabase/.env
 backend/supabase/.env.dev
 backend/supabase/.env.prod
+
+# Supabase CLI (root)
+supabase/.temp/
+supabase/.branches/
+supabase/.cache/

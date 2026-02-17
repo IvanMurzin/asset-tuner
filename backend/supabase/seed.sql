@@ -1,72 +1,276 @@
--- Minimal seed data for local/dev usage.
--- For production, prefer running rates sync and expanding the asset catalog.
-
-insert into public.assets (kind, code, name, decimals, provider_ref)
+insert into public.plan_limits(plan, max_accounts, max_subaccounts, fiat_limit, crypto_limit)
 values
-  ('fiat', 'USD', 'US Dollar', 2, null),
-  ('fiat', 'EUR', 'Euro', 2, null),
-  ('fiat', 'RUB', 'Russian Ruble', 2, null),
-  ('fiat', 'GBP', 'British Pound', 2, null),
-  ('fiat', 'CHF', 'Swiss Franc', 2, null),
-  ('crypto', 'BTC', 'Bitcoin', 8, 'bitcoin'),
-  ('crypto', 'ETH', 'Ethereum', 18, 'ethereum'),
-  ('crypto', 'USDT', 'Tether', 6, 'tether'),
-  ('crypto', 'SOL', 'Solana', 9, 'solana')
+  ('free', 5, 15, 5, 5),
+  ('pro', null, null, null, null)
+on conflict (plan) do update
+set
+  max_accounts = excluded.max_accounts,
+  max_subaccounts = excluded.max_subaccounts,
+  fiat_limit = excluded.fiat_limit,
+  crypto_limit = excluded.crypto_limit;
+
+insert into public.fiat_rank_seed(code, rank, name, decimals)
+values
+  ('USD', 1, 'US Dollar', 2),
+  ('EUR', 2, 'Euro', 2),
+  ('JPY', 3, 'Japanese Yen', 0),
+  ('GBP', 4, 'British Pound Sterling', 2),
+  ('CHF', 5, 'Swiss Franc', 2),
+  ('CAD', 6, 'Canadian Dollar', 2),
+  ('AUD', 7, 'Australian Dollar', 2),
+  ('CNY', 8, 'Chinese Yuan', 2),
+  ('HKD', 9, 'Hong Kong Dollar', 2),
+  ('SGD', 10, 'Singapore Dollar', 2),
+  ('SEK', 11, 'Swedish Krona', 2),
+  ('NOK', 12, 'Norwegian Krone', 2),
+  ('DKK', 13, 'Danish Krone', 2),
+  ('NZD', 14, 'New Zealand Dollar', 2),
+  ('KRW', 15, 'South Korean Won', 0),
+  ('INR', 16, 'Indian Rupee', 2),
+  ('BRL', 17, 'Brazilian Real', 2),
+  ('MXN', 18, 'Mexican Peso', 2),
+  ('ZAR', 19, 'South African Rand', 2),
+  ('AED', 20, 'UAE Dirham', 2),
+  ('SAR', 21, 'Saudi Riyal', 2),
+  ('PLN', 22, 'Polish Zloty', 2),
+  ('TRY', 23, 'Turkish Lira', 2),
+  ('THB', 24, 'Thai Baht', 2),
+  ('IDR', 25, 'Indonesian Rupiah', 2),
+  ('TWD', 26, 'New Taiwan Dollar', 2),
+  ('CZK', 27, 'Czech Koruna', 2),
+  ('HUF', 28, 'Hungarian Forint', 2),
+  ('ILS', 29, 'Israeli New Shekel', 2),
+  ('MYR', 30, 'Malaysian Ringgit', 2),
+  ('PHP', 31, 'Philippine Peso', 2),
+  ('CLP', 32, 'Chilean Peso', 0),
+  ('COP', 33, 'Colombian Peso', 2),
+  ('ARS', 34, 'Argentine Peso', 2),
+  ('PEN', 35, 'Peruvian Sol', 2),
+  ('RON', 36, 'Romanian Leu', 2),
+  ('BGN', 37, 'Bulgarian Lev', 2),
+  ('RSD', 38, 'Serbian Dinar', 2),
+  ('UAH', 39, 'Ukrainian Hryvnia', 2),
+  ('KZT', 40, 'Kazakhstani Tenge', 2),
+  ('QAR', 41, 'Qatari Riyal', 2),
+  ('KWD', 42, 'Kuwaiti Dinar', 3),
+  ('BHD', 43, 'Bahraini Dinar', 3),
+  ('OMR', 44, 'Omani Rial', 3),
+  ('JOD', 45, 'Jordanian Dinar', 3),
+  ('EGP', 46, 'Egyptian Pound', 2),
+  ('MAD', 47, 'Moroccan Dirham', 2),
+  ('NGN', 48, 'Nigerian Naira', 2),
+  ('KES', 49, 'Kenyan Shilling', 2),
+  ('GHS', 50, 'Ghanaian Cedi', 2),
+  ('PKR', 51, 'Pakistani Rupee', 2),
+  ('BDT', 52, 'Bangladeshi Taka', 2),
+  ('LKR', 53, 'Sri Lankan Rupee', 2),
+  ('VND', 54, 'Vietnamese Dong', 0),
+  ('RUB', 55, 'Russian Ruble', 2),
+  ('BYN', 56, 'Belarusian Ruble', 2),
+  ('GEL', 57, 'Georgian Lari', 2),
+  ('AMD', 58, 'Armenian Dram', 2),
+  ('AZN', 59, 'Azerbaijani Manat', 2),
+  ('UZS', 60, 'Uzbekistani Som', 2),
+  ('TJS', 61, 'Tajikistani Somoni', 2),
+  ('KGS', 62, 'Kyrgyzstani Som', 2),
+  ('MNT', 63, 'Mongolian Tugrik', 2),
+  ('ISK', 64, 'Icelandic Krona', 0),
+  ('FJD', 65, 'Fijian Dollar', 2),
+  ('XPF', 66, 'CFP Franc', 0),
+  ('XOF', 67, 'West African CFA Franc', 0),
+  ('XAF', 68, 'Central African CFA Franc', 0),
+  ('DZD', 69, 'Algerian Dinar', 2),
+  ('TND', 70, 'Tunisian Dinar', 3),
+  ('BWP', 71, 'Botswana Pula', 2),
+  ('MUR', 72, 'Mauritian Rupee', 2),
+  ('NAD', 73, 'Namibian Dollar', 2),
+  ('ETB', 74, 'Ethiopian Birr', 2),
+  ('UGX', 75, 'Ugandan Shilling', 0),
+  ('TZS', 76, 'Tanzanian Shilling', 2),
+  ('RWF', 77, 'Rwandan Franc', 0),
+  ('BIF', 78, 'Burundian Franc', 0),
+  ('ZMW', 79, 'Zambian Kwacha', 2),
+  ('MWK', 80, 'Malawian Kwacha', 2),
+  ('MZN', 81, 'Mozambican Metical', 2),
+  ('AOA', 82, 'Angolan Kwanza', 2),
+  ('XCD', 83, 'East Caribbean Dollar', 2),
+  ('BBD', 84, 'Barbadian Dollar', 2),
+  ('JMD', 85, 'Jamaican Dollar', 2),
+  ('TTD', 86, 'Trinidad and Tobago Dollar', 2),
+  ('GTQ', 87, 'Guatemalan Quetzal', 2),
+  ('HNL', 88, 'Honduran Lempira', 2),
+  ('NIO', 89, 'Nicaraguan Cordoba', 2),
+  ('CRC', 90, 'Costa Rican Colon', 2),
+  ('DOP', 91, 'Dominican Peso', 2),
+  ('PAB', 92, 'Panamanian Balboa', 2),
+  ('UYU', 93, 'Uruguayan Peso', 2),
+  ('PYG', 94, 'Paraguayan Guarani', 0),
+  ('BOB', 95, 'Bolivian Boliviano', 2),
+  ('SVC', 96, 'Salvadoran Colon', 2),
+  ('BAM', 97, 'Bosnia-Herzegovina Convertible Mark', 2),
+  ('ALL', 98, 'Albanian Lek', 2),
+  ('MKD', 99, 'Macedonian Denar', 2),
+  ('MDL', 100, 'Moldovan Leu', 2)
+on conflict (code) do update
+set
+  rank = excluded.rank,
+  name = excluded.name,
+  decimals = excluded.decimals;
+
+insert into public.assets(kind, code, name, provider, provider_ref, rank, decimals, is_active)
+select
+  'fiat',
+  f.code,
+  f.name,
+  'openexchangerates',
+  f.code,
+  f.rank,
+  f.decimals,
+  true
+from public.fiat_rank_seed f
 on conflict (kind, code) do update
 set
   name = excluded.name,
+  provider = excluded.provider,
+  provider_ref = excluded.provider_ref,
+  rank = excluded.rank,
   decimals = excluded.decimals,
-  provider_ref = excluded.provider_ref;
+  is_active = excluded.is_active,
+  updated_at = now();
 
--- Seed a tiny rates snapshot (so the app can render conversions before the first sync).
--- These values are placeholders; `rates_sync` will overwrite them.
-insert into public.asset_rates_usd (asset_id, usd_price, as_of)
-select a.id,
+insert into public.assets(kind, code, name, provider, provider_ref, rank, decimals, is_active)
+values
+  ('crypto', 'BTC', 'Bitcoin', 'coingecko', 'bitcoin', 1, 8, true),
+  ('crypto', 'ETH', 'Ethereum', 'coingecko', 'ethereum', 2, 18, true),
+  ('crypto', 'USDT', 'Tether', 'coingecko', 'tether', 3, 6, true),
+  ('crypto', 'XRP', 'XRP', 'coingecko', 'ripple', 4, 6, true),
+  ('crypto', 'BNB', 'BNB', 'coingecko', 'binancecoin', 5, 18, true),
+  ('crypto', 'USDC', 'USDC', 'coingecko', 'usd-coin', 6, 6, true),
+  ('crypto', 'SOL', 'Solana', 'coingecko', 'solana', 7, 9, true),
+  ('crypto', 'TRX', 'TRON', 'coingecko', 'tron', 8, 6, true),
+  ('crypto', 'DOGE', 'Dogecoin', 'coingecko', 'dogecoin', 9, 8, true),
+  ('crypto', 'FIGR_HELOC', 'Figure Heloc', 'coingecko', 'figure-heloc', 10, 8, true),
+  ('crypto', 'BCH', 'Bitcoin Cash', 'coingecko', 'bitcoin-cash', 11, 8, true),
+  ('crypto', 'WBT', 'WhiteBIT Coin', 'coingecko', 'whitebit', 12, 8, true),
+  ('crypto', 'ADA', 'Cardano', 'coingecko', 'cardano', 13, 6, true),
+  ('crypto', 'USDS', 'USDS', 'coingecko', 'usds', 14, 8, true),
+  ('crypto', 'LEO', 'LEO Token', 'coingecko', 'leo-token', 15, 8, true),
+  ('crypto', 'HYPE', 'Hyperliquid', 'coingecko', 'hyperliquid', 16, 8, true),
+  ('crypto', 'USDE', 'Ethena USDe', 'coingecko', 'ethena-usde', 17, 8, true),
+  ('crypto', 'CC', 'Canton', 'coingecko', 'canton-network', 18, 8, true),
+  ('crypto', 'LINK', 'Chainlink', 'coingecko', 'chainlink', 19, 18, true),
+  ('crypto', 'XMR', 'Monero', 'coingecko', 'monero', 20, 8, true),
+  ('crypto', 'XLM', 'Stellar', 'coingecko', 'stellar', 21, 8, true),
+  ('crypto', 'USD1', 'USD1', 'coingecko', 'usd1-wlfi', 22, 8, true),
+  ('crypto', 'RAIN', 'Rain', 'coingecko', 'rain', 23, 8, true),
+  ('crypto', 'ZEC', 'Zcash', 'coingecko', 'zcash', 24, 8, true),
+  ('crypto', 'HBAR', 'Hedera', 'coingecko', 'hedera-hashgraph', 25, 8, true),
+  ('crypto', 'DAI', 'Dai', 'coingecko', 'dai', 26, 8, true),
+  ('crypto', 'LTC', 'Litecoin', 'coingecko', 'litecoin', 27, 8, true),
+  ('crypto', 'PYUSD', 'PayPal USD', 'coingecko', 'paypal-usd', 28, 8, true),
+  ('crypto', 'AVAX', 'Avalanche', 'coingecko', 'avalanche-2', 29, 9, true),
+  ('crypto', 'SHIB', 'Shiba Inu', 'coingecko', 'shiba-inu', 30, 8, true),
+  ('crypto', 'SUI', 'Sui', 'coingecko', 'sui', 31, 8, true),
+  ('crypto', 'TON', 'Toncoin', 'coingecko', 'the-open-network', 32, 8, true),
+  ('crypto', 'CRO', 'Cronos', 'coingecko', 'crypto-com-chain', 33, 8, true),
+  ('crypto', 'WLFI', 'World Liberty Financial', 'coingecko', 'world-liberty-financial', 34, 8, true),
+  ('crypto', 'M', 'MemeCore', 'coingecko', 'memecore', 35, 8, true),
+  ('crypto', 'XAUT', 'Tether Gold', 'coingecko', 'tether-gold', 36, 8, true),
+  ('crypto', 'DOT', 'Polkadot', 'coingecko', 'polkadot', 37, 10, true),
+  ('crypto', 'PAXG', 'PAX Gold', 'coingecko', 'pax-gold', 38, 8, true),
+  ('crypto', 'UNI', 'Uniswap', 'coingecko', 'uniswap', 39, 8, true),
+  ('crypto', 'MNT', 'Mantle', 'coingecko', 'mantle', 40, 8, true),
+  ('crypto', 'AAVE', 'Aave', 'coingecko', 'aave', 41, 8, true),
+  ('crypto', 'TAO', 'Bittensor', 'coingecko', 'bittensor', 42, 8, true),
+  ('crypto', 'PEPE', 'Pepe', 'coingecko', 'pepe', 43, 8, true),
+  ('crypto', 'BUIDL', 'BlackRock USD Institutional Digital Liquidity Fund', 'coingecko', 'blackrock-usd-institutional-digital-liquidity-fund', 44, 8, true),
+  ('crypto', 'USDF', 'Falcon USD', 'coingecko', 'falcon-finance', 45, 8, true),
+  ('crypto', 'ASTER', 'Aster', 'coingecko', 'aster-2', 46, 8, true),
+  ('crypto', 'OKB', 'OKB', 'coingecko', 'okb', 47, 8, true),
+  ('crypto', 'BGB', 'Bitget Token', 'coingecko', 'bitget-token', 48, 8, true),
+  ('crypto', 'PI', 'Pi Network', 'coingecko', 'pi-network', 49, 8, true),
+  ('crypto', 'USDG', 'Global Dollar', 'coingecko', 'global-dollar', 50, 8, true),
+  ('crypto', 'USYC', 'Circle USYC', 'coingecko', 'hashnote-usyc', 51, 8, true),
+  ('crypto', 'HTX', 'HTX DAO', 'coingecko', 'htx-dao', 52, 8, true),
+  ('crypto', 'RLUSD', 'Ripple USD', 'coingecko', 'ripple-usd', 53, 8, true),
+  ('crypto', 'SKY', 'Sky', 'coingecko', 'sky', 54, 8, true),
+  ('crypto', 'ETC', 'Ethereum Classic', 'coingecko', 'ethereum-classic', 55, 8, true),
+  ('crypto', 'NEAR', 'NEAR Protocol', 'coingecko', 'near', 56, 24, true),
+  ('crypto', 'ONDO', 'Ondo', 'coingecko', 'ondo-finance', 57, 8, true),
+  ('crypto', 'BFUSD', 'BFUSD', 'coingecko', 'bfusd', 58, 8, true),
+  ('crypto', 'ICP', 'Internet Computer', 'coingecko', 'internet-computer', 59, 8, true),
+  ('crypto', 'PUMP', 'Pump.fun', 'coingecko', 'pump-fun', 60, 8, true),
+  ('crypto', 'USTB', 'Superstate Short Duration U.S. Government Securities Fund (USTB)', 'coingecko', 'superstate-short-duration-us-government-securities-fund-ustb', 61, 8, true),
+  ('crypto', 'POL', 'POL (ex-MATIC)', 'coingecko', 'polygon-ecosystem-token', 62, 8, true),
+  ('crypto', 'GT', 'Gate', 'coingecko', 'gatechain-token', 63, 8, true),
+  ('crypto', 'WLD', 'Worldcoin', 'coingecko', 'worldcoin-wld', 64, 8, true),
+  ('crypto', 'ATOM', 'Cosmos Hub', 'coingecko', 'cosmos', 65, 8, true),
+  ('crypto', 'KCS', 'KuCoin', 'coingecko', 'kucoin-shares', 66, 8, true),
+  ('crypto', 'QNT', 'Quant', 'coingecko', 'quant-network', 67, 8, true),
+  ('crypto', 'ENA', 'Ethena', 'coingecko', 'ethena', 68, 8, true),
+  ('crypto', 'NIGHT', 'Midnight', 'coingecko', 'midnight-3', 69, 8, true),
+  ('crypto', 'HASH', 'Provenance Blockchain', 'coingecko', 'hash-2', 70, 8, true),
+  ('crypto', 'NEXO', 'NEXO', 'coingecko', 'nexo', 71, 8, true),
+  ('crypto', 'KAS', 'Kaspa', 'coingecko', 'kaspa', 72, 8, true),
+  ('crypto', 'USDTB', 'USDtb', 'coingecko', 'usdtb', 73, 8, true),
+  ('crypto', 'ALGO', 'Algorand', 'coingecko', 'algorand', 74, 8, true),
+  ('crypto', 'FLR', 'Flare', 'coingecko', 'flare-networks', 75, 8, true),
+  ('crypto', 'TRUMP', 'Official Trump', 'coingecko', 'official-trump', 76, 8, true),
+  ('crypto', 'MORPHO', 'Morpho', 'coingecko', 'morpho', 77, 8, true),
+  ('crypto', 'EUTBL', 'Spiko EU T-Bills Money Market Fund', 'coingecko', 'eutbl', 78, 8, true),
+  ('crypto', 'RENDER', 'Render', 'coingecko', 'render-token', 79, 8, true),
+  ('crypto', 'XDC', 'XDC Network', 'coingecko', 'xdce-crowd-sale', 80, 8, true),
+  ('crypto', 'FIL', 'Filecoin', 'coingecko', 'filecoin', 81, 8, true),
+  ('crypto', 'JAAA', 'Janus Henderson Anemoy AAA CLO Fund', 'coingecko', 'janus-henderson-anemoy-aaa-clo-fund', 82, 8, true),
+  ('crypto', 'OUSG', 'OUSG', 'coingecko', 'ousg', 83, 8, true),
+  ('crypto', 'USDD', 'USDD', 'coingecko', 'usdd', 84, 8, true),
+  ('crypto', 'APT', 'Aptos', 'coingecko', 'aptos', 85, 8, true),
+  ('crypto', 'USDY', 'Ondo US Dollar Yield', 'coingecko', 'ondo-us-dollar-yield', 86, 8, true),
+  ('crypto', 'VET', 'VeChain', 'coingecko', 'vechain', 87, 8, true),
+  ('crypto', 'ARB', 'Arbitrum', 'coingecko', 'arbitrum', 88, 8, true),
+  ('crypto', 'BDX', 'Beldex', 'coingecko', 'beldex', 89, 8, true),
+  ('crypto', 'USD0', 'Usual USD', 'coingecko', 'usual-usd', 90, 8, true),
+  ('crypto', 'BONK', 'Bonk', 'coingecko', 'bonk', 91, 8, true),
+  ('crypto', 'JTRSY', 'Janus Henderson Anemoy Treasury Fund', 'coingecko', 'janus-henderson-anemoy-treasury-fund', 92, 8, true),
+  ('crypto', 'USDAI', 'USDai', 'coingecko', 'usdai', 93, 8, true),
+  ('crypto', 'JUP', 'Jupiter', 'coingecko', 'jupiter-exchange-solana', 94, 8, true),
+  ('crypto', 'GHO', 'GHO', 'coingecko', 'gho', 95, 8, true),
+  ('crypto', 'STABLE', 'Stable', 'coingecko', 'stable-2', 96, 8, true),
+  ('crypto', 'A7A5', 'A7A5', 'coingecko', 'a7a5', 97, 8, true),
+  ('crypto', 'SEI', 'Sei', 'coingecko', 'sei-network', 98, 8, true),
+  ('crypto', 'PIPPIN', 'pippin', 'coingecko', 'pippin', 99, 8, true),
+  ('crypto', 'TUSD', 'TrueUSD', 'coingecko', 'true-usd', 100, 8, true)
+on conflict (kind, code) do update
+set
+  name = excluded.name,
+  provider = excluded.provider,
+  provider_ref = excluded.provider_ref,
+  rank = excluded.rank,
+  decimals = excluded.decimals,
+  is_active = excluded.is_active,
+  updated_at = now();
+
+insert into public.asset_rates_usd(asset_id, usd_price_atomic, usd_price_decimals, as_of)
+select
+  a.id,
   case
-    when a.kind = 'fiat' and a.code = 'USD' then '1'
-    when a.kind = 'fiat' and a.code = 'EUR' then '1.08'
-    when a.kind = 'fiat' and a.code = 'RUB' then '0.011'
-    when a.kind = 'fiat' and a.code = 'GBP' then '1.27'
-    when a.kind = 'fiat' and a.code = 'CHF' then '1.10'
-    when a.kind = 'crypto' and a.code = 'BTC' then '45000'
-    when a.kind = 'crypto' and a.code = 'ETH' then '2500'
-    when a.kind = 'crypto' and a.code = 'USDT' then '1'
-    when a.kind = 'crypto' and a.code = 'SOL' then '100'
-    else null
-  end as usd_price,
-  now() as as_of
+    when a.kind = 'fiat' and a.code = 'USD' then '1000000000000'
+    else '0'
+  end as usd_price_atomic,
+  12,
+  now()
 from public.assets a
-where (a.kind, a.code) in (
-  ('fiat', 'USD'),
-  ('fiat', 'EUR'),
-  ('fiat', 'RUB'),
-  ('fiat', 'GBP'),
-  ('fiat', 'CHF'),
-  ('crypto', 'BTC'),
-  ('crypto', 'ETH'),
-  ('crypto', 'USDT'),
-  ('crypto', 'SOL')
-)
-and (
-  (a.kind = 'fiat')
-  or
-  (a.kind = 'crypto')
-)
-and
-  case
-    when a.kind = 'fiat' and a.code = 'USD' then true
-    when a.kind = 'fiat' and a.code = 'EUR' then true
-    when a.kind = 'fiat' and a.code = 'RUB' then true
-    when a.kind = 'fiat' and a.code = 'GBP' then true
-    when a.kind = 'fiat' and a.code = 'CHF' then true
-    when a.kind = 'crypto' and a.code = 'BTC' then true
-    when a.kind = 'crypto' and a.code = 'ETH' then true
-    when a.kind = 'crypto' and a.code = 'USDT' then true
-    when a.kind = 'crypto' and a.code = 'SOL' then true
-    else false
-  end
+where a.kind in ('fiat', 'crypto')
 on conflict (asset_id) do update
 set
-  usd_price = excluded.usd_price,
-  as_of = excluded.as_of
-where excluded.usd_price is not null;
+  usd_price_atomic = excluded.usd_price_atomic,
+  usd_price_decimals = excluded.usd_price_decimals,
+  as_of = excluded.as_of,
+  updated_at = now();
+update public.profiles p
+set base_asset_id = a.id,
+    updated_at = now()
+from public.assets a
+where p.base_asset_id is null
+  and a.kind = 'fiat'
+  and a.code = 'USD';

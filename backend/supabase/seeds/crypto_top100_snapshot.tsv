@@ -1,0 +1,100 @@
+BTC	Bitcoin	bitcoin	1	8
+ETH	Ethereum	ethereum	2	18
+USDT	Tether	tether	3	6
+XRP	XRP	ripple	4	6
+BNB	BNB	binancecoin	5	18
+USDC	USDC	usd-coin	6	6
+SOL	Solana	solana	7	9
+TRX	TRON	tron	8	6
+DOGE	Dogecoin	dogecoin	9	8
+FIGR_HELOC	Figure Heloc	figure-heloc	10	8
+BCH	Bitcoin Cash	bitcoin-cash	11	8
+WBT	WhiteBIT Coin	whitebit	12	8
+ADA	Cardano	cardano	13	6
+USDS	USDS	usds	14	8
+LEO	LEO Token	leo-token	15	8
+HYPE	Hyperliquid	hyperliquid	16	8
+USDE	Ethena USDe	ethena-usde	17	8
+CC	Canton	canton-network	18	8
+LINK	Chainlink	chainlink	19	18
+XMR	Monero	monero	20	8
+XLM	Stellar	stellar	21	8
+USD1	USD1	usd1-wlfi	22	8
+RAIN	Rain	rain	23	8
+ZEC	Zcash	zcash	24	8
+HBAR	Hedera	hedera-hashgraph	25	8
+DAI	Dai	dai	26	8
+LTC	Litecoin	litecoin	27	8
+PYUSD	PayPal USD	paypal-usd	28	8
+AVAX	Avalanche	avalanche-2	29	9
+SHIB	Shiba Inu	shiba-inu	30	8
+SUI	Sui	sui	31	8
+TON	Toncoin	the-open-network	32	8
+CRO	Cronos	crypto-com-chain	33	8
+WLFI	World Liberty Financial	world-liberty-financial	34	8
+M	MemeCore	memecore	35	8
+XAUT	Tether Gold	tether-gold	36	8
+DOT	Polkadot	polkadot	37	10
+PAXG	PAX Gold	pax-gold	38	8
+UNI	Uniswap	uniswap	39	8
+MNT	Mantle	mantle	40	8
+AAVE	Aave	aave	41	8
+TAO	Bittensor	bittensor	42	8
+PEPE	Pepe	pepe	43	8
+BUIDL	BlackRock USD Institutional Digital Liquidity Fund	blackrock-usd-institutional-digital-liquidity-fund	44	8
+USDF	Falcon USD	falcon-finance	45	8
+ASTER	Aster	aster-2	46	8
+OKB	OKB	okb	47	8
+BGB	Bitget Token	bitget-token	48	8
+PI	Pi Network	pi-network	49	8
+USDG	Global Dollar	global-dollar	50	8
+USYC	Circle USYC	hashnote-usyc	51	8
+HTX	HTX DAO	htx-dao	52	8
+RLUSD	Ripple USD	ripple-usd	53	8
+SKY	Sky	sky	54	8
+ETC	Ethereum Classic	ethereum-classic	55	8
+NEAR	NEAR Protocol	near	56	24
+ONDO	Ondo	ondo-finance	57	8
+BFUSD	BFUSD	bfusd	58	8
+ICP	Internet Computer	internet-computer	59	8
+PUMP	Pump.fun	pump-fun	60	8
+USTB	Superstate Short Duration U.S. Government Securities Fund (USTB)	superstate-short-duration-us-government-securities-fund-ustb	61	8
+POL	POL (ex-MATIC)	polygon-ecosystem-token	62	8
+GT	Gate	gatechain-token	63	8
+WLD	Worldcoin	worldcoin-wld	64	8
+ATOM	Cosmos Hub	cosmos	65	8
+KCS	KuCoin	kucoin-shares	66	8
+QNT	Quant	quant-network	67	8
+ENA	Ethena	ethena	68	8
+NIGHT	Midnight	midnight-3	69	8
+HASH	Provenance Blockchain	hash-2	70	8
+NEXO	NEXO	nexo	71	8
+KAS	Kaspa	kaspa	72	8
+USDTB	USDtb	usdtb	73	8
+ALGO	Algorand	algorand	74	8
+FLR	Flare	flare-networks	75	8
+TRUMP	Official Trump	official-trump	76	8
+MORPHO	Morpho	morpho	77	8
+EUTBL	Spiko EU T-Bills Money Market Fund	eutbl	78	8
+RENDER	Render	render-token	79	8
+XDC	XDC Network	xdce-crowd-sale	80	8
+FIL	Filecoin	filecoin	81	8
+JAAA	Janus Henderson Anemoy AAA CLO Fund	janus-henderson-anemoy-aaa-clo-fund	82	8
+OUSG	OUSG	ousg	83	8
+USDD	USDD	usdd	84	8
+APT	Aptos	aptos	85	8
+USDY	Ondo US Dollar Yield	ondo-us-dollar-yield	86	8
+VET	VeChain	vechain	87	8
+ARB	Arbitrum	arbitrum	88	8
+BDX	Beldex	beldex	89	8
+USD0	Usual USD	usual-usd	90	8
+BONK	Bonk	bonk	91	8
+JTRSY	Janus Henderson Anemoy Treasury Fund	janus-henderson-anemoy-treasury-fund	92	8
+USDAI	USDai	usdai	93	8
+JUP	Jupiter	jupiter-exchange-solana	94	8
+GHO	GHO	gho	95	8
+STABLE	Stable	stable-2	96	8
+A7A5	A7A5	a7a5	97	8
+SEI	Sei	sei-network	98	8
+PIPPIN	pippin	pippin	99	8
+TUSD	TrueUSD	true-usd	100	8

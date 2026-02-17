@@ -9,36 +9,19 @@ max_rows = 1000
 [db]
 major_version = 17
 
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
 [studio]
 enabled = true
 
 [functions]
-  [functions.bootstrap_profile]
-  verify_jwt = true
-
-  [functions.create_account]
-  verify_jwt = true
-
-  [functions.account]
-  verify_jwt = true
-
-  [functions.add_asset_to_account]
-  verify_jwt = true
-
-  [functions.remove_asset_from_account]
-  verify_jwt = true
-
-  [functions.update_base_currency]
-  verify_jwt = true
-
-  [functions.update_balance]
-  verify_jwt = true
-
-  [functions.update_plan]
+  [functions.api]
   verify_jwt = true
 
   [functions.rates_sync]
   verify_jwt = false
 
-  [functions.coingecko_refresh_metadata]
+  [functions.revenuecat_webhook]
   verify_jwt = false
