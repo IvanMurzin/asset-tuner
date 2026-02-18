@@ -42,18 +42,25 @@ class PaywallCubit extends Cubit<PaywallState> {
     final session = await _getCachedSession();
     if (isClosed) return;
     if (session == null) {
-      emit(state.copyWith(status: PaywallStatus.error, loadFailureCode: 'unauthorized'));
+      emit(
+        state.copyWith(
+          status: PaywallStatus.error,
+          loadFailureCode: 'unauthorized',
+        ),
+      );
       return;
     }
 
     final isPro = await _getIsPro();
     if (isClosed) return;
     if (isPro) {
-      logger.i('paywall_viewed reason=${reason?.name ?? 'unknown'} already_pro');
+      logger.i(
+        'paywall_viewed reason=${reason?.name ?? 'unknown'} already_pro',
+      );
       emit(
         state.copyWith(
           status: PaywallStatus.ready,
-          plan: 'paid',
+          plan: 'pro',
           loadFailureCode: null,
           navigation: const PaywallNavigation(PaywallDestination.closeUpgraded),
         ),
@@ -65,7 +72,9 @@ class PaywallCubit extends Cubit<PaywallState> {
     if (isClosed) return;
     switch (profileResult) {
       case Success<ProfileEntity>(value: final profile):
-        logger.i('paywall_viewed reason=${reason?.name ?? 'unknown'} entitlements=verified');
+        logger.i(
+          'paywall_viewed reason=${reason?.name ?? 'unknown'} entitlements=verified',
+        );
         emit(
           state.copyWith(
             status: PaywallStatus.ready,
@@ -81,7 +90,9 @@ class PaywallCubit extends Cubit<PaywallState> {
           Success(value: final data) => data.profile,
           FailureResult() => null,
         };
-        logger.i('paywall_viewed reason=${reason?.name ?? 'unknown'} entitlements=unverified');
+        logger.i(
+          'paywall_viewed reason=${reason?.name ?? 'unknown'} entitlements=unverified',
+        );
         emit(
           state.copyWith(
             status: PaywallStatus.ready,
@@ -101,16 +112,18 @@ class PaywallCubit extends Cubit<PaywallState> {
   Future<void> syncPlanAfterPurchase() async {
     if (isClosed) return;
     emit(state.copyWith(isUpdating: true, upgradeFailureCode: null));
-    final result = await _updatePlan('paid');
+    final result = await _updatePlan('pro');
     if (isClosed) return;
     switch (result) {
       case Success<ProfileEntity>(:final value):
-        logger.i('paywall_purchase_synced plan=paid');
+        logger.i('paywall_purchase_synced plan=pro');
         emit(
           state.copyWith(
             isUpdating: false,
             plan: value.plan,
-            navigation: const PaywallNavigation(PaywallDestination.closeUpgraded),
+            navigation: const PaywallNavigation(
+              PaywallDestination.closeUpgraded,
+            ),
           ),
         );
       case FailureResult<ProfileEntity>(failure: final failure):

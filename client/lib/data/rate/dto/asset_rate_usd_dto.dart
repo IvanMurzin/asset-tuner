@@ -1,20 +1,26 @@
 import 'package:decimal/decimal.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:asset_tuner/core/types/decimal_json_converter.dart';
-import 'package:asset_tuner/core/types/json_name.dart';
+import 'package:asset_tuner/data/_shared/money_atomic.dart';
 
-part 'asset_rate_usd_dto.freezed.dart';
-part 'asset_rate_usd_dto.g.dart';
+class AssetRateUsdDto {
+  const AssetRateUsdDto({
+    required this.assetId,
+    required this.usdPrice,
+    required this.asOfIso,
+  });
 
-@Freezed(fromJson: true, toJson: true)
-abstract class AssetRateUsdDto with _$AssetRateUsdDto {
-  const factory AssetRateUsdDto({
-    @JsonName('asset_id') required String assetId,
-    @JsonName('usd_price') @DecimalJsonConverter() required Decimal usdPrice,
-    @JsonName('as_of') required String asOfIso,
-  }) = _AssetRateUsdDto;
+  final String assetId;
+  final Decimal usdPrice;
+  final String asOfIso;
 
   factory AssetRateUsdDto.fromJson(Map<String, dynamic> json) {
-    return _$AssetRateUsdDtoFromJson(json);
+    final atomic = (json['usd_price_atomic'] as String?) ?? '0';
+    final decimalsRaw = json['usd_price_decimals'];
+    final decimals = decimalsRaw is num ? decimalsRaw.toInt() : 12;
+    return AssetRateUsdDto(
+      assetId:
+          (json['asset_id'] as String?) ?? (json['assetId'] as String?) ?? '',
+      usdPrice: MoneyAtomic.fromAtomic(atomic, decimals),
+      asOfIso: (json['as_of'] as String?) ?? '',
+    );
   }
 }

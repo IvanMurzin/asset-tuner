@@ -1,0 +1,6 @@
+supabase/.temp/
+supabase/.branches/
+supabase/.cache/
+.env
+.env.dev
+.env.prod

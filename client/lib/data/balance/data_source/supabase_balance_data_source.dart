@@ -3,55 +3,82 @@ import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asset_tuner/core/supabase/supabase_constants.dart';
 import 'package:asset_tuner/core/supabase/supabase_edge_functions.dart';
+import 'package:asset_tuner/data/_shared/money_atomic.dart';
 import 'package:asset_tuner/data/balance/dto/balance_entry_dto.dart';
+import 'package:asset_tuner/data/balance/dto/balance_history_response_dto.dart';
 
 @lazySingleton
 class SupabaseBalanceDataSource {
-  SupabaseBalanceDataSource(this._client, this._edgeFunctions);
+  SupabaseBalanceDataSource(this._edgeFunctions);
 
-  final SupabaseClient _client;
   final SupabaseEdgeFunctions _edgeFunctions;
 
-  Future<List<BalanceEntryDto>> fetchHistory({
+  Future<BalanceHistoryResponseDto> fetchHistory({
     required String subaccountId,
     required int limit,
-    required int offset,
+    String? cursor,
   }) async {
-    final start = offset;
-    final end = start + limit - 1;
-    final rows = await _client
-        .from(SupabaseTables.balanceEntries)
-        .select()
-        .eq('subaccount_id', subaccountId)
-        .order('entry_date', ascending: false)
-        .order('created_at', ascending: false)
-        .range(start, end);
-    return (rows as List).whereType<Map<String, dynamic>>().map(BalanceEntryDto.fromJson).toList();
+    final envelope = await _edgeFunctions.invokeApiEnvelope(
+      SupabaseApiRoutes.subaccountsHistory,
+      query: {
+        'subaccountId': subaccountId,
+        'limit': limit.toString(),
+        if (cursor != null && cursor.isNotEmpty) 'cursor': cursor,
+      },
+      method: HttpMethod.get,
+    );
+
+    final data = envelope.data;
+    if (data is! List) {
+      return const BalanceHistoryResponseDto(items: [], nextCursor: null);
+    }
+
+    final items = data
+        .whereType<Map<String, dynamic>>()
+        .map(BalanceEntryDto.fromJson)
+        .toList();
+    final nextCursor = envelope.meta?['nextCursor'] as String?;
+
+    return BalanceHistoryResponseDto(items: items, nextCursor: nextCursor);
   }
 
   Future<BalanceEntryDto> updateBalance({
     required String subaccountId,
     required DateTime entryDate,
     required Decimal snapshotAmount,
-  }) {
-    return _edgeFunctions.invoke(
-      SupabaseFunctions.updateSubaccountBalance,
+  }) async {
+    final _ = entryDate;
+    final decimals = await _resolveSubaccountDecimals(subaccountId);
+    final row = await _edgeFunctions.invokeDataObject(
+      SupabaseApiRoutes.subaccountsSetBalance,
       body: {
-        'subaccount_id': subaccountId,
-        'entry_date': entryDate.toUtc().toIso8601String(),
-        'snapshot_amount': snapshotAmount.toString(),
+        'subaccountId': subaccountId,
+        'amountAtomic': MoneyAtomic.toAtomic(snapshotAmount, decimals),
+        'amountDecimals': decimals,
       },
-      decode: BalanceEntryDto.fromJson,
+      method: HttpMethod.post,
     );
+    return BalanceEntryDto.fromJson(row);
   }
 
-  Future<List<BalanceEntryDto>> fetchEntriesForPositions(Set<String> subaccountIds) async {
-    final rows = await _client
-        .from(SupabaseTables.balanceEntries)
-        .select()
-        .inFilter('subaccount_id', subaccountIds.toList())
-        .order('entry_date', ascending: true)
-        .order('created_at', ascending: true);
-    return (rows as List).whereType<Map<String, dynamic>>().map(BalanceEntryDto.fromJson).toList();
+  Future<List<BalanceEntryDto>> fetchEntriesForPositions(
+    Set<String> subaccountIds,
+  ) async {
+    final result = <BalanceEntryDto>[];
+    for (final subaccountId in subaccountIds) {
+      final page = await fetchHistory(subaccountId: subaccountId, limit: 1);
+      if (page.items.isNotEmpty) {
+        result.add(page.items.first);
+      }
+    }
+    return result;
+  }
+
+  Future<int> _resolveSubaccountDecimals(String subaccountId) async {
+    final page = await fetchHistory(subaccountId: subaccountId, limit: 1);
+    if (page.items.isNotEmpty) {
+      return page.items.first.amountDecimals;
+    }
+    return 2;
   }
 }

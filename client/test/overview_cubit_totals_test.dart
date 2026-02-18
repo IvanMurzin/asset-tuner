@@ -50,37 +50,57 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> requestEmailOtp(String email) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(provider) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<void>> signInWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(
+    String email,
+    String password,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(
+    String email,
+    String code,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<void>> signOut() async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -90,7 +110,9 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> deleteAccount() async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -102,7 +124,11 @@ class FakeProfileRepository implements IProfileRepository {
   @override
   Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return Success(
-      ProfileBootstrapEntity(profile: profile, isNew: false, wasBaseCurrencyDefaulted: false),
+      ProfileBootstrapEntity(
+        profile: profile,
+        isNew: false,
+        wasBaseCurrencyDefaulted: false,
+      ),
     );
   }
 
@@ -113,12 +139,16 @@ class FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<ProfileEntity>> updatePlan(String plan) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -148,7 +178,9 @@ class FakeAccountRepository implements IAccountRepository {
     required String name,
     required AccountType type,
   }) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -157,7 +189,9 @@ class FakeAccountRepository implements IAccountRepository {
     required String name,
     required AccountType type,
   }) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -165,12 +199,16 @@ class FakeAccountRepository implements IAccountRepository {
     required String accountId,
     required bool archived,
   }) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<void>> deleteAccount({required String accountId}) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -180,13 +218,17 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
   final Map<String, List<AccountAssetEntity>> positionsByAccount;
 
   @override
-  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({required String accountId}) async {
+  Future<Result<List<AccountAssetEntity>>> fetchAccountAssets({
+    required String accountId,
+  }) async {
     return Success(positionsByAccount[accountId] ?? const []);
   }
 
   @override
   Future<Result<int>> countAssetPositions() async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -197,12 +239,18 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
     required Decimal snapshotAmount,
     required DateTime entryDate,
   }) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<void>> removeAssetFromAccount({required String subaccountId}) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<void>> removeAssetFromAccount({
+    required String subaccountId,
+  }) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -210,7 +258,9 @@ class FakeAccountAssetRepository implements IAccountAssetRepository {
     required String subaccountId,
     required String name,
   }) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -251,9 +301,11 @@ class FakeBalanceRepository implements IBalanceRepository {
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
     required String subaccountId,
     required int limit,
-    int? offset,
+    String? cursor,
   }) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -262,7 +314,9 @@ class FakeBalanceRepository implements IBalanceRepository {
     required DateTime entryDate,
     required Decimal snapshotAmount,
   }) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -277,7 +331,10 @@ class FakeOverviewCacheStorage extends OverviewCacheStorage {
   }
 
   @override
-  Future<void> writeSnapshot(String userId, StoredOverviewSnapshot snapshot) async {
+  Future<void> writeSnapshot(
+    String userId,
+    StoredOverviewSnapshot snapshot,
+  ) async {
     this.snapshot = snapshot;
   }
 
@@ -311,7 +368,10 @@ void main() {
     final cubit = OverviewCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
         ),
       ),
       GetProfileUseCase(FakeProfileRepository(profile)),
@@ -375,14 +435,27 @@ void main() {
       ],
     };
     final assets = const [
-      AssetEntity(id: 'asset_usd', kind: AssetKind.fiat, code: 'USD', name: 'United States Dollar'),
-      AssetEntity(id: 'asset_btc', kind: AssetKind.crypto, code: 'BTC', name: 'Bitcoin'),
+      AssetEntity(
+        id: 'asset_usd',
+        kind: AssetKind.fiat,
+        code: 'USD',
+        name: 'United States Dollar',
+      ),
+      AssetEntity(
+        id: 'asset_btc',
+        kind: AssetKind.crypto,
+        code: 'BTC',
+        name: 'Bitcoin',
+      ),
     ];
 
     final cubit = OverviewCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
         ),
       ),
       GetProfileUseCase(FakeProfileRepository(profile)),
@@ -391,7 +464,10 @@ void main() {
       GetAccountAssetsUseCase(FakeAccountAssetRepository(positions)),
       GetAssetsUseCase(FakeAssetRepository(assets)),
       GetCurrentBalancesUseCase(
-        FakeBalanceRepository({'pos_usd': Decimal.parse('1000'), 'pos_btc': Decimal.parse('2')}),
+        FakeBalanceRepository({
+          'pos_usd': Decimal.parse('1000'),
+          'pos_btc': Decimal.parse('2'),
+        }),
       ),
       GetLatestUsdRatesUseCase(FakeRateRepository(Success(rates))),
       FakeOverviewCacheStorage(),
@@ -435,13 +511,18 @@ void main() {
     final cubit = OverviewCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
         ),
       ),
       GetProfileUseCase(FakeProfileRepository(profile)),
       BootstrapProfileUseCase(FakeProfileRepository(profile)),
       GetAccountsUseCase(
-        FakeAccountRepository(const FailureResult(Failure(code: 'network', message: 'Offline'))),
+        FakeAccountRepository(
+          const FailureResult(Failure(code: 'network', message: 'Offline')),
+        ),
       ),
       GetAccountAssetsUseCase(FakeAccountAssetRepository(const {})),
       GetAssetsUseCase(FakeAssetRepository(const [])),
@@ -476,7 +557,10 @@ void main() {
     final cubit = OverviewCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
         ),
       ),
       GetProfileUseCase(FakeProfileRepository(profile)),
@@ -517,7 +601,10 @@ void main() {
     final cubit = OverviewCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
         ),
       ),
       GetProfileUseCase(FakeProfileRepository(profile)),

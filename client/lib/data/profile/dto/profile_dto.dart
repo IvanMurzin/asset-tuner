@@ -1,19 +1,42 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:asset_tuner/core/types/json_name.dart';
 import 'package:asset_tuner/data/profile/dto/entitlements_dto.dart';
 
-part 'profile_dto.freezed.dart';
-part 'profile_dto.g.dart';
+class ProfileDto {
+  const ProfileDto({
+    required this.baseAssetId,
+    required this.baseCurrencyCode,
+    required this.plan,
+    required this.entitlements,
+  });
 
-@Freezed(fromJson: true, toJson: true)
-abstract class ProfileDto with _$ProfileDto {
-  const factory ProfileDto({
-    @JsonName('base_currency') required String baseCurrency,
-    required String plan,
-    required EntitlementsDto entitlements,
-  }) = _ProfileDto;
+  final String? baseAssetId;
+  final String baseCurrencyCode;
+  final String plan;
+  final EntitlementsDto entitlements;
 
   factory ProfileDto.fromJson(Map<String, dynamic> json) {
-    return _$ProfileDtoFromJson(json);
+    return ProfileDto(
+      baseAssetId: json['base_asset_id'] as String?,
+      baseCurrencyCode: (json['base_currency_code'] as String?) ?? 'USD',
+      plan: ((json['plan'] as String?) ?? 'free').toLowerCase(),
+      entitlements: EntitlementsDto.fromJson(
+        (json['entitlements'] as Map<String, dynamic>?) ??
+            const <String, dynamic>{},
+      ),
+    );
+  }
+
+  factory ProfileDto.fromMeJson(Map<String, dynamic> json) {
+    final profile =
+        (json['profile'] as Map<String, dynamic>?) ?? const <String, dynamic>{};
+    final limits =
+        (json['limits'] as Map<String, dynamic>?) ?? const <String, dynamic>{};
+    final baseAsset = json['baseAsset'] as Map<String, dynamic>?;
+
+    return ProfileDto(
+      baseAssetId: profile['base_asset_id'] as String?,
+      baseCurrencyCode: (baseAsset?['code'] as String?) ?? 'USD',
+      plan: ((profile['plan'] as String?) ?? 'free').toLowerCase(),
+      entitlements: EntitlementsDto.fromJson(limits),
+    );
   }
 }

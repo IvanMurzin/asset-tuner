@@ -65,6 +65,20 @@ export function fromError(error: unknown): Response {
     return fail(error.status, error.code, error.message, error.details);
   }
 
+  if (typeof error === 'object' && error !== null) {
+    const maybeMessage = (error as { message?: unknown }).message;
+    if (typeof maybeMessage === 'string' && maybeMessage.trim().length > 0) {
+      const code = (error as { code?: unknown }).code;
+      const details = (error as { details?: unknown }).details;
+      const hint = (error as { hint?: unknown }).hint;
+      return fail(500, 'INTERNAL_ERROR', maybeMessage, {
+        ...(code === undefined ? {} : { code }),
+        ...(details === undefined ? {} : { details }),
+        ...(hint === undefined ? {} : { hint }),
+      });
+    }
+  }
+
   if (error instanceof Error) {
     return fail(500, 'INTERNAL_ERROR', error.message);
   }

@@ -15,7 +15,6 @@ import {
   deleteAccountSchema,
   deleteMyAccountSchema,
   deleteSubaccountSchema,
-  parseBoolean,
   parseJsonBody,
   parsePositiveInt,
   profileUpdateSchema,
@@ -64,6 +63,7 @@ type SubaccountHistoryPayload = {
     amount_decimals: number;
     note: string | null;
     created_at: string;
+    diff_amount?: number | null;
   }>;
   nextCursor: string | null;
 };
@@ -193,18 +193,15 @@ async function handleAssetsList(req: Request, userId: string): Promise<Response>
   const url = new URL(req.url);
   const kindRaw = url.searchParams.get('kind');
   const kind = kindRaw === 'fiat' || kindRaw === 'crypto' ? kindRaw : null;
-  const limit = parsePositiveInt(url.searchParams.get('limit'), 100, 200);
-  const onlyAllowed = parseBoolean(url.searchParams.get('onlyAllowed'), true);
+  const limit = parsePositiveInt(url.searchParams.get('limit'), 100, 100);
 
   const data = await rpc<unknown[]>('api_list_assets', {
     p_user_id: userId,
     p_kind: kind,
     p_limit: limit,
-    p_only_allowed: onlyAllowed,
   });
 
   return ok(data, {
-    onlyAllowed,
     requested_kind: kind,
   });
 }

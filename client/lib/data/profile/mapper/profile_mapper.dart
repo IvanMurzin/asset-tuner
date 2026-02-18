@@ -6,7 +6,8 @@ import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 abstract final class ProfileMapper {
   static ProfileEntity toEntity(ProfileDto dto) {
     return ProfileEntity(
-      baseCurrency: dto.baseCurrency,
+      baseAssetId: dto.baseAssetId,
+      baseCurrencyCode: dto.baseCurrencyCode,
       plan: dto.plan,
       entitlements: _entitlementsToEntity(dto.entitlements),
     );
@@ -14,7 +15,8 @@ abstract final class ProfileMapper {
 
   static ProfileDto toDto(ProfileEntity entity) {
     return ProfileDto(
-      baseCurrency: entity.baseCurrency,
+      baseAssetId: entity.baseAssetId,
+      baseCurrencyCode: entity.baseCurrencyCode,
       plan: entity.plan,
       entitlements: _entitlementsToDto(entity.entitlements),
     );
@@ -24,9 +26,8 @@ abstract final class ProfileMapper {
     return EntitlementsEntity(
       maxAccounts: dto.maxAccounts,
       maxSubaccounts: dto.maxSubaccounts,
-      anyBaseCurrency: dto.anyBaseCurrency,
-      freeBaseCurrencyCodes: dto.allowedBaseCurrencyCodes.map((e) => e.toUpperCase()).toSet(),
-      expiresAt: dto.expiresAtIso == null ? null : DateTime.parse(dto.expiresAtIso!),
+      fiatLimit: dto.fiatLimit,
+      cryptoLimit: dto.cryptoLimit,
     );
   }
 
@@ -34,9 +35,8 @@ abstract final class ProfileMapper {
     return EntitlementsDto(
       maxAccounts: entity.maxAccounts,
       maxSubaccounts: entity.maxSubaccounts,
-      anyBaseCurrency: entity.anyBaseCurrency,
-      allowedBaseCurrencyCodes: entity.freeBaseCurrencyCodes.map((e) => e.toUpperCase()).toList(),
-      expiresAtIso: entity.expiresAt?.toIso8601String(),
+      fiatLimit: entity.fiatLimit,
+      cryptoLimit: entity.cryptoLimit,
     );
   }
 }

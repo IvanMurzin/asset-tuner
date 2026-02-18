@@ -34,13 +34,15 @@ supabase --workdir "${BACKEND_DIR}" db push
 
 echo "[3/6] Seeding remote DB (optional, requires SUPABASE_DB_URL + psql)"
 if [[ -n "${SUPABASE_DB_URL:-}" && "${SUPABASE_DB_URL}" != "replace_me" ]] && command -v psql >/dev/null 2>&1; then
-  psql "${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -f "${BACKEND_DIR}/supabase/seed.sql"
+  if ! psql "${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -f "${BACKEND_DIR}/supabase/seed.sql"; then
+    echo "Warning: remote seed failed (check SUPABASE_DB_URL/DNS/network and retry manually)"
+  fi
 else
   echo "Skipping remote seed: set SUPABASE_DB_URL and install psql to enable"
 fi
 
 echo "[4/6] Syncing secrets"
-supabase secrets set \
+supabase --workdir "${BACKEND_DIR}" secrets set \
   SUPABASE_URL="${SUPABASE_URL:-}" \
   COINGECKO_API_KEY="${COINGECKO_API_KEY:-}" \
   COINGECKO_BASE_URL="${COINGECKO_BASE_URL:-}" \
@@ -69,3 +71,6 @@ fi
 
 echo "Done."
 echo "Next: configure hourly cron to POST /functions/v1/rates_sync with header x-scheduler-secret."
+ curl -fsS -X POST \
+    -H "x-scheduler-secret: sofksoefkspdfpsdkfpos" \
+    "https://qbeqjggcbbbrrcwsheui.supabase.co/functions/v1/rates_sync"

@@ -32,6 +32,9 @@
   - `supabase/functions/_shared/responses.ts`
   - `supabase/functions/_shared/fiat_top100.ts`
 
+`GET /assets/list` всегда возвращает up to top-100 активов по `kind` и поле `is_locked`.
+Логика блокировки рассчитывается только на backend (free: rank > 5 locked; pro: unlocked).
+
 ## Важное про округление
 
 `numeric_to_atomic` использует `round(..., 0)` в Postgres, то есть **half away from zero**.

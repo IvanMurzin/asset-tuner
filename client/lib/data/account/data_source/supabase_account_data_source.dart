@@ -6,25 +6,28 @@ import 'package:asset_tuner/data/account/dto/account_dto.dart';
 
 @lazySingleton
 class SupabaseAccountDataSource {
-  SupabaseAccountDataSource(this._client, this._edgeFunctions);
+  SupabaseAccountDataSource(this._edgeFunctions);
 
-  final SupabaseClient _client;
   final SupabaseEdgeFunctions _edgeFunctions;
 
   Future<List<AccountDto>> fetchAccounts() async {
-    final rows = await _client
-        .from(SupabaseTables.accounts)
-        .select()
-        .order('updated_at', ascending: false);
-    return (rows as List).whereType<Map<String, dynamic>>().map(AccountDto.fromJson).toList();
+    final rows = await _edgeFunctions.invokeDataList(
+      SupabaseApiRoutes.accountsList,
+      method: HttpMethod.get,
+    );
+    return rows.map(AccountDto.fromJson).toList(growable: false);
   }
 
-  Future<AccountDto> createAccount({required String name, required String type}) {
-    return _edgeFunctions.invoke(
-      SupabaseFunctions.createAccount,
+  Future<AccountDto> createAccount({
+    required String name,
+    required String type,
+  }) async {
+    final row = await _edgeFunctions.invokeDataObject(
+      SupabaseApiRoutes.accountsCreate,
       body: {'name': name, 'type': type},
-      decode: AccountDto.fromJson,
+      method: HttpMethod.post,
     );
+    return AccountDto.fromJson(row);
   }
 
   Future<AccountDto> updateAccount({
@@ -32,30 +35,31 @@ class SupabaseAccountDataSource {
     required String name,
     required String type,
   }) async {
-    final updated = await _client
-        .from(SupabaseTables.accounts)
-        .update({'name': name, 'type': type})
-        .eq('id', accountId)
-        .select()
-        .single();
-    return AccountDto.fromJson(updated);
+    final row = await _edgeFunctions.invokeDataObject(
+      SupabaseApiRoutes.accountsUpdate,
+      body: {'accountId': accountId, 'name': name, 'type': type},
+      method: HttpMethod.post,
+    );
+    return AccountDto.fromJson(row);
   }
 
-  Future<AccountDto> setArchived({required String accountId, required bool archived}) async {
-    final updated = await _client
-        .from(SupabaseTables.accounts)
-        .update({'archived': archived})
-        .eq('id', accountId)
-        .select()
-        .single();
-    return AccountDto.fromJson(updated);
+  Future<AccountDto> setArchived({
+    required String accountId,
+    required bool archived,
+  }) async {
+    final row = await _edgeFunctions.invokeDataObject(
+      SupabaseApiRoutes.accountsUpdate,
+      body: {'accountId': accountId, 'archived': archived},
+      method: HttpMethod.post,
+    );
+    return AccountDto.fromJson(row);
   }
 
   Future<void> deleteAccountCascade({required String accountId}) async {
     await _edgeFunctions.invokeVoid(
-      SupabaseFunctions.deleteAccount,
-      method: HttpMethod.delete,
-      body: {'account_id': accountId},
+      SupabaseApiRoutes.accountsDelete,
+      body: {'accountId': accountId},
+      method: HttpMethod.post,
     );
   }
 }

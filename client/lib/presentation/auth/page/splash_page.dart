@@ -21,7 +21,8 @@ class SplashPage extends StatelessWidget {
       create: (_) => getIt<SplashCubit>(),
       child: BlocConsumer<SplashCubit, SplashState>(
         listenWhen: (prev, curr) =>
-            curr is SplashRoute || (curr is SplashError && prev is! SplashError),
+            curr is SplashRoute ||
+            (curr is SplashError && prev is! SplashError),
         listener: (context, state) {
           if (state case SplashRoute(:final destination)) {
             switch (destination) {
@@ -34,7 +35,7 @@ class SplashPage extends StatelessWidget {
             }
             return;
           }
-          if (state case SplashError(:final failureCode, :final failureMessage)) {
+          if (state case SplashError(:final failureMessage)) {
             if (context.mounted) {
               showDSSnackBar(
                 context,

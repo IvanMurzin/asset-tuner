@@ -18,6 +18,11 @@ class AssetPickerItemDto {
   factory AssetPickerItemDto.fromJson(Map<String, dynamic> json) {
     final rankRaw = json['rank'];
     final rank = rankRaw is num ? rankRaw.toInt() : 999999;
+    final isLockedRaw = json['is_locked'];
+    final isUnlocked = switch (isLockedRaw) {
+      bool isLocked => !isLocked,
+      _ => json['is_unlocked'] == true,
+    };
 
     return AssetPickerItemDto(
       id: (json['id'] as String?) ?? '',
@@ -25,7 +30,7 @@ class AssetPickerItemDto {
       code: (json['code'] as String?) ?? '',
       name: (json['name'] as String?) ?? '',
       rank: rank > 0 ? rank : 999999,
-      isUnlocked: json['is_unlocked'] == true,
+      isUnlocked: isUnlocked,
     );
   }
 }

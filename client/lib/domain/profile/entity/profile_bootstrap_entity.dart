@@ -1,13 +1,13 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 
-part 'profile_bootstrap_entity.freezed.dart';
+class ProfileBootstrapEntity {
+  const ProfileBootstrapEntity({
+    required this.profile,
+    required this.isNew,
+    required this.wasBaseCurrencyDefaulted,
+  });
 
-@freezed
-abstract class ProfileBootstrapEntity with _$ProfileBootstrapEntity {
-  const factory ProfileBootstrapEntity({
-    required ProfileEntity profile,
-    required bool isNew,
-    required bool wasBaseCurrencyDefaulted,
-  }) = _ProfileBootstrapEntity;
+  final ProfileEntity profile;
+  final bool isNew;
+  final bool wasBaseCurrencyDefaulted;
 }

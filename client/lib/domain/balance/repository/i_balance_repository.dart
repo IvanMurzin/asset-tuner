@@ -7,7 +7,7 @@ abstract interface class IBalanceRepository {
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
     required String subaccountId,
     required int limit,
-    int? offset,
+    String? cursor,
   });
 
   Future<Result<BalanceEntryEntity>> updateBalance({
@@ -16,5 +16,7 @@ abstract interface class IBalanceRepository {
     required Decimal snapshotAmount,
   });
 
-  Future<Result<Map<String, Decimal>>> fetchCurrentBalances({required Set<String> subaccountIds});
+  Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
+    required Set<String> subaccountIds,
+  });
 }

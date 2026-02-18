@@ -45,12 +45,13 @@ class PaywallPage extends StatelessWidget {
                 title: l10n.splashErrorTitle,
                 message: l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
-                onAction: () => context.read<PaywallCubit>().load(reason: args.reason),
+                onAction: () =>
+                    context.read<PaywallCubit>().load(reason: args.reason),
               ),
             );
           }
 
-          final isPaid = (state.plan ?? 'free') == 'paid';
+          final isPaid = (state.plan ?? 'free') == 'pro';
           if (isPaid) {
             return Scaffold(
               appBar: DSAppBar(title: l10n.paywallTitle),

@@ -7,29 +7,33 @@ import 'package:asset_tuner/data/asset/dto/asset_picker_item_dto.dart';
 
 @lazySingleton
 class SupabaseAssetDataSource {
-  SupabaseAssetDataSource(this._client, this._edgeFunctions);
+  SupabaseAssetDataSource(this._edgeFunctions);
 
-  final SupabaseClient _client;
   final SupabaseEdgeFunctions _edgeFunctions;
 
   Future<List<AssetDto>> fetchAssets() async {
-    final rows = await _client
-        .from(SupabaseTables.assets)
-        .select()
-        .order('kind', ascending: true)
-        .order('code', ascending: true);
-    return (rows as List).whereType<Map<String, dynamic>>().map(AssetDto.fromJson).toList();
+    final fiat = await _edgeFunctions.invokeDataList(
+      SupabaseApiRoutes.assetsList,
+      query: {'kind': 'fiat', 'limit': 100},
+      method: HttpMethod.get,
+    );
+    final crypto = await _edgeFunctions.invokeDataList(
+      SupabaseApiRoutes.assetsList,
+      query: {'kind': 'crypto', 'limit': 100},
+      method: HttpMethod.get,
+    );
+
+    return [...fiat, ...crypto].map(AssetDto.fromJson).toList(growable: false);
   }
 
-  Future<List<AssetPickerItemDto>> fetchAssetsForPicker({required String kind}) async {
-    final data = await _edgeFunctions.invokeJson(
-      SupabaseFunctions.getAssetsForPicker,
-      body: {'kind': kind},
+  Future<List<AssetPickerItemDto>> fetchAssetsForPicker({
+    required String kind,
+  }) async {
+    final rows = await _edgeFunctions.invokeDataList(
+      SupabaseApiRoutes.assetsList,
+      query: {'kind': kind, 'limit': 100},
+      method: HttpMethod.get,
     );
-    final items = data['items'];
-    if (items is! List) {
-      return [];
-    }
-    return items.whereType<Map<String, dynamic>>().map(AssetPickerItemDto.fromJson).toList();
+    return rows.map(AssetPickerItemDto.fromJson).toList(growable: false);
   }
 }

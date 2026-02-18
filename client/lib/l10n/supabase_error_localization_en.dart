@@ -1,5 +1,9 @@
 const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'unknown_error': 'An unknown error occurred',
+  'limit_accounts_reached': 'Free plan account limit reached',
+  'limit_subaccounts_reached': 'Free plan subaccount limit reached',
+  'asset_not_allowed_for_plan': 'This asset is locked for your current plan',
+  'external_api_error': 'External service request failed',
   'email_not_confirmed': 'Email not confirmed',
   'invalid_credentials': 'Invalid login credentials',
   'user_not_found': 'User not found',
@@ -35,11 +39,13 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'conflict': 'General database conflict, such as concurrent requests',
   'email_address_invalid': 'Example and test domains are not supported',
   'email_address_not_authorized': 'Email sending not allowed for this address',
-  'email_conflict_identity_not_deletable': 'Unlinking this identity would cause email conflict',
+  'email_conflict_identity_not_deletable':
+      'Unlinking this identity would cause email conflict',
   'email_provider_disabled': 'Signups are disabled for email and password',
   'flow_state_expired': 'PKCE flow state has expired',
   'flow_state_not_found': 'PKCE flow state no longer exists',
-  'hook_payload_invalid_content_type': 'Hook payload does not have valid Content-Type header',
+  'hook_payload_invalid_content_type':
+      'Hook payload does not have valid Content-Type header',
   'hook_payload_over_size_limit': 'Hook payload exceeds maximum size limit',
   'hook_timeout': 'Unable to reach hook within maximum time allocated',
   'hook_timeout_after_retry': 'Unable to reach hook after maximum retries',
@@ -48,16 +54,19 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'insufficient_aal': 'User must have higher Authenticator Assurance Level',
   'invite_not_found': 'Invite is expired or already used',
   'manual_linking_disabled': 'Manual linking APIs are not enabled',
-  'mfa_factor_name_conflict': 'MFA factors should not have the same friendly name',
+  'mfa_factor_name_conflict':
+      'MFA factors should not have the same friendly name',
   'mfa_factor_not_found': 'MFA factor no longer exists',
-  'mfa_ip_address_mismatch': 'MFA enrollment must begin and end with same IP address',
+  'mfa_ip_address_mismatch':
+      'MFA enrollment must begin and end with same IP address',
   'mfa_phone_enroll_not_enabled': 'Enrollment of MFA Phone factors is disabled',
   'mfa_phone_verify_not_enabled': 'Login via Phone factors is disabled',
   'mfa_totp_enroll_not_enabled': 'Enrollment of MFA TOTP factors is disabled',
   'mfa_totp_verify_not_enabled': 'Login via TOTP factors is disabled',
   'mfa_verification_rejected': 'Further MFA verification is rejected',
   'mfa_verified_factor_exists': 'Verified phone factor already exists for user',
-  'mfa_web_authn_enroll_not_enabled': 'Enrollment of MFA WebAuthn factors is disabled',
+  'mfa_web_authn_enroll_not_enabled':
+      'Enrollment of MFA WebAuthn factors is disabled',
   'mfa_web_authn_verify_not_enabled': 'Login via WebAuthn factors is disabled',
   'no_authorization': 'HTTP request requires Authorization header',
   'not_admin': 'User is not admin',
@@ -67,7 +76,8 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'over_sms_send_rate_limit': 'Too many SMS messages sent to this phone number',
   'phone_not_confirmed': 'Phone number is not confirmed',
   'phone_provider_disabled': 'Signups are disabled for phone and password',
-  'provider_email_needs_verification': 'OAuth provider email needs verification',
+  'provider_email_needs_verification':
+      'OAuth provider email needs verification',
   'reauthentication_needed': 'User needs to reauthenticate to change password',
   'reauthentication_not_valid': 'Reauthentication verification failed',
   'refresh_token_already_used': 'Refresh token has been revoked',
@@ -86,9 +96,11 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'session_not_found': 'Session no longer exists',
   'single_identity_not_deletable': 'Every user must have at least one identity',
   'sms_send_failed': 'Sending SMS message failed',
-  'sso_domain_already_exists': 'Only one SSO domain can be registered per provider',
+  'sso_domain_already_exists':
+      'Only one SSO domain can be registered per provider',
   'sso_provider_not_found': 'SSO provider not found',
-  'too_many_enrolled_mfa_factors': 'User can only have a fixed number of MFA factors',
+  'too_many_enrolled_mfa_factors':
+      'User can only have a fixed number of MFA factors',
   'unexpected_audience': 'JWT audience does not match',
   'unexpected_failure': 'Auth service is degraded or a bug is present',
   'user_banned': 'User has an active banned_until property',
@@ -147,8 +159,10 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'KeyAlreadyExists': 'The specified key already exists',
   'BucketAlreadyExists': 'The specified bucket already exists',
   'DatabaseTimeout': 'Timeout occurred while accessing the database',
-  'InvalidSignature': 'The signature provided does not match the calculated signature',
-  'SignatureDoesNotMatch': 'The request signature does not match the calculated signature',
+  'InvalidSignature':
+      'The signature provided does not match the calculated signature',
+  'SignatureDoesNotMatch':
+      'The request signature does not match the calculated signature',
   'AccessDenied': 'Access to the specified resource is denied',
   'ResourceLocked': 'The specified resource is locked',
   'DatabaseError': 'An error occurred while accessing the database',
@@ -158,7 +172,8 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'LockTimeout': 'Timeout occurred while waiting for a lock',
   'S3Error': 'An error occurred related to Amazon S3',
   'S3InvalidAccessKeyId': 'The provided AWS access key ID is invalid',
-  'S3MaximumCredentialsLimit': 'The maximum number of credentials has been reached',
+  'S3MaximumCredentialsLimit':
+      'The maximum number of credentials has been reached',
   'InvalidChecksum': 'The checksum of the entity does not match',
   'MissingPart': 'A part of the entity is missing',
   'SlowDown': 'The request rate is too high and has been throttled',
@@ -185,18 +200,23 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'node_disconnected': 'Node disconnected',
   'migration_failed': 'Migration failed',
   'counter_tracking_error': 'Counter tracking error',
-  'ChannelRateLimitReached': 'The number of channels you can create has reached its limit',
+  'ChannelRateLimitReached':
+      'The number of channels you can create has reached its limit',
   'ClientJoinRateLimitReached':
       'The rate of joins per second from your clients has reached the channel limits',
   'ConnectionInitializing': 'Database is initializing connection',
-  'ConnectionRateLimitReached': 'The number of connected clients has reached its limit',
+  'ConnectionRateLimitReached':
+      'The number of connected clients has reached its limit',
   'DatabaseConnectionIssue':
       'Database had connection issues and connection was not able to be established',
   'DatabaseLackOfConnections':
       'Realtime was not able to connect to the tenant\'s database due to not having enough available connections',
-  'ErrorAuthorizingWebsocket': 'Error when trying to authorize the WebSocket connection',
-  'ErrorConnectingToWebsocket': 'Error when trying to connect to the WebSocket server',
-  'ErrorExecutingTransaction': 'Error executing a database transaction in tenant database',
+  'ErrorAuthorizingWebsocket':
+      'Error when trying to authorize the WebSocket connection',
+  'ErrorConnectingToWebsocket':
+      'Error when trying to connect to the WebSocket server',
+  'ErrorExecutingTransaction':
+      'Error executing a database transaction in tenant database',
   'ErrorOnRpcCall': 'Error when calling another realtime node',
   'ErrorStartingPostgresCDC':
       'Error when starting the Postgres CDC extension which is used for Postgres Changes',
@@ -204,7 +224,8 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
       'Error when starting the Postgres CDC stream which is used for Postgres Changes',
   'IncreaseConnectionPool':
       'The number of connections you have set for Realtime are not enough to handle your current use case',
-  'InitializingProjectConnection': 'Connection against Tenant database is still starting',
+  'InitializingProjectConnection':
+      'Connection against Tenant database is still starting',
   'InvalidJWTExpiration': 'JWT exp claim value is incorrect',
   'JanitorFailedToDeleteOldMessages':
       'Scheduled task for realtime.message cleanup was unable to run',
@@ -213,32 +234,42 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'MigrationCheckFailed': 'Check to see if we require to run migrations fails',
   'MigrationsFailedToRun':
       'Error when running the migrations against the Tenant database that are required by Realtime',
-  'PartitionCreationFailed': 'Error when creating partitions for realtime.messages',
+  'PartitionCreationFailed':
+      'Error when creating partitions for realtime.messages',
   'PoolingReplicationError': 'Error when pooling the replication slot',
-  'PoolingReplicationPreparationError': 'Error when preparing the replication slot',
+  'PoolingReplicationPreparationError':
+      'Error when preparing the replication slot',
   'RealtimeDisabledForConfiguration':
       'The configuration provided to Realtime on connect will not be able to provide you any Postgres Changes',
   'RealtimeDisabledForTenant': 'Realtime has been disabled for the tenant',
   'RealtimeNodeDisconnected':
       'Realtime is a distributed application and this means that one the system is unable to communicate with one of the distributed nodes',
   'RealtimeRestarting': 'Realtime is currently restarting',
-  'ReconnectSubscribeToPostgres': 'Postgres changes still waiting to be subscribed',
-  'ReplicationMaxWalSendersReached': 'Maximum number of WAL senders reached in tenant database',
-  'ReplicationSlotBeingUsed': 'The replication slot is being used by another transaction',
+  'ReconnectSubscribeToPostgres':
+      'Postgres changes still waiting to be subscribed',
+  'ReplicationMaxWalSendersReached':
+      'Maximum number of WAL senders reached in tenant database',
+  'ReplicationSlotBeingUsed':
+      'The replication slot is being used by another transaction',
   'RlsPolicyError': 'Error on RLS policy used for authorization',
   'StartListenAndReplicationFailed':
       'Error when starting the replication and listening of errors for database broadcasting',
-  'SubscriptionDeletionFailed': 'Error when trying to delete a subscription for postgres changes',
+  'SubscriptionDeletionFailed':
+      'Error when trying to delete a subscription for postgres changes',
   'SynInitializationError':
       'Our framework to synchronize processes has failed to properly startup a connection to the database',
   'TableHasSpacesInName':
       'The table you are trying to listen to has spaces in its name which we are unable to support',
   'TimeoutOnRpcCall': 'RPC request within the Realtime server has timed out',
-  'TopicNameRequired': 'You are trying to use Realtime without a topic name set',
-  'UnableCheckoutConnection': 'Error when trying to checkout a connection from the tenant pool',
-  'UnableToCheckProcessesOnRemoteNode': 'Error when trying to check the processes on a remote node',
+  'TopicNameRequired':
+      'You are trying to use Realtime without a topic name set',
+  'UnableCheckoutConnection':
+      'Error when trying to checkout a connection from the tenant pool',
+  'UnableToCheckProcessesOnRemoteNode':
+      'Error when trying to check the processes on a remote node',
   'UnableToConnectToProject': 'Unable to connect to Project database',
-  'UnableToConnectToTenantDatabase': 'Realtime was not able to connect to the tenant\'s database',
+  'UnableToConnectToTenantDatabase':
+      'Realtime was not able to connect to the tenant\'s database',
   'UnableToCreateCounter':
       'Error when trying to create a counter to track rate limits for a tenant',
   'UnableToDecrementCounter':
@@ -248,21 +279,26 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'UnableToDeleteTenant': 'Error when trying to delete a tenant',
   'UnableToEncodeJson':
       'An error where we are not handling correctly the response to be sent to the end user',
-  'UnableToFindCounter': 'Error when trying to find a counter to track rate limits for a tenant',
+  'UnableToFindCounter':
+      'Error when trying to find a counter to track rate limits for a tenant',
   'UnableToIncrementCounter':
       'Error when trying to increment a counter to track rate limits for a tenant',
   'UnableToListenToTenantDatabase':
       'Unable to LISTEN for notifications against the Tenant Database',
-  'UnableToProcessListenPayload': 'Payload sent in NOTIFY operation was JSON parsable',
+  'UnableToProcessListenPayload':
+      'Payload sent in NOTIFY operation was JSON parsable',
   'UnableToSetPolicies': 'Error when setting up Authorization Policies',
-  'UnableToSubscribeToPostgres': 'Error when trying to subscribe to Postgres changes',
+  'UnableToSubscribeToPostgres':
+      'Error when trying to subscribe to Postgres changes',
   'UnableToTrackPresence': 'Error when handling track presence for this socket',
   'UnableToUpdateCounter':
       'Error when trying to update a counter to track rate limits for a tenant',
   'Unauthorized': 'Unauthorized access',
   'UnhandledProcessMessage': 'Unhandled message received by a Realtime process',
-  'UnknownDataProcessed': 'An unknown data type was processed by the Realtime system',
-  'UnknownErrorOnChannel': 'An error we are not handling correctly was triggered on a channel',
+  'UnknownDataProcessed':
+      'An unknown data type was processed by the Realtime system',
+  'UnknownErrorOnChannel':
+      'An error we are not handling correctly was triggered on a channel',
   'UnknownErrorOnController':
       'An error we are not handling correctly was triggered on a controller',
   'UnknownPresenceEvent': 'Presence event type not recognized by service',

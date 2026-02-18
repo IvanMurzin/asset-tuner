@@ -1,13 +1,16 @@
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:asset_tuner/core/supabase/supabase_constants.dart';
+import 'package:asset_tuner/core/supabase/supabase_edge_functions.dart';
 import 'package:asset_tuner/data/auth/dto/auth_session_dto.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 
 @lazySingleton
 class SupabaseAuthDataSource {
-  SupabaseAuthDataSource(this._client);
+  SupabaseAuthDataSource(this._client, this._edgeFunctions);
 
   final SupabaseClient _client;
+  final SupabaseEdgeFunctions _edgeFunctions;
 
   AuthSessionDto? currentSession() {
     final user = _client.auth.currentSession?.user;
@@ -41,8 +44,15 @@ class SupabaseAuthDataSource {
     return _client.auth.signUp(email: email, password: password);
   }
 
-  Future<AuthSessionDto?> verifySignUpOtp({required String email, required String token}) async {
-    final response = await _client.auth.verifyOTP(email: email, token: token, type: OtpType.signup);
+  Future<AuthSessionDto?> verifySignUpOtp({
+    required String email,
+    required String token,
+  }) async {
+    final response = await _client.auth.verifyOTP(
+      email: email,
+      token: token,
+      type: OtpType.signup,
+    );
     final user = response.session?.user;
     if (user == null) {
       return null;
@@ -52,5 +62,13 @@ class SupabaseAuthDataSource {
 
   Future<void> signOut() {
     return _client.auth.signOut();
+  }
+
+  Future<void> deleteMyAccount() async {
+    await _edgeFunctions.invokeVoid(
+      SupabaseApiRoutes.deleteMyAccount,
+      method: HttpMethod.post,
+      body: {'confirm': true},
+    );
   }
 }

@@ -17,7 +17,7 @@ const CRYPTO_DECIMALS_OVERRIDES: Record<string, number> = {
   litecoin: 8,
   'bitcoin-cash': 8,
   polkadot: 10,
-  'near': 24,
+  near: 18,
   'matic-network': 18,
   toncoin: 9,
   'the-open-network': 9,

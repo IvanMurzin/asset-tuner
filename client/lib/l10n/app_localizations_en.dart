@@ -109,7 +109,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationInvalidEmail => 'Enter a valid email.';
 
   @override
-  String get validationPasswordRule => 'Use at least 6 characters with letters and numbers.';
+  String get validationPasswordRule =>
+      'Use at least 6 characters with letters and numbers.';
 
   @override
   String get validationPasswordMismatch => 'Passwords do not match.';
@@ -156,7 +157,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorConflict => 'This email is already in use.';
 
   @override
-  String get errorRateLimited => 'Too many attempts. Please wait and try again.';
+  String get errorRateLimited =>
+      'Too many attempts. Please wait and try again.';
 
   @override
   String get save => 'Save';
@@ -180,10 +182,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingBaseCurrencyTitle => 'Choose your base currency';
 
   @override
-  String get onboardingBaseCurrencyBody => 'Totals will be converted to this currency.';
+  String get onboardingBaseCurrencyBody =>
+      'Totals will be converted to this currency.';
 
   @override
-  String get baseCurrencyConversionCaption => 'Your savings will be converted to this currency.';
+  String get baseCurrencyConversionCaption =>
+      'Your savings will be converted to this currency.';
 
   @override
   String get onboardingSearchHint => 'Search currency';
@@ -201,7 +205,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingSelectCurrency => 'Select a currency to continue.';
 
   @override
-  String get onboardingUpgradeRequired => 'Upgrade required to select this currency.';
+  String get onboardingUpgradeRequired =>
+      'Upgrade required to select this currency.';
 
   @override
   String get onboardingCarouselTitle1 => 'One number for all your money';
@@ -221,7 +226,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingCarouselTitle3 => 'Always in sync';
 
   @override
-  String get onboardingCarouselBody3 => 'Rates updated hourly. Your data syncs across devices.';
+  String get onboardingCarouselBody3 =>
+      'Rates updated hourly. Your data syncs across devices.';
 
   @override
   String get onboardingCarouselNext => 'Next';
@@ -275,7 +281,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analyticsEmptyTitle => 'No analytics yet';
 
   @override
-  String get analyticsEmptyBody => 'Add accounts and balances to see breakdown and updates.';
+  String get analyticsEmptyBody =>
+      'Add accounts and balances to see breakdown and updates.';
 
   @override
   String get actionsTitle => 'Actions';
@@ -290,13 +297,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unpriced => 'Unpriced';
 
   @override
-  String get overviewEmptyBody => 'Overview content will appear here once accounts are added.';
+  String get overviewEmptyBody =>
+      'Overview content will appear here once accounts are added.';
 
   @override
   String get overviewEmptyNoAccountsTitle => 'Create your first account';
 
   @override
-  String get overviewEmptyNoAccountsBody => 'Add an account to start tracking assets and totals.';
+  String get overviewEmptyNoAccountsBody =>
+      'Add an account to start tracking assets and totals.';
 
   @override
   String get overviewEmptyNoAccountsCta => 'Create account';
@@ -305,7 +314,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewEmptyNoAssetsTitle => 'Add your first asset';
 
   @override
-  String get overviewEmptyNoAssetsBody => 'Add currencies or tokens you hold to an account.';
+  String get overviewEmptyNoAssetsBody =>
+      'Add currencies or tokens you hold to an account.';
 
   @override
   String get overviewEmptyNoAssetsCta => 'Add asset';
@@ -314,7 +324,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewEmptyNoBalancesTitle => 'Add your first balance';
 
   @override
-  String get overviewEmptyNoBalancesBody => 'Add a snapshot or change to start tracking totals.';
+  String get overviewEmptyNoBalancesBody =>
+      'Add a snapshot or change to start tracking totals.';
 
   @override
   String get overviewEmptyNoBalancesCta => 'Add balance';
@@ -323,7 +334,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewPricedTotalLabel => 'Priced total';
 
   @override
-  String get overviewMissingRatesTitle => 'Some holdings can’t be priced right now.';
+  String get overviewMissingRatesTitle =>
+      'Some holdings can’t be priced right now.';
 
   @override
   String get overviewMissingRatesBody =>
@@ -419,7 +431,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsTypeBankDescription => 'Bank account or savings';
 
   @override
-  String get accountsTypeCryptoWalletDescription => 'Crypto wallet or self-custody';
+  String get accountsTypeCryptoWalletDescription =>
+      'Crypto wallet or self-custody';
 
   @override
   String get accountsTypeExchangeDescription => 'Trading or exchange account';
@@ -446,7 +459,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsArchiveConfirmTitle => 'Archive account?';
 
   @override
-  String get accountsArchiveConfirmBody => 'This account will be hidden from totals.';
+  String get accountsArchiveConfirmBody =>
+      'This account will be hidden from totals.';
 
   @override
   String get accountsUnarchiveConfirmTitle => 'Unarchive account?';
@@ -465,19 +479,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountDetailEmptyTitle => 'No assets in this account';
 
   @override
-  String get accountDetailEmptyBody => 'Add the currencies or tokens you hold here.';
+  String get accountDetailEmptyBody =>
+      'Add the currencies or tokens you hold here.';
 
   @override
-  String get accountDetailArchivedHint => 'Archived — hidden from totals by default.';
+  String get accountDetailArchivedHint =>
+      'Archived — hidden from totals by default.';
 
   @override
   String get accountDetailTotalLabel => 'Total';
 
   @override
-  String get accountDetailMissingRatesTitle => 'Some assets can’t be priced right now.';
+  String get accountDetailMissingRatesTitle =>
+      'Some assets can’t be priced right now.';
 
   @override
-  String get accountDetailMissingRatesBody => 'Unpriced assets are excluded from the priced total.';
+  String get accountDetailMissingRatesBody =>
+      'Unpriced assets are excluded from the priced total.';
 
   @override
   String get assetAddTitle => 'Add asset';
@@ -528,7 +546,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subaccountEmptyTitle => 'No subaccounts yet';
 
   @override
-  String get subaccountEmptyBody => 'Add the holdings you have in this account.';
+  String get subaccountEmptyBody =>
+      'Add the holdings you have in this account.';
 
   @override
   String get subaccountListTitle => 'Subaccounts';
@@ -549,7 +568,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subaccountDeleteConfirmTitle => 'Delete subaccount?';
 
   @override
-  String get subaccountDeleteConfirmBody => 'This will delete its balance history.';
+  String get subaccountDeleteConfirmBody =>
+      'This will delete its balance history.';
 
   @override
   String get assetRemove => 'Remove';
@@ -558,7 +578,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetRemoveConfirmTitle => 'Remove asset?';
 
   @override
-  String get assetRemoveConfirmBody => 'This will remove the asset and delete its balance history.';
+  String get assetRemoveConfirmBody =>
+      'This will remove the asset and delete its balance history.';
 
   @override
   String get positionCurrentBalanceLabel => 'Current balance';
@@ -567,7 +588,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get positionConvertedValueLabel => 'Value';
 
   @override
-  String get positionUnpricedHint => 'Converted value isn’t available until rates are updated.';
+  String get positionUnpricedHint =>
+      'Converted value isn’t available until rates are updated.';
 
   @override
   String get positionAddBalance => 'Add balance';
@@ -582,7 +604,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get positionHistoryEmptyTitle => 'No balance history yet';
 
   @override
-  String get positionHistoryEmptyBody => 'Add a snapshot or change to start tracking.';
+  String get positionHistoryEmptyBody =>
+      'Add a snapshot or change to start tracking.';
 
   @override
   String get positionHistoryEmptyCta => 'Add your first balance';
@@ -618,10 +641,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addBalanceAmountLabel => 'Amount';
 
   @override
-  String get addBalanceHelperSnapshot => 'A snapshot is your balance on that date.';
+  String get addBalanceHelperSnapshot =>
+      'A snapshot is your balance on that date.';
 
   @override
-  String get addBalanceHelperDelta => 'A change is how much it increased or decreased.';
+  String get addBalanceHelperDelta =>
+      'A change is how much it increased or decreased.';
 
   @override
   String get addBalanceValidationAmount => 'Enter an amount';
@@ -636,16 +661,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallHeaderTitle => 'Upgrade';
 
   @override
-  String get paywallReasonAccounts => 'You’ve reached the free limit of 5 accounts.';
+  String get paywallReasonAccounts =>
+      'You’ve reached the free limit of 5 accounts.';
 
   @override
-  String get paywallReasonSubaccounts => 'You’ve reached the free limit of 20 subaccounts.';
+  String get paywallReasonSubaccounts =>
+      'You’ve reached the free limit of 20 subaccounts.';
 
   @override
   String get paywallReasonBaseCurrency => 'Unlock any base currency.';
 
   @override
-  String get paywallEntitlementsError => 'Couldn\'t verify subscription; try again.';
+  String get paywallEntitlementsError =>
+      'Couldn\'t verify subscription; try again.';
 
   @override
   String get paywallDismiss => 'Not now';
@@ -753,7 +781,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dsPreviewCardPortfolioTitle => 'Portfolio snapshot';
 
   @override
-  String get dsPreviewCardPortfolioBody => 'Diversified across 6 accounts and 19 assets.';
+  String get dsPreviewCardPortfolioBody =>
+      'Diversified across 6 accounts and 19 assets.';
 
   @override
   String get dsPreviewCardViewReport => 'View report';
@@ -792,7 +821,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dsPreviewDialogDeleteAccountTitle => 'Delete account';
 
   @override
-  String get dsPreviewDialogDeleteAccountBody => 'This action cannot be undone.';
+  String get dsPreviewDialogDeleteAccountBody =>
+      'This action cannot be undone.';
 
   @override
   String get dsPreviewDialogCancel => 'Cancel';
@@ -810,7 +840,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dsPreviewStateEmptyTitle => 'No accounts';
 
   @override
-  String get dsPreviewStateEmptyBody => 'Create your first account to get started.';
+  String get dsPreviewStateEmptyBody =>
+      'Create your first account to get started.';
 
   @override
   String get dsPreviewStateEmptyAction => 'Create account';
@@ -819,7 +850,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dsPreviewStateErrorTitle => 'Something went wrong';
 
   @override
-  String get dsPreviewStateErrorBody => 'We could not load your data. Try again.';
+  String get dsPreviewStateErrorBody =>
+      'We could not load your data. Try again.';
 
   @override
   String dsPreviewPercentThisMonth(String percent) {
@@ -859,7 +891,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSignOut => 'Sign out';
 
   @override
-  String get settingsEntitlementsError => 'Couldn\'t verify subscription status.';
+  String get settingsEntitlementsError =>
+      'Couldn\'t verify subscription status.';
 
   @override
   String get baseCurrencySettingsTitle => 'Base currency';
@@ -868,7 +901,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get baseCurrencySettingsCurrentTitle => 'Current selection';
 
   @override
-  String get baseCurrencySettingsCurrentBody => 'Totals will be converted to this currency.';
+  String get baseCurrencySettingsCurrentBody =>
+      'Totals will be converted to this currency.';
 
   @override
   String get baseCurrencySettingsPickerTitle => 'Choose currency';
@@ -880,7 +914,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get baseCurrencySettingsLoadErrorTitle => 'Couldn\'t load currencies.';
 
   @override
-  String get baseCurrencySettingsPaywallHint => 'Upgrade to unlock more base currencies.';
+  String get baseCurrencySettingsPaywallHint =>
+      'Upgrade to unlock more base currencies.';
 
   @override
   String get baseCurrencySettingsSearchHint => 'Search currency';
@@ -934,7 +969,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'You\'re on the free plan. Upgrade to unlock all base currencies.';
 
   @override
-  String get subscriptionPaidBody => 'You\'re on the paid plan. Thanks for supporting Asset Tuner.';
+  String get subscriptionPaidBody =>
+      'You\'re on the paid plan. Thanks for supporting Asset Tuner.';
 
   @override
   String get subscriptionPlaceholderBody =>
@@ -959,7 +995,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get archivedAccountsEmptyTitle => 'No archived accounts';
 
   @override
-  String get archivedAccountsEmptyBody => 'Accounts you archive will appear here.';
+  String get archivedAccountsEmptyBody =>
+      'Accounts you archive will appear here.';
 
   @override
   String get profileLanguage => 'Language';
@@ -998,7 +1035,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileDeleteAccountTitle => 'Delete account';
 
   @override
-  String get profileDeleteAccountBody => 'This will remove your local data and sign you out.';
+  String get profileDeleteAccountBody =>
+      'This will remove your local data and sign you out.';
 
   @override
   String get profileDeleteAccountCta => 'Delete account';

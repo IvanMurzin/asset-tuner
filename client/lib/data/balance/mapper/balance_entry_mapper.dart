@@ -21,6 +21,7 @@ abstract final class BalanceEntryMapper {
       subaccountId: stored.accountAssetId,
       entryDateIso: stored.entryDateIso,
       snapshotAmount: Decimal.parse(stored.snapshotAmount ?? '0'),
+      amountDecimals: _decimalsFromStored(stored.snapshotAmount),
       diffAmount: stored.impliedDeltaAmount == null
           ? null
           : Decimal.parse(stored.impliedDeltaAmount!),
@@ -39,5 +40,16 @@ abstract final class BalanceEntryMapper {
       impliedDeltaAmount: dto.diffAmount?.toString(),
       createdAtIso: dto.createdAtIso,
     );
+  }
+
+  static int _decimalsFromStored(String? amount) {
+    if (amount == null || amount.isEmpty) {
+      return 0;
+    }
+    final index = amount.indexOf('.');
+    if (index < 0) {
+      return 0;
+    }
+    return amount.length - index - 1;
   }
 }

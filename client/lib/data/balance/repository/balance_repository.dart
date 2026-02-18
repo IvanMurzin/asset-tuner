@@ -20,28 +20,31 @@ class BalanceRepository implements IBalanceRepository {
   Future<Result<BalanceHistoryPageEntity>> fetchHistory({
     required String subaccountId,
     required int limit,
-    int? offset,
+    String? cursor,
   }) async {
     try {
-      final start = offset ?? 0;
-      final pageDtos = await _dataSource.fetchHistory(
+      final response = await _dataSource.fetchHistory(
         subaccountId: subaccountId,
         limit: limit,
-        offset: start,
+        cursor: cursor,
       );
-      final nextOffset = pageDtos.length == limit ? start + limit : null;
 
-      logger.i('BalanceRepository.fetchHistory success: ${pageDtos.length}');
+      logger.i(
+        'BalanceRepository.fetchHistory success: ${response.items.length}',
+      );
       return Success(
         BalanceHistoryPageEntity(
-          entries: pageDtos.map(BalanceEntryMapper.toEntity).toList(),
-          nextOffset: nextOffset,
+          entries: response.items.map(BalanceEntryMapper.toEntity).toList(),
+          nextCursor: response.nextCursor,
         ),
       );
     } catch (error) {
       logger.e('BalanceRepository.fetchHistory failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load history'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to load history',
+        ),
       );
     }
   }
@@ -63,7 +66,10 @@ class BalanceRepository implements IBalanceRepository {
     } catch (error) {
       logger.e('BalanceRepository.updateBalance failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to save balance'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to save balance',
+        ),
       );
     }
   }
@@ -93,12 +99,17 @@ class BalanceRepository implements IBalanceRepository {
         final latest = entries.last;
         result[subaccountId] = latest.snapshotAmount;
       }
-      logger.i('BalanceRepository.fetchCurrentBalances success: ${result.length}');
+      logger.i(
+        'BalanceRepository.fetchCurrentBalances success: ${result.length}',
+      );
       return Success(result);
     } catch (error) {
       logger.e('BalanceRepository.fetchCurrentBalances failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to compute balances'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to compute balances',
+        ),
       );
     }
   }

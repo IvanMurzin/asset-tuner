@@ -15,7 +15,10 @@ abstract final class SupabaseFailureMapper {
     }
 
     if (error is EdgeFunctionException) {
-      return _createLocalizedFailure(code: error.code, rawMessage: error.message);
+      return _createLocalizedFailure(
+        code: _normalizeCode(error.code),
+        rawMessage: error.message,
+      );
     }
 
     if (error is AuthException) {
@@ -26,11 +29,19 @@ abstract final class SupabaseFailureMapper {
       }
       final normalized = message.toLowerCase();
       if (normalized.contains('invalid login') ||
-          normalized.contains('invalid') && normalized.contains('credentials')) {
-        return _createLocalizedFailure(code: 'unauthorized', rawMessage: message);
+          normalized.contains('invalid') &&
+              normalized.contains('credentials')) {
+        return _createLocalizedFailure(
+          code: 'unauthorized',
+          rawMessage: message,
+        );
       }
-      if (normalized.contains('rate limit') || normalized.contains('too many')) {
-        return _createLocalizedFailure(code: 'rate_limited', rawMessage: message);
+      if (normalized.contains('rate limit') ||
+          normalized.contains('too many')) {
+        return _createLocalizedFailure(
+          code: 'rate_limited',
+          rawMessage: message,
+        );
       }
       if (normalized.contains('already') && normalized.contains('registered')) {
         return _createLocalizedFailure(code: 'conflict', rawMessage: message);
@@ -49,27 +60,44 @@ abstract final class SupabaseFailureMapper {
       if (details is Map<String, dynamic>) {
         final edgeError = details['error'];
         if (edgeError is Map<String, dynamic>) {
-          final code = (edgeError['code'] as String?) ?? _mapHttpStatus(error.status);
+          final code =
+              (edgeError['code'] as String?) ?? _mapHttpStatus(error.status);
           final message =
-              (edgeError['message'] as String?) ?? (fallbackMessage ?? 'Request failed');
-          return _createLocalizedFailure(code: code, rawMessage: message);
+              (edgeError['message'] as String?) ??
+              (fallbackMessage ?? 'Request failed');
+          return _createLocalizedFailure(
+            code: _normalizeCode(code),
+            rawMessage: message,
+          );
         }
       }
       return _createLocalizedFailure(
-        code: _mapHttpStatus(error.status),
+        code: _normalizeCode(_mapHttpStatus(error.status)),
         rawMessage: fallbackMessage ?? 'Request failed',
       );
     }
 
     if (error is StorageException) {
-      return _createLocalizedFailure(code: 'unknown', rawMessage: error.message);
+      return _createLocalizedFailure(
+        code: 'unknown',
+        rawMessage: error.message,
+      );
     }
 
-    return _createLocalizedFailure(code: 'unknown', rawMessage: fallbackMessage ?? 'Unknown error');
+    return _createLocalizedFailure(
+      code: 'unknown',
+      rawMessage: fallbackMessage ?? 'Unknown error',
+    );
   }
 
-  static Failure _createLocalizedFailure({required String code, required String rawMessage}) {
-    final localizedMessage = resolveFailureMessage(code: code, rawMessage: rawMessage);
+  static Failure _createLocalizedFailure({
+    required String code,
+    required String rawMessage,
+  }) {
+    final localizedMessage = resolveFailureMessage(
+      code: code,
+      rawMessage: rawMessage,
+    );
     return Failure(code: code, message: localizedMessage);
   }
 
@@ -80,6 +108,23 @@ abstract final class SupabaseFailureMapper {
       '22P02' => 'validation',
       '42501' => 'forbidden',
       _ => 'unknown',
+    };
+  }
+
+  static String _normalizeCode(String code) {
+    final normalized = code.trim().toUpperCase();
+    return switch (normalized) {
+      'UNAUTHORIZED' => 'unauthorized',
+      'FORBIDDEN' => 'forbidden',
+      'NOT_FOUND' => 'not_found',
+      'VALIDATION_ERROR' => 'validation',
+      'LIMIT_ACCOUNTS_REACHED' => 'limit_accounts_reached',
+      'LIMIT_SUBACCOUNTS_REACHED' => 'limit_subaccounts_reached',
+      'ASSET_NOT_ALLOWED_FOR_PLAN' => 'asset_not_allowed_for_plan',
+      'RATE_LIMITED' => 'rate_limited',
+      'EXTERNAL_API_ERROR' => 'external_api_error',
+      'INTERNAL_ERROR' => 'internal_server_error',
+      _ => code,
     };
   }
 

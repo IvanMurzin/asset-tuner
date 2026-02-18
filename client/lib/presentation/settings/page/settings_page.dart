@@ -43,7 +43,12 @@ class SettingsPage extends StatelessWidget {
           final typography = context.dsTypography;
           final colors = context.dsColors;
 
-          final bannerText = _bannerText(context, l10n, state.failureCode, state.failureMessage);
+          final bannerText = _bannerText(
+            context,
+            l10n,
+            state.failureCode,
+            state.failureMessage,
+          );
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.settingsTitle),
@@ -66,7 +71,9 @@ class SettingsPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            DSSectionTitle(title: l10n.settingsSectionPreferences),
+                            DSSectionTitle(
+                              title: l10n.settingsSectionPreferences,
+                            ),
                             SizedBox(height: spacing.s12),
                             DSCard(
                               padding: EdgeInsets.zero,
@@ -85,23 +92,30 @@ class SettingsPage extends StatelessWidget {
                                   title: l10n.splashErrorTitle,
                                   message: l10n.errorGeneric,
                                   actionLabel: l10n.splashRetry,
-                                  onAction: () => context.read<SettingsCubit>().load(),
+                                  onAction: () =>
+                                      context.read<SettingsCubit>().load(),
                                 ),
                                 SettingsStatus.ready => Column(
                                   children: [
                                     DSListRow(
                                       title: l10n.settingsBaseCurrency,
                                       trailing: SettingsRowTrailing(
-                                        value: state.baseCurrency ?? l10n.notAvailable,
+                                        value:
+                                            state.baseCurrency ??
+                                            l10n.notAvailable,
                                       ),
-                                      onTap: () => context.push(AppRoutes.baseCurrencySettings),
+                                      onTap: () => context.push(
+                                        AppRoutes.baseCurrencySettings,
+                                      ),
                                     ),
                                   ],
                                 ),
                               },
                             ),
                             SizedBox(height: spacing.s24),
-                            DSSectionTitle(title: l10n.settingsSectionSubscription),
+                            DSSectionTitle(
+                              title: l10n.settingsSectionSubscription,
+                            ),
                             SizedBox(height: spacing.s12),
                             DSCard(
                               padding: EdgeInsets.zero,
@@ -120,14 +134,15 @@ class SettingsPage extends StatelessWidget {
                                   title: l10n.splashErrorTitle,
                                   message: l10n.errorGeneric,
                                   actionLabel: l10n.splashRetry,
-                                  onAction: () => context.read<SettingsCubit>().load(),
+                                  onAction: () =>
+                                      context.read<SettingsCubit>().load(),
                                 ),
                                 SettingsStatus.ready => Column(
                                   children: [
                                     DSListRow(
                                       title: l10n.settingsPlanStatus,
                                       trailing: Text(
-                                        (state.plan ?? 'free') == 'paid'
+                                        (state.plan ?? 'free') == 'pro'
                                             ? l10n.settingsPlanPaid
                                             : l10n.settingsPlanFree,
                                         style: typography.body.copyWith(
@@ -142,7 +157,9 @@ class SettingsPage extends StatelessWidget {
                                         Icons.chevron_right,
                                         color: colors.textTertiary,
                                       ),
-                                      onTap: () => context.push(AppRoutes.manageSubscription),
+                                      onTap: () => context.push(
+                                        AppRoutes.manageSubscription,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -172,7 +189,12 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  String? _bannerText(BuildContext context, AppLocalizations l10n, String? code, String? message) {
+  String? _bannerText(
+    BuildContext context,
+    AppLocalizations l10n,
+    String? code,
+    String? message,
+  ) {
     if (code == null) return null;
     if (code == 'entitlements') return l10n.settingsEntitlementsError;
     return message;

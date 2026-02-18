@@ -43,7 +43,12 @@ class ProfilePage extends StatelessWidget {
         builder: (context, state) {
           final spacing = context.dsSpacing;
 
-          final bannerText = _bannerText(context, l10n, state.failureCode, state.failureMessage);
+          final bannerText = _bannerText(
+            context,
+            l10n,
+            state.failureCode,
+            state.failureMessage,
+          );
 
           return Scaffold(
             appBar: DSAppBar(title: l10n.profileTitle),
@@ -77,7 +82,8 @@ class ProfilePage extends StatelessWidget {
                                 children: [
                                   DSCard(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         DSSkeleton(height: 26),
                                         SizedBox(height: spacing.s12),
@@ -101,7 +107,8 @@ class ProfilePage extends StatelessWidget {
                                     title: l10n.splashErrorTitle,
                                     message: l10n.errorGeneric,
                                     actionLabel: l10n.splashRetry,
-                                    onAction: () => context.read<ProfileCubit>().load(),
+                                    onAction: () =>
+                                        context.read<ProfileCubit>().load(),
                                   ),
                                 ],
                               ),
@@ -115,9 +122,13 @@ class ProfilePage extends StatelessWidget {
                                   );
                                   if (context.mounted) {
                                     if (result != null) {
-                                      context.read<ProfileCubit>().setPlan(result);
+                                      context.read<ProfileCubit>().setPlan(
+                                        result,
+                                      );
                                     }
-                                    await context.read<ProfileCubit>().refresh();
+                                    await context
+                                        .read<ProfileCubit>()
+                                        .refresh();
                                   }
                                 },
                                 onBaseCurrencyTap: () async {
@@ -126,13 +137,19 @@ class ProfilePage extends StatelessWidget {
                                   );
                                   if (context.mounted) {
                                     if (result != null) {
-                                      context.read<ProfileCubit>().setBaseCurrency(result);
+                                      context
+                                          .read<ProfileCubit>()
+                                          .setBaseCurrency(result);
                                     }
-                                    await context.read<ProfileCubit>().refresh();
+                                    await context
+                                        .read<ProfileCubit>()
+                                        .refresh();
                                   }
                                 },
-                                onArchivedTap: () => context.push(AppRoutes.archivedAccounts),
-                                onAccountActionsTap: () => context.push(AppRoutes.accountActions),
+                                onArchivedTap: () =>
+                                    context.push(AppRoutes.archivedAccounts),
+                                onAccountActionsTap: () =>
+                                    context.push(AppRoutes.accountActions),
                               ),
                             },
                           ),
@@ -149,7 +166,12 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  String? _bannerText(BuildContext context, AppLocalizations l10n, String? code, String? message) {
+  String? _bannerText(
+    BuildContext context,
+    AppLocalizations l10n,
+    String? code,
+    String? message,
+  ) {
     if (code == null) return null;
     if (code == 'entitlements') return l10n.settingsEntitlementsError;
     return message;
@@ -183,11 +205,11 @@ class _ProfileReadyContent extends StatelessWidget {
       children: [
         ProfileHeaderCard(
           email: state.email ?? l10n.notAvailable,
-          planLabel: (state.plan ?? 'free') == 'paid'
+          planLabel: (state.plan ?? 'free') == 'pro'
               ? l10n.settingsPlanPaid
               : l10n.settingsPlanFree,
           baseCurrency: state.baseCurrency ?? l10n.notAvailable,
-          isPaid: (state.plan ?? 'free') == 'paid',
+          isPaid: (state.plan ?? 'free') == 'pro',
           onManageSubscriptionTap: onManageSubscriptionTap,
         ),
         SizedBox(height: spacing.s24),
@@ -199,7 +221,9 @@ class _ProfileReadyContent extends StatelessWidget {
             children: [
               DSListRow(
                 title: l10n.settingsBaseCurrency,
-                trailing: SettingsRowTrailing(value: state.baseCurrency ?? l10n.notAvailable),
+                trailing: SettingsRowTrailing(
+                  value: state.baseCurrency ?? l10n.notAvailable,
+                ),
                 showDivider: true,
                 onTap: onBaseCurrencyTap,
               ),
@@ -215,8 +239,14 @@ class _ProfileReadyContent extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: DSListRow(
             title: l10n.settingsArchivedAccounts,
-            leading: Icon(Icons.archive_outlined, color: context.dsColors.textTertiary),
-            trailing: Icon(Icons.chevron_right, color: context.dsColors.textTertiary),
+            leading: Icon(
+              Icons.archive_outlined,
+              color: context.dsColors.textTertiary,
+            ),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: context.dsColors.textTertiary,
+            ),
             onTap: onArchivedTap,
           ),
         ),
@@ -228,8 +258,14 @@ class _ProfileReadyContent extends StatelessWidget {
           child: DSListRow(
             title: l10n.profileAccountActionsTitle,
             subtitle: l10n.profileAccountActionsSubtitle,
-            leading: Icon(Icons.security_outlined, color: context.dsColors.textTertiary),
-            trailing: Icon(Icons.chevron_right, color: context.dsColors.textTertiary),
+            leading: Icon(
+              Icons.security_outlined,
+              color: context.dsColors.textTertiary,
+            ),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: context.dsColors.textTertiary,
+            ),
             onTap: onAccountActionsTap,
           ),
         ),

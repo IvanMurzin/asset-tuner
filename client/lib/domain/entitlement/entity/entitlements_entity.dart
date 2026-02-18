@@ -1,14 +1,38 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+class EntitlementsEntity {
+  const EntitlementsEntity({
+    this.maxAccounts,
+    this.maxSubaccounts,
+    int? fiatLimit,
+    int? cryptoLimit,
+    bool? anyBaseCurrency,
+    Set<String>? freeBaseCurrencyCodes,
+  }) : fiatLimit = fiatLimit ?? (anyBaseCurrency == true ? null : 5),
+       cryptoLimit = cryptoLimit ?? (anyBaseCurrency == true ? null : 5),
+       freeBaseCurrencyCodes = freeBaseCurrencyCodes ?? const <String>{};
 
-part 'entitlements_entity.freezed.dart';
+  final int? maxAccounts;
+  final int? maxSubaccounts;
+  final int? fiatLimit;
+  final int? cryptoLimit;
+  final Set<String> freeBaseCurrencyCodes;
 
-@freezed
-abstract class EntitlementsEntity with _$EntitlementsEntity {
-  const factory EntitlementsEntity({
-    required int maxAccounts,
-    required int maxSubaccounts,
-    required bool anyBaseCurrency,
-    required Set<String> freeBaseCurrencyCodes,
-    DateTime? expiresAt,
-  }) = _EntitlementsEntity;
+  // Backward-compatible view for existing presentation logic.
+  bool get anyBaseCurrency => fiatLimit == null;
+
+  EntitlementsEntity copyWith({
+    int? maxAccounts,
+    int? maxSubaccounts,
+    int? fiatLimit,
+    int? cryptoLimit,
+    Set<String>? freeBaseCurrencyCodes,
+  }) {
+    return EntitlementsEntity(
+      maxAccounts: maxAccounts ?? this.maxAccounts,
+      maxSubaccounts: maxSubaccounts ?? this.maxSubaccounts,
+      fiatLimit: fiatLimit ?? this.fiatLimit,
+      cryptoLimit: cryptoLimit ?? this.cryptoLimit,
+      freeBaseCurrencyCodes:
+          freeBaseCurrencyCodes ?? this.freeBaseCurrencyCodes,
+    );
+  }
 }
