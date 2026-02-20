@@ -292,13 +292,7 @@ class FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
-    return Success(
-      ProfileBootstrapEntity(
-        profile: profile,
-        isNew: false,
-        wasBaseCurrencyDefaulted: false,
-      ),
-    );
+    return Success(ProfileBootstrapEntity(profile: profile));
   }
 
   @override
@@ -396,32 +390,32 @@ void main() {
         BalanceEntryEntity(
           id: 'e1',
           subaccountId: 'pos_1',
-          entryDate: DateTime(2026, 2, 1),
-          snapshotAmount: Decimal.parse('100'),
+          amountAtomic: Decimal.parse('10000'),
+          amountDecimals: 2,
           diffAmount: Decimal.zero,
           createdAt: DateTime(2026, 2, 1, 10, 0),
         ),
         BalanceEntryEntity(
           id: 'e2',
           subaccountId: 'pos_1',
-          entryDate: DateTime(2026, 2, 5),
-          snapshotAmount: Decimal.parse('80'),
+          amountAtomic: Decimal.parse('8000'),
+          amountDecimals: 2,
           diffAmount: Decimal.parse('-20'),
           createdAt: DateTime(2026, 2, 5, 11, 0),
         ),
         BalanceEntryEntity(
           id: 'e3',
           subaccountId: 'pos_1',
-          entryDate: DateTime(2026, 2, 7),
-          snapshotAmount: Decimal.parse('50'),
+          amountAtomic: Decimal.parse('5000'),
+          amountDecimals: 2,
           diffAmount: Decimal.parse('-30'),
           createdAt: DateTime(2026, 2, 7, 9, 0),
         ),
         BalanceEntryEntity(
           id: 'e4',
           subaccountId: 'pos_1',
-          entryDate: DateTime(2026, 2, 8),
-          snapshotAmount: Decimal.parse('60'),
+          amountAtomic: Decimal.parse('6000'),
+          amountDecimals: 2,
           diffAmount: Decimal.parse('10'),
           createdAt: DateTime(2026, 2, 8, 12, 0),
         ),

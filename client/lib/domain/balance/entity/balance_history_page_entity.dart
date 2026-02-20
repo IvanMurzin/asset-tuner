@@ -1,8 +1,12 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
 
-class BalanceHistoryPageEntity {
-  const BalanceHistoryPageEntity({required this.entries, this.nextCursor});
+part 'balance_history_page_entity.freezed.dart';
 
-  final List<BalanceEntryEntity> entries;
-  final String? nextCursor;
+@freezed
+abstract class BalanceHistoryPageEntity with _$BalanceHistoryPageEntity {
+  const factory BalanceHistoryPageEntity({
+    required List<BalanceEntryEntity> entries,
+    String? nextCursor,
+  }) = _BalanceHistoryPageEntity;
 }

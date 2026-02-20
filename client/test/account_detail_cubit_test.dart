@@ -252,8 +252,6 @@ class FakeProfileRepository implements IProfileRepository {
     return Success(
       ProfileBootstrapEntity(
         profile: profile,
-        isNew: false,
-        wasBaseCurrencyDefaulted: false,
       ),
     );
   }

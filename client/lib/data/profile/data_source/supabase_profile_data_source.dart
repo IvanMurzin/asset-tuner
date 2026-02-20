@@ -17,11 +17,7 @@ class SupabaseProfileDataSource {
       method: HttpMethod.get,
     );
     final profile = ProfileDto.fromMeJson(payload);
-    return ProfileBootstrapResponseDto(
-      profile: profile,
-      isNew: false,
-      wasBaseCurrencyDefaulted: false,
-    );
+    return ProfileBootstrapResponseDto(profile: profile);
   }
 
   Future<ProfileDto> fetchProfile() async {

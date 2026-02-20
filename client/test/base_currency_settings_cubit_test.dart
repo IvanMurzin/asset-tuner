@@ -91,8 +91,6 @@ class FakeProfileRepository implements IProfileRepository {
         Success(
           ProfileBootstrapEntity(
             profile: freeProfile(),
-            isNew: false,
-            wasBaseCurrencyDefaulted: false,
           ),
         );
   }
@@ -120,7 +118,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'USD',
     name: 'United States Dollar',
     rank: 1,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a2',
@@ -128,7 +126,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'EUR',
     name: 'Euro',
     rank: 2,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a3',
@@ -136,7 +134,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'GBP',
     name: 'British Pound',
     rank: 3,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a4',
@@ -144,7 +142,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'JPY',
     name: 'Japanese Yen',
     rank: 4,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a5',
@@ -152,7 +150,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'CNY',
     name: 'Chinese Yuan',
     rank: 5,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a6',
@@ -160,7 +158,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'AUD',
     name: 'Australian Dollar',
     rank: 6,
-    isUnlocked: false,
+    isLocked: true,
   ),
 ];
 
@@ -228,8 +226,6 @@ void main() {
           ensureResult: Success(
             ProfileBootstrapEntity(
               profile: freeProfile(),
-              isNew: false,
-              wasBaseCurrencyDefaulted: false,
             ),
           ),
         ),
@@ -260,8 +256,6 @@ void main() {
           ensureResult: Success(
             ProfileBootstrapEntity(
               profile: paidProfile(),
-              isNew: false,
-              wasBaseCurrencyDefaulted: false,
             ),
           ),
         ),

@@ -22,6 +22,7 @@ import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
@@ -40,7 +41,10 @@ void main() {
       () => ProfileCubit(
         GetCachedSessionUseCase(
           _FakeAuthRepository(
-            cachedSession: const AuthSessionEntity(userId: 'u1', email: 'u1@example.com'),
+            cachedSession: const AuthSessionEntity(
+              userId: 'u1',
+              email: 'u1@example.com',
+            ),
           ),
         ),
         GetProfileUseCase(_FakeProfileRepository(freeProfile())),
@@ -51,11 +55,16 @@ void main() {
     );
   });
 
-  testWidgets('Profile shows base currency, language, and subscription rows', (tester) async {
+  testWidgets('Profile shows base currency, language, and subscription rows', (
+    tester,
+  ) async {
     final router = GoRouter(
       initialLocation: AppRoutes.profile,
       routes: [
-        GoRoute(path: AppRoutes.profile, builder: (context, state) => const ProfilePage()),
+        GoRoute(
+          path: AppRoutes.profile,
+          builder: (context, state) => const ProfilePage(),
+        ),
         GoRoute(
           path: AppRoutes.baseCurrencySettings,
           builder: (context, state) => const BaseCurrencySettingsPage(),
@@ -125,32 +134,52 @@ class _FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> requestEmailOtp(String email) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<void>> signInWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(
+    String email,
+    String password,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(
+    String email,
+    String code,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<AuthSessionEntity>> signInWithOAuth(
+    AuthProvider provider,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -165,7 +194,9 @@ class _FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<void>> deleteAccount() async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -176,9 +207,7 @@ class _FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
-    return Success(
-      ProfileBootstrapEntity(profile: profile, isNew: false, wasBaseCurrencyDefaulted: false),
-    );
+    return Success(ProfileBootstrapEntity(profile: profile));
   }
 
   @override
@@ -188,11 +217,22 @@ class _FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
-    return Success(profile.copyWith(baseCurrency: baseCurrency));
+    return Success(
+      profile.copyWith(
+        baseAsset: AssetEntity(
+          id: '${baseCurrency.toLowerCase()}-asset',
+          kind: AssetKind.fiat,
+          code: baseCurrency,
+          name: baseCurrency,
+        ),
+      ),
+    );
   }
 
   @override
   Future<Result<ProfileEntity>> updatePlan(String plan) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }

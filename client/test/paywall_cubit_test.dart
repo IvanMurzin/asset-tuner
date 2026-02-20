@@ -138,8 +138,6 @@ void main() {
       ensureResult: Success(
         ProfileBootstrapEntity(
           profile: freeProfile(),
-          isNew: false,
-          wasBaseCurrencyDefaulted: false,
         ),
       ),
       updatePlanResult: const FailureResult(Failure(code: 'validation', message: 'Not used')),

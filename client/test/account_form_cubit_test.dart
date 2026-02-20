@@ -88,7 +88,7 @@ class FakeProfileRepository implements IProfileRepository {
   @override
   Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return Success(
-      ProfileBootstrapEntity(profile: profile, isNew: false, wasBaseCurrencyDefaulted: false),
+      ProfileBootstrapEntity(profile: profile),
     );
   }
 

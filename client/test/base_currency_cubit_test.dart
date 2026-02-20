@@ -40,27 +40,43 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(provider) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<void>> signInWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(
+    String email,
+    String password,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(
+    String email,
+    String code,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -97,12 +113,16 @@ class FakeProfileRepository implements IProfileRepository {
 
   @override
   Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
   Future<Result<ProfileEntity>> updatePlan(String plan) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 }
 
@@ -113,7 +133,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'USD',
     name: 'United States Dollar',
     rank: 1,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a2',
@@ -121,7 +141,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'EUR',
     name: 'Euro',
     rank: 2,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a3',
@@ -129,7 +149,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'GBP',
     name: 'British Pound',
     rank: 3,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a4',
@@ -137,7 +157,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'JPY',
     name: 'Japanese Yen',
     rank: 4,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a5',
@@ -145,7 +165,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'CNY',
     name: 'Chinese Yuan',
     rank: 5,
-    isUnlocked: true,
+    isLocked: false,
   ),
   const AssetPickerItemEntity(
     id: 'a6',
@@ -153,7 +173,7 @@ List<AssetPickerItemEntity> _fiatPickerItems() => [
     code: 'AUD',
     name: 'Australian Dollar',
     rank: 6,
-    isUnlocked: false,
+    isLocked: true,
   ),
 ];
 
@@ -189,37 +209,49 @@ void main() {
     expect(cubit.state.navigation?.destination, BaseCurrencyDestination.signIn);
   });
 
-  test('continueNext routes to paywall when currency outside free top-5', () async {
-    final cubit = BaseCurrencyCubit(
-      GetCachedSessionUseCase(
-        FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
-        ),
-      ),
-      GetAssetsForSubaccountPickerUseCase(FakeAssetRepository()),
-      GetProfileUseCase(
-        FakeProfileRepository(
-          profileResult: const Success(
-            ProfileEntity(baseCurrency: 'USD', plan: 'free', entitlements: freeEntitlements),
+  test(
+    'continueNext routes to paywall when currency outside free top-5',
+    () async {
+      final cubit = BaseCurrencyCubit(
+        GetCachedSessionUseCase(
+          FakeAuthRepository(
+            cachedSession: const AuthSessionEntity(
+              userId: 'user_1',
+              email: 'user@example.com',
+            ),
           ),
         ),
-      ),
-      UpdateBaseCurrencyUseCase(FakeProfileRepository()),
-    );
+        GetAssetsForSubaccountPickerUseCase(FakeAssetRepository()),
+        GetProfileUseCase(
+          FakeProfileRepository(
+            profileResult: const Success(
+              ProfileEntity(plan: 'free', entitlements: freeEntitlements),
+            ),
+          ),
+        ),
+        UpdateBaseCurrencyUseCase(FakeProfileRepository()),
+      );
 
-    await Future<void>.delayed(const Duration(milliseconds: 1));
+      await Future<void>.delayed(const Duration(milliseconds: 1));
 
-    cubit.selectCurrency('AUD');
-    await cubit.continueNext();
+      cubit.selectCurrency('AUD');
+      await cubit.continueNext();
 
-    expect(cubit.state.navigation?.destination, BaseCurrencyDestination.paywall);
-  });
+      expect(
+        cubit.state.navigation?.destination,
+        BaseCurrencyDestination.paywall,
+      );
+    },
+  );
 
   test('continueNext saves when currency allowed', () async {
     final cubit = BaseCurrencyCubit(
       GetCachedSessionUseCase(
         FakeAuthRepository(
-          cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
+          cachedSession: const AuthSessionEntity(
+            userId: 'user_1',
+            email: 'user@example.com',
+          ),
         ),
       ),
       GetAssetsForSubaccountPickerUseCase(FakeAssetRepository()),

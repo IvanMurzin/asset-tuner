@@ -1,35 +1,23 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
 
-class ProfileEntity {
-  const ProfileEntity({
-    this.baseAssetId,
-    String? baseCurrencyCode,
-    String? baseCurrency,
-    required this.plan,
-    required this.entitlements,
-  }) : baseCurrencyCode = baseCurrencyCode ?? baseCurrency ?? 'USD';
+part 'profile_entity.freezed.dart';
 
-  final String? baseAssetId;
-  final String baseCurrencyCode;
-  final String plan;
-  final EntitlementsEntity entitlements;
+@freezed
+abstract class ProfileEntity with _$ProfileEntity {
+  const ProfileEntity._();
 
-  // Backward-compatible alias for existing presentation logic.
-  String get baseCurrency => baseCurrencyCode;
-
-  ProfileEntity copyWith({
+  const factory ProfileEntity({
+    String? userId,
     String? baseAssetId,
-    String? baseCurrencyCode,
-    String? baseCurrency,
-    String? plan,
-    EntitlementsEntity? entitlements,
-  }) {
-    return ProfileEntity(
-      baseAssetId: baseAssetId ?? this.baseAssetId,
-      baseCurrencyCode:
-          baseCurrencyCode ?? baseCurrency ?? this.baseCurrencyCode,
-      plan: plan ?? this.plan,
-      entitlements: entitlements ?? this.entitlements,
-    );
-  }
+    AssetEntity? baseAsset,
+    String? revenuecatAppUserId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    required String plan,
+    required EntitlementsEntity entitlements,
+  }) = _ProfileEntity;
+
+  String get baseCurrency => baseAsset?.code ?? 'USD';
 }

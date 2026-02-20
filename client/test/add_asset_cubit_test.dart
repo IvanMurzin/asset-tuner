@@ -92,7 +92,7 @@ class FakeProfileRepository implements IProfileRepository {
   @override
   Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
     return Success(
-      ProfileBootstrapEntity(profile: profile, isNew: false, wasBaseCurrencyDefaulted: false),
+      ProfileBootstrapEntity(profile: profile),
     );
   }
 
@@ -199,7 +199,7 @@ void main() {
               code: 'USD',
               name: 'United States Dollar',
               rank: 1,
-              isUnlocked: true,
+              isLocked: false,
             ),
           ],
         }),
@@ -240,7 +240,7 @@ void main() {
               code: 'BTC',
               name: 'Bitcoin',
               rank: 1,
-              isUnlocked: true,
+              isLocked: false,
             ),
           ],
         }),
@@ -282,7 +282,7 @@ void main() {
               code: 'BTC',
               name: 'Bitcoin',
               rank: 1,
-              isUnlocked: true,
+              isLocked: false,
             ),
           ],
         }),
@@ -319,7 +319,7 @@ void main() {
               code: 'USD',
               name: 'US Dollar',
               rank: 1,
-              isUnlocked: true,
+              isLocked: false,
             ),
           ],
           AssetKind.crypto: const [
@@ -329,7 +329,7 @@ void main() {
               code: 'BTC',
               name: 'Bitcoin',
               rank: 1,
-              isUnlocked: true,
+              isLocked: false,
             ),
           ],
         }),
@@ -369,7 +369,7 @@ void main() {
               code: 'SOL',
               name: 'Solana',
               rank: 12,
-              isUnlocked: false,
+              isLocked: true,
             ),
           ],
         }),

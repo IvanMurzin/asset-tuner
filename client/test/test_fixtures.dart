@@ -1,23 +1,33 @@
 import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 
 const freeEntitlements = EntitlementsEntity(
+  plan: 'free',
   maxAccounts: 5,
   maxSubaccounts: 20,
-  anyBaseCurrency: false,
-  freeBaseCurrencyCodes: {'USD', 'EUR', 'RUB'},
+  fiatLimit: 5,
+  cryptoLimit: 5,
 );
 
 const paidEntitlements = EntitlementsEntity(
+  plan: 'pro',
   maxAccounts: 999,
   maxSubaccounts: 9999,
-  anyBaseCurrency: true,
-  freeBaseCurrencyCodes: <String>{},
 );
+
+AssetEntity _baseAsset(String code) {
+  return AssetEntity(
+    id: '${code.toLowerCase()}-asset',
+    kind: AssetKind.fiat,
+    code: code,
+    name: code,
+  );
+}
 
 ProfileEntity freeProfile({String baseCurrency = 'USD'}) {
   return ProfileEntity(
-    baseCurrency: baseCurrency,
+    baseAsset: _baseAsset(baseCurrency),
     plan: 'free',
     entitlements: freeEntitlements,
   );
@@ -25,7 +35,7 @@ ProfileEntity freeProfile({String baseCurrency = 'USD'}) {
 
 ProfileEntity paidProfile({String baseCurrency = 'USD'}) {
   return ProfileEntity(
-    baseCurrency: baseCurrency,
+    baseAsset: _baseAsset(baseCurrency),
     plan: 'pro',
     entitlements: paidEntitlements,
   );

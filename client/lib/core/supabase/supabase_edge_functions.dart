@@ -26,11 +26,11 @@ class SupabaseEdgeFunctions {
       );
 
       final payload = response.data;
-      logger.i({
-        'function': 'response: ${method.name} $path',
-        'payload': payload,
-        'status': response.status,
-      });
+      // logger.i({
+      //   'function': 'response: ${method.name} $path',
+      //   'payload': payload,
+      //   'status': response.status,
+      // });
       if (payload is! Map<String, dynamic>) {
         throw StateError('Unexpected edge function response payload');
       }

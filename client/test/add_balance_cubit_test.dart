@@ -125,8 +125,8 @@ class FakeBalanceRepository implements IBalanceRepository {
       BalanceEntryEntity(
         id: 'be_1',
         subaccountId: subaccountId,
-        entryDate: entryDate,
-        snapshotAmount: snapshotAmount,
+        amountAtomic: Decimal.parse('0'),
+        amountDecimals: 0,
         diffAmount: null,
         createdAt: DateTime(2026, 2, 10),
       ),

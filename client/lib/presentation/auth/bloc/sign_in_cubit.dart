@@ -31,11 +31,19 @@ class SignInCubit extends Cubit<SignInState> {
   final GetCachedSessionUseCase _getCachedSessionUseCase;
 
   void updateEmail(String value) {
-    emit(state.copyWith(email: value, emailError: null, bannerFailureCode: null));
+    emit(
+      state.copyWith(email: value, emailError: null, bannerFailureCode: null),
+    );
   }
 
   void updatePassword(String value) {
-    emit(state.copyWith(password: value, passwordError: null, bannerFailureCode: null));
+    emit(
+      state.copyWith(
+        password: value,
+        passwordError: null,
+        bannerFailureCode: null,
+      ),
+    );
   }
 
   Future<void> signIn() async {
@@ -49,7 +57,10 @@ class SignInCubit extends Cubit<SignInState> {
     }
 
     emit(state.copyWith(status: SignInStatus.loading, bannerFailureCode: null));
-    final result = await _signInWithPasswordUseCase(state.email.trim(), state.password);
+    final result = await _signInWithPasswordUseCase(
+      state.email.trim(),
+      state.password,
+    );
     if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
@@ -91,7 +102,12 @@ class SignInCubit extends Cubit<SignInState> {
     final session = await _getCachedSessionUseCase();
     if (isClosed) return;
     if (session == null) {
-      emit(state.copyWith(status: SignInStatus.idle, bannerFailureCode: 'unauthorized'));
+      emit(
+        state.copyWith(
+          status: SignInStatus.idle,
+          bannerFailureCode: 'unauthorized',
+        ),
+      );
       return;
     }
     final profileResult = await _bootstrapProfileUseCase();
@@ -106,7 +122,7 @@ class SignInCubit extends Cubit<SignInState> {
           ),
         );
       case Success(:final value):
-        final destination = value.wasBaseCurrencyDefaulted
+        final destination = value.profile.baseAssetId == null
             ? SignInDestination.onboardingBaseCurrency
             : SignInDestination.overview;
         emit(
@@ -123,7 +139,9 @@ class SignInCubit extends Cubit<SignInState> {
     if (isClosed) return;
     emit(
       state.copyWith(
-        availableProviders: providers.where((provider) => provider != AuthProvider.email).toList(),
+        availableProviders: providers
+            .where((provider) => provider != AuthProvider.email)
+            .toList(),
       ),
     );
   }

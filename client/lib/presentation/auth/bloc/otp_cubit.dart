@@ -69,7 +69,7 @@ class OtpCubit extends Cubit<OtpState> {
               state.copyWith(
                 status: OtpStatus.idle,
                 navigation: OtpNavigation(
-                  destination: value.wasBaseCurrencyDefaulted
+                  destination: value.profile.baseAssetId == null
                       ? OtpDestination.onboardingBaseCurrency
                       : OtpDestination.overview,
                 ),
@@ -85,7 +85,9 @@ class OtpCubit extends Cubit<OtpState> {
 
   Future<void> resend() async {
     final email = state.email;
-    if (email.isEmpty || state.isResendInProgress || state.resendCooldownUntil != null) {
+    if (email.isEmpty ||
+        state.isResendInProgress ||
+        state.resendCooldownUntil != null) {
       return;
     }
     emit(state.copyWith(isResendInProgress: true, bannerFailureCode: null));

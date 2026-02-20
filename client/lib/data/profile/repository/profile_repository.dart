@@ -20,13 +20,7 @@ class ProfileRepository implements IProfileRepository {
       final dto = await _dataSource.bootstrapProfile();
       final entity = ProfileMapper.toEntity(dto.profile);
       logger.i('ProfileRepository.ensureProfile success');
-      return Success(
-        ProfileBootstrapEntity(
-          profile: entity,
-          isNew: dto.isNew,
-          wasBaseCurrencyDefaulted: dto.wasBaseCurrencyDefaulted,
-        ),
-      );
+      return Success(ProfileBootstrapEntity(profile: entity));
     } catch (error) {
       logger.e('ProfileRepository.ensureProfile failed', error: error);
       return FailureResult(

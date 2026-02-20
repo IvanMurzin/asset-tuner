@@ -1,4 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:asset_tuner/core/types/json_name.dart';
+import 'package:asset_tuner/data/rate/dto/asset_rate_usd_dto.dart';
 
 part 'asset_dto.freezed.dart';
 part 'asset_dto.g.dart';
@@ -10,7 +12,15 @@ abstract class AssetDto with _$AssetDto {
     required String kind,
     required String code,
     required String name,
-    int? decimals,
+    required String provider,
+    @JsonName('provider_ref') required String providerRef,
+    required int rank,
+    required int decimals,
+    @JsonName('is_active') bool? isActive,
+    @JsonName('is_locked') bool? isLocked,
+    @JsonName('usd_rate') AssetRateUsdDto? usdRate,
+    @JsonName('created_at') String? createdAtIso,
+    @JsonName('updated_at') String? updatedAtIso,
   }) = _AssetDto;
 
   factory AssetDto.fromJson(Map<String, dynamic> json) {

@@ -96,7 +96,10 @@ class SupabaseAccountAssetDataSource {
           if (raw is num) {
             return raw.toInt();
           }
-          return 2;
+          throw const EdgeFunctionException(
+            code: 'INTERNAL_ERROR',
+            message: 'Asset decimals are missing in assets response',
+          );
         }
       }
       return null;

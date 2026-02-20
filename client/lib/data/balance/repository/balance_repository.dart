@@ -96,7 +96,7 @@ class BalanceRepository implements IBalanceRepository {
           result[subaccountId] = Decimal.zero;
           continue;
         }
-        final latest = entries.last;
+        final latest = BalanceEntryMapper.toEntity(entries.last);
         result[subaccountId] = latest.snapshotAmount;
       }
       logger.i(

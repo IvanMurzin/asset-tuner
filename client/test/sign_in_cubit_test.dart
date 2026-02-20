@@ -98,8 +98,6 @@ class FakeProfileRepository implements IProfileRepository {
         Success(
           ProfileBootstrapEntity(
             profile: freeProfile(),
-            isNew: true,
-            wasBaseCurrencyDefaulted: true,
           ),
         );
   }
@@ -188,7 +186,7 @@ void main() {
     );
     final profileRepo = FakeProfileRepository(
       ensureResult: Success(
-        ProfileBootstrapEntity(profile: freeProfile(), isNew: true, wasBaseCurrencyDefaulted: true),
+        ProfileBootstrapEntity(profile: freeProfile()),
       ),
     );
 

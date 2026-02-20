@@ -6,7 +6,9 @@ import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/local_storage/asset_rates_storage.dart';
 import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
 import 'package:asset_tuner/core/types/result.dart';
+import 'package:asset_tuner/data/_shared/money_atomic.dart';
 import 'package:asset_tuner/data/rate/data_source/supabase_rate_data_source.dart';
+import 'package:asset_tuner/data/rate/mapper/asset_rate_usd_mapper.dart';
 import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
 import 'package:asset_tuner/domain/rate/repository/i_rate_repository.dart';
 
@@ -34,7 +36,8 @@ class RateRepository implements IRateRepository {
     if (cached != null) {
       final lastAttempt = _lastRefreshAttemptAt;
       final canAttemptRefresh =
-          lastAttempt == null || now.difference(lastAttempt) >= _minRefreshInterval;
+          lastAttempt == null ||
+          now.difference(lastAttempt) >= _minRefreshInterval;
 
       if (canAttemptRefresh) {
         _startRefreshIfNeeded(now);
@@ -83,18 +86,41 @@ class RateRepository implements IRateRepository {
           .map((e) => DateTime.parse(e.asOfIso))
           .reduce((a, b) => a.isAfter(b) ? a : b);
       final prices = <String, Decimal>{};
+      final atomicById = <String, Decimal>{};
+      final decimalsById = <String, int>{};
+      final asOfById = <String, DateTime>{};
       for (final dto in dtos) {
-        prices[dto.assetId] = dto.usdPrice;
+        final assetId = dto.assetId;
+        if (assetId == null || assetId.isEmpty) {
+          continue;
+        }
+        prices[assetId] = AssetRateUsdMapper.toUsdPrice(dto);
+        atomicById[assetId] = dto.usdPriceAtomic;
+        decimalsById[assetId] = dto.usdPriceDecimals;
+        asOfById[assetId] = DateTime.parse(dto.asOfIso);
       }
       logger.i('RateRepository.fetchLatestUsdRates success: ${prices.length}');
-      final snapshot = RatesSnapshotEntity(usdPriceByAssetId: prices, asOf: asOf);
+      final snapshot = RatesSnapshotEntity(
+        usdPriceByAssetId: prices,
+        asOf: asOf,
+        usdPriceAtomicByAssetId: atomicById,
+        usdPriceDecimalsByAssetId: decimalsById,
+        asOfByAssetId: asOfById,
+      );
 
       _cached = snapshot;
       final stored = <String, StoredAssetRateUsd>{};
       for (final dto in dtos) {
-        stored[dto.assetId] = StoredAssetRateUsd(
-          assetId: dto.assetId,
-          usdPrice: dto.usdPrice.toString(),
+        final assetId = dto.assetId;
+        if (assetId == null || assetId.isEmpty) {
+          continue;
+        }
+        stored[assetId] = StoredAssetRateUsd(
+          assetId: assetId,
+          usdPrice: MoneyAtomic.fromAtomic(
+            dto.usdPriceAtomic.toString(),
+            dto.usdPriceDecimals,
+          ).toString(),
           asOfIso: dto.asOfIso,
         );
       }
@@ -108,7 +134,10 @@ class RateRepository implements IRateRepository {
         return Success(cached);
       }
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load rates'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to load rates',
+        ),
       );
     }
   }
@@ -127,10 +156,12 @@ class RateRepository implements IRateRepository {
 
       final prices = <String, Decimal>{};
       DateTime? asOf;
+      final asOfById = <String, DateTime>{};
 
       for (final entry in stored.entries) {
         prices[entry.key] = Decimal.parse(entry.value.usdPrice);
         final rateAsOf = DateTime.parse(entry.value.asOfIso);
+        asOfById[entry.key] = rateAsOf;
         asOf = asOf == null || rateAsOf.isAfter(asOf) ? rateAsOf : asOf;
       }
 
@@ -138,7 +169,11 @@ class RateRepository implements IRateRepository {
         return;
       }
 
-      _cached = RatesSnapshotEntity(usdPriceByAssetId: prices, asOf: asOf);
+      _cached = RatesSnapshotEntity(
+        usdPriceByAssetId: prices,
+        asOf: asOf,
+        asOfByAssetId: asOfById,
+      );
       logger.i('RateRepository hydrated from disk: ${prices.length}');
     } catch (error) {
       logger.w('RateRepository hydrate from disk failed', error: error);

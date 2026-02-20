@@ -79,6 +79,9 @@ class SupabaseBalanceDataSource {
     if (page.items.isNotEmpty) {
       return page.items.first.amountDecimals;
     }
-    return 2;
+    throw const EdgeFunctionException(
+      code: 'INTERNAL_ERROR',
+      message: 'Cannot resolve subaccount decimals: no balance history',
+    );
   }
 }

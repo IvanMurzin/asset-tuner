@@ -1,13 +1,15 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/data/profile/dto/profile_dto.dart';
 
-class ProfileBootstrapResponseDto {
-  const ProfileBootstrapResponseDto({
-    required this.profile,
-    required this.isNew,
-    required this.wasBaseCurrencyDefaulted,
-  });
+part 'profile_bootstrap_response_dto.freezed.dart';
+part 'profile_bootstrap_response_dto.g.dart';
 
-  final ProfileDto profile;
-  final bool isNew;
-  final bool wasBaseCurrencyDefaulted;
+@Freezed(fromJson: true, toJson: true)
+abstract class ProfileBootstrapResponseDto with _$ProfileBootstrapResponseDto {
+  const factory ProfileBootstrapResponseDto({required ProfileDto profile}) =
+      _ProfileBootstrapResponseDto;
+
+  factory ProfileBootstrapResponseDto.fromJson(Map<String, dynamic> json) {
+    return _$ProfileBootstrapResponseDtoFromJson(json);
+  }
 }
