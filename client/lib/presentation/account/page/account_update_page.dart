@@ -63,7 +63,7 @@ class _AccountUpdatePageState extends State<AccountUpdatePage> {
     }
 
     return BlocProvider(
-      create: (_) => AccountUpdateCubit(getIt(), getIt()),
+      create: (_) => getIt<AccountUpdateCubit>(),
       child: BlocListener<AccountUpdateCubit, AccountUpdateState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) async {

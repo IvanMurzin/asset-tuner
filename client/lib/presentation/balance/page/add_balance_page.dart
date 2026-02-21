@@ -54,7 +54,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
     final l10n = AppLocalizations.of(context)!;
 
     return BlocProvider(
-      create: (_) => SubaccountBalanceCubit(getIt(), getIt()),
+      create: (_) => getIt<SubaccountBalanceCubit>(),
       child: BlocListener<SubaccountBalanceCubit, SubaccountBalanceState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) async {

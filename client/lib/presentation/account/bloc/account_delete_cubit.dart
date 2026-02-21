@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/usecase/delete_account_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
@@ -7,6 +8,7 @@ import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart'
 part 'account_delete_cubit.freezed.dart';
 part 'account_delete_state.dart';
 
+@injectable
 class AccountDeleteCubit extends Cubit<AccountDeleteState> {
   AccountDeleteCubit(this._getCachedSession, this._deleteAccount)
     : super(const AccountDeleteState());

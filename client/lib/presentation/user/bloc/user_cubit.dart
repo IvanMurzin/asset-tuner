@@ -1,22 +1,24 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/delete_account_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_out_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
-import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
+import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_plan_usecase.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 part 'user_cubit.freezed.dart';
 part 'user_state.dart';
 
+@injectable
 class UserCubit extends Cubit<UserState> {
   UserCubit(
     this._getCachedSession,
-    this._bootstrapProfile,
+    this._getProfile,
     this._updateBaseCurrency,
     this._updatePlan,
     this._deleteAccount,
@@ -24,7 +26,7 @@ class UserCubit extends Cubit<UserState> {
   ) : super(const UserState());
 
   final GetCachedSessionUseCase _getCachedSession;
-  final BootstrapProfileUseCase _bootstrapProfile;
+  final GetProfileUseCase _getProfile;
   final UpdateBaseCurrencyUseCase _updateBaseCurrency;
   final UpdatePlanUseCase _updatePlan;
   final DeleteAccountUseCase _deleteAccount;
@@ -59,7 +61,7 @@ class UserCubit extends Cubit<UserState> {
       return;
     }
 
-    final profileResult = await _bootstrapProfile();
+    final profileResult = await _getProfile();
     if (isClosed) {
       return;
     }
@@ -76,7 +78,7 @@ class UserCubit extends Cubit<UserState> {
           emit(next);
         }
       case Success(value: final data):
-        var profile = data.profile;
+        var profile = data;
         if (profile.baseAssetId == null) {
           final fixResult = await _updateBaseCurrency('USD');
           if (isClosed) {

@@ -1,7 +1,9 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
 import 'package:asset_tuner/domain/subaccount/usecase/create_subaccount_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
@@ -9,6 +11,7 @@ import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart'
 part 'subaccount_create_cubit.freezed.dart';
 part 'subaccount_create_state.dart';
 
+@injectable
 class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
   SubaccountCreateCubit(this._getCachedSession, this._createSubaccount)
     : super(const SubaccountCreateState());
@@ -19,7 +22,7 @@ class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
   Future<void> submit({
     required String accountId,
     required String name,
-    required String assetId,
+    required AssetEntity asset,
     required Decimal snapshotAmount,
   }) async {
     if (name.trim().isEmpty) {
@@ -50,7 +53,7 @@ class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
     final result = await _createSubaccount(
       accountId: accountId,
       name: name.trim(),
-      assetId: assetId,
+      asset: asset,
       snapshotAmount: snapshotAmount,
       entryDate: DateTime.now(),
     );

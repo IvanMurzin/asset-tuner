@@ -1,5 +1,5 @@
 import 'package:asset_tuner/data/profile/dto/entitlements_dto.dart';
-import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
+import 'package:asset_tuner/domain/profile/entity/entitlements_entity.dart';
 import 'package:asset_tuner/data/asset/mapper/asset_mapper.dart';
 import 'package:asset_tuner/data/profile/dto/profile_dto.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';

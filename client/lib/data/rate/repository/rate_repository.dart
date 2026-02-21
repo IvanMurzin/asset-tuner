@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:decimal/decimal.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
-import 'package:asset_tuner/core/local_storage/asset_rates_storage.dart';
 import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
 import 'package:asset_tuner/core/types/result.dart';
-import 'package:asset_tuner/data/_shared/money_atomic.dart';
 import 'package:asset_tuner/data/rate/data_source/supabase_rate_data_source.dart';
 import 'package:asset_tuner/data/rate/mapper/asset_rate_usd_mapper.dart';
 import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
@@ -14,22 +12,18 @@ import 'package:asset_tuner/domain/rate/repository/i_rate_repository.dart';
 
 @LazySingleton(as: IRateRepository)
 class RateRepository implements IRateRepository {
-  RateRepository(this._dataSource, this._storage);
+  RateRepository(this._dataSource);
 
   final SupabaseRateDataSource _dataSource;
-  final AssetRatesStorage _storage;
 
   static const _minRefreshInterval = Duration(minutes: 1);
 
-  bool _hydrated = false;
   RatesSnapshotEntity? _cached;
   DateTime? _lastRefreshAttemptAt;
   Future<Result<RatesSnapshotEntity?>>? _inFlightRefresh;
 
   @override
   Future<Result<RatesSnapshotEntity?>> fetchLatestUsdRates() async {
-    await _hydrateFromDiskOnce();
-
     final now = DateTime.now();
     final cached = _cached;
 
@@ -108,22 +102,6 @@ class RateRepository implements IRateRepository {
       );
 
       _cached = snapshot;
-      final stored = <String, StoredAssetRateUsd>{};
-      for (final dto in dtos) {
-        final assetId = dto.assetId;
-        if (assetId == null || assetId.isEmpty) {
-          continue;
-        }
-        stored[assetId] = StoredAssetRateUsd(
-          assetId: assetId,
-          usdPrice: MoneyAtomic.fromAtomic(
-            dto.usdPriceAtomic.toString(),
-            dto.usdPriceDecimals,
-          ).toString(),
-          asOfIso: dto.asOfIso,
-        );
-      }
-      await _storage.writeRates(stored);
 
       return Success(snapshot);
     } catch (error) {
@@ -135,40 +113,6 @@ class RateRepository implements IRateRepository {
       return FailureResult(
         SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load rates'),
       );
-    }
-  }
-
-  Future<void> _hydrateFromDiskOnce() async {
-    if (_hydrated) {
-      return;
-    }
-    _hydrated = true;
-
-    try {
-      final stored = await _storage.readRates();
-      if (stored.isEmpty) {
-        return;
-      }
-
-      final prices = <String, Decimal>{};
-      DateTime? asOf;
-      final asOfById = <String, DateTime>{};
-
-      for (final entry in stored.entries) {
-        prices[entry.key] = Decimal.parse(entry.value.usdPrice);
-        final rateAsOf = DateTime.parse(entry.value.asOfIso);
-        asOfById[entry.key] = rateAsOf;
-        asOf = asOf == null || rateAsOf.isAfter(asOf) ? rateAsOf : asOf;
-      }
-
-      if (prices.isEmpty || asOf == null) {
-        return;
-      }
-
-      _cached = RatesSnapshotEntity(usdPriceByAssetId: prices, asOf: asOf, asOfByAssetId: asOfById);
-      logger.i('RateRepository hydrated from disk: ${prices.length}');
-    } catch (error) {
-      logger.w('RateRepository hydrate from disk failed', error: error);
     }
   }
 }

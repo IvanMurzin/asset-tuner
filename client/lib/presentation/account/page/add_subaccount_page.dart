@@ -34,7 +34,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
   late final TextEditingController _balanceController;
 
   AssetKind? _kind;
-  String? _selectedAssetId;
+  AssetEntity? _selectedAsset;
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
     final l10n = AppLocalizations.of(context)!;
 
     return BlocProvider(
-      create: (_) => SubaccountCreateCubit(getIt(), getIt()),
+      create: (_) => getIt<SubaccountCreateCubit>(),
       child: BlocListener<SubaccountCreateCubit, SubaccountCreateState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) async {
@@ -86,7 +86,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                 ? const <AssetEntity>[]
                 : assetsState.assets.where((item) => item.kind == _kind).toList();
             final canSubmit =
-                _selectedAssetId != null &&
+                _selectedAsset != null &&
                 _nameController.text.trim().isNotEmpty &&
                 _balanceController.text.trim().isNotEmpty &&
                 createState.status != SubaccountCreateStatus.loading;
@@ -127,7 +127,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                         selected: _kind == AssetKind.fiat,
                         onTap: () => setState(() {
                           _kind = AssetKind.fiat;
-                          _selectedAssetId = null;
+                          _selectedAsset = null;
                         }),
                       ),
                       DSRadioRow(
@@ -135,7 +135,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                         selected: _kind == AssetKind.crypto,
                         onTap: () => setState(() {
                           _kind = AssetKind.crypto;
-                          _selectedAssetId = null;
+                          _selectedAsset = null;
                         }),
                       ),
                       SizedBox(height: spacing.s12),
@@ -151,7 +151,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                               locked: asset.isLocked ?? false,
                             ),
                         ],
-                        selectedId: _selectedAssetId,
+                        selectedId: _selectedAsset?.id,
                         searchHintText: _kind == null
                             ? '${l10n.assetKindFiat} / ${l10n.assetKindCrypto}'
                             : l10n.assetSearchHint,
@@ -167,7 +167,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                             context.push(AppRoutes.paywall);
                             return;
                           }
-                          setState(() => _selectedAssetId = id);
+                          setState(() => _selectedAsset = asset);
                         },
                       ),
                       const Spacer(),
@@ -177,15 +177,15 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                         isLoading: createState.status == SubaccountCreateStatus.loading,
                         onPressed: canSubmit
                             ? () async {
-                                final assetId = _selectedAssetId;
+                                final asset = _selectedAsset;
                                 final amount = _tryParse(_balanceController.text);
-                                if (assetId == null || amount == null) {
+                                if (asset == null || amount == null) {
                                   return;
                                 }
                                 await context.read<SubaccountCreateCubit>().submit(
                                   accountId: widget.accountId,
                                   name: _nameController.text,
-                                  assetId: assetId,
+                                  asset: asset,
                                   snapshotAmount: amount,
                                 );
                               }

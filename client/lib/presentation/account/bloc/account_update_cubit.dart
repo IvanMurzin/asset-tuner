@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/account/usecase/update_account_usecase.dart';
@@ -8,6 +9,7 @@ import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart'
 part 'account_update_cubit.freezed.dart';
 part 'account_update_state.dart';
 
+@injectable
 class AccountUpdateCubit extends Cubit<AccountUpdateState> {
   AccountUpdateCubit(this._getCachedSession, this._updateAccount)
     : super(const AccountUpdateState());

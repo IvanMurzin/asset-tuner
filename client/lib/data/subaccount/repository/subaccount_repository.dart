@@ -1,12 +1,13 @@
-import 'package:decimal/decimal.dart';
-import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/data/subaccount/data_source/supabase_subaccount_data_source.dart';
 import 'package:asset_tuner/data/subaccount/mapper/subaccount_mapper.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
 import 'package:asset_tuner/domain/subaccount/repository/i_subaccount_repository.dart';
+import 'package:decimal/decimal.dart';
+import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ISubaccountRepository)
 class SubaccountRepository implements ISubaccountRepository {
@@ -29,24 +30,10 @@ class SubaccountRepository implements ISubaccountRepository {
   }
 
   @override
-  Future<Result<int>> countSubaccounts() async {
-    try {
-      final count = await _dataSource.countSubaccounts();
-      logger.i('SubaccountRepository.countSubaccounts success: $count');
-      return Success(count);
-    } catch (error) {
-      logger.e('SubaccountRepository.countSubaccounts failed', error: error);
-      return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to count subaccounts'),
-      );
-    }
-  }
-
-  @override
   Future<Result<SubaccountEntity>> createSubaccount({
     required String accountId,
     required String name,
-    required String assetId,
+    required AssetEntity asset,
     required Decimal snapshotAmount,
     required DateTime entryDate,
   }) async {
@@ -54,7 +41,7 @@ class SubaccountRepository implements ISubaccountRepository {
       final dto = await _dataSource.createSubaccount(
         accountId: accountId,
         name: name,
-        assetId: assetId,
+        asset: asset,
         snapshotAmount: snapshotAmount,
         entryDate: entryDate,
       );

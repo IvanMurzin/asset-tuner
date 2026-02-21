@@ -44,7 +44,7 @@ class _AccountCreatePageState extends State<AccountCreatePage> {
     final l10n = AppLocalizations.of(context)!;
 
     return BlocProvider(
-      create: (_) => AccountCreateCubit(getIt(), getIt()),
+      create: (_) => getIt<AccountCreateCubit>(),
       child: BlocListener<AccountCreateCubit, AccountCreateState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) async {

@@ -3,9 +3,6 @@ import 'package:asset_tuner/core/routing/app_page_transitions.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/preview/ds_preview_page.dart';
-import 'package:asset_tuner/domain/subaccount/usecase/get_subaccounts_usecase.dart';
-import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
-import 'package:asset_tuner/domain/balance/usecase/get_balance_history_usecase.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_archive_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_delete_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
@@ -97,19 +94,11 @@ final appRouter = GoRouter(
                       MultiBlocProvider(
                         providers: [
                           BlocProvider(
-                            create: (_) => AccountInfoCubit(
-                              getIt<GetCachedSessionUseCase>(),
-                              getIt<GetSubaccountsUseCase>(),
-                            )..load(accountId: accountId, account: account),
-                          ),
-                          BlocProvider(
                             create: (_) =>
-                                AccountArchiveCubit(getIt<GetCachedSessionUseCase>(), getIt()),
+                                getIt<AccountInfoCubit>()..load(accountId: accountId, account: account),
                           ),
-                          BlocProvider(
-                            create: (_) =>
-                                AccountDeleteCubit(getIt<GetCachedSessionUseCase>(), getIt()),
-                          ),
+                          BlocProvider(create: (_) => getIt<AccountArchiveCubit>()),
+                          BlocProvider(create: (_) => getIt<AccountDeleteCubit>()),
                         ],
                         child: AccountDetailPage(
                           accountId: accountId,
@@ -162,23 +151,11 @@ final appRouter = GoRouter(
                           MultiBlocProvider(
                             providers: [
                               BlocProvider(
-                                create: (_) => SubaccountInfoCubit(
-                                  getIt<GetCachedSessionUseCase>(),
-                                  getIt<GetBalanceHistoryUseCase>(),
-                                )..load(account: account, subaccount: subaccount),
+                                create: (_) =>
+                                    getIt<SubaccountInfoCubit>()..load(account: account, subaccount: subaccount),
                               ),
-                              BlocProvider(
-                                create: (_) => SubaccountUpdateCubit(
-                                  getIt<GetCachedSessionUseCase>(),
-                                  getIt(),
-                                ),
-                              ),
-                              BlocProvider(
-                                create: (_) => SubaccountDeleteCubit(
-                                  getIt<GetCachedSessionUseCase>(),
-                                  getIt(),
-                                ),
-                              ),
+                              BlocProvider(create: (_) => getIt<SubaccountUpdateCubit>()),
+                              BlocProvider(create: (_) => getIt<SubaccountDeleteCubit>()),
                             ],
                             child: SubaccountDetailPage(
                               accountId: accountId,

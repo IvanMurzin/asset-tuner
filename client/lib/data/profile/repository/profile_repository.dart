@@ -4,7 +4,6 @@ import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/data/profile/data_source/supabase_profile_data_source.dart';
 import 'package:asset_tuner/data/profile/mapper/profile_mapper.dart';
-import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 
@@ -13,21 +12,6 @@ class ProfileRepository implements IProfileRepository {
   ProfileRepository(this._dataSource);
 
   final SupabaseProfileDataSource _dataSource;
-
-  @override
-  Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
-    try {
-      final dto = await _dataSource.bootstrapProfile();
-      final entity = ProfileMapper.toEntity(dto.profile);
-      logger.i('ProfileRepository.ensureProfile success');
-      return Success(ProfileBootstrapEntity(profile: entity));
-    } catch (error) {
-      logger.e('ProfileRepository.ensureProfile failed', error: error);
-      return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load profile'),
-      );
-    }
-  }
 
   @override
   Future<Result<ProfileEntity>> getProfile() async {

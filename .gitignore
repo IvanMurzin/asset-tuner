@@ -3,3 +3,7 @@
 
 .vscode/.history/
 
+client/lib/l10n/app_localizations.dart
+client/lib/l10n/app_localizations_en.dart
+client/lib/l10n/app_localizations_ru.dart
+

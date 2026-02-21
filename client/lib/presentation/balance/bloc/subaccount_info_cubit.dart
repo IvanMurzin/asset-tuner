@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
@@ -11,6 +12,7 @@ import 'package:asset_tuner/domain/balance/usecase/get_balance_history_usecase.d
 part 'subaccount_info_cubit.freezed.dart';
 part 'subaccount_info_state.dart';
 
+@injectable
 class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
   SubaccountInfoCubit(this._getCachedSession, this._getHistory)
     : super(const SubaccountInfoState());

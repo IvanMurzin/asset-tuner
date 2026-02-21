@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
-import 'package:asset_tuner/domain/entitlement/entity/entitlements_entity.dart';
+import 'package:asset_tuner/domain/profile/entity/entitlements_entity.dart';
 
 part 'profile_entity.freezed.dart';
 

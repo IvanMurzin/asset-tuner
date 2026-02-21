@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/account/usecase/set_account_archived_usecase.dart';
@@ -8,6 +9,7 @@ import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart'
 part 'account_archive_cubit.freezed.dart';
 part 'account_archive_state.dart';
 
+@injectable
 class AccountArchiveCubit extends Cubit<AccountArchiveState> {
   AccountArchiveCubit(this._getCachedSession, this._setArchived)
     : super(const AccountArchiveState());

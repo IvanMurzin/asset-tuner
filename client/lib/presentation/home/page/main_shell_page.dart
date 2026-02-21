@@ -3,9 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
-import 'package:asset_tuner/domain/account/usecase/get_accounts_usecase.dart';
-import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
-import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
@@ -23,15 +20,9 @@ class MainShellPage extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AccountsCubit>(
-          create: (_) =>
-              AccountsCubit(getIt<GetCachedSessionUseCase>(), getIt<GetAccountsUseCase>())..load(),
-        ),
+        BlocProvider<AccountsCubit>(create: (_) => getIt<AccountsCubit>()..load()),
         BlocProvider<UsdRatesCubit>(create: (_) => getIt<UsdRatesCubit>()..start()),
-        BlocProvider<AssetsCubit>(
-          create: (_) =>
-              AssetsCubit(getIt<GetCachedSessionUseCase>(), getIt<GetAssetsUseCase>())..load(),
-        ),
+        BlocProvider<AssetsCubit>(create: (_) => getIt<AssetsCubit>()..load()),
         BlocProvider<AnalyticsCubit>(create: (_) => getIt<AnalyticsCubit>()),
       ],
       child: MultiBlocListener(

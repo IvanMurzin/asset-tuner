@@ -1,12 +1,6 @@
-import 'package:decimal/decimal.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
-import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
-import 'package:asset_tuner/domain/subaccount/usecase/get_subaccounts_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
@@ -15,10 +9,15 @@ import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.da
 import 'package:asset_tuner/domain/balance/usecase/get_balance_history_usecase.dart';
 import 'package:asset_tuner/domain/balance/usecase/get_current_balances_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
-import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
 import 'package:asset_tuner/domain/rate/usecase/get_latest_usd_rates_usecase.dart';
+import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
+import 'package:asset_tuner/domain/subaccount/usecase/get_subaccounts_usecase.dart';
+import 'package:decimal/decimal.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 part 'analytics_cubit.freezed.dart';
 part 'analytics_state.dart';
@@ -30,7 +29,6 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   AnalyticsCubit(
     this._getCachedSession,
     this._getProfile,
-    this._bootstrapProfile,
     this._getSubaccounts,
     this._getAssets,
     this._getCurrentBalances,
@@ -40,7 +38,6 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
   final GetCachedSessionUseCase _getCachedSession;
   final GetProfileUseCase _getProfile;
-  final BootstrapProfileUseCase _bootstrapProfile;
   final GetSubaccountsUseCase _getSubaccounts;
   final GetAssetsUseCase _getAssets;
   final GetCurrentBalancesUseCase _getCurrentBalances;
@@ -320,13 +317,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       case Success<ProfileEntity>(value: final profile):
         return profile;
       case FailureResult<ProfileEntity>():
-        final bootstrap = await _bootstrapProfile();
-        switch (bootstrap) {
-          case Success(value: final result):
-            return result.profile;
-          case FailureResult():
-            return null;
-        }
+        return null;
     }
   }
 
