@@ -7,3 +7,11 @@ client/lib/l10n/app_localizations.dart
 client/lib/l10n/app_localizations_en.dart
 client/lib/l10n/app_localizations_ru.dart
 
+client/android/local.properties
+client/android/key.properties
+client/android/keystores/
+**/*.keystore
+**/*.jks
+**/*.p12
+**/*.pem
+
