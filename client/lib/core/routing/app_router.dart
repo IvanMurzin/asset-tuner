@@ -3,6 +3,7 @@ import 'package:asset_tuner/core/routing/app_page_transitions.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/preview/ds_preview_page.dart';
+import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_archive_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_delete_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
@@ -80,102 +81,150 @@ final appRouter = GoRouter(
                   pageBuilder: (context, state) =>
                       slideTransition(context, state, const AccountCreatePage()),
                 ),
-                GoRoute(
-                  path: AppRoutes.accountIdPath,
-                  pageBuilder: (context, state) {
-                    final accountId = state.pathParameters['accountId']!;
-                    final extra = state.extra is AccountDetailExtra
-                        ? state.extra as AccountDetailExtra
-                        : null;
+                ShellRoute(
+                  builder: (context, state, child) {
+                    final accountId = state.pathParameters['accountId'];
+                    if (accountId == null) {
+                      return child;
+                    }
                     final account = context.read<AccountsCubit>().findById(accountId);
-                    return slideTransition(
-                      context,
-                      state,
-                      MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (_) =>
-                                getIt<AccountInfoCubit>()..load(accountId: accountId, account: account),
-                          ),
-                          BlocProvider(create: (_) => getIt<AccountArchiveCubit>()),
-                          BlocProvider(create: (_) => getIt<AccountDeleteCubit>()),
-                        ],
-                        child: AccountDetailPage(
-                          accountId: accountId,
-                          initialTitle: extra?.initialTitle,
-                          initialAccountType: extra?.initialAccountType,
-                        ),
-                      ),
+                    return BlocProvider(
+                      create: (_) =>
+                          getIt<AccountInfoCubit>()..load(accountId: accountId, account: account),
+                      child: child,
                     );
                   },
                   routes: [
                     GoRoute(
-                      path: AppRoutes.editPath,
-                      pageBuilder: (context, state) => slideTransition(
-                        context,
-                        state,
-                        AccountUpdatePage(accountId: state.pathParameters['accountId']!),
-                      ),
-                    ),
-                    GoRoute(
-                      path: AppRoutes.subaccountsNewPath,
-                      pageBuilder: (context, state) => slideTransition(
-                        context,
-                        state,
-                        AddSubaccountPage(accountId: state.pathParameters['accountId']!),
-                      ),
-                    ),
-                    GoRoute(
-                      path: AppRoutes.subaccountIdPath,
+                      path: AppRoutes.accountIdPath,
                       pageBuilder: (context, state) {
                         final accountId = state.pathParameters['accountId']!;
-                        final subaccountId = state.pathParameters['subaccountId']!;
-                        final extra = state.extra is SubaccountDetailExtra
-                            ? state.extra as SubaccountDetailExtra
+                        final extra = state.extra is AccountDetailExtra
+                            ? state.extra as AccountDetailExtra
                             : null;
-                        final accountInfo = context.read<AccountInfoCubit>();
-                        final account = accountInfo.state.account;
-                        final subaccount = accountInfo.state.subaccounts
-                            .where((item) => item.id == subaccountId)
-                            .firstOrNull;
-                        if (account == null || subaccount == null) {
-                          return slideTransition(
-                            context,
-                            state,
-                            const Scaffold(body: SizedBox.shrink()),
-                          );
-                        }
                         return slideTransition(
                           context,
                           state,
                           MultiBlocProvider(
                             providers: [
-                              BlocProvider(
-                                create: (_) =>
-                                    getIt<SubaccountInfoCubit>()..load(account: account, subaccount: subaccount),
-                              ),
-                              BlocProvider(create: (_) => getIt<SubaccountUpdateCubit>()),
-                              BlocProvider(create: (_) => getIt<SubaccountDeleteCubit>()),
+                              BlocProvider(create: (_) => getIt<AccountArchiveCubit>()),
+                              BlocProvider(create: (_) => getIt<AccountDeleteCubit>()),
                             ],
-                            child: SubaccountDetailPage(
+                            child: AccountDetailPage(
                               accountId: accountId,
-                              subaccountId: subaccountId,
                               initialTitle: extra?.initialTitle,
+                              initialAccountType: extra?.initialAccountType,
                             ),
                           ),
                         );
                       },
                       routes: [
                         GoRoute(
-                          path: AppRoutes.updateBalancePath,
+                          path: AppRoutes.editPath,
                           pageBuilder: (context, state) => slideTransition(
                             context,
                             state,
-                            AddBalancePage(
-                              accountId: state.pathParameters['accountId']!,
-                              subaccountId: state.pathParameters['subaccountId']!,
-                            ),
+                            AccountUpdatePage(accountId: state.pathParameters['accountId']!),
                           ),
+                        ),
+                        GoRoute(
+                          path: AppRoutes.subaccountsNewPath,
+                          pageBuilder: (context, state) => slideTransition(
+                            context,
+                            state,
+                            AddSubaccountPage(accountId: state.pathParameters['accountId']!),
+                          ),
+                        ),
+                        ShellRoute(
+                          builder: (context, state, child) {
+                            final subaccountId = state.pathParameters['subaccountId'];
+                            if (subaccountId == null) {
+                              return child;
+                            }
+                            final extra = state.extra is SubaccountDetailExtra
+                                ? state.extra as SubaccountDetailExtra
+                                : null;
+                            final account =
+                                extra?.account ?? context.read<AccountInfoCubit>().state.account;
+                            SubaccountEntity? subaccount = extra?.subaccount;
+                            if (subaccount == null) {
+                              for (final s in context.read<AccountInfoCubit>().state.subaccounts) {
+                                if (s.id == subaccountId) {
+                                  subaccount = s;
+                                  break;
+                                }
+                              }
+                            }
+                            if (account == null || subaccount == null) {
+                              return child;
+                            }
+                            return BlocProvider(
+                              create: (_) =>
+                                  getIt<SubaccountInfoCubit>()
+                                    ..load(account: account, subaccount: subaccount!),
+                              child: child,
+                            );
+                          },
+                          routes: [
+                            GoRoute(
+                              path: AppRoutes.subaccountIdPath,
+                              pageBuilder: (context, state) {
+                                final accountId = state.pathParameters['accountId']!;
+                                final subaccountId = state.pathParameters['subaccountId']!;
+                                final extra = state.extra is SubaccountDetailExtra
+                                    ? state.extra as SubaccountDetailExtra
+                                    : null;
+                                final account =
+                                    extra?.account ??
+                                    context.read<AccountInfoCubit>().state.account;
+                                SubaccountEntity? subaccount = extra?.subaccount;
+                                if (subaccount == null) {
+                                  for (final s
+                                      in context.read<AccountInfoCubit>().state.subaccounts) {
+                                    if (s.id == subaccountId) {
+                                      subaccount = s;
+                                      break;
+                                    }
+                                  }
+                                }
+                                if (account == null || subaccount == null) {
+                                  return slideTransition(
+                                    context,
+                                    state,
+                                    const Scaffold(body: SizedBox.shrink()),
+                                  );
+                                }
+                                return slideTransition(
+                                  context,
+                                  state,
+                                  MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider(create: (_) => getIt<SubaccountUpdateCubit>()),
+                                      BlocProvider(create: (_) => getIt<SubaccountDeleteCubit>()),
+                                    ],
+                                    child: SubaccountDetailPage(
+                                      accountId: accountId,
+                                      subaccountId: subaccountId,
+                                      initialTitle: extra?.initialTitle,
+                                    ),
+                                  ),
+                                );
+                              },
+                              routes: [
+                                GoRoute(
+                                  path: AppRoutes.updateBalancePath,
+                                  pageBuilder: (context, state) => slideTransition(
+                                    context,
+                                    state,
+                                    AddBalancePage(
+                                      accountId: state.pathParameters['accountId']!,
+                                      subaccountId: state.pathParameters['subaccountId']!,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -237,12 +286,3 @@ final appRouter = GoRouter(
     ),
   ],
 );
-
-extension<T> on Iterable<T> {
-  T? get firstOrNull {
-    for (final item in this) {
-      return item;
-    }
-    return null;
-  }
-}

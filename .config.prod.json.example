@@ -1,6 +1,9 @@
 {
   "ENV": "prod",
   "SUPABASE_URL": "https://YOUR_PROD_PROJECT.supabase.co",
-  "SUPABASE_ANON_KEY": "YOUR_PROD_ANON_KEY"
+  "SUPABASE_ANON_KEY": "YOUR_PROD_ANON_KEY",
+  "REVENUECAT_API_KEY": "YOUR_PROD_REVENUECAT_PUBLIC_SDK_KEY",
+  "TERMS_OF_USE_URL": "https://assettuner.app/terms",
+  "PRIVACY_POLICY_URL": "https://assettuner.app/privacy",
+  "LOG_API_RESPONSES": false
 }
-

@@ -20,7 +20,7 @@ import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_account_card.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_summary_card.dart';
-import 'package:asset_tuner/presentation/rate/bloc/usd_rates_cubit.dart';
+import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_account_item.dart';
 
@@ -62,9 +62,9 @@ class OverviewPage extends StatelessWidget {
               child: RefreshIndicator(
                 onRefresh: () async {
                   final accountsCubit = context.read<AccountsCubit>();
-                  final usdRatesCubit = context.read<UsdRatesCubit>();
+                  final assetsCubit = context.read<AssetsCubit>();
                   await accountsCubit.refresh();
-                  await usdRatesCubit.refresh();
+                  await assetsCubit.refresh();
                 },
                 child: BlocBuilder<AccountsCubit, AccountsState>(
                   builder: (context, accountsState) {
@@ -91,12 +91,12 @@ class OverviewPage extends StatelessWidget {
                       );
                     }
 
-                    return BlocBuilder<UsdRatesCubit, UsdRatesState>(
-                      builder: (context, ratesState) {
+                    return BlocBuilder<AssetsCubit, AssetsState>(
+                      builder: (context, assetsState) {
                         return _OverviewReady(
                           accounts: accountsState.accounts,
                           userState: userState,
-                          ratesState: ratesState,
+                          assetsState: assetsState,
                         );
                       },
                     );
@@ -112,18 +112,18 @@ class OverviewPage extends StatelessWidget {
 }
 
 class _OverviewReady extends StatelessWidget {
-  const _OverviewReady({required this.accounts, required this.userState, required this.ratesState});
+  const _OverviewReady({required this.accounts, required this.userState, required this.assetsState});
 
   final List<AccountEntity> accounts;
   final UserState userState;
-  final UsdRatesState ratesState;
+  final AssetsState assetsState;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final spacing = context.dsSpacing;
     final baseCurrency = userState.profile?.baseCurrency ?? 'USD';
-    final snapshot = ratesState.snapshot;
+    final snapshot = assetsState.snapshot;
 
     final baseUsdPrice = _resolveBaseUsdPrice(userState, snapshot);
 

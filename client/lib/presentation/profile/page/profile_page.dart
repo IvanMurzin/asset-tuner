@@ -104,12 +104,19 @@ class ProfilePage extends StatelessWidget {
                           : l10n.settingsPlanFree,
                       baseCurrency: profile.baseCurrency,
                       isPaid: profile.plan == 'pro',
-                      onManageSubscriptionTap: () async {
-                        await context.push(AppRoutes.manageSubscription);
+                      onPlanActionTap: () async {
+                        if (profile.plan == 'pro') {
+                          await context.push(AppRoutes.manageSubscription);
+                        } else {
+                          await context.push(AppRoutes.paywall);
+                        }
                         if (context.mounted) {
                           await context.read<UserCubit>().refresh(silent: true);
                         }
                       },
+                      planActionLabel: profile.plan == 'pro'
+                          ? l10n.settingsManageSubscription
+                          : l10n.profileUpgradePlan,
                     ),
                     SizedBox(height: spacing.s24),
                     DSSectionTitle(title: l10n.profileSectionPreferences),

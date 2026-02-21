@@ -8,12 +8,14 @@ class DSSegmentedControl extends StatelessWidget {
     required this.selectedIndex,
     required this.onChanged,
     this.enabled = true,
+    this.disabledIndices = const {},
   });
 
   final List<String> labels;
   final int selectedIndex;
   final ValueChanged<int> onChanged;
   final bool enabled;
+  final Set<int> disabledIndices;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,9 @@ class DSSegmentedControl extends StatelessWidget {
     final typography = context.dsTypography;
     final spacing = context.dsSpacing;
 
-    final isSelected = <bool>[for (var i = 0; i < labels.length; i++) i == selectedIndex];
+    final isSelected = <bool>[
+      for (var i = 0; i < labels.length; i++) i == selectedIndex,
+    ];
 
     return Container(
       decoration: BoxDecoration(
@@ -33,7 +37,14 @@ class DSSegmentedControl extends StatelessWidget {
       padding: EdgeInsets.all(spacing.s4),
       child: ToggleButtons(
         isSelected: isSelected,
-        onPressed: enabled ? onChanged : null,
+        onPressed: enabled
+            ? (index) {
+                if (disabledIndices.contains(index)) {
+                  return;
+                }
+                onChanged(index);
+              }
+            : null,
         borderRadius: BorderRadius.circular(radius.r12),
         borderColor: Colors.transparent,
         selectedBorderColor: Colors.transparent,
@@ -43,10 +54,17 @@ class DSSegmentedControl extends StatelessWidget {
         selectedColor: colors.textPrimary,
         constraints: const BoxConstraints(minHeight: 40),
         children: [
-          for (final label in labels)
+          for (var i = 0; i < labels.length; i++)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: spacing.s12),
-              child: Text(label, style: typography.body),
+              child: Text(
+                labels[i],
+                style: typography.body.copyWith(
+                  color: disabledIndices.contains(i)
+                      ? colors.textTertiary
+                      : null,
+                ),
+              ),
             ),
         ],
       ),

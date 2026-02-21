@@ -1,31 +1,20 @@
-import 'package:injectable/injectable.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asset_tuner/core/supabase/supabase_constants.dart';
 import 'package:asset_tuner/core/supabase/supabase_edge_functions.dart';
+import 'package:asset_tuner/data/asset/data_source/supabase_asset_data_source.dart';
 import 'package:asset_tuner/data/rate/dto/asset_rate_usd_dto.dart';
+import 'package:injectable/injectable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 @lazySingleton
 class SupabaseRateDataSource {
-  SupabaseRateDataSource(this._edgeFunctions);
+  SupabaseRateDataSource(this._edgeFunctions, this._assetDataSource);
 
   final SupabaseEdgeFunctions _edgeFunctions;
+  final SupabaseAssetDataSource _assetDataSource;
 
   Future<List<AssetRateUsdDto>> fetchLatestUsdRates() async {
-    final fiat = await _edgeFunctions.invokeDataList(
-      SupabaseApiRoutes.assetsList,
-      query: {'kind': 'fiat', 'limit': 100},
-      method: HttpMethod.get,
-    );
-    final crypto = await _edgeFunctions.invokeDataList(
-      SupabaseApiRoutes.assetsList,
-      query: {'kind': 'crypto', 'limit': 100},
-      method: HttpMethod.get,
-    );
-
-    final assetIds = <String>[
-      ...fiat.map((e) => e['id'] as String?).whereType<String>(),
-      ...crypto.map((e) => e['id'] as String?).whereType<String>(),
-    ];
+    final assets = await _assetDataSource.fetchAssets();
+    final assetIds = assets.map((a) => a.id).toList();
     if (assetIds.isEmpty) {
       return const [];
     }

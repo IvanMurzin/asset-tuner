@@ -23,6 +23,7 @@ class AnalyticsLoadingSkeleton extends StatelessWidget {
         SizedBox(height: spacing.s12),
         DSCard(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               for (var i = 0; i < 4; i++) ...[
                 const DSSkeleton(height: 18, width: 80),

@@ -21,8 +21,10 @@ import 'package:asset_tuner/presentation/account/widget/subaccount_view_item.dar
 import 'package:asset_tuner/presentation/account/widget/account_detail_actions_row.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_header_card.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_loading_skeleton.dart';
+import 'package:asset_tuner/presentation/account/widget/account_detail_positions_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_positions_section.dart';
-import 'package:asset_tuner/presentation/rate/bloc/usd_rates_cubit.dart';
+import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
+import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
 
 class AccountDetailPage extends StatelessWidget {
@@ -73,7 +75,7 @@ class AccountDetailPage extends StatelessWidget {
             }
             final accountsCubit = context.read<AccountsCubit>();
             final archiveCubit = context.read<AccountArchiveCubit>();
-            await accountsCubit.archive(state.account!);
+            accountsCubit.archive(state.account!);
             if (!context.mounted) {
               return;
             }
@@ -88,10 +90,10 @@ class AccountDetailPage extends StatelessWidget {
             }
             final accountsCubit = context.read<AccountsCubit>();
             final deleteCubit = context.read<AccountDeleteCubit>();
-            await accountsCubit.delete(state.deletedAccountId!);
             if (context.mounted) {
               context.pop(true);
             }
+            accountsCubit.delete(state.deletedAccountId!);
             deleteCubit.reset();
           },
         ),
@@ -121,10 +123,10 @@ class AccountDetailPage extends StatelessWidget {
           }
 
           final user = context.watch<UserCubit>().state;
-          final ratesState = context.watch<UsdRatesCubit>().state;
-          final rates = ratesState.snapshot;
+          final assetsState = context.watch<AssetsCubit>().state;
+          final rates = assetsState.snapshot;
           final baseCurrency = user.profile?.baseCurrency ?? 'USD';
-          final baseUsdPrice = _baseUsdPrice(user, ratesState);
+          final baseUsdPrice = _baseUsdPrice(user, assetsState.snapshot);
           final total = _toBase(account.totals?.totalUsd, baseCurrency, baseUsdPrice);
 
           final items = infoState.subaccounts.map((subaccount) {
@@ -250,22 +252,32 @@ class AccountDetailPage extends StatelessWidget {
                           ),
                           SizedBox(height: spacing.s24),
                           if (infoState.isSubaccountsLoading)
-                            const LinearProgressIndicator(minHeight: 2)
+                            const AccountDetailPositionsLoadingSkeleton()
                           else
                             AccountDetailPositionsSection(
                               items: items,
                               baseCurrency: baseCurrency,
                               onAddSubaccount: () async {
                                 await context.push<bool>(
-                                  AppRoutes.accountAddSubaccount.replaceFirst(':accountId', account.id),
+                                  AppRoutes.accountAddSubaccount.replaceFirst(
+                                    ':accountId',
+                                    account.id,
+                                  ),
                                 );
                               },
                               onOpenSubaccount: (item) async {
+                                final subaccount = infoState.subaccounts.firstWhere(
+                                  (s) => s.id == item.subaccountId,
+                                );
                                 await context.push<bool>(
                                   AppRoutes.accountSubaccountDetail
                                       .replaceFirst(':accountId', account.id)
                                       .replaceFirst(':subaccountId', item.subaccountId),
-                                  extra: SubaccountDetailExtra(initialTitle: item.name),
+                                  extra: SubaccountDetailExtra(
+                                    initialTitle: item.name,
+                                    account: account,
+                                    subaccount: subaccount,
+                                  ),
                                 );
                               },
                             ),
@@ -283,7 +295,7 @@ class AccountDetailPage extends StatelessWidget {
     );
   }
 
-  Decimal? _baseUsdPrice(UserState user, UsdRatesState rates) {
+  Decimal? _baseUsdPrice(UserState user, RatesSnapshotEntity? snapshot) {
     final baseCurrency = user.profile?.baseCurrency ?? 'USD';
     if (baseCurrency == 'USD') {
       return Decimal.one;
@@ -292,7 +304,7 @@ class AccountDetailPage extends StatelessWidget {
     if (baseAssetId == null) {
       return null;
     }
-    return rates.snapshot?.usdPriceByAssetId[baseAssetId];
+    return snapshot?.usdPriceByAssetId[baseAssetId];
   }
 
   Decimal? _toBase(Decimal? totalUsd, String baseCurrency, Decimal? baseUsdPrice) {

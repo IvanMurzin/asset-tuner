@@ -59,14 +59,14 @@ class SupabaseBalanceDataSource {
   }
 
   Future<List<BalanceEntryDto>> fetchEntriesForPositions(Set<String> subaccountIds) async {
-    final result = <BalanceEntryDto>[];
-    for (final subaccountId in subaccountIds) {
-      final page = await fetchHistory(subaccountId: subaccountId, limit: 1);
-      if (page.items.isNotEmpty) {
-        result.add(page.items.first);
-      }
-    }
-    return result;
+    if (subaccountIds.isEmpty) return [];
+    final pages = await Future.wait(
+      subaccountIds.map((id) => fetchHistory(subaccountId: id, limit: 1)),
+    );
+    return [
+      for (final page in pages)
+        if (page.items.isNotEmpty) ...page.items,
+    ];
   }
 
   Future<int> _resolveSubaccountDecimals(String subaccountId) async {

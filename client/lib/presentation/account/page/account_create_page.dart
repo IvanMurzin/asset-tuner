@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
@@ -48,11 +49,20 @@ class _AccountCreatePageState extends State<AccountCreatePage> {
       child: BlocListener<AccountCreateCubit, AccountCreateState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) async {
+          if (state.status == AccountCreateStatus.error &&
+              state.failureCode == 'limit_accounts_reached') {
+            if (!context.mounted) return;
+            await context.push(
+              AppRoutes.paywall,
+              extra: const PaywallArgs(reason: PaywallReason.accountsLimit),
+            );
+            return;
+          }
           if (state.status != AccountCreateStatus.success || state.account == null) {
             return;
           }
           final account = state.account!;
-          await context.read<AccountsCubit>().create(account);
+          context.read<AccountsCubit>().create(account);
 
           if (!context.mounted) {
             return;

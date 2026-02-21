@@ -2,16 +2,12 @@ import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
-import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
-import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.dart';
 import 'package:asset_tuner/domain/balance/usecase/get_balance_history_usecase.dart';
 import 'package:asset_tuner/domain/balance/usecase/get_current_balances_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
-import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
-import 'package:asset_tuner/domain/rate/usecase/get_latest_usd_rates_usecase.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
 import 'package:asset_tuner/domain/subaccount/usecase/get_subaccounts_usecase.dart';
 import 'package:decimal/decimal.dart';
@@ -27,52 +23,88 @@ enum AnalyticsDestination { signIn }
 @injectable
 class AnalyticsCubit extends Cubit<AnalyticsState> {
   AnalyticsCubit(
-    this._getCachedSession,
-    this._getProfile,
     this._getSubaccounts,
-    this._getAssets,
     this._getCurrentBalances,
     this._getHistory,
-    this._getLatestUsdRates,
   ) : super(const AnalyticsState());
 
-  final GetCachedSessionUseCase _getCachedSession;
-  final GetProfileUseCase _getProfile;
   final GetSubaccountsUseCase _getSubaccounts;
-  final GetAssetsUseCase _getAssets;
   final GetCurrentBalancesUseCase _getCurrentBalances;
   final GetBalanceHistoryUseCase _getHistory;
-  final GetLatestUsdRatesUseCase _getLatestUsdRates;
 
-  List<AccountEntity> _accounts = const <AccountEntity>[];
   bool _isFetching = false;
   bool _queuedFetch = false;
   bool _queuedSilent = true;
+  ProfileEntity? _queuedProfile;
+  RatesSnapshotEntity? _queuedRates;
+  List<AssetEntity> _queuedAssets = const [];
+  List<AccountEntity> _queuedAccounts = const [];
+  String? _queuedFingerprint;
+  String? _lastSourceFingerprint;
 
-  Future<void> load() async {
-    await _fetch(silent: false);
-  }
-
-  Future<void> refresh() async {
-    if (state.status != AnalyticsStatus.ready) {
+  Future<void> onSourceDataReady(
+    ProfileEntity profile,
+    RatesSnapshotEntity? rates,
+    List<AssetEntity> assets,
+    List<AccountEntity> accounts,
+  ) async {
+    final activeAccounts = accounts.where((a) => !a.archived).toList(growable: false);
+    final fingerprint = _sourceFingerprint(
+      profile: profile,
+      rates: rates,
+      accounts: activeAccounts,
+      assets: assets,
+    );
+    if (fingerprint == _lastSourceFingerprint && state.status == AnalyticsStatus.ready) {
       return;
     }
-    await _fetch(silent: true);
+    await _fetchFromSource(
+      profile: profile,
+      rates: rates,
+      assets: assets,
+      accounts: activeAccounts,
+      silent: state.status == AnalyticsStatus.ready,
+      fingerprint: fingerprint,
+    );
   }
 
-  Future<void> onAccountsChanged(List<AccountEntity> accounts) async {
-    final nextAccounts = accounts.where((a) => !a.archived).toList(growable: false);
-    if (_sameAccounts(_accounts, nextAccounts)) {
-      return;
-    }
-    _accounts = nextAccounts;
-    await _fetch(silent: state.status == AnalyticsStatus.ready);
+  void consumeNavigation() {
+    emit(state.copyWith(navigation: null));
   }
 
-  Future<void> _fetch({required bool silent}) async {
+  void invalidateCache() {
+    _lastSourceFingerprint = null;
+  }
+
+  String _sourceFingerprint({
+    required ProfileEntity profile,
+    required RatesSnapshotEntity? rates,
+    required List<AccountEntity> accounts,
+    required List<AssetEntity> assets,
+  }) {
+    final accountIds = accounts.map((a) => a.id).toList()..sort();
+    final assetIds = assets.map((a) => a.id).toList()..sort();
+    return '${profile.baseCurrency}|${profile.baseAssetId ?? ""}|'
+        '${accountIds.join(",")}|${assetIds.join(",")}|'
+        '${rates?.asOf.toIso8601String() ?? ""}';
+  }
+
+  Future<void> _fetchFromSource({
+    required ProfileEntity profile,
+    required RatesSnapshotEntity? rates,
+    required List<AssetEntity> assets,
+    required List<AccountEntity> accounts,
+    required bool silent,
+    required String fingerprint,
+  }) async {
     if (_isFetching) {
       _queuedFetch = true;
       _queuedSilent = _queuedSilent && silent;
+      _queuedProfile = profile;
+      _queuedRates = rates;
+      _queuedAssets = assets;
+      _queuedAccounts = accounts;
+      _queuedFingerprint = fingerprint;
       return;
     }
 
@@ -84,35 +116,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         );
       }
 
-      final session = await _getCachedSession();
-      if (isClosed) return;
-      if (session == null) {
-        emit(
-          state.copyWith(
-            status: AnalyticsStatus.error,
-            failureCode: 'unauthorized',
-            navigation: const AnalyticsNavigation(destination: AnalyticsDestination.signIn),
-          ),
-        );
-        return;
-      }
-
-      final profile = await _loadProfile();
-      if (isClosed) return;
-      if (profile == null) {
-        emit(state.copyWith(status: AnalyticsStatus.error, failureCode: 'unknown'));
-        return;
-      }
-
-      final ratesResult = await _getLatestUsdRates();
-      final rates = switch (ratesResult) {
-        Success<RatesSnapshotEntity?>(value: final value) => value,
-        FailureResult<RatesSnapshotEntity?>() => null,
-      };
-
-      final accounts = _accounts;
-
       if (accounts.isEmpty) {
+        _lastSourceFingerprint = fingerprint;
         emit(
           state.copyWith(
             status: AnalyticsStatus.ready,
@@ -124,23 +129,6 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         return;
       }
 
-      final assetsResult = await _getAssets();
-      if (isClosed) return;
-      List<AssetEntity> assets;
-      switch (assetsResult) {
-        case Success<List<AssetEntity>>(value: final value):
-          assets = value;
-        case FailureResult<List<AssetEntity>>(failure: final failure):
-          emit(
-            state.copyWith(
-              status: AnalyticsStatus.error,
-              failureCode: failure.code,
-              failureMessage: failure.message,
-            ),
-          );
-          return;
-      }
-
       final assetById = {for (final item in assets) item.id: item};
       final baseAsset = assets.firstWhereOrNull((a) => a.code == profile.baseCurrency);
       final baseUsdPrice = _baseUsdPrice(
@@ -149,13 +137,17 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         snapshot: rates,
       );
 
+      final subaccountsResults = await Future.wait(
+        accounts.map((a) => _getSubaccounts(accountId: a.id)),
+      );
+      if (isClosed) return;
+
       final subaccountsByAccount = <String, List<SubaccountEntity>>{};
-      for (final account in accounts) {
-        final result = await _getSubaccounts(accountId: account.id);
-        if (isClosed) return;
+      for (var i = 0; i < accounts.length; i++) {
+        final result = subaccountsResults[i];
         switch (result) {
           case Success<List<SubaccountEntity>>(value: final value):
-            subaccountsByAccount[account.id] = value;
+            subaccountsByAccount[accounts[i].id] = value;
           case FailureResult<List<SubaccountEntity>>(failure: final failure):
             emit(
               state.copyWith(
@@ -170,7 +162,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
       final subaccounts = subaccountsByAccount.values.expand((list) => list).toList();
       final subaccountIds = subaccounts.map((item) => item.id).toSet();
-      if (subaccountIds.isEmpty) {
+      if (      subaccountIds.isEmpty) {
+        _lastSourceFingerprint = fingerprint;
         emit(
           state.copyWith(
             status: AnalyticsStatus.ready,
@@ -242,10 +235,14 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       final updates = <AnalyticsUpdateItem>[];
       final accountById = {for (final account in accounts) account.id: account};
 
-      for (final subaccount in subaccounts) {
-        final historyResult = await _getHistory(subaccountId: subaccount.id, limit: 20);
-        if (isClosed) return;
+      final historyResults = await Future.wait(
+        subaccounts.map((s) => _getHistory(subaccountId: s.id, limit: 20)),
+      );
+      if (isClosed) return;
 
+      for (var i = 0; i < subaccounts.length; i++) {
+        final subaccount = subaccounts[i];
+        final historyResult = historyResults[i];
         final entries = switch (historyResult) {
           Success(value: final page) => page.entries,
           FailureResult<BalanceHistoryPageEntity>() => const <BalanceEntryEntity>[],
@@ -287,6 +284,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       updates.sort((a, b) => b.entryDate.compareTo(a.entryDate));
 
       if (isClosed) return;
+      _lastSourceFingerprint = fingerprint;
       emit(
         state.copyWith(
           status: AnalyticsStatus.ready,
@@ -300,39 +298,30 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       _isFetching = false;
       if (_queuedFetch) {
         final nextSilent = _queuedSilent;
+        final nextProfile = _queuedProfile;
+        final nextRates = _queuedRates;
+        final nextAssets = _queuedAssets;
+        final nextAccounts = _queuedAccounts;
+        final nextFingerprint = _queuedFingerprint ?? '';
         _queuedFetch = false;
         _queuedSilent = true;
-        await _fetch(silent: nextSilent);
+        _queuedProfile = null;
+        _queuedRates = null;
+        _queuedAssets = const [];
+        _queuedAccounts = const [];
+        _queuedFingerprint = null;
+        if (nextProfile != null) {
+          await _fetchFromSource(
+            profile: nextProfile,
+            rates: nextRates,
+            assets: nextAssets,
+            accounts: nextAccounts,
+            silent: nextSilent,
+            fingerprint: nextFingerprint,
+          );
+        }
       }
     }
-  }
-
-  void consumeNavigation() {
-    emit(state.copyWith(navigation: null));
-  }
-
-  Future<ProfileEntity?> _loadProfile() async {
-    final profileResult = await _getProfile();
-    switch (profileResult) {
-      case Success<ProfileEntity>(value: final profile):
-        return profile;
-      case FailureResult<ProfileEntity>():
-        return null;
-    }
-  }
-
-  bool _sameAccounts(List<AccountEntity> current, List<AccountEntity> next) {
-    if (current.length != next.length) {
-      return false;
-    }
-    for (var index = 0; index < current.length; index++) {
-      final left = current[index];
-      final right = next[index];
-      if (left.id != right.id || left.updatedAt != right.updatedAt) {
-        return false;
-      }
-    }
-    return true;
   }
 }
 

@@ -66,13 +66,13 @@ class _AddBalancePageState extends State<AddBalancePage> {
           final accountsCubit = context.read<AccountsCubit>();
           final subaccountInfoCubit = context.read<SubaccountInfoCubit>();
           final entry = state.entry!;
-          await accountInfoCubit.applyUpdatedSubaccountBalance(
+          accountInfoCubit.applyUpdatedSubaccountBalance(
             subaccountId: widget.subaccountId,
             amountAtomic: entry.amountAtomic,
             amountDecimals: entry.amountDecimals,
           );
-          await accountsCubit.refresh(silent: true);
-          await subaccountInfoCubit.refreshHistory(showLoading: true);
+          accountsCubit.refresh(silent: true);
+          subaccountInfoCubit.refreshHistory(showLoading: true);
 
           if (!context.mounted) {
             return;

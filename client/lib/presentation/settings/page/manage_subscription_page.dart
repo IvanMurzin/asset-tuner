@@ -1,17 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
+import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 class ManageSubscriptionPage extends StatelessWidget {
   const ManageSubscriptionPage({super.key});
@@ -67,7 +71,9 @@ class ManageSubscriptionPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           DSButton(
-                            label: isPaid ? l10n.subscriptionManage : l10n.subscriptionUpgrade,
+                            label: isPaid
+                                ? l10n.subscriptionManage
+                                : l10n.subscriptionUpgrade,
                             fullWidth: true,
                             isLoading: state.isSyncingSubscription,
                             onPressed: state.isSyncingSubscription
@@ -75,16 +81,22 @@ class ManageSubscriptionPage extends StatelessWidget {
                                 : () async {
                                     if (isPaid) {
                                       await RevenueCatUI.presentCustomerCenter();
-                                    } else {
-                                      await RevenueCatUI.presentPaywall(displayCloseButton: true);
-                                    }
-                                    if (context.mounted) {
+                                      if (!context.mounted) {
+                                        return;
+                                      }
                                       await context.read<UserCubit>().syncSubscription();
                                       if (!context.mounted) {
                                         return;
                                       }
                                       await context.read<AssetsCubit>().refresh(silent: true);
+                                      return;
                                     }
+                                    await context.push<bool>(
+                                      AppRoutes.paywall,
+                                      extra: const PaywallArgs(
+                                        reason: PaywallReason.baseCurrency,
+                                      ),
+                                    );
                                   },
                           ),
                           SizedBox(height: context.dsSpacing.s12),
@@ -96,13 +108,33 @@ class ManageSubscriptionPage extends StatelessWidget {
                             onPressed: state.isSyncingSubscription
                                 ? null
                                 : () async {
-                                    await RevenueCatUI.presentPaywall(displayCloseButton: true);
-                                    if (context.mounted) {
+                                    try {
+                                      await getIt<RevenueCatService>().restorePurchases();
+                                      if (!context.mounted) {
+                                        return;
+                                      }
                                       await context.read<UserCubit>().syncSubscription();
                                       if (!context.mounted) {
                                         return;
                                       }
                                       await context.read<AssetsCubit>().refresh(silent: true);
+                                      if (!context.mounted) {
+                                        return;
+                                      }
+                                      showDSSnackBar(
+                                        context,
+                                        variant: DSSnackBarVariant.success,
+                                        message: l10n.subscriptionRestoreSuccess,
+                                      );
+                                    } catch (_) {
+                                      if (!context.mounted) {
+                                        return;
+                                      }
+                                      showDSSnackBar(
+                                        context,
+                                        variant: DSSnackBarVariant.error,
+                                        message: l10n.errorGeneric,
+                                      );
                                     }
                                   },
                           ),

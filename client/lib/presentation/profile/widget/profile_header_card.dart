@@ -9,14 +9,16 @@ class ProfileHeaderCard extends StatelessWidget {
     required this.planLabel,
     required this.baseCurrency,
     this.isPaid = false,
-    this.onManageSubscriptionTap,
+    this.onPlanActionTap,
+    this.planActionLabel,
   });
 
   final String email;
   final String planLabel;
   final String baseCurrency;
   final bool isPaid;
-  final VoidCallback? onManageSubscriptionTap;
+  final VoidCallback? onPlanActionTap;
+  final String? planActionLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -146,14 +148,14 @@ class ProfileHeaderCard extends StatelessWidget {
                   ),
                 ],
               ),
-              if (onManageSubscriptionTap != null) ...[
+              if (onPlanActionTap != null) ...[
                 SizedBox(height: spacing.s16),
                 Divider(height: 1, color: colors.onPrimary.withValues(alpha: 0.25)),
                 SizedBox(height: spacing.s12),
                 Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: onManageSubscriptionTap,
+                    onTap: onPlanActionTap,
                     borderRadius: BorderRadius.circular(radius.r8),
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: spacing.s8, horizontal: spacing.s4),
@@ -167,7 +169,7 @@ class ProfileHeaderCard extends StatelessWidget {
                           ),
                           SizedBox(width: spacing.s4),
                           Text(
-                            l10n.settingsManageSubscription,
+                            planActionLabel ?? l10n.settingsManageSubscription,
                             style: typography.body.copyWith(
                               color: colors.onPrimary.withValues(alpha: 0.95),
                               fontWeight: FontWeight.w500,

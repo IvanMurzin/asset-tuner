@@ -13,9 +13,20 @@ import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
-
 import 'package:asset_tuner/presentation/analytics/widget/analytics_loading_skeleton.dart';
+import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
+import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
+
+Future<void> _refreshAnalyticsSources(BuildContext context) async {
+  context.read<AnalyticsCubit>().invalidateCache();
+  await Future.wait([
+    context.read<UserCubit>().refresh(silent: true),
+    context.read<AccountsCubit>().refresh(),
+    context.read<AssetsCubit>().refresh(),
+  ]);
+}
 
 class AnalyticsPage extends StatelessWidget {
   const AnalyticsPage({super.key});
@@ -40,14 +51,7 @@ class AnalyticsPage extends StatelessWidget {
           appBar: DSAppBar(title: l10n.analyticsTitle),
           body: SafeArea(
             child: RefreshIndicator(
-              onRefresh: () async {
-                final cubit = context.read<AnalyticsCubit>();
-                if (cubit.state.status == AnalyticsStatus.ready) {
-                  await cubit.refresh();
-                } else {
-                  await cubit.load();
-                }
-              },
+              onRefresh: () => _refreshAnalyticsSources(context),
               child: Padding(
                 padding: EdgeInsets.all(context.dsSpacing.s24),
                 child: _Body(state: state),
@@ -79,7 +83,7 @@ class _Body extends StatelessWidget {
         title: l10n.splashErrorTitle,
         message: state.failureMessage ?? l10n.errorGeneric,
         actionLabel: l10n.splashRetry,
-        onAction: () => context.read<AnalyticsCubit>().load(),
+        onAction: () => _refreshAnalyticsSources(context),
       );
     }
 
@@ -132,8 +136,12 @@ class _Body extends StatelessWidget {
         SizedBox(height: spacing.s12),
         ...state.breakdown.toList().asMap().entries.map((entry) {
           return Padding(
-            padding: EdgeInsets.only(bottom: spacing.s12),
+            padding: EdgeInsets.only(bottom: spacing.s8),
             child: DSCard(
+              padding: EdgeInsets.symmetric(
+                horizontal: spacing.s12,
+                vertical: spacing.s8,
+              ),
               child: _BreakdownCard(
                 item: entry.value,
                 index: entry.key,
@@ -200,23 +208,30 @@ class _BreakdownCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(item.assetCode, style: typography.h3),
-        SizedBox(height: spacing.s8),
-        Text(
-          '$originalText ${item.assetCode}',
-          style: typography.body.copyWith(color: colors.textSecondary),
+        Text(item.assetCode, style: typography.caption.copyWith(color: colors.textSecondary)),
+        SizedBox(height: spacing.s4),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              context.dsFormatters.formatMoney(item.value, currency),
+              style: typography.caption.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              '$originalText ${item.assetCode}',
+              style: typography.caption.copyWith(color: colors.textSecondary),
+            ),
+          ],
         ),
         SizedBox(height: spacing.s4),
-        Text(
-          context.dsFormatters.formatMoney(item.value, currency),
-          style: typography.body.copyWith(color: colors.textPrimary, fontWeight: FontWeight.w600),
-        ),
-        SizedBox(height: spacing.s12),
         ClipRRect(
-          borderRadius: BorderRadius.circular(context.dsRadius.r12),
+          borderRadius: BorderRadius.circular(context.dsRadius.r8),
           child: LinearProgressIndicator(
             value: percent,
-            minHeight: spacing.s8,
+            minHeight: spacing.s4,
             valueColor: AlwaysStoppedAnimation<Color>(barColor),
           ),
         ),

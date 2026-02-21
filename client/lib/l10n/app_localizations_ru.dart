@@ -208,28 +208,39 @@ class AppLocalizationsRu extends AppLocalizations {
       'Нужна подписка для выбора этой валюты.';
 
   @override
-  String get onboardingCarouselTitle1 => 'Одна цифра для всех ваших денег';
+  String get onboardingCarouselTitle1 => 'Весь капитал в одной валюте';
 
   @override
   String get onboardingCarouselBody1 =>
-      'Банки, кошельки, наличные в разных валютах — ваш общий баланс в одном месте.';
+      'Отслеживайте банковские счета, наличные и криптокошельки — и всегда получайте единый итог в вашей базовой валюте.';
 
   @override
-  String get onboardingCarouselTitle2 => 'Просто и вручную';
+  String get onboardingCarouselTitle2 => 'Смоделируйте реальную структуру';
 
   @override
   String get onboardingCarouselBody2 =>
-      'Без подключения банков. Добавляйте счета и балансы сами. Мгновенный итог в выбранной валюте.';
+      'Создавайте аккаунты типа Bank, Wallet, Exchange или Cash. Добавляйте несколько активов в один аккаунт (BTC, ETH, USDT, EUR) — как в реальной жизни.';
 
   @override
-  String get onboardingCarouselTitle3 => 'Всегда в синхронизации';
+  String get onboardingCarouselTitle3 => 'Обновляйте балансы за секунды';
 
   @override
   String get onboardingCarouselBody3 =>
-      'Курсы обновляются каждый час. Данные синхронизируются между устройствами.';
+      'Вносите быстрый снимок баланса. Мы подсвечиваем изменения с прошлого раза и держим итоги консистентными за счёт регулярно обновляемых курсов.';
 
   @override
-  String get onboardingCarouselNext => 'Далее';
+  String get onboardingCarouselBody3Footnote =>
+      'Далее: войдите, чтобы синхронизировать данные между устройствами.';
+
+  @override
+  String get onboardingCarouselQuickUpdatesCaption =>
+      'Быстрые обновления баланса';
+
+  @override
+  String get onboardingCarouselSignInCta => 'У меня уже есть аккаунт';
+
+  @override
+  String get onboardingCarouselNext => 'Продолжить';
 
   @override
   String get onboardingCarouselGetStarted => 'Начать';
@@ -655,10 +666,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addBalanceValidationDate => 'Выберите дату';
 
   @override
-  String get paywallTitle => 'Подписка';
+  String get paywallTitle => 'Открыть Pro';
 
   @override
-  String get paywallHeaderTitle => 'Подписка';
+  String get paywallHeaderTitle => 'Открыть Pro';
 
   @override
   String get paywallReasonAccounts =>
@@ -676,7 +687,78 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось проверить подписку. Попробуйте снова.';
 
   @override
-  String get paywallDismiss => 'Позже';
+  String get paywallRestore => 'Восстановить';
+
+  @override
+  String get paywallUnlockTitle => 'Открыть Pro';
+
+  @override
+  String get paywallSubtitle => 'Безлимит по аккаунтам, активам и валютам.';
+
+  @override
+  String get paywallLoadingOfferings => 'Загружаем варианты подписки...';
+
+  @override
+  String get paywallNoOfferings => 'Сейчас нет доступных вариантов подписки.';
+
+  @override
+  String get paywallDismiss => 'Не сейчас';
+
+  @override
+  String get paywallContinue => 'Продолжить';
+
+  @override
+  String get paywallMostPopular => 'Самый популярный';
+
+  @override
+  String get paywallFreeTitle => 'Free';
+
+  @override
+  String get paywallProTitle => 'Pro';
+
+  @override
+  String get paywallFreeFeatureAccounts => 'До 5 аккаунтов';
+
+  @override
+  String get paywallFreeFeatureSubaccounts => 'До 15 суб-аккаунтов';
+
+  @override
+  String get paywallFreeFeatureFiat => '5 популярных фиатных валют';
+
+  @override
+  String get paywallFreeFeatureCrypto => '5 популярных криптовалют';
+
+  @override
+  String get paywallProFeatureAccounts => 'Безлимитные аккаунты';
+
+  @override
+  String get paywallProFeatureSubaccounts => 'Безлимитные суб-аккаунты';
+
+  @override
+  String get paywallProFeatureFiat => '100+ фиатных валют';
+
+  @override
+  String get paywallProFeatureCrypto => '100+ криптовалют';
+
+  @override
+  String get paywallLegalPrefix =>
+      'Отменить можно в любой момент. Оплата будет списана через магазин приложений.';
+
+  @override
+  String get paywallLegalTerms => 'Условия';
+
+  @override
+  String get paywallLegalPrivacy => 'Конфиденциальность';
+
+  @override
+  String paywallMonthlyPrice(String price) {
+    return 'Месяц: $price / месяц';
+  }
+
+  @override
+  String paywallYearlyPrice(String price) {
+    return 'Год: $price / год';
+  }
 
   @override
   String get paywallIncludesTitle => 'Что включено';
@@ -885,6 +967,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsManageSubscription => 'Управление подпиской';
+
+  @override
+  String get profileUpgradePlan => 'Обновить план';
 
   @override
   String get settingsSignOut => 'Выйти';

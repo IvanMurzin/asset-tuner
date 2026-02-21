@@ -9,6 +9,8 @@ abstract class AssetsState with _$AssetsState {
   const factory AssetsState({
     @Default(AssetsStatus.initial) AssetsStatus status,
     @Default(<AssetEntity>[]) List<AssetEntity> assets,
+    RatesSnapshotEntity? snapshot,
+    DateTime? lastRatesRefreshAt,
     String? failureCode,
     String? failureMessage,
   }) = _AssetsState;

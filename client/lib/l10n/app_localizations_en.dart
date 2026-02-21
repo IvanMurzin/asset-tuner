@@ -209,28 +209,39 @@ class AppLocalizationsEn extends AppLocalizations {
       'Upgrade required to select this currency.';
 
   @override
-  String get onboardingCarouselTitle1 => 'One number for all your money';
+  String get onboardingCarouselTitle1 =>
+      'See your total wealth in one currency';
 
   @override
   String get onboardingCarouselBody1 =>
-      'Banks, wallets, cash in different currencies — see your total wealth in one place.';
+      'Track bank accounts, cash, and crypto wallets — and always get a single global total in your base currency.';
 
   @override
-  String get onboardingCarouselTitle2 => 'Simple and manual';
+  String get onboardingCarouselTitle2 => 'Model your real setup';
 
   @override
   String get onboardingCarouselBody2 =>
-      'No bank connections. Add accounts and balances yourself. Get instant totals in your chosen currency.';
+      'Create accounts like Bank, Wallet, Exchange, or Cash. Add multiple assets inside one account (BTC, ETH, USDT, EUR) — just like in real life.';
 
   @override
-  String get onboardingCarouselTitle3 => 'Always in sync';
+  String get onboardingCarouselTitle3 => 'Update balances in seconds';
 
   @override
   String get onboardingCarouselBody3 =>
-      'Rates updated hourly. Your data syncs across devices.';
+      'Enter a quick snapshot of your balance. We highlight what changed since last time and keep totals consistent with regularly updated rates.';
 
   @override
-  String get onboardingCarouselNext => 'Next';
+  String get onboardingCarouselBody3Footnote =>
+      'Next: sign in to sync across devices.';
+
+  @override
+  String get onboardingCarouselQuickUpdatesCaption => 'Quick balance updates';
+
+  @override
+  String get onboardingCarouselSignInCta => 'I already have an account';
+
+  @override
+  String get onboardingCarouselNext => 'Continue';
 
   @override
   String get onboardingCarouselGetStarted => 'Get started';
@@ -655,10 +666,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addBalanceValidationDate => 'Choose a date';
 
   @override
-  String get paywallTitle => 'Upgrade';
+  String get paywallTitle => 'Unlock Pro';
 
   @override
-  String get paywallHeaderTitle => 'Upgrade';
+  String get paywallHeaderTitle => 'Unlock Pro';
 
   @override
   String get paywallReasonAccounts =>
@@ -676,7 +687,80 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t verify subscription; try again.';
 
   @override
+  String get paywallRestore => 'Restore';
+
+  @override
+  String get paywallUnlockTitle => 'Unlock Pro';
+
+  @override
+  String get paywallSubtitle =>
+      'Go unlimited with accounts, assets, and currencies.';
+
+  @override
+  String get paywallLoadingOfferings => 'Loading subscription options...';
+
+  @override
+  String get paywallNoOfferings =>
+      'No subscription options are available right now.';
+
+  @override
   String get paywallDismiss => 'Not now';
+
+  @override
+  String get paywallContinue => 'Continue';
+
+  @override
+  String get paywallMostPopular => 'Most Popular';
+
+  @override
+  String get paywallFreeTitle => 'Free';
+
+  @override
+  String get paywallProTitle => 'Pro';
+
+  @override
+  String get paywallFreeFeatureAccounts => 'Up to 5 accounts';
+
+  @override
+  String get paywallFreeFeatureSubaccounts => 'Up to 15 sub-accounts';
+
+  @override
+  String get paywallFreeFeatureFiat => '5 top fiat currencies';
+
+  @override
+  String get paywallFreeFeatureCrypto => '5 top crypto currencies';
+
+  @override
+  String get paywallProFeatureAccounts => 'Unlimited accounts';
+
+  @override
+  String get paywallProFeatureSubaccounts => 'Unlimited sub-accounts';
+
+  @override
+  String get paywallProFeatureFiat => '100+ fiat currencies';
+
+  @override
+  String get paywallProFeatureCrypto => '100+ crypto currencies';
+
+  @override
+  String get paywallLegalPrefix =>
+      'Cancel anytime. Payment will be charged to your store account.';
+
+  @override
+  String get paywallLegalTerms => 'Terms';
+
+  @override
+  String get paywallLegalPrivacy => 'Privacy';
+
+  @override
+  String paywallMonthlyPrice(String price) {
+    return 'Monthly: $price / month';
+  }
+
+  @override
+  String paywallYearlyPrice(String price) {
+    return 'Yearly: $price / year';
+  }
 
   @override
   String get paywallIncludesTitle => 'What\'s included';
@@ -715,7 +799,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallUpgrade => 'Upgrade';
 
   @override
-  String get paywallAlreadyPaid => 'You\'re already on the paid plan.';
+  String get paywallAlreadyPaid => 'You\'re already on the pro plan.';
 
   @override
   String get dsPreviewTotalBalanceLabel => 'Total balance';
@@ -882,10 +966,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsPlanFree => 'Free plan';
 
   @override
-  String get settingsPlanPaid => 'Paid plan';
+  String get settingsPlanPaid => 'Pro plan';
 
   @override
   String get settingsManageSubscription => 'Manage subscription';
+
+  @override
+  String get profileUpgradePlan => 'Upgrade plan';
 
   @override
   String get settingsSignOut => 'Sign out';
@@ -962,7 +1049,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionCancel => 'Cancel subscription';
 
   @override
-  String get subscriptionUpgrade => 'Upgrade to paid';
+  String get subscriptionUpgrade => 'Upgrade to pro';
 
   @override
   String get subscriptionFreeBody =>
@@ -970,7 +1057,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionPaidBody =>
-      'You\'re on the paid plan. Thanks for supporting Asset Tuner.';
+      'You\'re on the pro plan. Thanks for supporting Asset Tuner.';
 
   @override
   String get subscriptionPlaceholderBody =>

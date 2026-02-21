@@ -111,7 +111,8 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                         SizedBox(height: spacing.s24),
                         DSSectionTitle(title: l10n.baseCurrencySettingsPickerTitle),
                         SizedBox(height: spacing.s12),
-                        if (!(profile.entitlements.anyBaseCurrency)) ...[
+                        if (!(profile.entitlements.anyBaseCurrency) &&
+                            profile.plan != 'pro') ...[
                           DSUnlockCurrenciesCard(
                             title: l10n.baseCurrencySettingsPaywallHint,
                             onTap: () => context.push(

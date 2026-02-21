@@ -10,7 +10,30 @@ class SupabaseAssetDataSource {
 
   final SupabaseEdgeFunctions _edgeFunctions;
 
+  static const _cacheTtl = Duration(seconds: 60);
+
+  List<AssetDto>? _cached;
+  DateTime? _cachedAt;
+  Future<List<AssetDto>>? _inFlight;
+
   Future<List<AssetDto>> fetchAssets() async {
+    final now = DateTime.now();
+    if (_cached != null &&
+        _cachedAt != null &&
+        now.difference(_cachedAt!) < _cacheTtl) {
+      return _cached!;
+    }
+
+    _inFlight ??= _doFetch().whenComplete(() {
+      _inFlight = null;
+    });
+    final result = await _inFlight!;
+    _cached = result;
+    _cachedAt = DateTime.now();
+    return result;
+  }
+
+  Future<List<AssetDto>> _doFetch() async {
     final fiatFuture = _edgeFunctions.invokeDataList(
       SupabaseApiRoutes.assetsList,
       query: {'kind': 'fiat', 'limit': 100},

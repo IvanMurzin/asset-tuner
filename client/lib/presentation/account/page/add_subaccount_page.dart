@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
+import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
@@ -59,6 +61,15 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
       child: BlocListener<SubaccountCreateCubit, SubaccountCreateState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) async {
+          if (state.status == SubaccountCreateStatus.error &&
+              state.failureCode == 'limit_subaccounts_reached') {
+            if (!context.mounted) return;
+            await context.push(
+              AppRoutes.paywall,
+              extra: const PaywallArgs(reason: PaywallReason.subaccountsLimit),
+            );
+            return;
+          }
           if (state.status != SubaccountCreateStatus.success || state.subaccount == null) {
             return;
           }
@@ -66,8 +77,8 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
           final accountInfoCubit = context.read<AccountInfoCubit>();
           final accountsCubit = context.read<AccountsCubit>();
           final created = state.subaccount!;
-          await accountInfoCubit.applyCreatedSubaccount(created);
-          await accountsCubit.refresh(silent: true);
+          accountInfoCubit.applyCreatedSubaccount(created);
+          accountsCubit.refresh(silent: true);
 
           if (!context.mounted) {
             return;
@@ -76,6 +87,10 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
             AppRoutes.accountSubaccountDetail
                 .replaceFirst(':accountId', widget.accountId)
                 .replaceFirst(':subaccountId', created.id),
+            extra: SubaccountDetailExtra(
+              account: accountInfoCubit.state.account,
+              subaccount: created,
+            ),
           );
         },
         child: BlocBuilder<SubaccountCreateCubit, SubaccountCreateState>(

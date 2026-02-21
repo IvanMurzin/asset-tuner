@@ -1,4 +1,7 @@
+import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
+import 'package:asset_tuner/core/logger/logger.dart';
+import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/delete_account_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
@@ -23,6 +26,7 @@ class UserCubit extends Cubit<UserState> {
     this._updatePlan,
     this._deleteAccount,
     this._signOut,
+    this._revenueCatService,
   ) : super(const UserState());
 
   final GetCachedSessionUseCase _getCachedSession;
@@ -31,9 +35,17 @@ class UserCubit extends Cubit<UserState> {
   final UpdatePlanUseCase _updatePlan;
   final DeleteAccountUseCase _deleteAccount;
   final SignOutUseCase _signOut;
+  final RevenueCatService _revenueCatService;
+  String? _revenueCatUserId;
 
   Future<void> bootstrap() async {
-    emit(state.copyWith(status: UserStatus.loading, failureCode: null, failureMessage: null));
+    emit(
+      state.copyWith(
+        status: UserStatus.loading,
+        failureCode: null,
+        failureMessage: null,
+      ),
+    );
     await _loadAuthenticatedState(silent: false);
   }
 
@@ -48,6 +60,7 @@ class UserCubit extends Cubit<UserState> {
     }
 
     if (session == null) {
+      await _syncRevenueCatLoggedOut();
       final next = state.copyWith(
         status: UserStatus.unauthenticated,
         session: null,
@@ -102,6 +115,7 @@ class UserCubit extends Cubit<UserState> {
         if (!silent || next != state) {
           emit(next);
         }
+        await _syncRevenueCatLoggedIn(session.userId);
     }
   }
 
@@ -110,7 +124,13 @@ class UserCubit extends Cubit<UserState> {
       return;
     }
 
-    emit(state.copyWith(isUpdatingBaseCurrency: true, failureCode: null, failureMessage: null));
+    emit(
+      state.copyWith(
+        isUpdatingBaseCurrency: true,
+        failureCode: null,
+        failureMessage: null,
+      ),
+    );
 
     final result = await _updateBaseCurrency(code);
     if (isClosed) {
@@ -136,24 +156,48 @@ class UserCubit extends Cubit<UserState> {
       return;
     }
 
-    emit(state.copyWith(isSyncingSubscription: true, failureCode: null, failureMessage: null));
+    emit(
+      state.copyWith(
+        isSyncingSubscription: true,
+        failureCode: null,
+        failureMessage: null,
+      ),
+    );
 
-    final result = await _updatePlan('pro');
-    if (isClosed) {
-      return;
-    }
-
-    switch (result) {
-      case Success(value: final profile):
-        emit(state.copyWith(isSyncingSubscription: false, profile: profile));
-      case FailureResult(failure: final failure):
-        emit(
-          state.copyWith(
-            isSyncingSubscription: false,
-            failureCode: failure.code,
-            failureMessage: failure.message,
-          ),
-        );
+    try {
+      final result = await _updatePlan('pro').timeout(
+        const Duration(seconds: 30),
+        onTimeout: () => FailureResult(
+          Failure(code: 'TIMEOUT', message: 'Subscription sync timed out'),
+        ),
+      );
+      if (isClosed) {
+        return;
+      }
+      switch (result) {
+        case Success(value: final profile):
+          emit(state.copyWith(isSyncingSubscription: false, profile: profile));
+        case FailureResult(failure: final failure):
+          emit(
+            state.copyWith(
+              isSyncingSubscription: false,
+              failureCode: failure.code,
+              failureMessage: failure.message,
+            ),
+          );
+      }
+    } catch (error, stackTrace) {
+      if (isClosed) {
+        return;
+      }
+      logger.e('syncSubscription failed', error: error, stackTrace: stackTrace);
+      emit(
+        state.copyWith(
+          isSyncingSubscription: false,
+          failureCode: 'SYNC_ERROR',
+          failureMessage: error.toString(),
+        ),
+      );
     }
   }
 
@@ -172,6 +216,7 @@ class UserCubit extends Cubit<UserState> {
     );
 
     await _signOut();
+    await _syncRevenueCatLoggedOut();
   }
 
   Future<void> deleteAccountOptimistic() async {
@@ -184,9 +229,39 @@ class UserCubit extends Cubit<UserState> {
       ),
     );
     await _deleteAccount();
+    await _syncRevenueCatLoggedOut();
   }
 
   void consumeNavigation() {
     emit(state.copyWith(navigation: null));
+  }
+
+  Future<void> _syncRevenueCatLoggedIn(String userId) async {
+    if (_revenueCatUserId == userId) {
+      return;
+    }
+    try {
+      await _revenueCatService.logIn(userId);
+      _revenueCatUserId = userId;
+    } catch (error, stackTrace) {
+      logger.e('RevenueCat logIn failed', error: error, stackTrace: stackTrace);
+    }
+  }
+
+  Future<void> _syncRevenueCatLoggedOut() async {
+    if (_revenueCatUserId == null) {
+      return;
+    }
+    try {
+      await _revenueCatService.logOut();
+    } catch (error, stackTrace) {
+      logger.e(
+        'RevenueCat logOut failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      _revenueCatUserId = null;
+    }
   }
 }

@@ -20,8 +20,9 @@ import 'package:asset_tuner/presentation/balance/bloc/subaccount_update_cubit.da
 import 'package:asset_tuner/presentation/balance/widget/subaccount_detail_actions_row.dart';
 import 'package:asset_tuner/presentation/balance/widget/subaccount_detail_header_card.dart';
 import 'package:asset_tuner/presentation/balance/widget/subaccount_detail_loading_skeleton.dart';
+import 'package:asset_tuner/presentation/balance/widget/subaccount_history_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/balance/widget/subaccount_history_section.dart';
-import 'package:asset_tuner/presentation/rate/bloc/usd_rates_cubit.dart';
+import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
 
 class SubaccountDetailPage extends StatelessWidget {
@@ -97,9 +98,9 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
             final accountsCubit = context.read<AccountsCubit>();
             final updateCubit = context.read<SubaccountUpdateCubit>();
             final updated = state.subaccount!;
-            await accountInfoCubit.applyUpdatedSubaccount(updated);
+            accountInfoCubit.applyUpdatedSubaccount(updated);
             subaccountInfoCubit.updateSubaccount(updated);
-            await accountsCubit.refresh(silent: true);
+            accountsCubit.refresh(silent: true);
             if (!mounted) {
               return;
             }
@@ -118,8 +119,8 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
             final accountsCubit = context.read<AccountsCubit>();
             final subaccountInfoCubit = context.read<SubaccountInfoCubit>();
             final deleteCubit = context.read<SubaccountDeleteCubit>();
-            await accountInfoCubit.applyDeletedSubaccount(state.deletedSubaccountId!);
-            await accountsCubit.refresh(silent: true);
+            accountInfoCubit.applyDeletedSubaccount(state.deletedSubaccountId!);
+            accountsCubit.refresh(silent: true);
             subaccountInfoCubit.onDeleted();
             deleteCubit.reset();
           },
@@ -151,7 +152,7 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
           }
 
           final user = context.watch<UserCubit>().state;
-          final rates = context.watch<UsdRatesCubit>().state.snapshot;
+          final rates = context.watch<AssetsCubit>().state.snapshot;
           final baseCurrency = user.profile?.baseCurrency ?? 'USD';
           final baseUsdPrice = _baseUsdPrice(user, rates);
 
@@ -280,7 +281,7 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: spacing.s24),
                         child: state.isHistoryLoading
-                            ? const SubaccountDetailLoadingSkeleton()
+                            ? const SubaccountHistoryLoadingSkeleton()
                             : SubaccountHistorySection(
                                 entries: state.entries,
                                 assetCode: subaccount.asset?.code,

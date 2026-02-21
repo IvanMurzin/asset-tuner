@@ -72,7 +72,7 @@ class _AccountUpdatePageState extends State<AccountUpdatePage> {
           }
 
           final account = state.account!;
-          await context.read<AccountsCubit>().update(account);
+          context.read<AccountsCubit>().update(account);
 
           if (context.mounted) {
             context.pop(account.id);

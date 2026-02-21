@@ -479,43 +479,61 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingCarouselTitle1.
   ///
   /// In en, this message translates to:
-  /// **'One number for all your money'**
+  /// **'See your total wealth in one currency'**
   String get onboardingCarouselTitle1;
 
   /// No description provided for @onboardingCarouselBody1.
   ///
   /// In en, this message translates to:
-  /// **'Banks, wallets, cash in different currencies — see your total wealth in one place.'**
+  /// **'Track bank accounts, cash, and crypto wallets — and always get a single global total in your base currency.'**
   String get onboardingCarouselBody1;
 
   /// No description provided for @onboardingCarouselTitle2.
   ///
   /// In en, this message translates to:
-  /// **'Simple and manual'**
+  /// **'Model your real setup'**
   String get onboardingCarouselTitle2;
 
   /// No description provided for @onboardingCarouselBody2.
   ///
   /// In en, this message translates to:
-  /// **'No bank connections. Add accounts and balances yourself. Get instant totals in your chosen currency.'**
+  /// **'Create accounts like Bank, Wallet, Exchange, or Cash. Add multiple assets inside one account (BTC, ETH, USDT, EUR) — just like in real life.'**
   String get onboardingCarouselBody2;
 
   /// No description provided for @onboardingCarouselTitle3.
   ///
   /// In en, this message translates to:
-  /// **'Always in sync'**
+  /// **'Update balances in seconds'**
   String get onboardingCarouselTitle3;
 
   /// No description provided for @onboardingCarouselBody3.
   ///
   /// In en, this message translates to:
-  /// **'Rates updated hourly. Your data syncs across devices.'**
+  /// **'Enter a quick snapshot of your balance. We highlight what changed since last time and keep totals consistent with regularly updated rates.'**
   String get onboardingCarouselBody3;
+
+  /// No description provided for @onboardingCarouselBody3Footnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: sign in to sync across devices.'**
+  String get onboardingCarouselBody3Footnote;
+
+  /// No description provided for @onboardingCarouselQuickUpdatesCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick balance updates'**
+  String get onboardingCarouselQuickUpdatesCaption;
+
+  /// No description provided for @onboardingCarouselSignInCta.
+  ///
+  /// In en, this message translates to:
+  /// **'I already have an account'**
+  String get onboardingCarouselSignInCta;
 
   /// No description provided for @onboardingCarouselNext.
   ///
   /// In en, this message translates to:
-  /// **'Next'**
+  /// **'Continue'**
   String get onboardingCarouselNext;
 
   /// No description provided for @onboardingCarouselGetStarted.
@@ -1313,13 +1331,13 @@ abstract class AppLocalizations {
   /// No description provided for @paywallTitle.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade'**
+  /// **'Unlock Pro'**
   String get paywallTitle;
 
   /// No description provided for @paywallHeaderTitle.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade'**
+  /// **'Unlock Pro'**
   String get paywallHeaderTitle;
 
   /// No description provided for @paywallReasonAccounts.
@@ -1346,11 +1364,143 @@ abstract class AppLocalizations {
   /// **'Couldn\'t verify subscription; try again.'**
   String get paywallEntitlementsError;
 
+  /// No description provided for @paywallRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get paywallRestore;
+
+  /// No description provided for @paywallUnlockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Pro'**
+  String get paywallUnlockTitle;
+
+  /// No description provided for @paywallSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Go unlimited with accounts, assets, and currencies.'**
+  String get paywallSubtitle;
+
+  /// No description provided for @paywallLoadingOfferings.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading subscription options...'**
+  String get paywallLoadingOfferings;
+
+  /// No description provided for @paywallNoOfferings.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription options are available right now.'**
+  String get paywallNoOfferings;
+
   /// No description provided for @paywallDismiss.
   ///
   /// In en, this message translates to:
   /// **'Not now'**
   String get paywallDismiss;
+
+  /// No description provided for @paywallContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get paywallContinue;
+
+  /// No description provided for @paywallMostPopular.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Popular'**
+  String get paywallMostPopular;
+
+  /// No description provided for @paywallFreeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get paywallFreeTitle;
+
+  /// No description provided for @paywallProTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro'**
+  String get paywallProTitle;
+
+  /// No description provided for @paywallFreeFeatureAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 5 accounts'**
+  String get paywallFreeFeatureAccounts;
+
+  /// No description provided for @paywallFreeFeatureSubaccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 15 sub-accounts'**
+  String get paywallFreeFeatureSubaccounts;
+
+  /// No description provided for @paywallFreeFeatureFiat.
+  ///
+  /// In en, this message translates to:
+  /// **'5 top fiat currencies'**
+  String get paywallFreeFeatureFiat;
+
+  /// No description provided for @paywallFreeFeatureCrypto.
+  ///
+  /// In en, this message translates to:
+  /// **'5 top crypto currencies'**
+  String get paywallFreeFeatureCrypto;
+
+  /// No description provided for @paywallProFeatureAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited accounts'**
+  String get paywallProFeatureAccounts;
+
+  /// No description provided for @paywallProFeatureSubaccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited sub-accounts'**
+  String get paywallProFeatureSubaccounts;
+
+  /// No description provided for @paywallProFeatureFiat.
+  ///
+  /// In en, this message translates to:
+  /// **'100+ fiat currencies'**
+  String get paywallProFeatureFiat;
+
+  /// No description provided for @paywallProFeatureCrypto.
+  ///
+  /// In en, this message translates to:
+  /// **'100+ crypto currencies'**
+  String get paywallProFeatureCrypto;
+
+  /// No description provided for @paywallLegalPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel anytime. Payment will be charged to your store account.'**
+  String get paywallLegalPrefix;
+
+  /// No description provided for @paywallLegalTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms'**
+  String get paywallLegalTerms;
+
+  /// No description provided for @paywallLegalPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get paywallLegalPrivacy;
+
+  /// No description provided for @paywallMonthlyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly: {price} / month'**
+  String paywallMonthlyPrice(String price);
+
+  /// No description provided for @paywallYearlyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly: {price} / year'**
+  String paywallYearlyPrice(String price);
 
   /// No description provided for @paywallIncludesTitle.
   ///
@@ -1427,7 +1577,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallAlreadyPaid.
   ///
   /// In en, this message translates to:
-  /// **'You\'re already on the paid plan.'**
+  /// **'You\'re already on the pro plan.'**
   String get paywallAlreadyPaid;
 
   /// No description provided for @dsPreviewTotalBalanceLabel.
@@ -1745,7 +1895,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsPlanPaid.
   ///
   /// In en, this message translates to:
-  /// **'Paid plan'**
+  /// **'Pro plan'**
   String get settingsPlanPaid;
 
   /// No description provided for @settingsManageSubscription.
@@ -1753,6 +1903,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage subscription'**
   String get settingsManageSubscription;
+
+  /// No description provided for @profileUpgradePlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade plan'**
+  String get profileUpgradePlan;
 
   /// No description provided for @settingsSignOut.
   ///
@@ -1895,7 +2051,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionUpgrade.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade to paid'**
+  /// **'Upgrade to pro'**
   String get subscriptionUpgrade;
 
   /// No description provided for @subscriptionFreeBody.
@@ -1907,7 +2063,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionPaidBody.
   ///
   /// In en, this message translates to:
-  /// **'You\'re on the paid plan. Thanks for supporting Asset Tuner.'**
+  /// **'You\'re on the pro plan. Thanks for supporting Asset Tuner.'**
   String get subscriptionPaidBody;
 
   /// No description provided for @subscriptionPlaceholderBody.
