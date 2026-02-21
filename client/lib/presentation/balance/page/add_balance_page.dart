@@ -58,8 +58,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
       child: BlocListener<SubaccountBalanceCubit, SubaccountBalanceState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) async {
-          if (state.status != SubaccountBalanceStatus.success ||
-              state.entry == null) {
+          if (state.status != SubaccountBalanceStatus.success || state.entry == null) {
             return;
           }
 
@@ -89,12 +88,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
               appBar: DSAppBar(title: l10n.subaccountUpdateBalanceCta),
               body: SafeArea(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    spacing.s24,
-                    spacing.s24,
-                    spacing.s24,
-                    spacing.s16,
-                  ),
+                  padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -116,8 +110,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
                                   label: l10n.addBalanceDateLabel,
                                   value: _date,
                                   enabled: !isLoading,
-                                  onChanged: (value) =>
-                                      setState(() => _date = value),
+                                  onChanged: (value) => setState(() => _date = value),
                                 ),
                                 SizedBox(height: spacing.s16),
                                 DSDecimalField(
@@ -138,19 +131,15 @@ class _AddBalancePageState extends State<AddBalancePage> {
                         onPressed: isLoading
                             ? null
                             : () async {
-                                final amount = _parseDecimal(
-                                  _amountController.text,
-                                );
+                                final amount = _parseDecimal(_amountController.text);
                                 if (amount == null) {
                                   return;
                                 }
-                                await context
-                                    .read<SubaccountBalanceCubit>()
-                                    .submit(
-                                      subaccountId: widget.subaccountId,
-                                      entryDate: _date,
-                                      snapshotAmount: amount,
-                                    );
+                                await context.read<SubaccountBalanceCubit>().submit(
+                                  subaccountId: widget.subaccountId,
+                                  entryDate: _date,
+                                  snapshotAmount: amount,
+                                );
                               },
                       ),
                     ],

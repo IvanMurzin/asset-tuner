@@ -31,12 +31,7 @@ class SubaccountBalanceCubit extends Cubit<SubaccountBalanceState> {
 
     final session = await _getCachedSession();
     if (session == null) {
-      emit(
-        state.copyWith(
-          status: SubaccountBalanceStatus.error,
-          failureCode: 'unauthorized',
-        ),
-      );
+      emit(state.copyWith(status: SubaccountBalanceStatus.error, failureCode: 'unauthorized'));
       return;
     }
 
@@ -51,9 +46,7 @@ class SubaccountBalanceCubit extends Cubit<SubaccountBalanceState> {
 
     switch (result) {
       case Success<BalanceEntryEntity>(value: final entry):
-        emit(
-          state.copyWith(status: SubaccountBalanceStatus.success, entry: entry),
-        );
+        emit(state.copyWith(status: SubaccountBalanceStatus.success, entry: entry));
       case FailureResult<BalanceEntryEntity>(failure: final failure):
         emit(
           state.copyWith(

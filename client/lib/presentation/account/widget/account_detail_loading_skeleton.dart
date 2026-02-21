@@ -103,10 +103,7 @@ class AccountDetailLoadingSkeleton extends StatelessWidget {
               for (var i = 0; i < 4; i++) ...[
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: spacing.s12,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: spacing.s12),
                   decoration: BoxDecoration(
                     color: colors.surface,
                     borderRadius: BorderRadius.circular(context.dsRadius.r16),

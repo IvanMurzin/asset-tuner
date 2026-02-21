@@ -28,47 +28,39 @@ const Map<String, dynamic> supabaseErrorLocalizationRu = {
   'provider_disabled': 'Провайдер отключён',
   'oauth_callback_error': 'Ошибка callback OAuth',
   'otp_expired': 'Токен истёк или недействителен',
-  'over_email_send_rate_limit':
-      'Запрос можно отправлять не чаще одного раза в минуту.',
+  'over_email_send_rate_limit': 'Запрос можно отправлять не чаще одного раза в минуту.',
   'anonymous_provider_disabled': 'Анонимный вход отключён',
   'bad_code_verifier': 'Переданный code verifier не совпадает с ожидаемым',
   'bad_json': 'Тело HTTP-запроса не является валидным JSON',
   'bad_jwt': 'JWT в заголовке Authorization недействителен',
-  'bad_oauth_callback':
-      'OAuth callback не содержит всех обязательных атрибутов',
+  'bad_oauth_callback': 'OAuth callback не содержит всех обязательных атрибутов',
   'bad_oauth_state': 'OAuth state имеет неверный формат',
   'captcha_failed': 'Не удалось проверить CAPTCHA',
   'conflict': 'Конфликт в базе данных (например, параллельные запросы)',
   'email_address_invalid': 'Тестовые и примерные домены не поддерживаются',
   'email_address_not_authorized': 'Отправка писем на этот адрес запрещена',
-  'email_conflict_identity_not_deletable':
-      'Отвязка этой идентичности приведёт к конфликту email',
+  'email_conflict_identity_not_deletable': 'Отвязка этой идентичности приведёт к конфликту email',
   'email_provider_disabled': 'Регистрация по email и паролю отключена',
   'flow_state_expired': 'Состояние PKCE истекло',
   'flow_state_not_found': 'Состояние PKCE больше не существует',
-  'hook_payload_invalid_content_type':
-      'У payload хука некорректный заголовок Content-Type',
+  'hook_payload_invalid_content_type': 'У payload хука некорректный заголовок Content-Type',
   'hook_payload_over_size_limit': 'Payload хука превышает максимальный размер',
   'hook_timeout': 'Не удалось достучаться до хука за отведённое время',
-  'hook_timeout_after_retry':
-      'Не удалось достучаться до хука после максимального числа попыток',
+  'hook_timeout_after_retry': 'Не удалось достучаться до хука после максимального числа попыток',
   'identity_already_exists': 'Идентичность уже привязана к пользователю',
   'identity_not_found': 'Идентичность не существует',
-  'insufficient_aal':
-      'Требуется более высокий уровень AAL (Authenticator Assurance Level)',
+  'insufficient_aal': 'Требуется более высокий уровень AAL (Authenticator Assurance Level)',
   'invite_not_found': 'Приглашение истекло или уже использовано',
   'manual_linking_disabled': 'API ручной привязки отключены',
   'mfa_factor_name_conflict': 'MFA-факторы не должны иметь одинаковые названия',
   'mfa_factor_not_found': 'MFA-фактор больше не существует',
-  'mfa_ip_address_mismatch':
-      'Подключение MFA должно начинаться и завершаться с одного IP-адреса',
+  'mfa_ip_address_mismatch': 'Подключение MFA должно начинаться и завершаться с одного IP-адреса',
   'mfa_phone_enroll_not_enabled': 'Подключение MFA по телефону отключено',
   'mfa_phone_verify_not_enabled': 'Вход через MFA по телефону отключён',
   'mfa_totp_enroll_not_enabled': 'Подключение MFA TOTP отключено',
   'mfa_totp_verify_not_enabled': 'Вход через MFA TOTP отключён',
   'mfa_verification_rejected': 'Дальнейшая проверка MFA отклонена',
-  'mfa_verified_factor_exists':
-      'У пользователя уже есть подтверждённый телефонный MFA-фактор',
+  'mfa_verified_factor_exists': 'У пользователя уже есть подтверждённый телефонный MFA-фактор',
   'mfa_web_authn_enroll_not_enabled': 'Подключение MFA WebAuthn отключено',
   'mfa_web_authn_verify_not_enabled': 'Вход через MFA WebAuthn отключён',
   'no_authorization': 'HTTP-запрос требует заголовок Authorization',
@@ -76,14 +68,11 @@ const Map<String, dynamic> supabaseErrorLocalizationRu = {
   'oauth_provider_not_supported': 'OAuth-провайдер отключён',
   'otp_disabled': 'Вход по OTP отключён',
   'over_request_rate_limit': 'Слишком много запросов от этого клиента',
-  'over_sms_send_rate_limit':
-      'Слишком много SMS отправлено на этот номер телефона',
+  'over_sms_send_rate_limit': 'Слишком много SMS отправлено на этот номер телефона',
   'phone_not_confirmed': 'Номер телефона не подтверждён',
   'phone_provider_disabled': 'Регистрация по телефону и паролю отключена',
-  'provider_email_needs_verification':
-      'Email у OAuth-провайдера требует подтверждения',
-  'reauthentication_needed':
-      'Для смены пароля требуется повторная аутентификация',
+  'provider_email_needs_verification': 'Email у OAuth-провайдера требует подтверждения',
+  'reauthentication_needed': 'Для смены пароля требуется повторная аутентификация',
   'reauthentication_not_valid': 'Повторная аутентификация не прошла проверку',
   'refresh_token_already_used': 'Refresh token отозван',
   'refresh_token_not_found': 'Сессия с refresh token не найдена',
@@ -99,17 +88,13 @@ const Map<String, dynamic> supabaseErrorLocalizationRu = {
   'saml_relay_state_expired': 'Relay state SAML истёк',
   'saml_relay_state_not_found': 'Relay state SAML больше не существует',
   'session_not_found': 'Сессия больше не существует',
-  'single_identity_not_deletable':
-      'У каждого пользователя должна быть хотя бы одна идентичность',
+  'single_identity_not_deletable': 'У каждого пользователя должна быть хотя бы одна идентичность',
   'sms_send_failed': 'Не удалось отправить SMS',
-  'sso_domain_already_exists':
-      'Для одного провайдера можно зарегистрировать только один SSO-домен',
+  'sso_domain_already_exists': 'Для одного провайдера можно зарегистрировать только один SSO-домен',
   'sso_provider_not_found': 'SSO-провайдер не найден',
-  'too_many_enrolled_mfa_factors':
-      'У пользователя достигнут лимит MFA-факторов',
+  'too_many_enrolled_mfa_factors': 'У пользователя достигнут лимит MFA-факторов',
   'unexpected_audience': 'Audience у JWT не совпадает',
-  'unexpected_failure':
-      'Сервис аутентификации работает нестабильно или произошла ошибка',
+  'unexpected_failure': 'Сервис аутентификации работает нестабильно или произошла ошибка',
   'user_banned': 'Пользователь заблокирован (поле banned_until активно)',
   'user_sso_managed': 'Некоторые поля SSO-пользователя нельзя обновлять',
   'validation_failed': 'Параметры имеют неверный формат',
@@ -167,8 +152,7 @@ const Map<String, dynamic> supabaseErrorLocalizationRu = {
   'BucketAlreadyExists': 'Указанный bucket уже существует',
   'DatabaseTimeout': 'Истекло время ожидания при обращении к базе данных',
   'InvalidSignature': 'Подпись не совпадает с вычисленной подписью',
-  'SignatureDoesNotMatch':
-      'Подпись запроса не совпадает с вычисленной подписью',
+  'SignatureDoesNotMatch': 'Подпись запроса не совпадает с вычисленной подписью',
   'AccessDenied': 'Доступ к указанному ресурсу запрещён',
   'ResourceLocked': 'Указанный ресурс заблокирован',
   'DatabaseError': 'Произошла ошибка при обращении к базе данных',
@@ -205,13 +189,11 @@ const Map<String, dynamic> supabaseErrorLocalizationRu = {
   'node_disconnected': 'Узел отключён',
   'migration_failed': 'Миграция не удалась',
   'counter_tracking_error': 'Ошибка отслеживания счётчика',
-  'ChannelRateLimitReached':
-      'Достигнут лимит на количество создаваемых каналов',
+  'ChannelRateLimitReached': 'Достигнут лимит на количество создаваемых каналов',
   'ClientJoinRateLimitReached':
       'Слишком высокая частота подключений в секунду (достигнут лимит канала)',
   'ConnectionInitializing': 'База данных инициализирует соединение',
-  'ConnectionRateLimitReached':
-      'Достигнут лимит на количество подключённых клиентов',
+  'ConnectionRateLimitReached': 'Достигнут лимит на количество подключённых клиентов',
   'DatabaseConnectionIssue':
       'Проблемы с подключением к базе данных — соединение не удалось установить',
   'DatabaseLackOfConnections':
@@ -220,78 +202,57 @@ const Map<String, dynamic> supabaseErrorLocalizationRu = {
   'ErrorConnectingToWebsocket': 'Ошибка при подключении к WebSocket-серверу',
   'ErrorExecutingTransaction': 'Ошибка выполнения транзакции в базе tenant',
   'ErrorOnRpcCall': 'Ошибка при вызове другого узла realtime',
-  'ErrorStartingPostgresCDC':
-      'Ошибка запуска расширения Postgres CDC для Postgres Changes',
-  'ErrorStartingPostgresCDCStream':
-      'Ошибка запуска потока Postgres CDC для Postgres Changes',
+  'ErrorStartingPostgresCDC': 'Ошибка запуска расширения Postgres CDC для Postgres Changes',
+  'ErrorStartingPostgresCDCStream': 'Ошибка запуска потока Postgres CDC для Postgres Changes',
   'IncreaseConnectionPool':
       'Настроенного числа соединений для Realtime недостаточно для вашего сценария',
-  'InitializingProjectConnection':
-      'Подключение к базе tenant всё ещё устанавливается',
+  'InitializingProjectConnection': 'Подключение к базе tenant всё ещё устанавливается',
   'InvalidJWTExpiration': 'Неверное значение claim exp в JWT',
-  'JanitorFailedToDeleteOldMessages':
-      'Плановая очистка realtime.message не смогла выполниться',
+  'JanitorFailedToDeleteOldMessages': 'Плановая очистка realtime.message не смогла выполниться',
   'JwtSignatureError': 'Не удалось проверить подпись JWT',
   'MalformedJWT': 'Полученный токен не соответствует формату JWT',
   'MigrationCheckFailed': 'Проверка необходимости миграций завершилась ошибкой',
-  'MigrationsFailedToRun':
-      'Ошибка при выполнении миграций в базе tenant, необходимых Realtime',
+  'MigrationsFailedToRun': 'Ошибка при выполнении миграций в базе tenant, необходимых Realtime',
   'PartitionCreationFailed': 'Ошибка создания партиций для realtime.messages',
   'PoolingReplicationError': 'Ошибка при пуллинге replication slot',
-  'PoolingReplicationPreparationError':
-      'Ошибка при подготовке replication slot',
+  'PoolingReplicationPreparationError': 'Ошибка при подготовке replication slot',
   'RealtimeDisabledForConfiguration':
       'Переданная конфигурация Realtime не позволяет получать Postgres Changes',
   'RealtimeDisabledForTenant': 'Realtime отключён для tenant',
-  'RealtimeNodeDisconnected':
-      'Один из узлов распределённой системы Realtime недоступен',
+  'RealtimeNodeDisconnected': 'Один из узлов распределённой системы Realtime недоступен',
   'RealtimeRestarting': 'Realtime перезапускается',
   'ReconnectSubscribeToPostgres': 'Ожидание подписки на Postgres Changes',
-  'ReplicationMaxWalSendersReached':
-      'Достигнут максимум WAL senders в базе tenant',
-  'ReplicationSlotBeingUsed':
-      'Replication slot используется другой транзакцией',
+  'ReplicationMaxWalSendersReached': 'Достигнут максимум WAL senders в базе tenant',
+  'ReplicationSlotBeingUsed': 'Replication slot используется другой транзакцией',
   'RlsPolicyError': 'Ошибка в RLS-политике авторизации',
   'StartListenAndReplicationFailed':
       'Ошибка запуска репликации и прослушивания ошибок для рассылки по базе',
-  'SubscriptionDeletionFailed':
-      'Ошибка при удалении подписки на Postgres Changes',
+  'SubscriptionDeletionFailed': 'Ошибка при удалении подписки на Postgres Changes',
   'SynInitializationError':
       'Не удалось инициализировать соединение с базой для синхронизации процессов',
-  'TableHasSpacesInName':
-      'В имени таблицы есть пробелы — это не поддерживается',
+  'TableHasSpacesInName': 'В имени таблицы есть пробелы — это не поддерживается',
   'TimeoutOnRpcCall': 'RPC-запрос в Realtime превысил таймаут',
   'TopicNameRequired': 'Для Realtime не задано имя топика',
   'UnableCheckoutConnection': 'Ошибка получения соединения из пула tenant',
-  'UnableToCheckProcessesOnRemoteNode':
-      'Ошибка проверки процессов на удалённом узле',
+  'UnableToCheckProcessesOnRemoteNode': 'Ошибка проверки процессов на удалённом узле',
   'UnableToConnectToProject': 'Не удалось подключиться к базе проекта',
-  'UnableToConnectToTenantDatabase':
-      'Realtime не смог подключиться к базе tenant',
-  'UnableToCreateCounter':
-      'Ошибка создания счётчика для отслеживания лимитов tenant',
-  'UnableToDecrementCounter':
-      'Ошибка уменьшения счётчика для отслеживания лимитов tenant',
-  'UnableToDeletePhantomSubscriptions':
-      'Ошибка удаления неиспользуемых подписок',
+  'UnableToConnectToTenantDatabase': 'Realtime не смог подключиться к базе tenant',
+  'UnableToCreateCounter': 'Ошибка создания счётчика для отслеживания лимитов tenant',
+  'UnableToDecrementCounter': 'Ошибка уменьшения счётчика для отслеживания лимитов tenant',
+  'UnableToDeletePhantomSubscriptions': 'Ошибка удаления неиспользуемых подписок',
   'UnableToDeleteTenant': 'Ошибка удаления tenant',
   'UnableToEncodeJson': 'Ошибка при формировании JSON-ответа',
-  'UnableToFindCounter':
-      'Ошибка поиска счётчика для отслеживания лимитов tenant',
-  'UnableToIncrementCounter':
-      'Ошибка увеличения счётчика для отслеживания лимитов tenant',
-  'UnableToListenToTenantDatabase':
-      'Не удалось выполнить LISTEN для уведомлений в базе tenant',
+  'UnableToFindCounter': 'Ошибка поиска счётчика для отслеживания лимитов tenant',
+  'UnableToIncrementCounter': 'Ошибка увеличения счётчика для отслеживания лимитов tenant',
+  'UnableToListenToTenantDatabase': 'Не удалось выполнить LISTEN для уведомлений в базе tenant',
   'UnableToProcessListenPayload':
       'Не удалось обработать payload операции NOTIFY (некорректный JSON)',
   'UnableToSetPolicies': 'Ошибка настройки политик авторизации',
   'UnableToSubscribeToPostgres': 'Ошибка подписки на изменения Postgres',
   'UnableToTrackPresence': 'Ошибка обработки track presence для этого сокета',
-  'UnableToUpdateCounter':
-      'Ошибка обновления счётчика для отслеживания лимитов tenant',
+  'UnableToUpdateCounter': 'Ошибка обновления счётчика для отслеживания лимитов tenant',
   'Unauthorized': 'Неавторизованный доступ',
-  'UnhandledProcessMessage':
-      'Получено необработанное сообщение процесса Realtime',
+  'UnhandledProcessMessage': 'Получено необработанное сообщение процесса Realtime',
   'UnknownDataProcessed': 'Система Realtime обработала неизвестный тип данных',
   'UnknownErrorOnChannel': 'Произошла необработанная ошибка в канале',
   'UnknownErrorOnController': 'Произошла необработанная ошибка в контроллере',

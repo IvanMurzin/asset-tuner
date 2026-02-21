@@ -18,10 +18,7 @@ class SupabaseAccountDataSource {
     return rows.map(AccountDto.fromJson).toList(growable: false);
   }
 
-  Future<AccountDto> createAccount({
-    required String name,
-    required String type,
-  }) async {
+  Future<AccountDto> createAccount({required String name, required String type}) async {
     final row = await _edgeFunctions.invokeDataObject(
       SupabaseApiRoutes.accountsCreate,
       body: {'name': name, 'type': type},
@@ -43,10 +40,7 @@ class SupabaseAccountDataSource {
     return AccountDto.fromJson(row);
   }
 
-  Future<AccountDto> setArchived({
-    required String accountId,
-    required bool archived,
-  }) async {
+  Future<AccountDto> setArchived({required String accountId, required bool archived}) async {
     final row = await _edgeFunctions.invokeDataObject(
       SupabaseApiRoutes.accountsUpdate,
       body: {'accountId': accountId, 'archived': archived},

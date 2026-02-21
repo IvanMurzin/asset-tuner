@@ -74,9 +74,7 @@ class ArchivedAccountsPage extends StatelessWidget {
                 hasUnpricedHoldings: false,
               );
               return Padding(
-                padding: EdgeInsets.only(
-                  bottom: index < archived.length - 1 ? spacing.s12 : 0,
-                ),
+                padding: EdgeInsets.only(bottom: index < archived.length - 1 ? spacing.s12 : 0),
                 child: OverviewAccountCard(
                   item: item,
                   baseCurrency: 'USD',
@@ -95,10 +93,7 @@ class ArchivedAccountsPage extends StatelessWidget {
   void _openAccountDetail(BuildContext context, AccountEntity account) {
     context.go(
       AppRoutes.accountDetail.replaceFirst(':accountId', account.id),
-      extra: AccountDetailExtra(
-        initialTitle: account.name,
-        initialAccountType: account.type,
-      ),
+      extra: AccountDetailExtra(initialTitle: account.name, initialAccountType: account.type),
     );
   }
 }

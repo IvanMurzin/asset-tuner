@@ -9,20 +9,13 @@ part 'assets_cubit.freezed.dart';
 part 'assets_state.dart';
 
 class AssetsCubit extends Cubit<AssetsState> {
-  AssetsCubit(this._getCachedSession, this._getAssets)
-    : super(const AssetsState());
+  AssetsCubit(this._getCachedSession, this._getAssets) : super(const AssetsState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final GetAssetsUseCase _getAssets;
 
   Future<void> load() async {
-    emit(
-      state.copyWith(
-        status: AssetsStatus.loading,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(status: AssetsStatus.loading, failureCode: null, failureMessage: null));
     await _fetch(silent: false);
   }
 
@@ -73,12 +66,7 @@ class AssetsCubit extends Cubit<AssetsState> {
             ),
           );
         } else {
-          emit(
-            state.copyWith(
-              failureCode: failure.code,
-              failureMessage: failure.message,
-            ),
-          );
+          emit(state.copyWith(failureCode: failure.code, failureMessage: failure.message));
         }
     }
   }

@@ -6,7 +6,7 @@ enum SubaccountCreateStatus { idle, loading, success, error }
 abstract class SubaccountCreateState with _$SubaccountCreateState {
   const factory SubaccountCreateState({
     @Default(SubaccountCreateStatus.idle) SubaccountCreateStatus status,
-    AccountAssetEntity? subaccount,
+    SubaccountEntity? subaccount,
     String? failureCode,
     String? failureMessage,
   }) = _SubaccountCreateState;

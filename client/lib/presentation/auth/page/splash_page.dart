@@ -41,15 +41,11 @@ class SplashPage extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        final isLoading =
-            state.status == UserStatus.initial || state.status == UserStatus.loading;
+        final isLoading = state.status == UserStatus.initial || state.status == UserStatus.loading;
 
         return Scaffold(
           body: isLoading
-              ? DSSplashLayout(
-                  title: l10n.appTitle,
-                  status: l10n.splashPreparingProfile,
-                )
+              ? DSSplashLayout(title: l10n.appTitle, status: l10n.splashPreparingProfile)
               : state.status == UserStatus.error
               ? Center(
                   child: Padding(

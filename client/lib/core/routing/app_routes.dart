@@ -13,7 +13,7 @@ abstract final class AppRoutes {
   static const String accountNew = '/main/accounts/new';
   static const String accountDetail = '/main/accounts/:accountId';
   static const String accountEdit = '/main/accounts/:accountId/edit';
-  static const String accountAddAsset = '/main/accounts/:accountId/subaccounts/new';
+  static const String accountAddSubaccount = '/main/accounts/:accountId/subaccounts/new';
 
   static const String accountSubaccountDetail =
       '/main/accounts/:accountId/subaccounts/:subaccountId';

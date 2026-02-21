@@ -4,5 +4,4 @@ import 'package:asset_tuner/domain/asset/entity/asset_picker_item_entity.dart';
 
 abstract interface class IAssetRepository {
   Future<Result<List<AssetEntity>>> fetchAssets();
-  Future<Result<List<AssetPickerItemEntity>>> fetchAssetsForPicker({required AssetKind kind});
 }

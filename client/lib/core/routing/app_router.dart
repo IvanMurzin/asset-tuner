@@ -1,12 +1,9 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_page_transitions.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/preview/ds_preview_page.dart';
-import 'package:flutter/material.dart';
-import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
+import 'package:asset_tuner/domain/subaccount/usecase/get_subaccounts_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/balance/usecase/get_balance_history_usecase.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_archive_cubit.dart';
@@ -16,7 +13,7 @@ import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/account/page/account_create_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_detail_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_update_page.dart';
-import 'package:asset_tuner/presentation/account/page/add_asset_page.dart';
+import 'package:asset_tuner/presentation/account/page/add_subaccount_page.dart';
 import 'package:asset_tuner/presentation/analytics/page/analytics_page.dart';
 import 'package:asset_tuner/presentation/auth/page/otp_page.dart';
 import 'package:asset_tuner/presentation/auth/page/sign_in_page.dart';
@@ -26,45 +23,43 @@ import 'package:asset_tuner/presentation/balance/bloc/subaccount_delete_cubit.da
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_info_cubit.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_update_cubit.dart';
 import 'package:asset_tuner/presentation/balance/page/add_balance_page.dart';
-import 'package:asset_tuner/presentation/balance/page/asset_position_detail_page.dart';
+import 'package:asset_tuner/presentation/balance/page/subaccount_detail_page.dart';
 import 'package:asset_tuner/presentation/home/page/main_shell_page.dart';
 import 'package:asset_tuner/presentation/onboarding/page/onboarding_carousel_page.dart';
 import 'package:asset_tuner/presentation/overview/page/overview_page.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
 import 'package:asset_tuner/presentation/profile/page/account_actions_page.dart';
-import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
 import 'package:asset_tuner/presentation/profile/page/archived_accounts_page.dart';
+import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
 import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
 import 'package:asset_tuner/presentation/settings/page/manage_subscription_page.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
   initialLocation: AppRoutes.home,
   routes: [
     GoRoute(
       path: AppRoutes.home,
-      pageBuilder: (context, state) =>
-          slideTransition(context, state, const HomeGatePage()),
+      pageBuilder: (context, state) => slideTransition(context, state, const HomeGatePage()),
     ),
     GoRoute(
       path: AppRoutes.designSystem,
-      pageBuilder: (context, state) =>
-          slideTransition(context, state, const DSPreviewPage()),
+      pageBuilder: (context, state) => slideTransition(context, state, const DSPreviewPage()),
     ),
     GoRoute(
       path: AppRoutes.signIn,
-      pageBuilder: (context, state) =>
-          slideTransition(context, state, const SignInPage()),
+      pageBuilder: (context, state) => slideTransition(context, state, const SignInPage()),
     ),
     GoRoute(
       path: AppRoutes.signUp,
-      pageBuilder: (context, state) =>
-          slideTransition(context, state, const SignUpPage()),
+      pageBuilder: (context, state) => slideTransition(context, state, const SignUpPage()),
     ),
     GoRoute(
       path: AppRoutes.otp,
-      pageBuilder: (context, state) =>
-          slideTransition(context, state, const OtpPage()),
+      pageBuilder: (context, state) => slideTransition(context, state, const OtpPage()),
     ),
     GoRoute(
       path: AppRoutes.onboardingCarousel,
@@ -85,11 +80,8 @@ final appRouter = GoRouter(
               routes: [
                 GoRoute(
                   path: AppRoutes.accountsNewPath,
-                  pageBuilder: (context, state) => slideTransition(
-                    context,
-                    state,
-                    const AccountCreatePage(),
-                  ),
+                  pageBuilder: (context, state) =>
+                      slideTransition(context, state, const AccountCreatePage()),
                 ),
                 GoRoute(
                   path: AppRoutes.accountIdPath,
@@ -98,9 +90,7 @@ final appRouter = GoRouter(
                     final extra = state.extra is AccountDetailExtra
                         ? state.extra as AccountDetailExtra
                         : null;
-                    final account = context.read<AccountsCubit>().findById(
-                      accountId,
-                    );
+                    final account = context.read<AccountsCubit>().findById(accountId);
                     return slideTransition(
                       context,
                       state,
@@ -109,20 +99,16 @@ final appRouter = GoRouter(
                           BlocProvider(
                             create: (_) => AccountInfoCubit(
                               getIt<GetCachedSessionUseCase>(),
-                              getIt<GetAccountAssetsUseCase>(),
+                              getIt<GetSubaccountsUseCase>(),
                             )..load(accountId: accountId, account: account),
                           ),
                           BlocProvider(
-                            create: (_) => AccountArchiveCubit(
-                              getIt<GetCachedSessionUseCase>(),
-                              getIt(),
-                            ),
+                            create: (_) =>
+                                AccountArchiveCubit(getIt<GetCachedSessionUseCase>(), getIt()),
                           ),
                           BlocProvider(
-                            create: (_) => AccountDeleteCubit(
-                              getIt<GetCachedSessionUseCase>(),
-                              getIt(),
-                            ),
+                            create: (_) =>
+                                AccountDeleteCubit(getIt<GetCachedSessionUseCase>(), getIt()),
                           ),
                         ],
                         child: AccountDetailPage(
@@ -139,9 +125,7 @@ final appRouter = GoRouter(
                       pageBuilder: (context, state) => slideTransition(
                         context,
                         state,
-                        AccountUpdatePage(
-                          accountId: state.pathParameters['accountId']!,
-                        ),
+                        AccountUpdatePage(accountId: state.pathParameters['accountId']!),
                       ),
                     ),
                     GoRoute(
@@ -149,17 +133,14 @@ final appRouter = GoRouter(
                       pageBuilder: (context, state) => slideTransition(
                         context,
                         state,
-                        AddAssetPage(
-                          accountId: state.pathParameters['accountId']!,
-                        ),
+                        AddSubaccountPage(accountId: state.pathParameters['accountId']!),
                       ),
                     ),
                     GoRoute(
                       path: AppRoutes.subaccountIdPath,
                       pageBuilder: (context, state) {
                         final accountId = state.pathParameters['accountId']!;
-                        final subaccountId =
-                            state.pathParameters['subaccountId']!;
+                        final subaccountId = state.pathParameters['subaccountId']!;
                         final extra = state.extra is SubaccountDetailExtra
                             ? state.extra as SubaccountDetailExtra
                             : null;
@@ -181,14 +162,10 @@ final appRouter = GoRouter(
                           MultiBlocProvider(
                             providers: [
                               BlocProvider(
-                                create: (_) =>
-                                    SubaccountInfoCubit(
-                                      getIt<GetCachedSessionUseCase>(),
-                                      getIt<GetBalanceHistoryUseCase>(),
-                                    )..load(
-                                      account: account,
-                                      subaccount: subaccount,
-                                    ),
+                                create: (_) => SubaccountInfoCubit(
+                                  getIt<GetCachedSessionUseCase>(),
+                                  getIt<GetBalanceHistoryUseCase>(),
+                                )..load(account: account, subaccount: subaccount),
                               ),
                               BlocProvider(
                                 create: (_) => SubaccountUpdateCubit(
@@ -203,7 +180,7 @@ final appRouter = GoRouter(
                                 ),
                               ),
                             ],
-                            child: AssetPositionDetailPage(
+                            child: SubaccountDetailPage(
                               accountId: accountId,
                               subaccountId: subaccountId,
                               initialTitle: extra?.initialTitle,
@@ -219,8 +196,7 @@ final appRouter = GoRouter(
                             state,
                             AddBalancePage(
                               accountId: state.pathParameters['accountId']!,
-                              subaccountId:
-                                  state.pathParameters['subaccountId']!,
+                              subaccountId: state.pathParameters['subaccountId']!,
                             ),
                           ),
                         ),
@@ -245,40 +221,27 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.profile,
-              pageBuilder: (context, state) =>
-                  slideTransition(context, state, const ProfilePage()),
+              pageBuilder: (context, state) => slideTransition(context, state, const ProfilePage()),
               routes: [
                 GoRoute(
                   path: 'base-currency',
-                  pageBuilder: (context, state) => slideTransition(
-                    context,
-                    state,
-                    const BaseCurrencySettingsPage(),
-                  ),
+                  pageBuilder: (context, state) =>
+                      slideTransition(context, state, const BaseCurrencySettingsPage()),
                 ),
                 GoRoute(
                   path: 'subscription',
-                  pageBuilder: (context, state) => slideTransition(
-                    context,
-                    state,
-                    const ManageSubscriptionPage(),
-                  ),
+                  pageBuilder: (context, state) =>
+                      slideTransition(context, state, const ManageSubscriptionPage()),
                 ),
                 GoRoute(
                   path: 'account',
-                  pageBuilder: (context, state) => slideTransition(
-                    context,
-                    state,
-                    const AccountActionsPage(),
-                  ),
+                  pageBuilder: (context, state) =>
+                      slideTransition(context, state, const AccountActionsPage()),
                 ),
                 GoRoute(
                   path: 'archived-accounts',
-                  pageBuilder: (context, state) => slideTransition(
-                    context,
-                    state,
-                    const ArchivedAccountsPage(),
-                  ),
+                  pageBuilder: (context, state) =>
+                      slideTransition(context, state, const ArchivedAccountsPage()),
                 ),
               ],
             ),

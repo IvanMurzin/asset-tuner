@@ -36,8 +36,7 @@ class OverviewAccountCard extends StatelessWidget {
         ? context.dsFormatters.formatMoney(item.total, baseCurrency)
         : '—';
     final subaccountsText =
-        subtitleOverride ??
-        '${item.subaccountsCount} ${l10n.subaccountsCountLabel}';
+        subtitleOverride ?? '${item.subaccountsCount} ${l10n.subaccountsCountLabel}';
 
     return InkWell(
       borderRadius: BorderRadius.circular(context.dsRadius.r16),
@@ -74,9 +73,7 @@ class OverviewAccountCard extends StatelessWidget {
                   SizedBox(height: spacing.s4),
                   Text(
                     subaccountsText,
-                    style: typography.caption.copyWith(
-                      color: colors.textSecondary,
-                    ),
+                    style: typography.caption.copyWith(color: colors.textSecondary),
                   ),
                 ],
               ),

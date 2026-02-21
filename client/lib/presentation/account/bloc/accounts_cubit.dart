@@ -11,8 +11,7 @@ part 'accounts_cubit.freezed.dart';
 part 'accounts_state.dart';
 
 class AccountsCubit extends Cubit<AccountsState> {
-  AccountsCubit(this._getCachedSession, this._getAccounts)
-    : super(const AccountsState());
+  AccountsCubit(this._getCachedSession, this._getAccounts) : super(const AccountsState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final GetAccountsUseCase _getAccounts;
@@ -22,13 +21,7 @@ class AccountsCubit extends Cubit<AccountsState> {
   bool _queuedSilent = true;
 
   Future<void> load() async {
-    emit(
-      state.copyWith(
-        status: AccountsStatus.loading,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(status: AccountsStatus.loading, failureCode: null, failureMessage: null));
     await _fetch(silent: false);
   }
 
@@ -106,12 +99,7 @@ class AccountsCubit extends Cubit<AccountsState> {
               ),
             );
           } else {
-            emit(
-              state.copyWith(
-                failureCode: failure.code,
-                failureMessage: failure.message,
-              ),
-            );
+            emit(state.copyWith(failureCode: failure.code, failureMessage: failure.message));
           }
       }
     } finally {
@@ -159,9 +147,7 @@ class AccountsCubit extends Cubit<AccountsState> {
     emit(
       state.copyWith(
         status: AccountsStatus.ready,
-        accounts: _sort(
-          state.accounts.where((item) => item.id != accountId).toList(),
-        ),
+        accounts: _sort(state.accounts.where((item) => item.id != accountId).toList()),
         failureCode: null,
         failureMessage: null,
       ),

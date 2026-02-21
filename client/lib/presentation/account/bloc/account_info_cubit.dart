@@ -5,28 +5,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
-import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
-import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
+import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
+import 'package:asset_tuner/domain/subaccount/usecase/get_subaccounts_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 
 part 'account_info_cubit.freezed.dart';
 part 'account_info_state.dart';
 
 class AccountInfoCubit extends Cubit<AccountInfoState> {
-  AccountInfoCubit(this._getCachedSession, this._getAccountAssets)
+  AccountInfoCubit(this._getCachedSession, this._getSubaccounts)
     : super(const AccountInfoState());
 
   final GetCachedSessionUseCase _getCachedSession;
-  final GetAccountAssetsUseCase _getAccountAssets;
+  final GetSubaccountsUseCase _getSubaccounts;
 
   bool _isFetching = false;
   bool _queuedFetch = false;
   bool _queuedSilent = true;
 
-  Future<void> load({
-    required String accountId,
-    required AccountEntity? account,
-  }) async {
+  Future<void> load({required String accountId, required AccountEntity? account}) async {
     if (account == null) {
       emit(
         state.copyWith(
@@ -76,7 +73,7 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
     await _fetchSubaccounts(accountId: accountId, silent: silent);
   }
 
-  Future<void> applyUpdatedSubaccount(AccountAssetEntity updated) async {
+  Future<void> applyUpdatedSubaccount(SubaccountEntity updated) async {
     updateSubaccount(updated);
     await refreshSubaccounts(silent: true);
   }
@@ -99,15 +96,12 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
     await refreshSubaccounts(silent: true);
   }
 
-  Future<void> applyCreatedSubaccount(AccountAssetEntity created) async {
+  Future<void> applyCreatedSubaccount(SubaccountEntity created) async {
     createSubaccount(created);
     await refreshSubaccounts(silent: true);
   }
 
-  Future<void> _fetchSubaccounts({
-    required String accountId,
-    required bool silent,
-  }) async {
+  Future<void> _fetchSubaccounts({required String accountId, required bool silent}) async {
     if (_isFetching) {
       _queuedFetch = true;
       _queuedSilent = _queuedSilent && silent;
@@ -126,31 +120,23 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
             status: AccountInfoStatus.error,
             failureCode: 'unauthorized',
             failureMessage: null,
-            navigation: const AccountInfoNavigation(
-              AccountInfoDestination.signIn,
-            ),
+            navigation: const AccountInfoNavigation(AccountInfoDestination.signIn),
           ),
         );
         return;
       }
 
       if (!silent) {
-        emit(
-          state.copyWith(
-            isSubaccountsLoading: true,
-            failureCode: null,
-            failureMessage: null,
-          ),
-        );
+        emit(state.copyWith(isSubaccountsLoading: true, failureCode: null, failureMessage: null));
       }
 
-      final result = await _getAccountAssets(accountId: accountId);
+      final result = await _getSubaccounts(accountId: accountId);
       if (isClosed) {
         return;
       }
 
       switch (result) {
-        case Success<List<AccountAssetEntity>>(value: final list):
+        case Success<List<SubaccountEntity>>(value: final list):
           emit(
             state.copyWith(
               status: AccountInfoStatus.ready,
@@ -160,7 +146,7 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
               failureMessage: null,
             ),
           );
-        case FailureResult<List<AccountAssetEntity>>(failure: final failure):
+        case FailureResult<List<SubaccountEntity>>(failure: final failure):
           if (!silent) {
             emit(
               state.copyWith(
@@ -182,7 +168,7 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
     }
   }
 
-  void updateSubaccount(AccountAssetEntity updated) {
+  void updateSubaccount(SubaccountEntity updated) {
     emit(
       state.copyWith(
         subaccounts: _sort([
@@ -217,14 +203,12 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
   void deleteSubaccount(String subaccountId) {
     emit(
       state.copyWith(
-        subaccounts: state.subaccounts
-            .where((item) => item.id != subaccountId)
-            .toList(),
+        subaccounts: state.subaccounts.where((item) => item.id != subaccountId).toList(),
       ),
     );
   }
 
-  void createSubaccount(AccountAssetEntity created) {
+  void createSubaccount(SubaccountEntity created) {
     emit(state.copyWith(subaccounts: _sort([...state.subaccounts, created])));
   }
 
@@ -232,7 +216,7 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
     emit(state.copyWith(navigation: null));
   }
 
-  List<AccountAssetEntity> _sort(List<AccountAssetEntity> items) {
+  List<SubaccountEntity> _sort(List<SubaccountEntity> items) {
     return [...items]..sort((a, b) => a.name.compareTo(b.name));
   }
 }

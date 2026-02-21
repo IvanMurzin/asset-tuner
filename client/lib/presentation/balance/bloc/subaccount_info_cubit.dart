@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
-import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
+import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.dart';
@@ -20,7 +20,7 @@ class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
 
   Future<void> load({
     required AccountEntity account,
-    required AccountAssetEntity subaccount,
+    required SubaccountEntity subaccount,
   }) async {
     emit(
       state.copyWith(
@@ -59,22 +59,14 @@ class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
           status: SubaccountInfoStatus.error,
           failureCode: 'unauthorized',
           failureMessage: null,
-          navigation: const SubaccountInfoNavigation(
-            SubaccountInfoDestination.signIn,
-          ),
+          navigation: const SubaccountInfoNavigation(SubaccountInfoDestination.signIn),
         ),
       );
       return;
     }
 
     if (showLoading) {
-      emit(
-        state.copyWith(
-          isHistoryLoading: true,
-          failureCode: null,
-          failureMessage: null,
-        ),
-      );
+      emit(state.copyWith(isHistoryLoading: true, failureCode: null, failureMessage: null));
     }
 
     final result = await _getHistory(subaccountId: subaccountId, limit: 50);
@@ -113,19 +105,9 @@ class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        isLoadingMore: true,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(isLoadingMore: true, failureCode: null, failureMessage: null));
 
-    final result = await _getHistory(
-      subaccountId: subaccountId,
-      limit: 50,
-      cursor: cursor,
-    );
+    final result = await _getHistory(subaccountId: subaccountId, limit: 50, cursor: cursor);
     if (isClosed) {
       return;
     }
@@ -150,16 +132,14 @@ class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
     }
   }
 
-  void updateSubaccount(AccountAssetEntity subaccount) {
+  void updateSubaccount(SubaccountEntity subaccount) {
     emit(state.copyWith(subaccount: subaccount));
   }
 
   void onDeleted() {
     emit(
       state.copyWith(
-        navigation: const SubaccountInfoNavigation(
-          SubaccountInfoDestination.backDeleted,
-        ),
+        navigation: const SubaccountInfoNavigation(SubaccountInfoDestination.backDeleted),
       ),
     );
   }

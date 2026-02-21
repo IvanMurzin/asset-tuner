@@ -16,21 +16,12 @@ class AccountDeleteCubit extends Cubit<AccountDeleteState> {
 
   Future<void> submit(String accountId) async {
     emit(
-      state.copyWith(
-        status: AccountDeleteStatus.loading,
-        failureCode: null,
-        failureMessage: null,
-      ),
+      state.copyWith(status: AccountDeleteStatus.loading, failureCode: null, failureMessage: null),
     );
 
     final session = await _getCachedSession();
     if (session == null) {
-      emit(
-        state.copyWith(
-          status: AccountDeleteStatus.error,
-          failureCode: 'unauthorized',
-        ),
-      );
+      emit(state.copyWith(status: AccountDeleteStatus.error, failureCode: 'unauthorized'));
       return;
     }
 
@@ -41,12 +32,7 @@ class AccountDeleteCubit extends Cubit<AccountDeleteState> {
 
     switch (result) {
       case Success<void>():
-        emit(
-          state.copyWith(
-            status: AccountDeleteStatus.success,
-            deletedAccountId: accountId,
-          ),
-        );
+        emit(state.copyWith(status: AccountDeleteStatus.success, deletedAccountId: accountId));
       case FailureResult<void>(failure: final failure):
         emit(
           state.copyWith(

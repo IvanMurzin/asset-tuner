@@ -3,7 +3,8 @@ import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 
 abstract final class RevenueCatInitializer {
-  static Future<void> init(AppConfig config) async {
+  static Future<void> init() async {
+    final config = AppConfig.instance;
     final debug = config.env.toLowerCase() == 'dev';
     if (debug) {
       await Purchases.setLogLevel(LogLevel.debug);

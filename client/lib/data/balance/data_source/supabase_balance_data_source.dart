@@ -33,10 +33,7 @@ class SupabaseBalanceDataSource {
       return const BalanceHistoryResponseDto(items: [], nextCursor: null);
     }
 
-    final items = data
-        .whereType<Map<String, dynamic>>()
-        .map(BalanceEntryDto.fromJson)
-        .toList();
+    final items = data.whereType<Map<String, dynamic>>().map(BalanceEntryDto.fromJson).toList();
     final nextCursor = envelope.meta?['nextCursor'] as String?;
 
     return BalanceHistoryResponseDto(items: items, nextCursor: nextCursor);
@@ -61,9 +58,7 @@ class SupabaseBalanceDataSource {
     return BalanceEntryDto.fromJson(row);
   }
 
-  Future<List<BalanceEntryDto>> fetchEntriesForPositions(
-    Set<String> subaccountIds,
-  ) async {
+  Future<List<BalanceEntryDto>> fetchEntriesForPositions(Set<String> subaccountIds) async {
     final result = <BalanceEntryDto>[];
     for (final subaccountId in subaccountIds) {
       final page = await fetchHistory(subaccountId: subaccountId, limit: 1);

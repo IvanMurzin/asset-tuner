@@ -36,8 +36,7 @@ class RateRepository implements IRateRepository {
     if (cached != null) {
       final lastAttempt = _lastRefreshAttemptAt;
       final canAttemptRefresh =
-          lastAttempt == null ||
-          now.difference(lastAttempt) >= _minRefreshInterval;
+          lastAttempt == null || now.difference(lastAttempt) >= _minRefreshInterval;
 
       if (canAttemptRefresh) {
         _startRefreshIfNeeded(now);
@@ -134,10 +133,7 @@ class RateRepository implements IRateRepository {
         return Success(cached);
       }
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to load rates',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load rates'),
       );
     }
   }
@@ -169,11 +165,7 @@ class RateRepository implements IRateRepository {
         return;
       }
 
-      _cached = RatesSnapshotEntity(
-        usdPriceByAssetId: prices,
-        asOf: asOf,
-        asOfByAssetId: asOfById,
-      );
+      _cached = RatesSnapshotEntity(usdPriceByAssetId: prices, asOf: asOf, asOfByAssetId: asOfById);
       logger.i('RateRepository hydrated from disk: ${prices.length}');
     } catch (error) {
       logger.w('RateRepository hydrate from disk failed', error: error);

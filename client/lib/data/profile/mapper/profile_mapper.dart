@@ -9,9 +9,7 @@ abstract final class ProfileMapper {
     return ProfileEntity(
       userId: dto.userId,
       baseAssetId: dto.baseAssetId,
-      baseAsset: dto.baseAsset == null
-          ? null
-          : AssetMapper.toEntity(dto.baseAsset!),
+      baseAsset: dto.baseAsset == null ? null : AssetMapper.toEntity(dto.baseAsset!),
       revenuecatAppUserId: dto.revenuecatAppUserId,
       createdAt: _parseDateOrNull(dto.createdAtIso),
       updatedAt: _parseDateOrNull(dto.updatedAtIso),
@@ -29,9 +27,7 @@ abstract final class ProfileMapper {
       revenuecatAppUserId: entity.revenuecatAppUserId,
       createdAtIso: entity.createdAt?.toIso8601String(),
       updatedAtIso: entity.updatedAt?.toIso8601String(),
-      baseAsset: entity.baseAsset == null
-          ? null
-          : AssetMapper.toDto(entity.baseAsset!),
+      baseAsset: entity.baseAsset == null ? null : AssetMapper.toDto(entity.baseAsset!),
     );
   }
 

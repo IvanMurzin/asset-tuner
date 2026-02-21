@@ -1,7 +1,7 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:decimal/decimal.dart';
-import 'package:asset_tuner/core/types/json_name.dart';
 import 'package:asset_tuner/core/types/decimal_json_converter.dart';
+import 'package:asset_tuner/core/types/json_name.dart';
+import 'package:decimal/decimal.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'account_dto.freezed.dart';
 part 'account_dto.g.dart';
@@ -34,13 +34,9 @@ abstract class AccountDto with _$AccountDto {
 @Freezed(fromJson: true, toJson: true)
 abstract class AccountTotalsDto with _$AccountTotalsDto {
   const factory AccountTotalsDto({
-    @JsonName('total_usd_atomic')
-    @NullableDecimalJsonConverter()
-    Decimal? totalUsdAtomic,
+    @JsonName('total_usd_atomic') @NullableDecimalJsonConverter() Decimal? totalUsdAtomic,
     @JsonName('total_usd_decimals') int? totalUsdDecimals,
-    @JsonName('total_in_base_atomic')
-    @NullableDecimalJsonConverter()
-    Decimal? totalInBaseAtomic,
+    @JsonName('total_in_base_atomic') @NullableDecimalJsonConverter() Decimal? totalInBaseAtomic,
     @JsonName('total_in_base_decimals') int? totalInBaseDecimals,
     @JsonName('base_asset_id') String? baseAssetId,
     @JsonName('base_asset_code') String? baseAssetCode,

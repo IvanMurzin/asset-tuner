@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/core/types/result.dart';
-import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
-import 'package:asset_tuner/domain/account_asset/usecase/rename_subaccount_usecase.dart';
+import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
+import 'package:asset_tuner/domain/subaccount/usecase/rename_subaccount_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 
 part 'subaccount_update_cubit.freezed.dart';
@@ -15,10 +15,7 @@ class SubaccountUpdateCubit extends Cubit<SubaccountUpdateState> {
   final GetCachedSessionUseCase _getCachedSession;
   final RenameSubaccountUseCase _renameSubaccount;
 
-  Future<void> submit({
-    required String subaccountId,
-    required String name,
-  }) async {
+  Future<void> submit({required String subaccountId, required String name}) async {
     final normalized = name.trim();
     if (normalized.isEmpty) {
       emit(
@@ -41,32 +38,19 @@ class SubaccountUpdateCubit extends Cubit<SubaccountUpdateState> {
 
     final session = await _getCachedSession();
     if (session == null) {
-      emit(
-        state.copyWith(
-          status: SubaccountUpdateStatus.error,
-          failureCode: 'unauthorized',
-        ),
-      );
+      emit(state.copyWith(status: SubaccountUpdateStatus.error, failureCode: 'unauthorized'));
       return;
     }
 
-    final result = await _renameSubaccount(
-      subaccountId: subaccountId,
-      name: normalized,
-    );
+    final result = await _renameSubaccount(subaccountId: subaccountId, name: normalized);
     if (isClosed) {
       return;
     }
 
     switch (result) {
-      case Success<AccountAssetEntity>(value: final subaccount):
-        emit(
-          state.copyWith(
-            status: SubaccountUpdateStatus.success,
-            subaccount: subaccount,
-          ),
-        );
-      case FailureResult<AccountAssetEntity>(failure: final failure):
+      case Success<SubaccountEntity>(value: final subaccount):
+        emit(state.copyWith(status: SubaccountUpdateStatus.success, subaccount: subaccount));
+      case FailureResult<SubaccountEntity>(failure: final failure):
         emit(
           state.copyWith(
             status: SubaccountUpdateStatus.error,

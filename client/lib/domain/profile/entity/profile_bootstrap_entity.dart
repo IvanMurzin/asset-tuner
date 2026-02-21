@@ -5,6 +5,5 @@ part 'profile_bootstrap_entity.freezed.dart';
 
 @freezed
 abstract class ProfileBootstrapEntity with _$ProfileBootstrapEntity {
-  const factory ProfileBootstrapEntity({required ProfileEntity profile}) =
-      _ProfileBootstrapEntity;
+  const factory ProfileBootstrapEntity({required ProfileEntity profile}) = _ProfileBootstrapEntity;
 }

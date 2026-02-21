@@ -33,38 +33,23 @@ class AccountUpdateCubit extends Cubit<AccountUpdateState> {
     }
 
     emit(
-      state.copyWith(
-        status: AccountUpdateStatus.loading,
-        failureCode: null,
-        failureMessage: null,
-      ),
+      state.copyWith(status: AccountUpdateStatus.loading, failureCode: null, failureMessage: null),
     );
 
     final session = await _getCachedSession();
     if (session == null) {
-      emit(
-        state.copyWith(
-          status: AccountUpdateStatus.error,
-          failureCode: 'unauthorized',
-        ),
-      );
+      emit(state.copyWith(status: AccountUpdateStatus.error, failureCode: 'unauthorized'));
       return;
     }
 
-    final result = await _updateAccount(
-      accountId: accountId,
-      name: normalized,
-      type: type,
-    );
+    final result = await _updateAccount(accountId: accountId, name: normalized, type: type);
     if (isClosed) {
       return;
     }
 
     switch (result) {
       case Success<AccountEntity>(value: final account):
-        emit(
-          state.copyWith(status: AccountUpdateStatus.success, account: account),
-        );
+        emit(state.copyWith(status: AccountUpdateStatus.success, account: account));
       case FailureResult<AccountEntity>(failure: final failure):
         emit(
           state.copyWith(

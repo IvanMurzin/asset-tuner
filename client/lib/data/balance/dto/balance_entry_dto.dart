@@ -12,14 +12,10 @@ abstract class BalanceEntryDto with _$BalanceEntryDto {
     required String id,
     @JsonName('user_id') String? userId,
     @JsonName('subaccount_id') required String subaccountId,
-    @JsonName('amount_atomic')
-    @DecimalJsonConverter()
-    required Decimal amountAtomic,
+    @JsonName('amount_atomic') @DecimalJsonConverter() required Decimal amountAtomic,
     @JsonName('amount_decimals') required int amountDecimals,
     String? note,
-    @JsonName('diff_amount')
-    @NullableDecimalJsonConverter()
-    Decimal? diffAmount,
+    @JsonName('diff_amount') @NullableDecimalJsonConverter() Decimal? diffAmount,
     @JsonName('created_at') required String createdAtIso,
   }) = _BalanceEntryDto;
 

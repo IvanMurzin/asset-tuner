@@ -45,8 +45,7 @@ class _OtpPageState extends State<OtpPage> {
       child: BlocConsumer<OtpCubit, OtpState>(
         listenWhen: (prev, curr) =>
             curr.navigation != null ||
-            (curr.bannerFailureCode != null &&
-                curr.bannerFailureCode != prev.bannerFailureCode) ||
+            (curr.bannerFailureCode != null && curr.bannerFailureCode != prev.bannerFailureCode) ||
             curr.resendSuccess,
         listener: (context, state) async {
           if (state.resendSuccess) {
@@ -88,11 +87,7 @@ class _OtpPageState extends State<OtpPage> {
               ? (state.bannerFailureMessage ?? l10n.errorGeneric)
               : null;
           if (message != null && context.mounted) {
-            showDSSnackBar(
-              context,
-              variant: DSSnackBarVariant.error,
-              message: message,
-            );
+            showDSSnackBar(context, variant: DSSnackBarVariant.error, message: message);
           }
         },
         builder: (context, state) {
@@ -103,9 +98,7 @@ class _OtpPageState extends State<OtpPage> {
 
           if (_otpController.text != state.code) {
             _otpController.text = state.code;
-            _otpController.selection = TextSelection.collapsed(
-              offset: _otpController.text.length,
-            );
+            _otpController.selection = TextSelection.collapsed(offset: _otpController.text.length);
           }
 
           return Scaffold(
@@ -126,10 +119,7 @@ class _OtpPageState extends State<OtpPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          AuthHero(
-                            title: l10n.otpTitle,
-                            subtitle: l10n.otpBodyWithEmail(email),
-                          ),
+                          AuthHero(title: l10n.otpTitle, subtitle: l10n.otpBodyWithEmail(email)),
                           SizedBox(height: spacing.s32),
                           DSOtpInput(
                             controller: _otpController,
@@ -162,20 +152,14 @@ class _OtpPageState extends State<OtpPage> {
                           label: l10n.verifyOtp,
                           isLoading: isLoading,
                           fullWidth: true,
-                          onPressed: isLoading
-                              ? null
-                              : context.read<OtpCubit>().verify,
+                          onPressed: isLoading ? null : context.read<OtpCubit>().verify,
                         ),
                         SizedBox(height: spacing.s12),
                         TextButton(
-                          onPressed: isLoading
-                              ? null
-                              : () => context.go(AppRoutes.signUp),
+                          onPressed: isLoading ? null : () => context.go(AppRoutes.signUp),
                           child: Text(
                             l10n.changeEmail,
-                            style: typography.body.copyWith(
-                              color: context.dsColors.primary,
-                            ),
+                            style: typography.body.copyWith(color: context.dsColors.primary),
                           ),
                         ),
                       ],
@@ -219,10 +203,7 @@ class _ResendCaption extends StatelessWidget {
     if (disabled) {
       return Align(
         alignment: Alignment.center,
-        child: Text(
-          l10n.resendOtp,
-          style: typography.body.copyWith(color: colors.textTertiary),
-        ),
+        child: Text(l10n.resendOtp, style: typography.body.copyWith(color: colors.textTertiary)),
       );
     }
 
@@ -235,10 +216,7 @@ class _ResendCaption extends StatelessWidget {
           minimumSize: Size.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
-        child: Text(
-          l10n.resendOtp,
-          style: typography.body.copyWith(color: colors.primary),
-        ),
+        child: Text(l10n.resendOtp, style: typography.body.copyWith(color: colors.primary)),
       ),
     );
   }

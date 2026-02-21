@@ -1,3 +1,4 @@
+import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,11 +27,13 @@ class SupabaseEdgeFunctions {
       );
 
       final payload = response.data;
-      // logger.i({
-      //   'function': 'response: ${method.name} $path',
-      //   'payload': payload,
-      //   'status': response.status,
-      // });
+      if (AppConfig.instance.logApiResponses) {
+        logger.i({
+          'function': 'response: ${method.name} $path',
+          'payload': payload,
+          'status': response.status,
+        });
+      }
       if (payload is! Map<String, dynamic>) {
         throw StateError('Unexpected edge function response payload');
       }

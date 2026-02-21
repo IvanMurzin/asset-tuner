@@ -13,11 +13,9 @@ abstract class AssetsState with _$AssetsState {
     String? failureMessage,
   }) = _AssetsState;
 
-  List<AssetEntity> get fiatAssets => assets
-      .where((item) => item.kind == AssetKind.fiat)
-      .toList(growable: false);
+  List<AssetEntity> get fiatAssets =>
+      assets.where((item) => item.kind == AssetKind.fiat).toList(growable: false);
 
-  List<AssetEntity> get cryptoAssets => assets
-      .where((item) => item.kind == AssetKind.crypto)
-      .toList(growable: false);
+  List<AssetEntity> get cryptoAssets =>
+      assets.where((item) => item.kind == AssetKind.crypto).toList(growable: false);
 }

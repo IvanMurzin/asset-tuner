@@ -5,7 +5,7 @@ import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
-import 'package:asset_tuner/presentation/account/widget/account_asset_view_item.dart';
+import 'package:asset_tuner/presentation/account/widget/subaccount_view_item.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 
@@ -15,13 +15,13 @@ class AccountDetailPositionsSection extends StatelessWidget {
     required this.items,
     required this.baseCurrency,
     required this.onOpenSubaccount,
-    required this.onAddAsset,
+    required this.onAddSubaccount,
   });
 
-  final List<AccountAssetViewItem> items;
+  final List<SubaccountViewItem> items;
   final String baseCurrency;
-  final Future<void> Function(AccountAssetViewItem item) onOpenSubaccount;
-  final VoidCallback onAddAsset;
+  final Future<void> Function(SubaccountViewItem item) onOpenSubaccount;
+  final VoidCallback onAddSubaccount;
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +41,7 @@ class AccountDetailPositionsSection extends StatelessWidget {
               icon: Icons.add_circle_outline,
             ),
             SizedBox(height: spacing.s16),
-            DSButton(
-              label: l10n.subaccountCreateCta,
-              fullWidth: true,
-              onPressed: onAddAsset,
-            ),
+            DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
           ],
         ),
       );
@@ -65,16 +61,12 @@ class AccountDetailPositionsSection extends StatelessWidget {
           if (i != sortedItems.length - 1) const SizedBox(height: 10),
         ],
         SizedBox(height: spacing.s24),
-        DSButton(
-          label: l10n.subaccountCreateCta,
-          fullWidth: true,
-          onPressed: onAddAsset,
-        ),
+        DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
       ],
     );
   }
 
-  List<AccountAssetViewItem> _sortByBalance(List<AccountAssetViewItem> source) {
+  List<SubaccountViewItem> _sortByBalance(List<SubaccountViewItem> source) {
     final sorted = [...source];
     sorted.sort((a, b) {
       final aConverted = a.convertedAmount ?? Decimal.zero;
@@ -90,13 +82,9 @@ class AccountDetailPositionsSection extends StatelessWidget {
 }
 
 class _PositionCard extends StatelessWidget {
-  const _PositionCard({
-    required this.item,
-    required this.baseCurrency,
-    required this.onTap,
-  });
+  const _PositionCard({required this.item, required this.baseCurrency, required this.onTap});
 
-  final AccountAssetViewItem item;
+  final SubaccountViewItem item;
   final String baseCurrency;
   final VoidCallback onTap;
 
@@ -138,10 +126,7 @@ class _PositionCard extends StatelessWidget {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: _accentByKind(
-                  colors,
-                  item.assetKind,
-                ).withValues(alpha: 0.14),
+                color: _accentByKind(colors, item.assetKind).withValues(alpha: 0.14),
                 borderRadius: BorderRadius.circular(context.dsRadius.r12),
               ),
               alignment: Alignment.center,
@@ -160,9 +145,7 @@ class _PositionCard extends StatelessWidget {
                   SizedBox(height: spacing.s4),
                   Text(
                     '${item.assetName} · ${_kindLabel(l10n, item.assetKind)}',
-                    style: typography.caption.copyWith(
-                      color: colors.textSecondary,
-                    ),
+                    style: typography.caption.copyWith(color: colors.textSecondary),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

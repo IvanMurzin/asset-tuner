@@ -67,8 +67,7 @@ class _AccountUpdatePageState extends State<AccountUpdatePage> {
       child: BlocListener<AccountUpdateCubit, AccountUpdateState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) async {
-          if (state.status != AccountUpdateStatus.success ||
-              state.account == null) {
+          if (state.status != AccountUpdateStatus.success || state.account == null) {
             return;
           }
 
@@ -88,12 +87,7 @@ class _AccountUpdatePageState extends State<AccountUpdatePage> {
               appBar: DSAppBar(title: l10n.accountsEditTitle),
               body: SafeArea(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(
-                    spacing.s24,
-                    spacing.s24,
-                    spacing.s24,
-                    spacing.s16,
-                  ),
+                  padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -126,9 +120,7 @@ class _AccountUpdatePageState extends State<AccountUpdatePage> {
                           title: _typeTitle(l10n, type),
                           description: _typeDescription(l10n, type),
                           selected: _type == type,
-                          onTap: isSaving
-                              ? null
-                              : () => setState(() => _type = type),
+                          onTap: isSaving ? null : () => setState(() => _type = type),
                         ),
                         SizedBox(height: spacing.s8),
                       ],

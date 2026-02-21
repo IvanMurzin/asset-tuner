@@ -29,9 +29,7 @@ class BalanceRepository implements IBalanceRepository {
         cursor: cursor,
       );
 
-      logger.i(
-        'BalanceRepository.fetchHistory success: ${response.items.length}',
-      );
+      logger.i('BalanceRepository.fetchHistory success: ${response.items.length}');
       return Success(
         BalanceHistoryPageEntity(
           entries: response.items.map(BalanceEntryMapper.toEntity).toList(),
@@ -41,10 +39,7 @@ class BalanceRepository implements IBalanceRepository {
     } catch (error) {
       logger.e('BalanceRepository.fetchHistory failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to load history',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load history'),
       );
     }
   }
@@ -66,10 +61,7 @@ class BalanceRepository implements IBalanceRepository {
     } catch (error) {
       logger.e('BalanceRepository.updateBalance failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to save balance',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to save balance'),
       );
     }
   }
@@ -99,17 +91,12 @@ class BalanceRepository implements IBalanceRepository {
         final latest = BalanceEntryMapper.toEntity(entries.last);
         result[subaccountId] = latest.snapshotAmount;
       }
-      logger.i(
-        'BalanceRepository.fetchCurrentBalances success: ${result.length}',
-      );
+      logger.i('BalanceRepository.fetchCurrentBalances success: ${result.length}');
       return Success(result);
     } catch (error) {
       logger.e('BalanceRepository.fetchCurrentBalances failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to compute balances',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to compute balances'),
       );
     }
   }

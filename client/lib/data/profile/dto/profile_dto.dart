@@ -24,10 +24,8 @@ abstract class ProfileDto with _$ProfileDto {
   }
 
   factory ProfileDto.fromMeJson(Map<String, dynamic> json) {
-    final profile =
-        (json['profile'] as Map<String, dynamic>?) ?? const <String, dynamic>{};
-    final limits =
-        (json['limits'] as Map<String, dynamic>?) ?? const <String, dynamic>{};
+    final profile = (json['profile'] as Map<String, dynamic>?) ?? const <String, dynamic>{};
+    final limits = (json['limits'] as Map<String, dynamic>?) ?? const <String, dynamic>{};
     final baseAssetRaw = json['baseAsset'] as Map<String, dynamic>?;
 
     return ProfileDto(

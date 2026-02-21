@@ -29,21 +29,12 @@ class AccountCreateCubit extends Cubit<AccountCreateState> {
     }
 
     emit(
-      state.copyWith(
-        status: AccountCreateStatus.loading,
-        failureCode: null,
-        failureMessage: null,
-      ),
+      state.copyWith(status: AccountCreateStatus.loading, failureCode: null, failureMessage: null),
     );
 
     final session = await _getCachedSession();
     if (session == null) {
-      emit(
-        state.copyWith(
-          status: AccountCreateStatus.error,
-          failureCode: 'unauthorized',
-        ),
-      );
+      emit(state.copyWith(status: AccountCreateStatus.error, failureCode: 'unauthorized'));
       return;
     }
 
@@ -54,9 +45,7 @@ class AccountCreateCubit extends Cubit<AccountCreateState> {
 
     switch (result) {
       case Success<AccountEntity>(value: final account):
-        emit(
-          state.copyWith(status: AccountCreateStatus.success, account: account),
-        );
+        emit(state.copyWith(status: AccountCreateStatus.success, account: account));
       case FailureResult<AccountEntity>(failure: final failure):
         emit(
           state.copyWith(

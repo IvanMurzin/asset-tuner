@@ -24,19 +24,13 @@ class MainShellPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AccountsCubit>(
-          create: (_) => AccountsCubit(
-            getIt<GetCachedSessionUseCase>(),
-            getIt<GetAccountsUseCase>(),
-          )..load(),
+          create: (_) =>
+              AccountsCubit(getIt<GetCachedSessionUseCase>(), getIt<GetAccountsUseCase>())..load(),
         ),
-        BlocProvider<UsdRatesCubit>(
-          create: (_) => getIt<UsdRatesCubit>()..start(),
-        ),
+        BlocProvider<UsdRatesCubit>(create: (_) => getIt<UsdRatesCubit>()..start()),
         BlocProvider<AssetsCubit>(
-          create: (_) => AssetsCubit(
-            getIt<GetCachedSessionUseCase>(),
-            getIt<GetAssetsUseCase>(),
-          )..load(),
+          create: (_) =>
+              AssetsCubit(getIt<GetCachedSessionUseCase>(), getIt<GetAssetsUseCase>())..load(),
         ),
         BlocProvider<AnalyticsCubit>(create: (_) => getIt<AnalyticsCubit>()),
       ],
@@ -49,9 +43,7 @@ class MainShellPage extends StatelessWidget {
               if (state.status != AccountsStatus.ready) {
                 return;
               }
-              await context.read<AnalyticsCubit>().onAccountsChanged(
-                state.accounts,
-              );
+              await context.read<AnalyticsCubit>().onAccountsChanged(state.accounts);
             },
           ),
         ],

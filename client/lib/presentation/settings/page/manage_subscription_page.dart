@@ -67,9 +67,7 @@ class ManageSubscriptionPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           DSButton(
-                            label: isPaid
-                                ? l10n.subscriptionManage
-                                : l10n.subscriptionUpgrade,
+                            label: isPaid ? l10n.subscriptionManage : l10n.subscriptionUpgrade,
                             fullWidth: true,
                             isLoading: state.isSyncingSubscription,
                             onPressed: state.isSyncingSubscription
@@ -78,20 +76,14 @@ class ManageSubscriptionPage extends StatelessWidget {
                                     if (isPaid) {
                                       await RevenueCatUI.presentCustomerCenter();
                                     } else {
-                                      await RevenueCatUI.presentPaywall(
-                                        displayCloseButton: true,
-                                      );
+                                      await RevenueCatUI.presentPaywall(displayCloseButton: true);
                                     }
                                     if (context.mounted) {
-                                      await context
-                                          .read<UserCubit>()
-                                          .syncSubscription();
+                                      await context.read<UserCubit>().syncSubscription();
                                       if (!context.mounted) {
                                         return;
                                       }
-                                      await context.read<AssetsCubit>().refresh(
-                                        silent: true,
-                                      );
+                                      await context.read<AssetsCubit>().refresh(silent: true);
                                     }
                                   },
                           ),
@@ -104,19 +96,13 @@ class ManageSubscriptionPage extends StatelessWidget {
                             onPressed: state.isSyncingSubscription
                                 ? null
                                 : () async {
-                                    await RevenueCatUI.presentPaywall(
-                                      displayCloseButton: true,
-                                    );
+                                    await RevenueCatUI.presentPaywall(displayCloseButton: true);
                                     if (context.mounted) {
-                                      await context
-                                          .read<UserCubit>()
-                                          .syncSubscription();
+                                      await context.read<UserCubit>().syncSubscription();
                                       if (!context.mounted) {
                                         return;
                                       }
-                                      await context.read<AssetsCubit>().refresh(
-                                        silent: true,
-                                      );
+                                      await context.read<AssetsCubit>().refresh(silent: true);
                                     }
                                   },
                           ),

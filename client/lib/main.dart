@@ -12,9 +12,9 @@ Future<void> main() async {
   // TODO: add bloc observer
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final config = AppConfig.requireFromEnvironment();
-    await SupabaseInitializer.init(config);
-    await RevenueCatInitializer.init(config);
+    AppConfig.init();
+    await SupabaseInitializer.init();
+    await RevenueCatInitializer.init();
     await configureDependencies();
 
     final locale = WidgetsBinding.instance.platformDispatcher.locale;

@@ -6,9 +6,8 @@ enum SubaccountInfoDestination { signIn, backDeleted }
 
 @freezed
 abstract class SubaccountInfoNavigation with _$SubaccountInfoNavigation {
-  const factory SubaccountInfoNavigation(
-    SubaccountInfoDestination destination,
-  ) = _SubaccountInfoNavigation;
+  const factory SubaccountInfoNavigation(SubaccountInfoDestination destination) =
+      _SubaccountInfoNavigation;
 }
 
 @freezed
@@ -16,7 +15,7 @@ abstract class SubaccountInfoState with _$SubaccountInfoState {
   const factory SubaccountInfoState({
     @Default(SubaccountInfoStatus.loading) SubaccountInfoStatus status,
     AccountEntity? account,
-    AccountAssetEntity? subaccount,
+    SubaccountEntity? subaccount,
     @Default(<BalanceEntryEntity>[]) List<BalanceEntryEntity> entries,
     String? nextCursor,
     @Default(false) bool isHistoryLoading,

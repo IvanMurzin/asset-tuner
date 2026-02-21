@@ -20,8 +20,7 @@ class BaseCurrencySettingsPage extends StatefulWidget {
   const BaseCurrencySettingsPage({super.key});
 
   @override
-  State<BaseCurrencySettingsPage> createState() =>
-      _BaseCurrencySettingsPageState();
+  State<BaseCurrencySettingsPage> createState() => _BaseCurrencySettingsPageState();
 }
 
 class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
@@ -59,15 +58,11 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
             builder: (context, assetsState) {
               final spacing = context.dsSpacing;
 
-              if (assetsState.status == AssetsStatus.loading &&
-                  assetsState.assets.isEmpty) {
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                );
+              if (assetsState.status == AssetsStatus.loading && assetsState.assets.isEmpty) {
+                return const Scaffold(body: Center(child: CircularProgressIndicator()));
               }
 
-              if (assetsState.status == AssetsStatus.error &&
-                  assetsState.assets.isEmpty) {
+              if (assetsState.status == AssetsStatus.error && assetsState.assets.isEmpty) {
                 return Scaffold(
                   appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
                   body: DSInlineError(
@@ -105,9 +100,7 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        DSSectionTitle(
-                          title: l10n.baseCurrencySettingsCurrentTitle,
-                        ),
+                        DSSectionTitle(title: l10n.baseCurrencySettingsCurrentTitle),
                         SizedBox(height: spacing.s12),
                         DSBaseCurrencyValueCard(
                           title: l10n.baseCurrencySettingsCurrentTitle,
@@ -116,18 +109,14 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                           codeFallback: l10n.notAvailable,
                         ),
                         SizedBox(height: spacing.s24),
-                        DSSectionTitle(
-                          title: l10n.baseCurrencySettingsPickerTitle,
-                        ),
+                        DSSectionTitle(title: l10n.baseCurrencySettingsPickerTitle),
                         SizedBox(height: spacing.s12),
                         if (!(profile.entitlements.anyBaseCurrency)) ...[
                           DSUnlockCurrenciesCard(
                             title: l10n.baseCurrencySettingsPaywallHint,
                             onTap: () => context.push(
                               AppRoutes.paywall,
-                              extra: const PaywallArgs(
-                                reason: PaywallReason.baseCurrency,
-                              ),
+                              extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
                             ),
                           ),
                           SizedBox(height: spacing.s16),
@@ -144,11 +133,7 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                           enabled: !userState.isUpdatingBaseCurrency,
                           onSelect: (code) {
                             final matched = fiatAssets
-                                .where(
-                                  (asset) =>
-                                      asset.code.toUpperCase() ==
-                                      code.toUpperCase(),
-                                )
+                                .where((asset) => asset.code.toUpperCase() == code.toUpperCase())
                                 .firstOrNull;
                             if (matched == null) {
                               return;
@@ -164,17 +149,14 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                               );
                               return;
                             }
-                            setState(
-                              () => _selectedCode = matched.code.toUpperCase(),
-                            );
+                            setState(() => _selectedCode = matched.code.toUpperCase());
                           },
                         ),
                         if (userState.failureCode != null) ...[
                           SizedBox(height: spacing.s16),
                           DSInlineBanner(
                             title: l10n.baseCurrencySettingsTitle,
-                            message:
-                                userState.failureMessage ?? l10n.errorGeneric,
+                            message: userState.failureMessage ?? l10n.errorGeneric,
                             variant: DSInlineBannerVariant.danger,
                           ),
                         ],
@@ -187,20 +169,13 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                               ? null
                               : () async {
                                   final selected = _selectedCode;
-                                  if (selected == null ||
-                                      selected == profile.baseCurrency) {
+                                  if (selected == null || selected == profile.baseCurrency) {
                                     context.pop(profile.baseCurrency);
                                     return;
                                   }
-                                  await context
-                                      .read<UserCubit>()
-                                      .updateBaseCurrency(selected);
+                                  await context.read<UserCubit>().updateBaseCurrency(selected);
                                   if (context.mounted &&
-                                      context
-                                              .read<UserCubit>()
-                                              .state
-                                              .failureCode ==
-                                          null) {
+                                      context.read<UserCubit>().state.failureCode == null) {
                                     context.pop(selected);
                                   }
                                 },

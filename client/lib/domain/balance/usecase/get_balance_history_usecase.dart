@@ -14,10 +14,6 @@ class GetBalanceHistoryUseCase {
     int limit = 50,
     String? cursor,
   }) {
-    return _repository.fetchHistory(
-      subaccountId: subaccountId,
-      limit: limit,
-      cursor: cursor,
-    );
+    return _repository.fetchHistory(subaccountId: subaccountId, limit: limit, cursor: cursor);
   }
 }

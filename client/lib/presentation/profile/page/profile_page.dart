@@ -28,8 +28,7 @@ class ProfilePage extends StatelessWidget {
       builder: (context, state) {
         final spacing = context.dsSpacing;
 
-        if (state.status == UserStatus.loading ||
-            state.status == UserStatus.initial) {
+        if (state.status == UserStatus.loading || state.status == UserStatus.initial) {
           return Scaffold(
             appBar: DSAppBar(title: l10n.profileTitle),
             body: SafeArea(
@@ -121,12 +120,9 @@ class ProfilePage extends StatelessWidget {
                         children: [
                           DSListRow(
                             title: l10n.settingsBaseCurrency,
-                            trailing: SettingsRowTrailing(
-                              value: profile.baseCurrency,
-                            ),
+                            trailing: SettingsRowTrailing(value: profile.baseCurrency),
                             showDivider: true,
-                            onTap: () =>
-                                context.push(AppRoutes.baseCurrencySettings),
+                            onTap: () => context.push(AppRoutes.baseCurrencySettings),
                           ),
                           const ProfileLanguageSelector(),
                           const ProfileThemeSelector(),
@@ -140,14 +136,8 @@ class ProfilePage extends StatelessWidget {
                       padding: EdgeInsets.zero,
                       child: DSListRow(
                         title: l10n.settingsArchivedAccounts,
-                        leading: Icon(
-                          Icons.archive_outlined,
-                          color: context.dsColors.textTertiary,
-                        ),
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: context.dsColors.textTertiary,
-                        ),
+                        leading: Icon(Icons.archive_outlined, color: context.dsColors.textTertiary),
+                        trailing: Icon(Icons.chevron_right, color: context.dsColors.textTertiary),
                         onTap: () => context.push(AppRoutes.archivedAccounts),
                       ),
                     ),
@@ -163,10 +153,7 @@ class ProfilePage extends StatelessWidget {
                           Icons.security_outlined,
                           color: context.dsColors.textTertiary,
                         ),
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: context.dsColors.textTertiary,
-                        ),
+                        trailing: Icon(Icons.chevron_right, color: context.dsColors.textTertiary),
                         onTap: () => context.push(AppRoutes.accountActions),
                       ),
                     ),

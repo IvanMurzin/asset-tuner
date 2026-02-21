@@ -44,10 +44,7 @@ class _SummarySkeleton extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colors.primary.withValues(alpha: 0.16),
-            colors.info.withValues(alpha: 0.1),
-          ],
+          colors: [colors.primary.withValues(alpha: 0.16), colors.info.withValues(alpha: 0.1)],
         ),
         borderRadius: BorderRadius.circular(context.dsRadius.r16),
       ),

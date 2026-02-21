@@ -2,19 +2,19 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/core/types/result.dart';
-import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
-import 'package:asset_tuner/domain/account_asset/usecase/add_asset_to_account_usecase.dart';
+import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
+import 'package:asset_tuner/domain/subaccount/usecase/create_subaccount_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 
 part 'subaccount_create_cubit.freezed.dart';
 part 'subaccount_create_state.dart';
 
 class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
-  SubaccountCreateCubit(this._getCachedSession, this._addAssetToAccount)
+  SubaccountCreateCubit(this._getCachedSession, this._createSubaccount)
     : super(const SubaccountCreateState());
 
   final GetCachedSessionUseCase _getCachedSession;
-  final AddAssetToAccountUseCase _addAssetToAccount;
+  final CreateSubaccountUseCase _createSubaccount;
 
   Future<void> submit({
     required String accountId,
@@ -43,16 +43,11 @@ class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
 
     final session = await _getCachedSession();
     if (session == null) {
-      emit(
-        state.copyWith(
-          status: SubaccountCreateStatus.error,
-          failureCode: 'unauthorized',
-        ),
-      );
+      emit(state.copyWith(status: SubaccountCreateStatus.error, failureCode: 'unauthorized'));
       return;
     }
 
-    final result = await _addAssetToAccount(
+    final result = await _createSubaccount(
       accountId: accountId,
       name: name.trim(),
       assetId: assetId,
@@ -64,14 +59,9 @@ class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
     }
 
     switch (result) {
-      case Success<AccountAssetEntity>(value: final subaccount):
-        emit(
-          state.copyWith(
-            status: SubaccountCreateStatus.success,
-            subaccount: subaccount,
-          ),
-        );
-      case FailureResult<AccountAssetEntity>(failure: final failure):
+      case Success<SubaccountEntity>(value: final subaccount):
+        emit(state.copyWith(status: SubaccountCreateStatus.success, subaccount: subaccount));
+      case FailureResult<SubaccountEntity>(failure: final failure):
         emit(
           state.copyWith(
             status: SubaccountCreateStatus.error,

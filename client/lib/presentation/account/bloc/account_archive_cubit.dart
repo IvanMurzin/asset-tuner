@@ -15,26 +15,14 @@ class AccountArchiveCubit extends Cubit<AccountArchiveState> {
   final GetCachedSessionUseCase _getCachedSession;
   final SetAccountArchivedUseCase _setArchived;
 
-  Future<void> submit({
-    required String accountId,
-    required bool archived,
-  }) async {
+  Future<void> submit({required String accountId, required bool archived}) async {
     emit(
-      state.copyWith(
-        status: AccountArchiveStatus.loading,
-        failureCode: null,
-        failureMessage: null,
-      ),
+      state.copyWith(status: AccountArchiveStatus.loading, failureCode: null, failureMessage: null),
     );
 
     final session = await _getCachedSession();
     if (session == null) {
-      emit(
-        state.copyWith(
-          status: AccountArchiveStatus.error,
-          failureCode: 'unauthorized',
-        ),
-      );
+      emit(state.copyWith(status: AccountArchiveStatus.error, failureCode: 'unauthorized'));
       return;
     }
 
@@ -45,12 +33,7 @@ class AccountArchiveCubit extends Cubit<AccountArchiveState> {
 
     switch (result) {
       case Success<AccountEntity>(value: final account):
-        emit(
-          state.copyWith(
-            status: AccountArchiveStatus.success,
-            account: account,
-          ),
-        );
+        emit(state.copyWith(status: AccountArchiveStatus.success, account: account));
       case FailureResult<AccountEntity>(failure: final failure):
         emit(
           state.copyWith(

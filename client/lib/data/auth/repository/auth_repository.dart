@@ -28,10 +28,7 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.restoreSession failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to restore session',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to restore session'),
       );
     }
   }
@@ -59,10 +56,7 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.requestEmailOtp failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to request OTP',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to request OTP'),
       );
     }
   }
@@ -83,25 +77,17 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.confirmEmailOtp failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to confirm OTP',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to confirm OTP'),
       );
     }
   }
 
   @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(
-    AuthProvider provider,
-  ) async {
+  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
     try {
       if (provider == AuthProvider.email) {
         return const FailureResult(
-          Failure(
-            code: 'validation',
-            message: 'Use email OTP or password sign-in',
-          ),
+          Failure(code: 'validation', message: 'Use email OTP or password sign-in'),
         );
       }
       await _dataSource.signInWithOAuth(provider);
@@ -118,10 +104,7 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.signInWithOAuth failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to sign in',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign in'),
       );
     }
   }
@@ -136,10 +119,7 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.signOut failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to sign out',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign out'),
       );
     }
   }
@@ -155,10 +135,7 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.deleteAccount failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to delete account',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to delete account'),
       );
     }
   }
@@ -174,19 +151,13 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.signInWithPassword failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to sign in',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign in'),
       );
     }
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  ) async {
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
     try {
       await _dataSource.signUpWithPassword(email, password);
       logger.i('AuthRepository.signUpWithPassword success');
@@ -194,19 +165,13 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.signUpWithPassword failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to sign up',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign up'),
       );
     }
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(
-    String email,
-    String code,
-  ) async {
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
     try {
       final dto = await _dataSource.verifySignUpOtp(email: email, token: code);
       if (dto == null) {
@@ -221,20 +186,13 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.verifySignUpOtp failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to verify OTP',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to verify OTP'),
       );
     }
   }
 
   @override
   Future<List<AuthProvider>> getAvailableProviders() {
-    return Future.value(const [
-      AuthProvider.email,
-      AuthProvider.google,
-      AuthProvider.apple,
-    ]);
+    return Future.value(const [AuthProvider.email, AuthProvider.google, AuthProvider.apple]);
   }
 }

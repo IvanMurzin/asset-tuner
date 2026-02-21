@@ -5,8 +5,8 @@ import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
-import 'package:asset_tuner/domain/account_asset/entity/account_asset_entity.dart';
-import 'package:asset_tuner/domain/account_asset/usecase/get_account_assets_usecase.dart';
+import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
+import 'package:asset_tuner/domain/subaccount/usecase/get_subaccounts_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
@@ -31,7 +31,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     this._getCachedSession,
     this._getProfile,
     this._bootstrapProfile,
-    this._getAccountAssets,
+    this._getSubaccounts,
     this._getAssets,
     this._getCurrentBalances,
     this._getHistory,
@@ -41,7 +41,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   final GetCachedSessionUseCase _getCachedSession;
   final GetProfileUseCase _getProfile;
   final BootstrapProfileUseCase _bootstrapProfile;
-  final GetAccountAssetsUseCase _getAccountAssets;
+  final GetSubaccountsUseCase _getSubaccounts;
   final GetAssetsUseCase _getAssets;
   final GetCurrentBalancesUseCase _getCurrentBalances;
   final GetBalanceHistoryUseCase _getHistory;
@@ -64,9 +64,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   }
 
   Future<void> onAccountsChanged(List<AccountEntity> accounts) async {
-    final nextAccounts = accounts
-        .where((a) => !a.archived)
-        .toList(growable: false);
+    final nextAccounts = accounts.where((a) => !a.archived).toList(growable: false);
     if (_sameAccounts(_accounts, nextAccounts)) {
       return;
     }
@@ -85,11 +83,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     try {
       if (!silent) {
         emit(
-          state.copyWith(
-            status: AnalyticsStatus.loading,
-            failureCode: null,
-            failureMessage: null,
-          ),
+          state.copyWith(status: AnalyticsStatus.loading, failureCode: null, failureMessage: null),
         );
       }
 
@@ -100,9 +94,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           state.copyWith(
             status: AnalyticsStatus.error,
             failureCode: 'unauthorized',
-            navigation: const AnalyticsNavigation(
-              destination: AnalyticsDestination.signIn,
-            ),
+            navigation: const AnalyticsNavigation(destination: AnalyticsDestination.signIn),
           ),
         );
         return;
@@ -111,9 +103,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       final profile = await _loadProfile();
       if (isClosed) return;
       if (profile == null) {
-        emit(
-          state.copyWith(status: AnalyticsStatus.error, failureCode: 'unknown'),
-        );
+        emit(state.copyWith(status: AnalyticsStatus.error, failureCode: 'unknown'));
         return;
       }
 
@@ -155,23 +145,21 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       }
 
       final assetById = {for (final item in assets) item.id: item};
-      final baseAsset = assets.firstWhereOrNull(
-        (a) => a.code == profile.baseCurrency,
-      );
+      final baseAsset = assets.firstWhereOrNull((a) => a.code == profile.baseCurrency);
       final baseUsdPrice = _baseUsdPrice(
         baseCurrencyCode: profile.baseCurrency,
         baseAssetId: baseAsset?.id,
         snapshot: rates,
       );
 
-      final subaccountsByAccount = <String, List<AccountAssetEntity>>{};
+      final subaccountsByAccount = <String, List<SubaccountEntity>>{};
       for (final account in accounts) {
-        final result = await _getAccountAssets(accountId: account.id);
+        final result = await _getSubaccounts(accountId: account.id);
         if (isClosed) return;
         switch (result) {
-          case Success<List<AccountAssetEntity>>(value: final value):
+          case Success<List<SubaccountEntity>>(value: final value):
             subaccountsByAccount[account.id] = value;
-          case FailureResult<List<AccountAssetEntity>>(failure: final failure):
+          case FailureResult<List<SubaccountEntity>>(failure: final failure):
             emit(
               state.copyWith(
                 status: AnalyticsStatus.error,
@@ -183,9 +171,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         }
       }
 
-      final subaccounts = subaccountsByAccount.values
-          .expand((list) => list)
-          .toList();
+      final subaccounts = subaccountsByAccount.values.expand((list) => list).toList();
       final subaccountIds = subaccounts.map((item) => item.id).toSet();
       if (subaccountIds.isEmpty) {
         emit(
@@ -199,9 +185,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         return;
       }
 
-      final balancesResult = await _getCurrentBalances(
-        subaccountIds: subaccountIds,
-      );
+      final balancesResult = await _getCurrentBalances(subaccountIds: subaccountIds);
       if (isClosed) return;
       Map<String, Decimal> balances;
       switch (balancesResult) {
@@ -238,11 +222,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           continue;
         }
         total += priced;
-        breakdownTotals.update(
-          asset.code,
-          (current) => current + priced,
-          ifAbsent: () => priced,
-        );
+        breakdownTotals.update(asset.code, (current) => current + priced, ifAbsent: () => priced);
         breakdownOriginalTotals.update(
           asset.code,
           (current) => current + amount,
@@ -266,16 +246,12 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       final accountById = {for (final account in accounts) account.id: account};
 
       for (final subaccount in subaccounts) {
-        final historyResult = await _getHistory(
-          subaccountId: subaccount.id,
-          limit: 20,
-        );
+        final historyResult = await _getHistory(subaccountId: subaccount.id, limit: 20);
         if (isClosed) return;
 
         final entries = switch (historyResult) {
           Success(value: final page) => page.entries,
-          FailureResult<BalanceHistoryPageEntity>() =>
-            const <BalanceEntryEntity>[],
+          FailureResult<BalanceHistoryPageEntity>() => const <BalanceEntryEntity>[],
         };
 
         final asset = assetById[subaccount.assetId];

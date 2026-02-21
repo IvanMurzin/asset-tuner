@@ -31,13 +31,7 @@ class UserCubit extends Cubit<UserState> {
   final SignOutUseCase _signOut;
 
   Future<void> bootstrap() async {
-    emit(
-      state.copyWith(
-        status: UserStatus.loading,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(status: UserStatus.loading, failureCode: null, failureMessage: null));
     await _loadAuthenticatedState(silent: false);
   }
 
@@ -114,13 +108,7 @@ class UserCubit extends Cubit<UserState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        isUpdatingBaseCurrency: true,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(isUpdatingBaseCurrency: true, failureCode: null, failureMessage: null));
 
     final result = await _updateBaseCurrency(code);
     if (isClosed) {
@@ -146,13 +134,7 @@ class UserCubit extends Cubit<UserState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        isSyncingSubscription: true,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(isSyncingSubscription: true, failureCode: null, failureMessage: null));
 
     final result = await _updatePlan('pro');
     if (isClosed) {
