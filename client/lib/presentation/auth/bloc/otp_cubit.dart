@@ -6,7 +6,6 @@ import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/usecase/request_email_otp_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/verify_sign_up_otp_usecase.dart';
-import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 
 part 'otp_state.dart';
 part 'otp_cubit.freezed.dart';
@@ -15,12 +14,10 @@ part 'otp_cubit.freezed.dart';
 class OtpCubit extends Cubit<OtpState> {
   OtpCubit(
     this._verifySignUpOtpUseCase,
-    this._bootstrapProfileUseCase,
     this._requestEmailOtpUseCase,
   ) : super(const OtpState());
 
   final VerifySignUpOtpUseCase _verifySignUpOtpUseCase;
-  final BootstrapProfileUseCase _bootstrapProfileUseCase;
   final RequestEmailOtpUseCase _requestEmailOtpUseCase;
 
   static const _resendCooldown = Duration(seconds: 60);
@@ -53,29 +50,12 @@ class OtpCubit extends Cubit<OtpState> {
           ),
         );
       case Success():
-        final profileResult = await _bootstrapProfileUseCase();
-        if (isClosed) return;
-        switch (profileResult) {
-          case FailureResult(:final failure):
-            emit(
-              state.copyWith(
-                status: OtpStatus.idle,
-                bannerFailureCode: failure.code,
-                bannerFailureMessage: failure.message,
-              ),
-            );
-          case Success(:final value):
-            emit(
-              state.copyWith(
-                status: OtpStatus.idle,
-                navigation: OtpNavigation(
-                  destination: value.profile.baseAssetId == null
-                      ? OtpDestination.onboardingBaseCurrency
-                      : OtpDestination.overview,
-                ),
-              ),
-            );
-        }
+        emit(
+          state.copyWith(
+            status: OtpStatus.idle,
+            navigation: const OtpNavigation(destination: OtpDestination.overview),
+          ),
+        );
     }
   }
 

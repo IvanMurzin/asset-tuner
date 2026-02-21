@@ -12,9 +12,7 @@ part 'usd_rates_state.dart';
 
 @injectable
 class UsdRatesCubit extends Cubit<UsdRatesState> {
-  UsdRatesCubit(this._getLatestUsdRates) : super(const UsdRatesState()) {
-    start();
-  }
+  UsdRatesCubit(this._getLatestUsdRates) : super(const UsdRatesState());
 
   final GetLatestUsdRatesUseCase _getLatestUsdRates;
 
@@ -22,6 +20,9 @@ class UsdRatesCubit extends Cubit<UsdRatesState> {
   bool _isRefreshing = false;
 
   Future<void> start() async {
+    if (_timer != null) {
+      return;
+    }
     await refresh();
     _timer ??= Timer.periodic(const Duration(minutes: 1), (_) => refresh());
   }

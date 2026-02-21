@@ -4,7 +4,7 @@ enum OtpStatus { idle, loading }
 
 enum OtpFieldError { invalidLength }
 
-enum OtpDestination { onboardingBaseCurrency, overview, signIn }
+enum OtpDestination { overview, signIn }
 
 @freezed
 abstract class OtpNavigation with _$OtpNavigation {

@@ -3,9 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/domain/account/usecase/get_accounts_usecase.dart';
+import 'package:asset_tuner/domain/asset/usecase/get_assets_usecase.dart';
+import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
-import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
+import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
+import 'package:asset_tuner/presentation/rate/bloc/usd_rates_cubit.dart';
 
 class MainShellPage extends StatelessWidget {
   const MainShellPage({super.key, required this.navigationShell});
@@ -18,26 +23,38 @@ class MainShellPage extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        // TODO: add profile cubit
-        BlocProvider<OverviewCubit>(create: (_) => getIt<OverviewCubit>()..load()),
-        BlocProvider<AnalyticsCubit>(create: (_) => getIt<AnalyticsCubit>()..load()),
+        BlocProvider<AccountsCubit>(
+          create: (_) => AccountsCubit(
+            getIt<GetCachedSessionUseCase>(),
+            getIt<GetAccountsUseCase>(),
+          )..load(),
+        ),
+        BlocProvider<UsdRatesCubit>(
+          create: (_) => getIt<UsdRatesCubit>()..start(),
+        ),
+        BlocProvider<AssetsCubit>(
+          create: (_) => AssetsCubit(
+            getIt<GetCachedSessionUseCase>(),
+            getIt<GetAssetsUseCase>(),
+          )..load(),
+        ),
+        BlocProvider<AnalyticsCubit>(create: (_) => getIt<AnalyticsCubit>()),
       ],
-      child: BlocListener<OverviewCubit, OverviewState>(
-        // TODO: refactor this
-        listenWhen: (prev, curr) {
-          if (curr.status != OverviewStatus.ready) {
-            return false;
-          }
-          if (prev.status != OverviewStatus.ready) {
-            return true;
-          }
-          return prev.fullTotal != curr.fullTotal ||
-              prev.ratesAsOf != curr.ratesAsOf ||
-              prev.accounts.length != curr.accounts.length;
-        },
-        listener: (context, state) {
-          context.read<AnalyticsCubit>().refresh();
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<AccountsCubit, AccountsState>(
+            listenWhen: (prev, curr) =>
+                prev.status != curr.status || prev.accounts != curr.accounts,
+            listener: (context, state) async {
+              if (state.status != AccountsStatus.ready) {
+                return;
+              }
+              await context.read<AnalyticsCubit>().onAccountsChanged(
+                state.accounts,
+              );
+            },
+          ),
+        ],
         child: Scaffold(
           body: navigationShell,
           bottomNavigationBar: NavigationBar(
@@ -47,6 +64,14 @@ class MainShellPage extends StatelessWidget {
                 index,
                 initialLocation: index == navigationShell.currentIndex,
               );
+              if (index == 1) {
+                final analyticsCubit = context.read<AnalyticsCubit>();
+                if (analyticsCubit.state.status == AnalyticsStatus.ready) {
+                  analyticsCubit.refresh();
+                } else {
+                  analyticsCubit.load();
+                }
+              }
             },
             destinations: [
               NavigationDestination(

@@ -1,27 +1,24 @@
+import 'package:decimal/decimal.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
 import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_radio_row.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
-import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
-import 'package:asset_tuner/domain/asset/entity/asset_picker_item_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
-import 'package:asset_tuner/presentation/account/bloc/add_asset_cubit.dart';
-import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
-import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
+import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
+import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
+import 'package:asset_tuner/presentation/balance/bloc/subaccount_create_cubit.dart';
 
 class AddAssetPage extends StatefulWidget {
   const AddAssetPage({super.key, required this.accountId});
@@ -35,6 +32,9 @@ class AddAssetPage extends StatefulWidget {
 class _AddAssetPageState extends State<AddAssetPage> {
   late final TextEditingController _nameController;
   late final TextEditingController _balanceController;
+
+  AssetKind? _kind;
+  String? _selectedAssetId;
 
   @override
   void initState() {
@@ -55,236 +55,193 @@ class _AddAssetPageState extends State<AddAssetPage> {
     final l10n = AppLocalizations.of(context)!;
 
     return BlocProvider(
-      create: (_) => getIt<AddAssetCubit>()..load(widget.accountId),
-      child: BlocConsumer<AddAssetCubit, AddAssetState>(
+      create: (_) => SubaccountCreateCubit(getIt(), getIt()),
+      child: BlocListener<SubaccountCreateCubit, SubaccountCreateState>(
+        listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) async {
-          final navigation = state.navigation;
-          if (navigation == null) {
+          if (state.status != SubaccountCreateStatus.success ||
+              state.subaccount == null) {
             return;
           }
-          context.read<AddAssetCubit>().consumeNavigation();
-          switch (navigation.destination) {
-            case AddAssetDestination.signIn:
-              context.go(AppRoutes.signIn);
-              break;
-            case AddAssetDestination.paywall:
-              final upgraded = await context.push<bool>(
-                AppRoutes.paywall,
-                extra: const PaywallArgs(reason: PaywallReason.subaccountsLimit),
-              );
-              if (context.mounted && upgraded == true) {
-                await context.read<AddAssetCubit>().load(widget.accountId);
-              }
-              break;
-            case AddAssetDestination.backAdded:
-              context.read<OverviewCubit>().refresh();
-              context.pop(true);
-              break;
+
+          final accountInfoCubit = context.read<AccountInfoCubit>();
+          final accountsCubit = context.read<AccountsCubit>();
+          final created = state.subaccount!;
+          await accountInfoCubit.applyCreatedSubaccount(created);
+          await accountsCubit.refresh(silent: true);
+
+          if (!context.mounted) {
+            return;
           }
+          context.replace(
+            AppRoutes.accountSubaccountDetail
+                .replaceFirst(':accountId', widget.accountId)
+                .replaceFirst(':subaccountId', created.id),
+          );
         },
-        builder: (context, state) {
-          final spacing = context.dsSpacing;
+        child: BlocBuilder<SubaccountCreateCubit, SubaccountCreateState>(
+          builder: (context, createState) {
+            final spacing = context.dsSpacing;
+            final assetsState = context.watch<AssetsCubit>().state;
+            final allAssets = _kind == null
+                ? const <AssetEntity>[]
+                : assetsState.assets
+                      .where((item) => item.kind == _kind)
+                      .toList();
+            final canSubmit =
+                _selectedAssetId != null &&
+                _nameController.text.trim().isNotEmpty &&
+                _balanceController.text.trim().isNotEmpty &&
+                createState.status != SubaccountCreateStatus.loading;
 
-          if (_nameController.text != state.name) {
-            _nameController.value = _nameController.value.copyWith(
-              text: state.name,
-              selection: TextSelection.collapsed(offset: state.name.length),
-            );
-          }
-          if (_balanceController.text != state.balanceText) {
-            _balanceController.value = _balanceController.value.copyWith(
-              text: state.balanceText,
-              selection: TextSelection.collapsed(offset: state.balanceText.length),
-            );
-          }
-
-          if (state.status == AddAssetStatus.loading) {
             return Scaffold(
               appBar: DSAppBar(title: l10n.subaccountCreateTitle),
               body: SafeArea(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
+                  padding: EdgeInsets.fromLTRB(
+                    spacing.s24,
+                    spacing.s24,
+                    spacing.s24,
+                    spacing.s16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const DSSkeleton(height: 56),
-                      SizedBox(height: spacing.s12),
-                      const DSSkeleton(height: 56),
-                      SizedBox(height: spacing.s12),
-                      Container(
-                        width: double.infinity,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: context.dsColors.surface,
-                          borderRadius: BorderRadius.circular(context.dsRadius.r12),
-                          border: Border.all(color: context.dsColors.border),
+                      if (createState.status ==
+                          SubaccountCreateStatus.error) ...[
+                        DSInlineBanner(
+                          title: l10n.subaccountCreateTitle,
+                          message:
+                              createState.failureMessage ?? l10n.errorGeneric,
+                          variant: DSInlineBannerVariant.danger,
                         ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: spacing.s12,
-                          vertical: spacing.s12,
-                        ),
-                        child: const DSSkeleton(height: 20, width: 120),
+                        SizedBox(height: spacing.s16),
+                      ],
+                      DSTextField(
+                        label: l10n.accountsNameLabel,
+                        hintText: l10n.subaccountNameHint,
+                        controller: _nameController,
+                        enabled:
+                            createState.status !=
+                            SubaccountCreateStatus.loading,
                       ),
-                      SizedBox(height: spacing.s16),
-                      const DSSkeleton(height: 52),
+                      SizedBox(height: spacing.s12),
+                      DSDecimalField(
+                        label: l10n.addBalanceAmountLabel,
+                        controller: _balanceController,
+                        enabled:
+                            createState.status !=
+                            SubaccountCreateStatus.loading,
+                      ),
+                      SizedBox(height: spacing.s24),
+                      DSSectionTitle(title: l10n.accountsTypeLabel),
+                      SizedBox(height: spacing.s8),
+                      DSRadioRow(
+                        title: l10n.assetKindFiat,
+                        selected: _kind == AssetKind.fiat,
+                        onTap: () => setState(() {
+                          _kind = AssetKind.fiat;
+                          _selectedAssetId = null;
+                        }),
+                      ),
+                      DSRadioRow(
+                        title: l10n.assetKindCrypto,
+                        selected: _kind == AssetKind.crypto,
+                        onTap: () => setState(() {
+                          _kind = AssetKind.crypto;
+                          _selectedAssetId = null;
+                        }),
+                      ),
+                      SizedBox(height: spacing.s12),
+                      DSCurrencyPicker(
+                        options: [
+                          for (final asset in allAssets)
+                            DSCurrencyPickerOption(
+                              id: asset.id,
+                              primaryText: asset.code,
+                              secondaryText: asset.name,
+                              tertiaryText: asset.code,
+                              searchTerms: [asset.code, asset.name],
+                              locked: asset.isLocked ?? false,
+                            ),
+                        ],
+                        selectedId: _selectedAssetId,
+                        searchHintText: _kind == null
+                            ? '${l10n.assetKindFiat} / ${l10n.assetKindCrypto}'
+                            : l10n.assetSearchHint,
+                        recentTitleText: l10n.currencyPickerRecentTitle,
+                        selectedTitleText: l10n.subaccountCurrencyLabel,
+                        changeSelectionText: l10n.currencyPickerChangeAction,
+                        emptyResultsTitle: l10n.assetNoMatchesTitle,
+                        emptyResultsMessage: l10n.assetNoMatchesBody,
+                        enabled: _kind != null,
+                        onSelect: (id) {
+                          final asset = allAssets
+                              .where((item) => item.id == id)
+                              .firstOrNull;
+                          if (asset?.isLocked ?? false) {
+                            context.push(AppRoutes.paywall);
+                            return;
+                          }
+                          setState(() => _selectedAssetId = id);
+                        },
+                      ),
+                      const Spacer(),
+                      DSButton(
+                        label: l10n.subaccountCreateCta,
+                        fullWidth: true,
+                        isLoading:
+                            createState.status ==
+                            SubaccountCreateStatus.loading,
+                        onPressed: canSubmit
+                            ? () async {
+                                final assetId = _selectedAssetId;
+                                final amount = _tryParse(
+                                  _balanceController.text,
+                                );
+                                if (assetId == null || amount == null) {
+                                  return;
+                                }
+                                await context
+                                    .read<SubaccountCreateCubit>()
+                                    .submit(
+                                      accountId: widget.accountId,
+                                      name: _nameController.text,
+                                      assetId: assetId,
+                                      snapshotAmount: amount,
+                                    );
+                              }
+                            : null,
+                      ),
                     ],
                   ),
                 ),
               ),
             );
-          }
-
-          if (state.status == AddAssetStatus.error) {
-            return Scaffold(
-              appBar: DSAppBar(title: l10n.subaccountCreateTitle),
-              body: DSInlineError(
-                title: l10n.splashErrorTitle,
-                message: state.failureMessage ?? l10n.errorGeneric,
-                actionLabel: l10n.splashRetry,
-                onAction: () => context.read<AddAssetCubit>().load(widget.accountId),
-              ),
-            );
-          }
-
-          final canAdd =
-              state.selectedAssetId != null &&
-              state.name.trim().isNotEmpty &&
-              state.balanceText.trim().isNotEmpty &&
-              !state.isSaving &&
-              !state.isCatalogLoading;
-
-          final options = _buildAssetOptions(l10n, state.visibleAssets);
-
-          return Scaffold(
-            appBar: DSAppBar(title: l10n.subaccountCreateTitle),
-            body: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (state.failureCode != null) ...[
-                      DSInlineBanner(
-                        title: l10n.subaccountCreateTitle,
-                        message: state.failureMessage ?? l10n.errorGeneric,
-                        variant: DSInlineBannerVariant.danger,
-                      ),
-                      SizedBox(height: spacing.s16),
-                    ],
-                    DSTextField(
-                      label: l10n.accountsNameLabel,
-                      hintText: l10n.subaccountNameHint,
-                      controller: _nameController,
-                      enabled: !state.isSaving,
-                      errorText: _nameErrorText(l10n, state.nameError),
-                      onChanged: context.read<AddAssetCubit>().updateName,
-                    ),
-                    SizedBox(height: spacing.s12),
-                    DSDecimalField(
-                      label: l10n.addBalanceAmountLabel,
-                      controller: _balanceController,
-                      enabled: !state.isSaving,
-                      errorText: _balanceErrorText(l10n, state.balanceError),
-                      onChanged: context.read<AddAssetCubit>().updateBalance,
-                    ),
-                    SizedBox(height: spacing.s24),
-                    DSSectionTitle(title: l10n.accountsTypeLabel),
-                    SizedBox(height: spacing.s8),
-                    DSCard(
-                      padding: EdgeInsets.all(spacing.s8),
-                      child: Column(
-                        children: [
-                          DSRadioRow(
-                            title: l10n.assetKindFiat,
-                            selected: state.selectedKind == AssetKind.fiat,
-                            onTap: state.isSaving
-                                ? null
-                                : () => context.read<AddAssetCubit>().selectKind(AssetKind.fiat),
-                          ),
-                          DSRadioRow(
-                            title: l10n.assetKindCrypto,
-                            selected: state.selectedKind == AssetKind.crypto,
-                            onTap: state.isSaving
-                                ? null
-                                : () => context.read<AddAssetCubit>().selectKind(AssetKind.crypto),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: spacing.s12),
-                    if (state.isCatalogLoading) ...[
-                      const LinearProgressIndicator(minHeight: 2),
-                      SizedBox(height: spacing.s12),
-                    ],
-                    DSCurrencyPicker(
-                      options: options,
-                      selectedId: state.selectedAssetId,
-                      searchHintText: state.selectedKind == null
-                          ? '${l10n.accountsTypeLabel}: ${l10n.assetKindFiat} / ${l10n.assetKindCrypto}'
-                          : l10n.assetSearchHint,
-                      recentTitleText: l10n.currencyPickerRecentTitle,
-                      selectedTitleText: l10n.subaccountCurrencyLabel,
-                      changeSelectionText: l10n.currencyPickerChangeAction,
-                      emptyResultsTitle: l10n.assetNoMatchesTitle,
-                      emptyResultsMessage: l10n.assetNoMatchesBody,
-                      enabled:
-                          !state.isSaving && !state.isCatalogLoading && state.selectedKind != null,
-                      onSelect: (assetId) => context.read<AddAssetCubit>().selectAsset(assetId),
-                    ),
-                    SizedBox(height: spacing.s16),
-                    DSButton(
-                      label: l10n.subaccountCreateCta,
-                      fullWidth: true,
-                      isLoading: state.isSaving,
-                      onPressed: canAdd ? context.read<AddAssetCubit>().addSelected : null,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }
 
-  List<DSCurrencyPickerOption> _buildAssetOptions(
-    AppLocalizations l10n,
-    List<AssetPickerItemEntity> assets,
-  ) {
-    return assets
-        .map(
-          (asset) => DSCurrencyPickerOption(
-            id: asset.id,
-            primaryText: asset.code,
-            secondaryText: asset.name,
-            tertiaryText: _kindLabel(l10n, asset.kind),
-            searchTerms: [asset.code, asset.name],
-            locked: !asset.isUnlocked,
-          ),
-        )
-        .toList();
+  Decimal? _tryParse(String value) {
+    final normalized = value.trim().replaceAll(',', '.');
+    if (normalized.isEmpty) {
+      return null;
+    }
+    try {
+      return Decimal.parse(normalized);
+    } catch (_) {
+      return null;
+    }
   }
+}
 
-  String? _nameErrorText(AppLocalizations l10n, String? code) {
-    return switch (code) {
-      'required' => l10n.accountsNameRequired,
-      _ => null,
-    };
-  }
-
-  String? _balanceErrorText(AppLocalizations l10n, String? code) {
-    return switch (code) {
-      'required' => l10n.addBalanceValidationAmount,
-      'invalid' => l10n.errorValidation,
-      _ => null,
-    };
-  }
-
-  String _kindLabel(AppLocalizations l10n, AssetKind kind) {
-    return switch (kind) {
-      AssetKind.fiat => l10n.assetKindFiat,
-      AssetKind.crypto => l10n.assetKindCrypto,
-    };
+extension<T> on Iterable<T> {
+  T? get firstOrNull {
+    for (final item in this) {
+      return item;
+    }
+    return null;
   }
 }

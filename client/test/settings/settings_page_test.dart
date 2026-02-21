@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/local_storage/locale_storage.dart';
 import 'package:asset_tuner/core/localization/locale_cubit.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
@@ -25,39 +24,40 @@ import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
-import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
+import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
+import 'package:asset_tuner/domain/profile/usecase/update_plan_usecase.dart';
 import 'package:asset_tuner/presentation/profile/page/account_actions_page.dart';
 import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
 import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
 import 'package:asset_tuner/presentation/settings/page/manage_subscription_page.dart';
-import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
+import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
 import '../test_fixtures.dart';
 
 void main() {
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
-    await getIt.reset();
-    getIt.registerFactory<ProfileCubit>(
-      () => ProfileCubit(
-        GetCachedSessionUseCase(
-          _FakeAuthRepository(
-            cachedSession: const AuthSessionEntity(
-              userId: 'u1',
-              email: 'u1@example.com',
-            ),
-          ),
-        ),
-        GetProfileUseCase(_FakeProfileRepository(freeProfile())),
-        BootstrapProfileUseCase(_FakeProfileRepository(freeProfile())),
-        SignOutUseCase(_FakeAuthRepository()),
-        DeleteAccountUseCase(_FakeAuthRepository()),
-      ),
-    );
   });
 
   testWidgets('Profile shows base currency, language, and subscription rows', (
     tester,
   ) async {
+    final authRepository = _FakeAuthRepository(
+      cachedSession: const AuthSessionEntity(
+        userId: 'u1',
+        email: 'u1@example.com',
+      ),
+    );
+    final profileRepository = _FakeProfileRepository(freeProfile());
+    final userCubit = UserCubit(
+      GetCachedSessionUseCase(authRepository),
+      BootstrapProfileUseCase(profileRepository),
+      UpdateBaseCurrencyUseCase(profileRepository),
+      UpdatePlanUseCase(profileRepository),
+      DeleteAccountUseCase(authRepository),
+      SignOutUseCase(authRepository),
+    );
+    await userCubit.bootstrap();
+
     final router = GoRouter(
       initialLocation: AppRoutes.profile,
       routes: [
@@ -93,6 +93,7 @@ void main() {
         providers: [
           BlocProvider.value(value: LocaleCubit(LocaleStorage())..load()),
           BlocProvider.value(value: ThemeModeCubit(ThemeModeStorage())),
+          BlocProvider.value(value: userCubit),
         ],
         child: MaterialApp.router(
           theme: lightTheme,
@@ -113,6 +114,11 @@ void main() {
     expect(find.text('Theme'), findsOneWidget);
     expect(find.text('Free plan'), findsOneWidget);
     expect(find.text('Manage subscription'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Account actions'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Account actions'), findsOneWidget);
   });
 }

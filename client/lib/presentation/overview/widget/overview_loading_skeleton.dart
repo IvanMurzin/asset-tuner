@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
-import 'package:asset_tuner/presentation/account/utils/account_type_theme.dart';
+import 'package:asset_tuner/presentation/account/widget/account_type_theme.dart';
 
 class OverviewLoadingSkeleton extends StatelessWidget {
   const OverviewLoadingSkeleton({super.key});
@@ -44,7 +44,10 @@ class _SummarySkeleton extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [colors.primary.withValues(alpha: 0.16), colors.info.withValues(alpha: 0.1)],
+          colors: [
+            colors.primary.withValues(alpha: 0.16),
+            colors.info.withValues(alpha: 0.1),
+          ],
         ),
         borderRadius: BorderRadius.circular(context.dsRadius.r16),
       ),

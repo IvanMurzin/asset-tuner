@@ -4,7 +4,7 @@ enum SignInStatus { idle, loading }
 
 enum SignInFieldError { invalidEmail, weakPassword }
 
-enum SignInDestination { onboardingBaseCurrency, overview }
+enum SignInDestination { overview }
 
 @freezed
 abstract class SignInNavigation with _$SignInNavigation {

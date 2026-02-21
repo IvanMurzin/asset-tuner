@@ -4,7 +4,6 @@ abstract final class AppRoutes {
   static const String signIn = '/sign-in';
   static const String signUp = '/sign-up';
   static const String otp = '/otp';
-  static const String onboardingBaseCurrency = '/onboarding/base-currency';
   static const String onboardingCarousel = '/onboarding/carousel';
 
   static const String main = '/main';
@@ -12,12 +11,14 @@ abstract final class AppRoutes {
   static const String profile = '/profile';
 
   static const String accountNew = '/main/accounts/new';
-  static const String accountDetail = '/main/accounts/:id';
-  static const String accountEdit = '/main/accounts/:id/edit';
-  static const String accountAddAsset = '/main/accounts/:id/subaccounts/new';
+  static const String accountDetail = '/main/accounts/:accountId';
+  static const String accountEdit = '/main/accounts/:accountId/edit';
+  static const String accountAddAsset = '/main/accounts/:accountId/subaccounts/new';
 
-  static const String subaccountDetail = '/main/subaccounts/:id';
-  static const String addBalance = '/main/subaccounts/:id/update-balance';
+  static const String accountSubaccountDetail =
+      '/main/accounts/:accountId/subaccounts/:subaccountId';
+  static const String accountSubaccountBalance =
+      '/main/accounts/:accountId/subaccounts/:subaccountId/update-balance';
 
   static const String paywall = '/paywall';
   static const String baseCurrencySettings = '/profile/base-currency';
@@ -26,9 +27,9 @@ abstract final class AppRoutes {
   static const String archivedAccounts = '/profile/archived-accounts';
 
   static const String accountsNewPath = 'accounts/new';
-  static const String accountIdPath = 'accounts/:id';
+  static const String accountIdPath = 'accounts/:accountId';
   static const String editPath = 'edit';
   static const String subaccountsNewPath = 'subaccounts/new';
-  static const String subaccountIdPath = 'subaccounts/:id';
+  static const String subaccountIdPath = 'subaccounts/:subaccountId';
   static const String updateBalancePath = 'update-balance';
 }

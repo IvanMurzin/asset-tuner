@@ -4,10 +4,8 @@ import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_auth_providers_usecase.dart';
-import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/oauth_sign_in_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_in_with_password_usecase.dart';
-import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 
 part 'sign_in_state.dart';
 part 'sign_in_cubit.freezed.dart';
@@ -17,18 +15,14 @@ class SignInCubit extends Cubit<SignInState> {
   SignInCubit(
     this._signInWithPasswordUseCase,
     this._oAuthSignInUseCase,
-    this._bootstrapProfileUseCase,
     this._getAuthProvidersUseCase,
-    this._getCachedSessionUseCase,
   ) : super(const SignInState()) {
     _loadProviders();
   }
 
   final SignInWithPasswordUseCase _signInWithPasswordUseCase;
   final OAuthSignInUseCase _oAuthSignInUseCase;
-  final BootstrapProfileUseCase _bootstrapProfileUseCase;
   final GetAuthProvidersUseCase _getAuthProvidersUseCase;
-  final GetCachedSessionUseCase _getCachedSessionUseCase;
 
   void updateEmail(String value) {
     emit(
@@ -72,7 +66,7 @@ class SignInCubit extends Cubit<SignInState> {
           ),
         );
       case Success():
-        await _handleSignedIn();
+        _emitSuccessNavigation();
     }
   }
 
@@ -90,7 +84,7 @@ class SignInCubit extends Cubit<SignInState> {
           ),
         );
       case Success():
-        await _handleSignedIn();
+        _emitSuccessNavigation();
     }
   }
 
@@ -98,40 +92,15 @@ class SignInCubit extends Cubit<SignInState> {
     emit(state.copyWith(navigation: null));
   }
 
-  Future<void> _handleSignedIn() async {
-    final session = await _getCachedSessionUseCase();
-    if (isClosed) return;
-    if (session == null) {
-      emit(
-        state.copyWith(
-          status: SignInStatus.idle,
-          bannerFailureCode: 'unauthorized',
+  void _emitSuccessNavigation() {
+    emit(
+      state.copyWith(
+        status: SignInStatus.idle,
+        navigation: const SignInNavigation(
+          destination: SignInDestination.overview,
         ),
-      );
-      return;
-    }
-    final profileResult = await _bootstrapProfileUseCase();
-    if (isClosed) return;
-    switch (profileResult) {
-      case FailureResult(:final failure):
-        emit(
-          state.copyWith(
-            status: SignInStatus.idle,
-            bannerFailureCode: failure.code,
-            bannerFailureMessage: failure.message,
-          ),
-        );
-      case Success(:final value):
-        final destination = value.profile.baseAssetId == null
-            ? SignInDestination.onboardingBaseCurrency
-            : SignInDestination.overview;
-        emit(
-          state.copyWith(
-            status: SignInStatus.idle,
-            navigation: SignInNavigation(destination: destination),
-          ),
-        );
-    }
+      ),
+    );
   }
 
   Future<void> _loadProviders() async {

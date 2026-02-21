@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
-import 'package:asset_tuner/presentation/account/utils/account_type_theme.dart';
+import 'package:asset_tuner/presentation/account/widget/account_type_theme.dart';
 
 class AccountTypeCard extends StatelessWidget {
   const AccountTypeCard({
@@ -78,14 +78,17 @@ class AccountTypeCard extends StatelessWidget {
                     SizedBox(height: spacing.s4),
                     Text(
                       description,
-                      style: typography.caption.copyWith(color: colors.textSecondary),
+                      style: typography.caption.copyWith(
+                        color: colors.textSecondary,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-              if (selected) Icon(Icons.check_circle_rounded, color: accentColor, size: 24),
+              if (selected)
+                Icon(Icons.check_circle_rounded, color: accentColor, size: 24),
             ],
           ),
         ),

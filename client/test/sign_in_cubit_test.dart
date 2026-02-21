@@ -6,15 +6,9 @@ import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_auth_providers_usecase.dart';
-import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/oauth_sign_in_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_in_with_password_usecase.dart';
-import 'package:asset_tuner/domain/profile/entity/profile_bootstrap_entity.dart';
-import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
-import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
-import 'package:asset_tuner/domain/profile/usecase/bootstrap_profile_usecase.dart';
 import 'package:asset_tuner/presentation/auth/bloc/sign_in_cubit.dart';
-import 'test_fixtures.dart';
 
 class FakeAuthRepository implements IAuthRepository {
   FakeAuthRepository({
@@ -48,7 +42,9 @@ class FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
@@ -57,23 +53,37 @@ class FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(
+    String email,
+    String password,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(
+    String email,
+    String code,
+  ) async {
+    return const FailureResult(
+      Failure(code: 'validation', message: 'Not used'),
+    );
   }
 
   @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
-    return oauthResult ?? const Success(AuthSessionEntity(userId: 'user_1', email: 'user@x.com'));
+  Future<Result<AuthSessionEntity>> signInWithOAuth(
+    AuthProvider provider,
+  ) async {
+    return oauthResult ??
+        const Success(AuthSessionEntity(userId: 'user_1', email: 'user@x.com'));
   }
 
   @override
   Future<List<AuthProvider>> getAvailableProviders() async {
-    return availableProviders ?? const [AuthProvider.google, AuthProvider.apple];
+    return availableProviders ??
+        const [AuthProvider.google, AuthProvider.apple];
   }
 
   @override
@@ -87,48 +97,14 @@ class FakeAuthRepository implements IAuthRepository {
   }
 }
 
-class FakeProfileRepository implements IProfileRepository {
-  FakeProfileRepository({this.ensureResult});
-
-  final Result<ProfileBootstrapEntity>? ensureResult;
-
-  @override
-  Future<Result<ProfileBootstrapEntity>> ensureProfile() async {
-    return ensureResult ??
-        Success(
-          ProfileBootstrapEntity(
-            profile: freeProfile(),
-          ),
-        );
-  }
-
-  @override
-  Future<Result<ProfileEntity>> getProfile() async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
-  }
-
-  @override
-  Future<Result<ProfileEntity>> updateBaseCurrency(String baseCurrency) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
-  }
-
-  @override
-  Future<Result<ProfileEntity>> updatePlan(String plan) async {
-    return const FailureResult(Failure(code: 'validation', message: 'Not used'));
-  }
-}
-
 void main() {
   test('invalid email sets email error', () async {
     final authRepo = FakeAuthRepository();
-    final profileRepo = FakeProfileRepository();
 
     final cubit = SignInCubit(
       SignInWithPasswordUseCase(authRepo),
       OAuthSignInUseCase(authRepo),
-      BootstrapProfileUseCase(profileRepo),
       GetAuthProvidersUseCase(authRepo),
-      GetCachedSessionUseCase(authRepo),
     );
 
     cubit.updateEmail('invalid');
@@ -140,14 +116,11 @@ void main() {
 
   test('weak password sets password error', () async {
     final authRepo = FakeAuthRepository();
-    final profileRepo = FakeProfileRepository();
 
     final cubit = SignInCubit(
       SignInWithPasswordUseCase(authRepo),
       OAuthSignInUseCase(authRepo),
-      BootstrapProfileUseCase(profileRepo),
       GetAuthProvidersUseCase(authRepo),
-      GetCachedSessionUseCase(authRepo),
     );
 
     cubit.updateEmail('user@example.com');
@@ -163,14 +136,10 @@ void main() {
         Failure(code: 'rate_limited', message: 'Too many attempts'),
       ),
     );
-    final profileRepo = FakeProfileRepository();
-
     final cubit = SignInCubit(
       SignInWithPasswordUseCase(authRepo),
       OAuthSignInUseCase(authRepo),
-      BootstrapProfileUseCase(profileRepo),
       GetAuthProvidersUseCase(authRepo),
-      GetCachedSessionUseCase(authRepo),
     );
 
     cubit.updateEmail('user@example.com');
@@ -180,22 +149,13 @@ void main() {
     expect(cubit.state.bannerFailureCode, 'rate_limited');
   });
 
-  test('signIn success routes to onboarding when defaulted', () async {
-    final authRepo = FakeAuthRepository(
-      cachedSession: const AuthSessionEntity(userId: 'user_1', email: 'user@example.com'),
-    );
-    final profileRepo = FakeProfileRepository(
-      ensureResult: Success(
-        ProfileBootstrapEntity(profile: freeProfile()),
-      ),
-    );
+  test('signIn success routes to overview', () async {
+    final authRepo = FakeAuthRepository();
 
     final cubit = SignInCubit(
       SignInWithPasswordUseCase(authRepo),
       OAuthSignInUseCase(authRepo),
-      BootstrapProfileUseCase(profileRepo),
       GetAuthProvidersUseCase(authRepo),
-      GetCachedSessionUseCase(authRepo),
     );
 
     cubit.updateEmail('user@example.com');
@@ -203,6 +163,6 @@ void main() {
     await cubit.signIn();
 
     expect(cubit.state.navigation, isNotNull);
-    expect(cubit.state.navigation?.destination, SignInDestination.onboardingBaseCurrency);
+    expect(cubit.state.navigation?.destination, SignInDestination.overview);
   });
 }

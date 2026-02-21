@@ -1,7 +1,7 @@
 import 'package:asset_tuner/core_ui/components/ds_skeleton.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
-import 'package:asset_tuner/presentation/account/utils/account_type_theme.dart';
+import 'package:asset_tuner/presentation/account/widget/account_type_theme.dart';
 import 'package:flutter/material.dart';
 
 class AccountDetailLoadingSkeleton extends StatelessWidget {
@@ -103,7 +103,10 @@ class AccountDetailLoadingSkeleton extends StatelessWidget {
               for (var i = 0; i < 4; i++) ...[
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: spacing.s12),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: spacing.s12,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.surface,
                     borderRadius: BorderRadius.circular(context.dsRadius.r16),

@@ -13,6 +13,7 @@ import 'package:asset_tuner/presentation/auth/widget/auth_hero.dart';
 import 'package:asset_tuner/presentation/auth/widget/oauth_section.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_in_email_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_in_password_field.dart';
+import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -26,15 +27,27 @@ class SignInPage extends StatelessWidget {
       child: BlocConsumer<SignInCubit, SignInState>(
         listenWhen: (prev, curr) =>
             curr.navigation != null ||
-            (curr.bannerFailureCode != null && curr.bannerFailureCode != prev.bannerFailureCode),
-        listener: (context, state) {
+            (curr.bannerFailureCode != null &&
+                curr.bannerFailureCode != prev.bannerFailureCode),
+        listener: (context, state) async {
           final navigation = state.navigation;
           if (navigation != null) {
             switch (navigation.destination) {
-              case SignInDestination.onboardingBaseCurrency:
-                context.go(AppRoutes.onboardingBaseCurrency);
               case SignInDestination.overview:
-                context.go(AppRoutes.main);
+                await context.read<UserCubit>().bootstrap();
+                if (!context.mounted) {
+                  return;
+                }
+                final userState = context.read<UserCubit>().state;
+                if (userState.status == UserStatus.authenticated) {
+                  context.go(AppRoutes.main);
+                } else if (userState.failureMessage != null) {
+                  showDSSnackBar(
+                    context,
+                    variant: DSSnackBarVariant.error,
+                    message: userState.failureMessage!,
+                  );
+                }
             }
             context.read<SignInCubit>().consumeNavigation();
             return;
@@ -43,7 +56,11 @@ class SignInPage extends StatelessWidget {
               ? (state.bannerFailureMessage ?? l10n.errorGeneric)
               : null;
           if (message != null && context.mounted) {
-            showDSSnackBar(context, variant: DSSnackBarVariant.error, message: message);
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: message,
+            );
           }
         },
         builder: (context, state) {
@@ -70,7 +87,10 @@ class SignInPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          AuthHero(title: l10n.signInTitle, subtitle: l10n.signInBody),
+                          AuthHero(
+                            title: l10n.signInTitle,
+                            subtitle: l10n.signInBody,
+                          ),
                           SizedBox(height: spacing.s24),
                           SignInEmailField(
                             label: l10n.emailLabel,
@@ -81,7 +101,10 @@ class SignInPage extends StatelessWidget {
                           SignInPasswordField(
                             label: l10n.passwordLabel,
                             hint: l10n.passwordHint,
-                            errorText: _passwordErrorText(l10n, state.passwordError),
+                            errorText: _passwordErrorText(
+                              l10n,
+                              state.passwordError,
+                            ),
                           ),
                           if (providers.isNotEmpty) ...[
                             SizedBox(height: spacing.s24),
@@ -112,14 +135,20 @@ class SignInPage extends StatelessWidget {
                           label: l10n.signInPrimary,
                           isLoading: isLoading,
                           fullWidth: true,
-                          onPressed: isLoading ? null : context.read<SignInCubit>().signIn,
+                          onPressed: isLoading
+                              ? null
+                              : context.read<SignInCubit>().signIn,
                         ),
                         SizedBox(height: spacing.s16),
                         TextButton(
-                          onPressed: isLoading ? null : () => context.go(AppRoutes.signUp),
+                          onPressed: isLoading
+                              ? null
+                              : () => context.go(AppRoutes.signUp),
                           child: Text(
                             l10n.switchToSignUp,
-                            style: typography.body.copyWith(color: context.dsColors.primary),
+                            style: typography.body.copyWith(
+                              color: context.dsColors.primary,
+                            ),
                           ),
                         ),
                       ],

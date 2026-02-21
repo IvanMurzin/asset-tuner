@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
-import 'package:asset_tuner/presentation/account/utils/account_type_theme.dart';
-import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
+import 'package:asset_tuner/presentation/account/widget/account_type_theme.dart';
+import 'package:asset_tuner/presentation/overview/widget/overview_account_item.dart';
 
 class OverviewAccountCard extends StatelessWidget {
   const OverviewAccountCard({
@@ -36,7 +36,8 @@ class OverviewAccountCard extends StatelessWidget {
         ? context.dsFormatters.formatMoney(item.total, baseCurrency)
         : '—';
     final subaccountsText =
-        subtitleOverride ?? '${item.subaccountsCount} ${l10n.subaccountsCountLabel}';
+        subtitleOverride ??
+        '${item.subaccountsCount} ${l10n.subaccountsCountLabel}';
 
     return InkWell(
       borderRadius: BorderRadius.circular(context.dsRadius.r16),
@@ -73,7 +74,9 @@ class OverviewAccountCard extends StatelessWidget {
                   SizedBox(height: spacing.s4),
                   Text(
                     subaccountsText,
-                    style: typography.caption.copyWith(color: colors.textSecondary),
+                    style: typography.caption.copyWith(
+                      color: colors.textSecondary,
+                    ),
                   ),
                 ],
               ),

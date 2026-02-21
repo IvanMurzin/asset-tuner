@@ -1,179 +1,229 @@
-import 'package:asset_tuner/core/di/get_it.dart';
-import 'package:asset_tuner/core/routing/app_routes.dart';
-import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
-import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
-import 'package:asset_tuner/core_ui/components/ds_base_currency_value_card.dart';
-import 'package:asset_tuner/core_ui/components/ds_unlock_currencies_card.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
-import 'package:asset_tuner/core_ui/components/ds_loader.dart';
-import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
-import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
-import 'package:asset_tuner/l10n/app_localizations.dart';
-import 'package:asset_tuner/presentation/paywall/entity/paywall_args.dart';
-import 'package:asset_tuner/presentation/settings/bloc/base_currency_settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
+import 'package:asset_tuner/core_ui/components/ds_base_currency_value_card.dart';
+import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
+import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
+import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
+import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
+import 'package:asset_tuner/core_ui/components/ds_unlock_currencies_card.dart';
+import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
+import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
+import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
 
-class BaseCurrencySettingsPage extends StatelessWidget {
+class BaseCurrencySettingsPage extends StatefulWidget {
   const BaseCurrencySettingsPage({super.key});
+
+  @override
+  State<BaseCurrencySettingsPage> createState() =>
+      _BaseCurrencySettingsPageState();
+}
+
+class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
+  String? _selectedCode;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocProvider(
-      create: (_) => getIt<BaseCurrencySettingsCubit>()..load(),
-      child: BlocConsumer<BaseCurrencySettingsCubit, BaseCurrencySettingsState>(
-        listener: (context, state) async {
-          final navigation = state.navigation;
-          if (navigation == null) {
-            return;
-          }
-          context.read<BaseCurrencySettingsCubit>().consumeNavigation();
-          switch (navigation.destination) {
-            case BaseCurrencySettingsDestination.back:
-              context.pop(state.currentCode);
-              break;
-            case BaseCurrencySettingsDestination.signIn:
-              context.go(AppRoutes.signIn);
-              break;
-            case BaseCurrencySettingsDestination.paywall:
-              final upgraded = await context.push<bool>(
-                AppRoutes.paywall,
-                extra: PaywallArgs(
-                  reason: PaywallReason.baseCurrency,
-                  requestedBaseCurrencyCode: navigation.requestedCode,
-                ),
-              );
-              if (context.mounted && upgraded == true) {
-                await context.read<BaseCurrencySettingsCubit>().load();
-                final requested = navigation.requestedCode;
-                if (requested != null && context.mounted) {
-                  context.read<BaseCurrencySettingsCubit>().selectCurrency(requested);
-                }
-              }
-              break;
-          }
-        },
-        builder: (context, state) {
-          final spacing = context.dsSpacing;
-
-          if (state.status == BaseCurrencySettingsStatus.loading) {
-            return const Scaffold(body: Center(child: DSLoader()));
-          }
-
-          if (state.status == BaseCurrencySettingsStatus.error && state.currencies.isEmpty) {
+    return BlocListener<UserCubit, UserState>(
+      listenWhen: (prev, curr) => prev.status != curr.status,
+      listener: (context, state) {
+        if (state.status == UserStatus.unauthenticated) {
+          context.go(AppRoutes.signIn);
+        }
+      },
+      child: BlocBuilder<UserCubit, UserState>(
+        builder: (context, userState) {
+          if (!userState.isAuthenticated) {
             return Scaffold(
               appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
               body: DSInlineError(
-                title: l10n.baseCurrencySettingsLoadErrorTitle,
-                message: state.loadFailureMessage ?? l10n.errorGeneric,
+                title: l10n.splashErrorTitle,
+                message: l10n.errorGeneric,
                 actionLabel: l10n.splashRetry,
-                onAction: () => context.read<BaseCurrencySettingsCubit>().load(),
+                onAction: context.read<UserCubit>().bootstrap,
               ),
             );
           }
 
-          final options = _buildOptions(state);
+          final profile = userState.profile!;
+          _selectedCode ??= profile.baseCurrency;
 
-          return Scaffold(
-            appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
-            body: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: spacing.s24,
-                  bottom: spacing.s16,
-                  left: spacing.s24,
-                  right: spacing.s24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    DSSectionTitle(title: l10n.baseCurrencySettingsCurrentTitle),
-                    SizedBox(height: spacing.s12),
-                    DSBaseCurrencyValueCard(
-                      title: l10n.baseCurrencySettingsCurrentTitle,
-                      caption: l10n.baseCurrencyConversionCaption,
-                      currencyCode: state.currentCode ?? state.selectedCode,
-                      codeFallback: l10n.notAvailable,
+          return BlocBuilder<AssetsCubit, AssetsState>(
+            builder: (context, assetsState) {
+              final spacing = context.dsSpacing;
+
+              if (assetsState.status == AssetsStatus.loading &&
+                  assetsState.assets.isEmpty) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (assetsState.status == AssetsStatus.error &&
+                  assetsState.assets.isEmpty) {
+                return Scaffold(
+                  appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
+                  body: DSInlineError(
+                    title: l10n.splashErrorTitle,
+                    message: assetsState.failureMessage ?? l10n.errorGeneric,
+                    actionLabel: l10n.splashRetry,
+                    onAction: () => context.read<AssetsCubit>().load(),
+                  ),
+                );
+              }
+
+              final fiatAssets = assetsState.fiatAssets;
+              final options = [
+                for (final asset in fiatAssets)
+                  DSCurrencyPickerOption(
+                    id: asset.code.toUpperCase(),
+                    primaryText: asset.code.toUpperCase(),
+                    secondaryText: asset.name,
+                    tertiaryText: asset.code.toUpperCase(),
+                    searchTerms: [asset.code, asset.name],
+                    locked: asset.isLocked ?? false,
+                  ),
+              ];
+
+              return Scaffold(
+                appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
+                body: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: spacing.s24,
+                      bottom: spacing.s16,
+                      left: spacing.s24,
+                      right: spacing.s24,
                     ),
-                    SizedBox(height: spacing.s24),
-                    DSSectionTitle(title: l10n.baseCurrencySettingsPickerTitle),
-                    SizedBox(height: spacing.s12),
-                    if (state.bannerType == BaseCurrencySettingsBannerType.saveFailure &&
-                        state.bannerFailureCode != null) ...[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: spacing.s24),
-                        child: DSInlineBanner(
-                          title: l10n.baseCurrencySettingsTitle,
-                          message: state.bannerFailureMessage ?? l10n.errorGeneric,
-                          variant: DSInlineBannerVariant.danger,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        DSSectionTitle(
+                          title: l10n.baseCurrencySettingsCurrentTitle,
                         ),
-                      ),
-                      SizedBox(height: spacing.s16),
-                    ],
-                    if (!(state.entitlements?.anyBaseCurrency ?? false)) ...[
-                      DSUnlockCurrenciesCard(
-                        title: l10n.baseCurrencySettingsPaywallHint,
-                        onTap: () async {
-                          final upgraded = await context.push<bool>(
-                            AppRoutes.paywall,
-                            extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
-                          );
-                          if (context.mounted && upgraded == true) {
-                            await context.read<BaseCurrencySettingsCubit>().load();
-                          }
-                        },
-                      ),
-                      SizedBox(height: spacing.s16),
-                    ],
-                    DSCurrencyPicker(
-                      options: options,
-                      selectedId: state.selectedCode?.toUpperCase(),
-                      searchHintText: l10n.baseCurrencySettingsSearchHint,
-                      recentTitleText: l10n.currencyPickerRecentTitle,
-                      selectedTitleText: l10n.currencyPickerSelectedTitle,
-                      changeSelectionText: l10n.currencyPickerChangeAction,
-                      emptyResultsTitle: l10n.currencyPickerNoResultsTitle,
-                      emptyResultsMessage: l10n.currencyPickerNoResultsBody,
-                      enabled: !state.isSaving,
-                      onSelect: (code) =>
-                          context.read<BaseCurrencySettingsCubit>().selectCurrency(code),
+                        SizedBox(height: spacing.s12),
+                        DSBaseCurrencyValueCard(
+                          title: l10n.baseCurrencySettingsCurrentTitle,
+                          caption: l10n.baseCurrencyConversionCaption,
+                          currencyCode: profile.baseCurrency,
+                          codeFallback: l10n.notAvailable,
+                        ),
+                        SizedBox(height: spacing.s24),
+                        DSSectionTitle(
+                          title: l10n.baseCurrencySettingsPickerTitle,
+                        ),
+                        SizedBox(height: spacing.s12),
+                        if (!(profile.entitlements.anyBaseCurrency)) ...[
+                          DSUnlockCurrenciesCard(
+                            title: l10n.baseCurrencySettingsPaywallHint,
+                            onTap: () => context.push(
+                              AppRoutes.paywall,
+                              extra: const PaywallArgs(
+                                reason: PaywallReason.baseCurrency,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: spacing.s16),
+                        ],
+                        DSCurrencyPicker(
+                          options: options,
+                          selectedId: _selectedCode?.toUpperCase(),
+                          searchHintText: l10n.baseCurrencySettingsSearchHint,
+                          recentTitleText: l10n.currencyPickerRecentTitle,
+                          selectedTitleText: l10n.currencyPickerSelectedTitle,
+                          changeSelectionText: l10n.currencyPickerChangeAction,
+                          emptyResultsTitle: l10n.currencyPickerNoResultsTitle,
+                          emptyResultsMessage: l10n.currencyPickerNoResultsBody,
+                          enabled: !userState.isUpdatingBaseCurrency,
+                          onSelect: (code) {
+                            final matched = fiatAssets
+                                .where(
+                                  (asset) =>
+                                      asset.code.toUpperCase() ==
+                                      code.toUpperCase(),
+                                )
+                                .firstOrNull;
+                            if (matched == null) {
+                              return;
+                            }
+                            if ((matched.isLocked ?? false) &&
+                                !profile.entitlements.anyBaseCurrency) {
+                              context.push(
+                                AppRoutes.paywall,
+                                extra: PaywallArgs(
+                                  reason: PaywallReason.baseCurrency,
+                                  requestedBaseCurrencyCode: matched.code,
+                                ),
+                              );
+                              return;
+                            }
+                            setState(
+                              () => _selectedCode = matched.code.toUpperCase(),
+                            );
+                          },
+                        ),
+                        if (userState.failureCode != null) ...[
+                          SizedBox(height: spacing.s16),
+                          DSInlineBanner(
+                            title: l10n.baseCurrencySettingsTitle,
+                            message:
+                                userState.failureMessage ?? l10n.errorGeneric,
+                            variant: DSInlineBannerVariant.danger,
+                          ),
+                        ],
+                        const Spacer(),
+                        DSButton(
+                          label: l10n.baseCurrencySettingsSave,
+                          fullWidth: true,
+                          isLoading: userState.isUpdatingBaseCurrency,
+                          onPressed: userState.isUpdatingBaseCurrency
+                              ? null
+                              : () async {
+                                  final selected = _selectedCode;
+                                  if (selected == null ||
+                                      selected == profile.baseCurrency) {
+                                    context.pop(profile.baseCurrency);
+                                    return;
+                                  }
+                                  await context
+                                      .read<UserCubit>()
+                                      .updateBaseCurrency(selected);
+                                  if (context.mounted &&
+                                      context
+                                              .read<UserCubit>()
+                                              .state
+                                              .failureCode ==
+                                          null) {
+                                    context.pop(selected);
+                                  }
+                                },
+                        ),
+                        SizedBox(height: spacing.s16),
+                      ],
                     ),
-                    Spacer(),
-                    DSButton(
-                      label: l10n.baseCurrencySettingsSave,
-                      fullWidth: true,
-                      isLoading: state.isSaving,
-                      onPressed: state.isSaving
-                          ? null
-                          : () => context.read<BaseCurrencySettingsCubit>().save(),
-                    ),
-                    SizedBox(height: spacing.s16),
-                  ],
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),
     );
   }
+}
 
-  List<DSCurrencyPickerOption> _buildOptions(BaseCurrencySettingsState state) {
-    return state.currencies.map((item) {
-      final code = item.code.toUpperCase();
-      return DSCurrencyPickerOption(
-        id: code,
-        primaryText: code,
-        secondaryText: item.name,
-        tertiaryText: code,
-        searchTerms: [item.name, code],
-        locked: !item.isUnlocked,
-      );
-    }).toList();
+extension<T> on Iterable<T> {
+  T? get firstOrNull {
+    for (final item in this) {
+      return item;
+    }
+    return null;
   }
 }

@@ -1,23 +1,29 @@
-import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:decimal/decimal.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
-import 'package:asset_tuner/domain/account/entity/account_entity.dart';
+import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_dialog.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/domain/account/entity/account_entity.dart';
+import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
-import 'package:asset_tuner/presentation/account/bloc/account_detail_cubit.dart';
+import 'package:asset_tuner/presentation/account/bloc/account_archive_cubit.dart';
+import 'package:asset_tuner/presentation/account/bloc/account_delete_cubit.dart';
+import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
+import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
+import 'package:asset_tuner/presentation/account/widget/account_asset_view_item.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_actions_row.dart';
-import 'package:asset_tuner/presentation/overview/bloc/overview_cubit.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_header_card.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/account/widget/account_detail_positions_section.dart';
-//
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/presentation/rate/bloc/usd_rates_cubit.dart';
+import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
 
 class AccountDetailPage extends StatelessWidget {
   const AccountDetailPage({
@@ -35,62 +41,145 @@ class AccountDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocProvider(
-      create: (_) => getIt<AccountDetailCubit>()..load(accountId),
-      child: BlocConsumer<AccountDetailCubit, AccountDetailState>(
-        listenWhen: (prev, curr) =>
-            curr.navigation != null ||
-            (prev.account != null && curr.account != null && prev.account != curr.account),
-        listener: (context, state) {
-          final navigation = state.navigation;
-          if (navigation != null) {
-            context.read<AccountDetailCubit>().consumeNavigation();
-            switch (navigation.destination) {
-              case AccountDetailDestination.signIn:
-                context.go(AppRoutes.signIn);
-                break;
-              case AccountDetailDestination.backDeleted:
-                context.read<OverviewCubit>().refresh();
-                context.pop(true);
-                break;
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AccountInfoCubit, AccountInfoState>(
+          listenWhen: (prev, curr) => curr.navigation != null,
+          listener: (context, state) {
+            final navigation = state.navigation;
+            if (navigation == null) {
+              return;
             }
-            return;
-          }
-          if (state.account != null) {
-            context.read<OverviewCubit>().refresh();
-          }
-        },
-        builder: (context, state) {
+            context.read<AccountInfoCubit>().consumeNavigation();
+            if (navigation.destination == AccountInfoDestination.signIn) {
+              context.go(AppRoutes.signIn);
+            }
+          },
+        ),
+        BlocListener<AccountsCubit, AccountsState>(
+          listenWhen: (prev, curr) =>
+              prev.accounts.length != curr.accounts.length ||
+              prev.accounts != curr.accounts,
+          listener: (context, state) {
+            context.read<AccountInfoCubit>().setAccount(
+              context.read<AccountsCubit>().findById(accountId),
+            );
+          },
+        ),
+        BlocListener<AccountArchiveCubit, AccountArchiveState>(
+          listenWhen: (prev, curr) => prev.status != curr.status,
+          listener: (context, state) async {
+            if (state.status != AccountArchiveStatus.success ||
+                state.account == null) {
+              return;
+            }
+            final accountsCubit = context.read<AccountsCubit>();
+            final archiveCubit = context.read<AccountArchiveCubit>();
+            await accountsCubit.archive(state.account!);
+            if (!context.mounted) {
+              return;
+            }
+            archiveCubit.reset();
+          },
+        ),
+        BlocListener<AccountDeleteCubit, AccountDeleteState>(
+          listenWhen: (prev, curr) => prev.status != curr.status,
+          listener: (context, state) async {
+            if (state.status != AccountDeleteStatus.success ||
+                state.deletedAccountId == null) {
+              return;
+            }
+            final accountsCubit = context.read<AccountsCubit>();
+            final deleteCubit = context.read<AccountDeleteCubit>();
+            await accountsCubit.delete(state.deletedAccountId!);
+            if (context.mounted) {
+              context.pop(true);
+            }
+            deleteCubit.reset();
+          },
+        ),
+      ],
+      child: BlocBuilder<AccountInfoCubit, AccountInfoState>(
+        builder: (context, infoState) {
           final spacing = context.dsSpacing;
 
-          if (state.status == AccountDetailStatus.loading) {
+          final account = infoState.account;
+          if (account == null &&
+              infoState.status == AccountInfoStatus.loading) {
             return Scaffold(
               appBar: DSAppBar(title: initialTitle ?? l10n.accountsTitle),
-              body: SafeArea(child: AccountDetailLoadingSkeleton(accountType: initialAccountType)),
-            );
-          }
-
-          if (state.status == AccountDetailStatus.error && state.account == null) {
-            return Scaffold(
-              appBar: DSAppBar(title: initialTitle ?? l10n.accountsTitle),
-              body: DSInlineError(
-                title: l10n.splashErrorTitle,
-                message: state.failureMessage ?? l10n.errorGeneric,
-                actionLabel: l10n.splashRetry,
-                onAction: () => context.read<AccountDetailCubit>().load(accountId),
+              body: SafeArea(
+                child: AccountDetailLoadingSkeleton(
+                  accountType: initialAccountType,
+                ),
               ),
             );
           }
 
-          final account = state.account!;
-          final baseCurrency = state.baseCurrency ?? 'USD';
-          final actionsEnabled = !state.isAccountActionBusy;
+          if (account == null) {
+            return Scaffold(
+              appBar: DSAppBar(title: initialTitle ?? l10n.accountsTitle),
+              body: DSInlineError(
+                title: l10n.splashErrorTitle,
+                message: infoState.failureMessage ?? l10n.errorGeneric,
+                actionLabel: l10n.splashRetry,
+                onAction: () => context.read<AccountsCubit>().refresh(),
+              ),
+            );
+          }
+
+          final user = context.watch<UserCubit>().state;
+          final ratesState = context.watch<UsdRatesCubit>().state;
+          final rates = ratesState.snapshot;
+          final baseCurrency = user.profile?.baseCurrency ?? 'USD';
+          final baseUsdPrice = _baseUsdPrice(user, ratesState);
+          final total = _toBase(
+            account.totals?.totalUsd,
+            baseCurrency,
+            baseUsdPrice,
+          );
+
+          final items = infoState.subaccounts.map((subaccount) {
+            final asset = subaccount.asset;
+            final original = subaccount.currentAmount ?? Decimal.zero;
+            final assetUsd = subaccount.usdRate?.usdPrice;
+            Decimal? converted;
+            if (original == Decimal.zero) {
+              converted = Decimal.zero;
+            } else if (baseUsdPrice != null &&
+                assetUsd != null &&
+                baseUsdPrice != Decimal.zero) {
+              converted = divideToDecimal(original * assetUsd, baseUsdPrice);
+            }
+
+            return AccountAssetViewItem(
+              subaccountId: subaccount.id,
+              assetId: subaccount.assetId,
+              name: subaccount.name,
+              assetCode: asset?.code ?? 'N/A',
+              assetName: asset?.name ?? 'Unknown',
+              assetKind: asset?.kind ?? AssetKind.fiat,
+              originalAmount: original,
+              convertedAmount: converted,
+            );
+          }).toList();
+
+          final archiveState = context.watch<AccountArchiveCubit>().state;
+          final deleteState = context.watch<AccountDeleteCubit>().state;
+          final isBusy =
+              archiveState.status == AccountArchiveStatus.loading ||
+              deleteState.status == AccountDeleteStatus.loading;
 
           return Scaffold(
             appBar: DSAppBar(title: account.name),
             body: SafeArea(
               child: RefreshIndicator(
-                onRefresh: () => context.read<AccountDetailCubit>().refresh(),
+                onRefresh: () async {
+                  final accountInfoCubit = context.read<AccountInfoCubit>();
+                  final accountsCubit = context.read<AccountsCubit>();
+                  await accountInfoCubit.refreshSubaccounts(silent: false);
+                  await accountsCubit.refresh(silent: true);
+                },
                 child: ListView(
                   children: [
                     SizedBox(height: spacing.s24),
@@ -99,17 +188,38 @@ class AccountDetailPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (state.bannerFailureCode != null) ...[
+                          if (infoState.failureCode != null) ...[
                             DSInlineBanner(
                               title: account.name,
-                              message: state.bannerFailureCode != null
-                                  ? (state.bannerFailureMessage ?? l10n.errorGeneric)
-                                  : l10n.errorGeneric,
+                              message:
+                                  infoState.failureMessage ?? l10n.errorGeneric,
                               variant: DSInlineBannerVariant.danger,
                             ),
                             SizedBox(height: spacing.s12),
                           ],
-                          if (state.isAccountArchived) ...[
+                          if (archiveState.status ==
+                              AccountArchiveStatus.error) ...[
+                            DSInlineBanner(
+                              title: account.name,
+                              message:
+                                  archiveState.failureMessage ??
+                                  l10n.errorGeneric,
+                              variant: DSInlineBannerVariant.danger,
+                            ),
+                            SizedBox(height: spacing.s12),
+                          ],
+                          if (deleteState.status ==
+                              AccountDeleteStatus.error) ...[
+                            DSInlineBanner(
+                              title: account.name,
+                              message:
+                                  deleteState.failureMessage ??
+                                  l10n.errorGeneric,
+                              variant: DSInlineBannerVariant.danger,
+                            ),
+                            SizedBox(height: spacing.s12),
+                          ],
+                          if (account.archived) ...[
                             DSInlineBanner(
                               title: account.name,
                               message: l10n.accountDetailArchivedHint,
@@ -117,90 +227,83 @@ class AccountDetailPage extends StatelessWidget {
                             ),
                             SizedBox(height: spacing.s12),
                           ],
-                          if (state.hasUnpricedHoldings) ...[
-                            DSInlineBanner(
-                              title: l10n.accountDetailMissingRatesTitle,
-                              message: l10n.accountDetailMissingRatesBody,
-                              variant: DSInlineBannerVariant.warning,
-                            ),
-                            SizedBox(height: spacing.s12),
-                          ],
                           AccountDetailHeaderCard(
                             account: account,
                             baseCurrency: baseCurrency,
-                            total: state.total,
-                            pricedTotal: state.pricedTotal,
-                            ratesAsOf: state.ratesAsOf,
+                            total: total,
+                            pricedTotal: null,
+                            ratesAsOf: rates?.asOf,
                           ),
                           SizedBox(height: spacing.s16),
                           AccountDetailActionsRow(
-                            isEnabled: actionsEnabled,
-                            isArchived: state.isAccountArchived,
+                            isEnabled: !isBusy,
+                            isArchived: account.archived,
                             editLabel: l10n.accountsEdit,
                             archiveLabel: l10n.accountsArchive,
                             unarchiveLabel: l10n.accountsUnarchive,
                             deleteLabel: l10n.accountsDelete,
                             onEdit: () async {
-                              final saved = await context.push<String>(
-                                AppRoutes.accountEdit.replaceFirst(':id', account.id),
+                              await context.push<String>(
+                                AppRoutes.accountEdit.replaceFirst(
+                                  ':accountId',
+                                  account.id,
+                                ),
                               );
-                              if (context.mounted && saved != null) {
-                                await context.read<AccountDetailCubit>().refresh();
-                              }
                             },
                             onArchiveToggle: () async {
                               final confirmed = await _confirmArchive(
                                 context,
                                 l10n,
-                                archive: !state.isAccountArchived,
+                                archive: !account.archived,
                               );
                               if (!confirmed || !context.mounted) {
                                 return;
                               }
-                              await context.read<AccountDetailCubit>().setArchived(
+                              await context.read<AccountArchiveCubit>().submit(
                                 accountId: account.id,
-                                archived: !state.isAccountArchived,
+                                archived: !account.archived,
                               );
-                              if (context.mounted) {
-                                context.read<OverviewCubit>().refresh();
-                              }
                             },
                             onDelete: () async {
-                              final confirmed = await _confirmDelete(context, l10n);
+                              final confirmed = await _confirmDelete(
+                                context,
+                                l10n,
+                              );
                               if (!confirmed || !context.mounted) {
                                 return;
                               }
-                              await context.read<AccountDetailCubit>().deleteAccount(account.id);
+                              await context.read<AccountDeleteCubit>().submit(
+                                account.id,
+                              );
                             },
                           ),
                           SizedBox(height: spacing.s24),
-                          if (state.status == AccountDetailStatus.error)
-                            DSInlineError(
-                              title: l10n.splashErrorTitle,
-                              message: state.failureMessage ?? l10n.errorGeneric,
-                              actionLabel: l10n.splashRetry,
-                              onAction: () => context.read<AccountDetailCubit>().load(accountId),
-                            )
+                          if (infoState.isSubaccountsLoading)
+                            const LinearProgressIndicator(minHeight: 2)
                           else
                             AccountDetailPositionsSection(
-                              items: state.items,
+                              items: items,
                               baseCurrency: baseCurrency,
                               onAddAsset: () async {
-                                final added = await context.push<bool>(
-                                  AppRoutes.accountAddAsset.replaceFirst(':id', account.id),
+                                await context.push<bool>(
+                                  AppRoutes.accountAddAsset.replaceFirst(
+                                    ':accountId',
+                                    account.id,
+                                  ),
                                 );
-                                if (context.mounted && added == true) {
-                                  await context.read<AccountDetailCubit>().refresh();
-                                }
                               },
                               onOpenSubaccount: (item) async {
-                                final changed = await context.push<bool>(
-                                  AppRoutes.subaccountDetail.replaceFirst(':id', item.subaccountId),
-                                  extra: SubaccountDetailExtra(initialTitle: item.name),
+                                await context.push<bool>(
+                                  AppRoutes.accountSubaccountDetail
+                                      .replaceFirst(':accountId', account.id)
+                                      .replaceFirst(
+                                        ':subaccountId',
+                                        item.subaccountId,
+                                      ),
+                                  extra: SubaccountDetailExtra(
+                                    initialTitle: item.name,
+                                  ),
                                 );
-                                if (context.mounted && changed == true) {
-                                  await context.read<AccountDetailCubit>().refresh();
-                                }
                               },
                             ),
                         ],
@@ -217,6 +320,33 @@ class AccountDetailPage extends StatelessWidget {
     );
   }
 
+  Decimal? _baseUsdPrice(UserState user, UsdRatesState rates) {
+    final baseCurrency = user.profile?.baseCurrency ?? 'USD';
+    if (baseCurrency == 'USD') {
+      return Decimal.one;
+    }
+    final baseAssetId = user.profile?.baseAssetId;
+    if (baseAssetId == null) {
+      return null;
+    }
+    return rates.snapshot?.usdPriceByAssetId[baseAssetId];
+  }
+
+  Decimal? _toBase(
+    Decimal? totalUsd,
+    String baseCurrency,
+    Decimal? baseUsdPrice,
+  ) {
+    final usd = totalUsd ?? Decimal.zero;
+    if (baseCurrency == 'USD') {
+      return usd;
+    }
+    if (baseUsdPrice == null || baseUsdPrice == Decimal.zero) {
+      return null;
+    }
+    return divideToDecimal(usd, baseUsdPrice);
+  }
+
   Future<bool> _confirmArchive(
     BuildContext context,
     AppLocalizations l10n, {
@@ -225,7 +355,9 @@ class AccountDetailPage extends StatelessWidget {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => DSDialog(
-        title: archive ? l10n.accountsArchiveConfirmTitle : l10n.accountsUnarchiveConfirmTitle,
+        title: archive
+            ? l10n.accountsArchiveConfirmTitle
+            : l10n.accountsUnarchiveConfirmTitle,
         content: archive ? Text(l10n.accountsArchiveConfirmBody) : null,
         primaryLabel: archive ? l10n.accountsArchive : l10n.accountsUnarchive,
         secondaryLabel: l10n.cancel,
@@ -236,7 +368,10 @@ class AccountDetailPage extends StatelessWidget {
     return result ?? false;
   }
 
-  Future<bool> _confirmDelete(BuildContext context, AppLocalizations l10n) async {
+  Future<bool> _confirmDelete(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => DSDialog(
