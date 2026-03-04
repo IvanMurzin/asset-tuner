@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Asset Tuner</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#101826;
+      --text:#e6eef8;
+      --muted:#a9b7c6;
+      --link:#7cc4ff;
+      --line:#223047;
+    }
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+      background:linear-gradient(180deg,var(--bg),#070a0f);
+      color:var(--text);
+      line-height:1.6;
+    }
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 44px 20px 72px; }
+    header, .card{
+      border:1px solid var(--line);
+      background: rgba(16,24,38,0.72);
+      border-radius: 18px;
+      backdrop-filter: blur(6px);
+    }
+    header{ padding: 26px 24px; }
+    .card{ margin-top: 18px; padding: 22px 24px; }
+    h1{ margin:0 0 8px; font-size: 30px; letter-spacing:-0.02em; }
+    .meta{ margin: 0; color: var(--muted); font-size: 14px; }
+    h2{ margin: 0 0 10px; font-size: 20px; letter-spacing:-0.01em; }
+    h3{ margin: 16px 0 8px; font-size: 16px; letter-spacing:-0.01em; }
+    p{ margin: 10px 0; }
+    ul{ margin: 8px 0 12px 22px; }
+    li{ margin: 6px 0; }
+    a{ color: var(--link); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+    .muted{ color: var(--muted); }
+    .note{
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px dashed #2b3d59;
+      background: rgba(8,12,18,0.35);
+      color: var(--muted);
+      margin: 12px 0;
+    }
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.95em;
+      color: #d7e7ff;
+      background: rgba(7,10,15,0.45);
+      border: 1px solid var(--line);
+      padding: 2px 6px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .tbl{
+      width:100%;
+      border-collapse: collapse;
+      margin: 10px 0 2px;
+      overflow:hidden;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+    }
+    .tbl th,.tbl td{
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      font-size: 14px;
+    }
+    .tbl th{
+      color: var(--muted);
+      font-weight: 600;
+      background: rgba(7,10,15,0.35);
+    }
+    .tbl tr:last-child td{ border-bottom:0; }
+    footer{ margin-top: 18px; color: var(--muted); font-size: 13px; padding: 10px 2px; }
+    .pill{
+      display:inline-block;
+      padding:2px 10px;
+      border:1px solid var(--line);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Privacy Policy — Asset Tuner</h1>
+      <p class="meta">
+        Effective date: <strong>2026-03-04</strong><br/>
+        This Privacy Policy explains how <strong>Ivan Murzin</strong> (“we”, “us”, or “our”) collects, uses, and shares
+        information when you use the Asset Tuner mobile application (the “App”).<br/>
+        Contact: <a href="mailto:ivanmurzin.developer@gmail.com">ivanmurzin.developer@gmail.com</a>
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>1) Quick summary</h2>
+      <ul>
+        <li><strong>No ads:</strong> we do not display ads and we do not sell your personal information.</li>
+        <li><strong>Manual-only:</strong> the App does not connect to your bank accounts or wallets automatically; you enter balances manually.</li>
+        <li><strong>Core data:</strong> we store the asset tracking data you enter to provide login and sync across devices.</li>
+        <li><strong>Analytics:</strong> we use Firebase Analytics to understand app usage and improve reliability and features.</li>
+        <li><strong>Subscriptions:</strong> purchases are handled by Apple/Google; we use RevenueCat to validate subscriptions and unlock paid features.</li>
+        <li><strong>Account deletion:</strong> you can delete your account in the App (Settings → Profile → Delete account).</li>
+      </ul>
+      <div class="note">
+        Asset Tuner is an informational tool for personal tracking only. It does not provide financial, investment, legal, or tax advice.
+      </div>
+    </section>
+
+    <section class="card" id="collect">
+      <h2>2) Information we collect</h2>
+
+      <h3>A. Information you provide</h3>
+      <ul>
+        <li><strong>Account information:</strong> your email address (for authentication / email OTP), and an internal user identifier.</li>
+        <li><strong>Asset-tracking content:</strong> the data you enter in the App, such as account names/types (e.g., Bank/Wallet/Cash), assets/currencies you track, balances (snapshots), and your base-currency preference.</li>
+        <li><strong>Support communications:</strong> messages you send us (e.g., by email) and the information you choose to include.</li>
+      </ul>
+
+      <h3>B. Information collected automatically</h3>
+      <ul>
+        <li><strong>Device & app info:</strong> device model, operating system version, app version, language, and time zone.</li>
+        <li><strong>Identifiers:</strong> internal user IDs, session identifiers, and app-instance identifiers used by our infrastructure to provide authentication, sync, subscription validation, and analytics.</li>
+        <li><strong>Diagnostics / log data:</strong> technical logs related to requests and error events (for example, to troubleshoot outages and bugs). These logs may include timestamps and device/app technical details.</li>
+      </ul>
+
+      <h3>C. Analytics data (Firebase Analytics)</h3>
+      <p>
+        We use <strong>Firebase Analytics</strong> (a Google service) to understand how the App is used and to improve performance and features.
+        Firebase Analytics may collect or process information such as:
+      </p>
+      <ul>
+        <li>app interactions (for example: screen views, feature usage, button taps, and session duration);</li>
+        <li>device information (for example: model, OS version, app version, language);</li>
+        <li>approximate location information (for example: country/region) derived from network signals; and</li>
+        <li>identifiers such as an app-instance identifier and (depending on your device and configuration) advertising-related identifiers.</li>
+      </ul>
+      <p class="muted">
+        We use analytics for measurement and product improvement. We do not use your analytics data to show ads in the App.
+      </p>
+
+      <h3>D. Payments</h3>
+      <p>
+        <strong>We do not collect or store your full payment card details.</strong>
+        Purchases and subscriptions are processed by the platform (Apple App Store and/or Google Play).
+        We may receive limited information such as subscription status and transaction identifiers to provide paid features and prevent fraud.
+      </p>
+    </section>
+
+    <section class="card" id="use">
+      <h2>3) How we use information</h2>
+      <ul>
+        <li><strong>Provide the App:</strong> create and manage accounts, sync your asset-tracking data across devices, and show totals in your chosen base currency.</li>
+        <li><strong>Operate and secure the service:</strong> authentication, abuse prevention, and maintaining system reliability.</li>
+        <li><strong>Analytics and improvement:</strong> understand usage patterns, diagnose issues, and improve app performance and features.</li>
+        <li><strong>Subscriptions:</strong> validate purchases and manage entitlements (paid vs free features).</li>
+        <li><strong>Support:</strong> respond to your requests and troubleshoot issues.</li>
+        <li><strong>Legal compliance:</strong> comply with applicable laws, regulations, and lawful requests.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="legal-bases">
+      <h2>4) Legal bases (EEA/UK)</h2>
+      <p class="muted">
+        If you are in the European Economic Area (EEA) or the United Kingdom, we rely on the following legal bases under applicable data protection laws:
+      </p>
+      <ul>
+        <li><strong>Contract:</strong> to provide the App (authentication, syncing your data, and paid features if you subscribe).</li>
+        <li><strong>Legitimate interests:</strong> to keep the service secure, prevent abuse, and improve reliability and user experience.</li>
+        <li><strong>Consent (where required):</strong> for optional processing where your jurisdiction requires consent (for example, certain analytics choices).</li>
+        <li><strong>Legal obligation:</strong> where we must keep or share information to comply with law.</li>
+      </ul>
+      <div class="note">
+        Some jurisdictions may require consent for certain analytics. Where required, we will provide appropriate controls or notices.
+      </div>
+    </section>
+
+    <section class="card" id="share">
+      <h2>5) When we share information</h2>
+      <p>We share information only as described below:</p>
+
+      <table class="tbl" aria-label="Data sharing table">
+        <thead>
+          <tr>
+            <th style="width: 26%;">Recipient</th>
+            <th style="width: 34%;">Why we share</th>
+            <th style="width: 40%;">What may be shared</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Supabase</strong><br/><span class="muted">Auth + database hosting</span></td>
+            <td>To provide authentication, store your asset-tracking data, and sync across devices.</td>
+            <td>Email, internal user ID, your in-app content (accounts/holdings/balances), and technical logs needed to operate the service.</td>
+          </tr>
+          <tr>
+            <td><strong>RevenueCat</strong><br/><span class="muted">Subscription management</span></td>
+            <td>To validate subscriptions and unlock paid features.</td>
+            <td>App user identifier, subscription/entitlement status, and store transaction identifiers (as provided by Apple/Google).</td>
+          </tr>
+          <tr>
+            <td><strong>Firebase Analytics (Google)</strong><br/><span class="muted">App analytics</span></td>
+            <td>To measure app usage, diagnose issues, and improve performance and features.</td>
+            <td>App interaction events, device/app technical info, and identifiers such as an app-instance identifier and related analytics identifiers.</td>
+          </tr>
+          <tr>
+            <td><strong>Apple / Google</strong><br/><span class="muted">App store & billing</span></td>
+            <td>To process payments (if you subscribe) and provide download/distribution services.</td>
+            <td>Purchase and subscription transaction details handled by the stores (we do not receive full payment card details).</td>
+          </tr>
+          <tr>
+            <td><strong>Rate providers</strong><br/><span class="muted">OpenExchangeRates, CoinGecko</span></td>
+            <td>We obtain public exchange rates and crypto prices to calculate conversions in the App.</td>
+            <td>These providers receive requests from our servers for rate data. We do not send your asset-tracking content to them.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="muted">
+        We may also share information if required by law, to respond to lawful requests, or to protect our rights, users, and the public.
+      </p>
+    </section>
+
+    <section class="card" id="choices">
+      <h2>6) Your choices and controls</h2>
+      <ul>
+        <li><strong>Edit your data:</strong> you can update asset-tracking content inside the App.</li>
+        <li><strong>Analytics controls:</strong> depending on your jurisdiction and device, you may be able to limit analytics and advertising identifiers using your device privacy settings.
+          Where the App provides an analytics control, you can also use that setting.</li>
+        <li><strong>Marketing:</strong> we do not send marketing emails by default. If we ever offer optional newsletters, you will be able to opt out.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="delete">
+      <h2>7) Account deletion</h2>
+      <p>
+        You can delete your account from within the App: <strong>Settings → Profile → Delete account</strong>.
+        When you request deletion, we delete or anonymize personal information associated with your account, except where we must retain certain
+        information for legal obligations, security, fraud prevention, or dispute resolution.
+      </p>
+      <p class="muted">
+        If you have trouble deleting your account in the App, contact us at
+        <a href="mailto:ivanmurzin.developer@gmail.com">ivanmurzin.developer@gmail.com</a>.
+      </p>
+    </section>
+
+    <section class="card" id="retain">
+      <h2>8) Data retention</h2>
+      <p>
+        We keep your information for as long as your account is active or as needed to provide the App.
+        If you delete your account, we will delete or anonymize your data within a reasonable period, subject to the exceptions described above.
+      </p>
+    </section>
+
+    <section class="card" id="security">
+      <h2>9) Security</h2>
+      <p>
+        We use reasonable technical and organizational measures designed to protect your information (for example, access controls and encryption in transit).
+        However, no method of transmission over the internet or electronic storage is 100% secure.
+      </p>
+    </section>
+
+    <section class="card" id="rights">
+      <h2>10) Your privacy rights</h2>
+      <p>
+        Depending on your location, you may have rights to access, correct, delete, or obtain a copy of your personal information,
+        and to object to or restrict certain processing.
+      </p>
+      <ul>
+        <li><strong>Access / portability:</strong> request a copy of the data associated with your account.</li>
+        <li><strong>Deletion:</strong> delete your account in the App or request deletion by contacting us.</li>
+        <li><strong>Correction:</strong> update your data within the App or by contacting us.</li>
+      </ul>
+      <p class="muted">
+        To exercise your rights, contact us at <a href="mailto:ivanmurzin.developer@gmail.com">ivanmurzin.developer@gmail.com</a>.
+      </p>
+
+      <h3>California notice</h3>
+      <p class="muted">
+        We do not sell your personal information. If you are a California resident, you may have additional rights under applicable law.
+        You can contact us to make a request.
+      </p>
+    </section>
+
+    <section class="card" id="children">
+      <h2>11) Children’s privacy</h2>
+      <p>
+        The App is not intended for children under 13 (or the minimum age required in your jurisdiction), and we do not knowingly collect personal
+        information from children. If you believe a child has provided personal information, please contact us and we will take appropriate steps.
+      </p>
+    </section>
+
+    <section class="card" id="international">
+      <h2>12) International transfers</h2>
+      <p>
+        Your information may be processed in countries other than your own, including where our service providers operate.
+        Where required, we use appropriate safeguards for such transfers.
+      </p>
+    </section>
+
+    <section class="card" id="changes">
+      <h2>13) Changes to this Privacy Policy</h2>
+      <p>
+        We may update this Privacy Policy from time to time. We will post the updated version in the App and/or at the policy URL with a new effective date.
+        If changes are material, we may provide additional notice.
+      </p>
+    </section>
+
+    <section class="card" id="contact">
+      <h2>14) Contact</h2>
+      <p>If you have questions or requests related to privacy, contact:</p>
+      <ul>
+        <li><strong>Developer / Data controller:</strong> Ivan Murzin</li>
+        <li><strong>Email:</strong> <a href="mailto:ivanmurzin.developer@gmail.com">ivanmurzin.developer@gmail.com</a></li>
+      </ul>
+      <p class="muted">
+        If you publish Asset Tuner under a legal entity name/address, update the contact details accordingly.
+      </p>
+    </section>
+
+    <footer>
+      <span class="muted">Asset Tuner — Privacy Policy</span>
+      <span class="pill">2026-03-04</span>
+    </footer>
+  </div>
+</body>
+</html>

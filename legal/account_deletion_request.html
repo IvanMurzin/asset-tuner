@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Account Deletion Request — Asset Tuner</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#101826;
+      --text:#e6eef8;
+      --muted:#a9b7c6;
+      --link:#7cc4ff;
+      --line:#223047;
+    }
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+      background:linear-gradient(180deg,var(--bg),#070a0f);
+      color:var(--text);
+      line-height:1.6;
+    }
+    .wrap{ max-width: 920px; margin: 0 auto; padding: 44px 20px 72px; }
+    header, .card{
+      border:1px solid var(--line);
+      background: rgba(16,24,38,0.72);
+      border-radius: 18px;
+      backdrop-filter: blur(6px);
+    }
+    header{ padding: 26px 24px; }
+    .card{ margin-top: 18px; padding: 22px 24px; }
+    h1{ margin:0 0 8px; font-size: 28px; letter-spacing:-0.02em; }
+    .meta{ margin: 0; color: var(--muted); font-size: 14px; }
+    h2{ margin: 0 0 10px; font-size: 18px; letter-spacing:-0.01em; }
+    h3{ margin: 16px 0 8px; font-size: 16px; letter-spacing:-0.01em; }
+    p{ margin: 10px 0; }
+    ul, ol{ margin: 8px 0 12px 22px; }
+    li{ margin: 6px 0; }
+    a{ color: var(--link); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+    .muted{ color: var(--muted); }
+    .note{
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px dashed #2b3d59;
+      background: rgba(8,12,18,0.35);
+      color: var(--muted);
+      margin: 12px 0;
+    }
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.95em;
+      color: #d7e7ff;
+      background: rgba(7,10,15,0.45);
+      border: 1px solid var(--line);
+      padding: 2px 6px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Account Deletion Request — Asset Tuner</h1>
+      <p class="meta">
+        Developer: <strong>Ivan Murzin</strong><br/>
+        Support email: <a href="mailto:ivanmurzin.developer@gmail.com">ivanmurzin.developer@gmail.com</a><br/>
+        Last updated: <strong>2026-03-04</strong>
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>How to delete your account and data</h2>
+      <p>
+        Asset Tuner allows you to delete your account and the data linked to it.
+        The fastest way is to request deletion directly inside the app.
+      </p>
+
+      <h3>Option A — Delete from inside the app (recommended)</h3>
+      <ol>
+        <li>Open <strong>Asset Tuner</strong>.</li>
+        <li>Go to <code>Settings</code> → <code>Profile</code>.</li>
+        <li>Tap <code>Delete account</code> and confirm.</li>
+      </ol>
+      <p class="muted">
+        This triggers deletion of your account and associated data from our backend systems used to provide login and sync.
+      </p>
+
+      <h3>Option B — Request deletion by email</h3>
+      <p>
+        If you cannot access the app, email us at
+        <a href="mailto:ivanmurzin.developer@gmail.com?subject=Asset%20Tuner%20%E2%80%94%20Account%20Deletion%20Request">ivanmurzin.developer@gmail.com</a>
+        with the subject <code>Account Deletion Request</code> and include:
+      </p>
+      <ul>
+        <li>the email address used in Asset Tuner (or any details that help us locate your account); and</li>
+        <li>a short message requesting account deletion.</li>
+      </ul>
+
+      <div class="note">
+        We may ask for additional information to verify account ownership before deleting data (to prevent unauthorized deletion).
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>What data is deleted vs. retained</h2>
+
+      <h3>Data that is deleted or anonymized</h3>
+      <ul>
+        <li><strong>Account identifiers:</strong> your account record, internal user ID, and authentication profile.</li>
+        <li><strong>Asset-tracking content:</strong> accounts/wallets you created, holdings, balances/snapshots, and related preferences (e.g., base currency).</li>
+        <li><strong>User settings:</strong> app preferences stored with your account (where applicable).</li>
+      </ul>
+
+      <h3>Data that may be retained</h3>
+      <ul>
+        <li><strong>Store purchase records:</strong> Apple/Google maintain their own purchase history. We may retain limited subscription/transaction identifiers
+          needed for accounting, fraud prevention, and dispute handling where required.</li>
+        <li><strong>Security and operational logs:</strong> we may retain certain technical logs for a limited period to protect the service and investigate abuse.</li>
+        <li><strong>Analytics:</strong> Firebase Analytics data is generally collected at an app/device level for measurement. It may be retained by Google
+          according to Google/Firebase retention settings and may not always be removable on a per-user basis. We do not use analytics to show ads in Asset Tuner.</li>
+        <li><strong>Legal obligations:</strong> where we are required by law to retain certain information for longer.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Deletion timelines (retention periods)</h2>
+      <ul>
+        <li><strong>Processing time:</strong> deletion requests are typically completed within <strong>30 days</strong>.</li>
+        <li><strong>Backup systems:</strong> residual copies may persist in encrypted backups for a limited period and are removed as backups rotate.</li>
+        <li><strong>Security logs:</strong> typically retained for up to <strong>90 days</strong> unless a longer period is required for security investigations or legal reasons.</li>
+        <li><strong>Purchase/transaction identifiers:</strong> may be retained as required for accounting, fraud prevention, and dispute resolution, and for any period mandated by law.</li>
+      </ul>
+      <p class="muted">
+        If you need confirmation of deletion, email us and we will respond after the request is completed.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Related documents</h2>
+      <ul>
+        <li>Privacy Policy: please refer to the privacy policy URL published with the app listing and inside the app.</li>
+        <li>Terms of Use: available in the app and on the page where the terms are published.</li>
+      </ul>
+    </section>
+
+    <footer style="margin-top: 18px; color: var(--muted); font-size: 13px; padding: 10px 2px;">
+      <span class="muted">Asset Tuner — Account Deletion Request</span>
+    </footer>
+  </div>
+</body>
+</html>
