@@ -7,6 +7,7 @@ Start here:
 - Backend contract (schema): `docs/contracts/data_contract.md`
 - Backend contract (API): `docs/contracts/api_surface.md`
 - Migration runbook (money/rates as text): `docs/tech/money-text-migration.md`
+- Product quality backlog (March 2026): `docs/backlog/2026-03-product-quality-audit/INDEX.md`
 - Testable features: `docs/features/index.md`
 - UX screens & navigation: `docs/ux/screen_map.md`, `docs/ux/navigation.md`, `docs/ux/screens/*`
 
