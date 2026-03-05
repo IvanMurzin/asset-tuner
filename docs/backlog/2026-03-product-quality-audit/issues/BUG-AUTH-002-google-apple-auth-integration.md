@@ -4,7 +4,7 @@
 - ID: `BUG-AUTH-002`
 - Тип: `Bug`
 - Приоритет: `P0`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FR-002`, `FTR-001`, `SCR-002`
 
 ## Экран/модуль/слой
@@ -55,3 +55,10 @@ Google/Apple auth работают в dev и prod по единому documented
 - [sign_in_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/auth/page/sign_in_page.dart)
 - [supabase_auth_data_source.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/data/auth/data_source/supabase_auth_data_source.dart)
 - [app_config.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core/config/app_config.dart)
+
+## Implementation note
+- Добавлены OAuth config-поля в `AppConfig` с явной диагностикой отсутствующих ключей.
+- Обновлены `.config.dev/.prod` и `.example` новыми OAuth placeholders для dev/prod.
+- В `SupabaseAuthDataSource` выделен тестируемый маппинг `AuthProvider -> OAuthProvider` и добавлен unit test.
+- Обновлён owner checklist по OAuth setup в Supabase/Auth providers.
+- Проверки: `flutter analyze` (warning-only, 3 pre-existing warning), `flutter test test/data/auth/data_source/supabase_auth_data_source_test.dart` (passed).

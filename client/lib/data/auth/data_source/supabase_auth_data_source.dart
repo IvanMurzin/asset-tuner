@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asset_tuner/core/supabase/supabase_constants.dart';
@@ -29,23 +30,34 @@ class SupabaseAuthDataSource {
   }
 
   Future<void> signInWithOAuth(AuthProvider provider) {
-    final supaProvider = provider == AuthProvider.google
-        ? OAuthProvider.google
-        : provider == AuthProvider.apple
-        ? OAuthProvider.apple
-        : null;
-    if (supaProvider == null) {
-      throw StateError('OAuth is not supported for $provider');
-    }
+    final supaProvider = mapOAuthProvider(provider);
     return _client.auth.signInWithOAuth(supaProvider);
+  }
+
+  @visibleForTesting
+  static OAuthProvider mapOAuthProvider(AuthProvider provider) {
+    return switch (provider) {
+      AuthProvider.google => OAuthProvider.google,
+      AuthProvider.apple => OAuthProvider.apple,
+      AuthProvider.email => throw StateError(
+        'OAuth is not supported for $provider',
+      ),
+    };
   }
 
   Future<void> signUpWithPassword(String email, String password) {
     return _client.auth.signUp(email: email, password: password);
   }
 
-  Future<AuthSessionDto?> verifySignUpOtp({required String email, required String token}) async {
-    final response = await _client.auth.verifyOTP(email: email, token: token, type: OtpType.signup);
+  Future<AuthSessionDto?> verifySignUpOtp({
+    required String email,
+    required String token,
+  }) async {
+    final response = await _client.auth.verifyOTP(
+      email: email,
+      token: token,
+      type: OtpType.signup,
+    );
     final user = response.session?.user;
     if (user == null) {
       return null;

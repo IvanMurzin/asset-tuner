@@ -12,7 +12,7 @@
 
 ### AUTH
 1. [BUG-AUTH-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-AUTH-001-onboarding-carousel-transition.md) `P1`
-2. [BUG-AUTH-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-AUTH-002-google-apple-auth-integration.md) `P0`
+2. [BUG-AUTH-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-AUTH-002-google-apple-auth-integration.md) `P0` `Done`
 3. [BUG-AUTH-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-AUTH-003-is-otp-enabled-signup-routing.md) `P0`
 4. [BUG-AUTH-004](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-AUTH-004-keyboard-overlap-auth-screens.md) `P0`
 5. [IMP-AUTH-005](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-AUTH-005-post-onboarding-guided-tour.md) `P2`

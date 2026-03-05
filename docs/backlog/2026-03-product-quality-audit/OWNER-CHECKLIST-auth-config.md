@@ -14,11 +14,10 @@
 
 ## 2) Что добавить в клиентские конфиги (placeholders)
 В `.config.dev.json` и `.config.prod.json` должны быть добавлены поля:
-1. `IS_OTP_ENABLED` (`true|false`)
-2. `GOOGLE_IOS_CLIENT_ID`
-3. `GOOGLE_ANDROID_CLIENT_ID`
-4. `APPLE_SERVICE_ID`
-5. `APPLE_REDIRECT_URI` (если требуется текущим SDK flow)
+1. `GOOGLE_IOS_CLIENT_ID`
+2. `GOOGLE_ANDROID_CLIENT_ID`
+3. `APPLE_SERVICE_ID`
+4. `APPLE_REDIRECT_URI`
 
 Примечание: значения секретов не коммитятся в репозиторий; используются локальные файлы конфигурации.
 
@@ -30,9 +29,7 @@
 ## 4) Проверки после настройки
 1. Вход Google проходит end-to-end и возвращает пользователя в приложение.
 2. Вход Apple проходит end-to-end и возвращает пользователя в приложение.
-3. При `IS_OTP_ENABLED=false` sign-up не отправляет на OTP экран.
-4. При `IS_OTP_ENABLED=true` sign-up ведет на OTP экран.
-5. Session restore после перезапуска работает для всех auth providers.
+3. Session restore после перезапуска работает для всех auth providers.
 
 ## 5) Анти-риски
 1. Не смешивать ключи dev/prod проектов Supabase.
