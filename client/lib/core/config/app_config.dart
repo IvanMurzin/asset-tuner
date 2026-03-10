@@ -4,6 +4,7 @@ final class AppConfig {
     required this.supabaseUrl,
     required this.supabaseAnonKey,
     required this.oauthRedirectUri,
+    required this.isOtpEnabled,
     required this.revenueCatApiKey,
     required this.termsOfUseUrl,
     required this.privacyPolicyUrl,
@@ -35,6 +36,7 @@ final class AppConfig {
   final String supabaseUrl;
   final String supabaseAnonKey;
   final String oauthRedirectUri;
+  final bool isOtpEnabled;
   final String revenueCatApiKey;
   final String termsOfUseUrl;
   final String privacyPolicyUrl;
@@ -49,12 +51,20 @@ final class AppConfig {
     if (_missingRequiredStringKeys(stringValues).isNotEmpty) {
       return null;
     }
-    final logApiResponses = const bool.fromEnvironment('LOG_API_RESPONSES', defaultValue: false);
+    final logApiResponses = const bool.fromEnvironment(
+      'LOG_API_RESPONSES',
+      defaultValue: false,
+    );
+    final isOtpEnabled = const bool.fromEnvironment(
+      'IS_OTP_ENABLED',
+      defaultValue: true,
+    );
     return AppConfig._(
       env: stringValues['ENV']!,
       supabaseUrl: stringValues['SUPABASE_URL']!,
       supabaseAnonKey: stringValues['SUPABASE_ANON_KEY']!,
       oauthRedirectUri: stringValues['OAUTH_REDIRECT_URI']!,
+      isOtpEnabled: isOtpEnabled,
       revenueCatApiKey: stringValues['REVENUECAT_API_KEY']!,
       termsOfUseUrl: stringValues['TERMS_OF_USE_URL']!,
       privacyPolicyUrl: stringValues['PRIVACY_POLICY_URL']!,
@@ -86,7 +96,9 @@ final class AppConfig {
     };
   }
 
-  static List<String> _missingRequiredStringKeys(Map<String, String> stringValues) {
+  static List<String> _missingRequiredStringKeys(
+    Map<String, String> stringValues,
+  ) {
     return _requiredStringKeys
         .where((key) => stringValues[key]?.trim().isEmpty ?? true)
         .toList(growable: false);

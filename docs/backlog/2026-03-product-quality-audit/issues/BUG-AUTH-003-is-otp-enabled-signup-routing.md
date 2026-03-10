@@ -4,7 +4,7 @@
 - ID: `BUG-AUTH-003`
 - Тип: `Bug`
 - Приоритет: `P0`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-001`, `SCR-015`, `SCR-016`
 
 ## Экран/модуль/слой
@@ -57,3 +57,8 @@
 - [sign_up_cubit.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/auth/bloc/sign_up_cubit.dart)
 - [sign_up_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/auth/page/sign_up_page.dart)
 - [otp_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/auth/page/otp_page.dart)
+
+## Implementation note
+- Что сделано: добавлен флаг `IS_OTP_ENABLED` в `AppConfig`; `SignUpCubit` получил post-signup branching (`otp` при `true`, переход на `home` при `false`); `SignUpPage` переведен с hardcoded `AppRoutes.otp` на route-by-state.
+- Измененные файлы: `client/lib/core/config/app_config.dart`, `client/lib/presentation/auth/bloc/sign_up_cubit.dart`, `client/lib/presentation/auth/page/sign_up_page.dart`, `client/test/presentation/auth/bloc/sign_up_cubit_test.dart`.
+- Проверки: `flutter analyze` (pass), `flutter test test/presentation/auth/bloc/sign_up_cubit_test.dart` (pass).

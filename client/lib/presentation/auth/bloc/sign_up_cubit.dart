@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_up_with_password_usecase.dart';
 import 'package:asset_tuner/presentation/auth/bloc/auth_form_validators.dart';
@@ -10,9 +11,12 @@ part 'sign_up_cubit.freezed.dart';
 
 @injectable
 class SignUpCubit extends Cubit<SignUpState> {
-  SignUpCubit(this._signUpWithPasswordUseCase) : super(const SignUpState());
+  SignUpCubit(this._signUpWithPasswordUseCase, {bool? isOtpEnabled})
+    : _isOtpEnabled = isOtpEnabled ?? AppConfig.instance.isOtpEnabled,
+      super(const SignUpState());
 
   final SignUpWithPasswordUseCase _signUpWithPasswordUseCase;
+  final bool _isOtpEnabled;
 
   void updateEmail(String value) {
     emit(
@@ -79,12 +83,23 @@ class SignUpCubit extends Cubit<SignUpState> {
           ),
         );
       case Success(:final value):
+        if (_isOtpEnabled) {
+          emit(
+            state.copyWith(
+              status: SignUpStatus.otpSent,
+              navigation: SignUpNavigation(email: value.email),
+              bannerEmail: value.email,
+              bannerType: SignUpBannerType.success,
+            ),
+          );
+          return;
+        }
         emit(
           state.copyWith(
-            status: SignUpStatus.otpSent,
+            status: SignUpStatus.idle,
             navigation: SignUpNavigation(email: value.email),
-            bannerEmail: value.email,
-            bannerType: SignUpBannerType.success,
+            bannerEmail: null,
+            bannerType: null,
           ),
         );
     }

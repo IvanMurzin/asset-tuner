@@ -42,14 +42,22 @@ class SignUpPage extends StatelessWidget {
               }
             }
             if (context.mounted) {
-              context.go(AppRoutes.otp, extra: navigation.email);
+              if (state.status == SignUpStatus.otpSent) {
+                context.go(AppRoutes.otp, extra: navigation.email);
+              } else {
+                context.go(AppRoutes.home);
+              }
               context.read<SignUpCubit>().consumeNavigation();
             }
             return;
           }
           final message = _bannerMessage(context, l10n, state);
           if (message != null && context.mounted) {
-            showDSSnackBar(context, variant: DSSnackBarVariant.error, message: message);
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: message,
+            );
           }
         },
         builder: (context, state) {
@@ -75,7 +83,10 @@ class SignUpPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          AuthHero(title: l10n.signUpTitle, subtitle: l10n.signUpBody),
+                          AuthHero(
+                            title: l10n.signUpTitle,
+                            subtitle: l10n.signUpBody,
+                          ),
                           SizedBox(height: spacing.s24),
                           SignUpEmailField(
                             label: l10n.emailLabel,
@@ -86,13 +97,19 @@ class SignUpPage extends StatelessWidget {
                           SignUpPasswordField(
                             label: l10n.passwordLabel,
                             hint: l10n.passwordHint,
-                            errorText: _passwordErrorText(l10n, state.passwordError),
+                            errorText: _passwordErrorText(
+                              l10n,
+                              state.passwordError,
+                            ),
                           ),
                           SizedBox(height: spacing.s16),
                           SignUpConfirmPasswordField(
                             label: l10n.confirmPasswordLabel,
                             hint: l10n.confirmPasswordHint,
-                            errorText: _confirmErrorText(l10n, state.confirmPasswordError),
+                            errorText: _confirmErrorText(
+                              l10n,
+                              state.confirmPasswordError,
+                            ),
                           ),
                         ],
                       ),
@@ -112,14 +129,20 @@ class SignUpPage extends StatelessWidget {
                           label: l10n.signUpPrimary,
                           isLoading: isLoading,
                           fullWidth: true,
-                          onPressed: isLoading ? null : context.read<SignUpCubit>().submit,
+                          onPressed: isLoading
+                              ? null
+                              : context.read<SignUpCubit>().submit,
                         ),
                         SizedBox(height: spacing.s16),
                         TextButton(
-                          onPressed: isLoading ? null : () => context.go(AppRoutes.signIn),
+                          onPressed: isLoading
+                              ? null
+                              : () => context.go(AppRoutes.signIn),
                           child: Text(
                             l10n.switchToSignIn,
-                            style: typography.body.copyWith(color: context.dsColors.primary),
+                            style: typography.body.copyWith(
+                              color: context.dsColors.primary,
+                            ),
                           ),
                         ),
                       ],
@@ -155,7 +178,11 @@ class SignUpPage extends StatelessWidget {
     };
   }
 
-  String? _bannerMessage(BuildContext context, AppLocalizations l10n, SignUpState state) {
+  String? _bannerMessage(
+    BuildContext context,
+    AppLocalizations l10n,
+    SignUpState state,
+  ) {
     switch (state.bannerType) {
       case SignUpBannerType.success:
         final email = state.bannerEmail ?? '';
