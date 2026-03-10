@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:injectable/injectable.dart';
+import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
 import 'package:asset_tuner/core/types/failure.dart';
@@ -206,6 +207,13 @@ class AuthRepository implements IAuthRepository {
   ) async {
     try {
       await _dataSource.signUpWithPassword(email, password);
+      if (!AppConfig.instance.isOtpEnabled) {
+        final hasSession = _dataSource.currentSession() != null;
+        if (!hasSession) {
+          await _dataSource.signInWithPassword(email, password);
+        }
+        _syncCachedSession(_dataSource.currentSession());
+      }
       logger.i('AuthRepository.signUpWithPassword success');
       return Success(OtpVerificationEntity(email: email));
     } catch (error) {

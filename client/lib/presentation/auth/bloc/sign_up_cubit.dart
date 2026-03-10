@@ -11,12 +11,9 @@ part 'sign_up_cubit.freezed.dart';
 
 @injectable
 class SignUpCubit extends Cubit<SignUpState> {
-  SignUpCubit(this._signUpWithPasswordUseCase, {bool? isOtpEnabled})
-    : _isOtpEnabled = isOtpEnabled ?? AppConfig.instance.isOtpEnabled,
-      super(const SignUpState());
+  SignUpCubit(this._signUpWithPasswordUseCase) : super(const SignUpState());
 
   final SignUpWithPasswordUseCase _signUpWithPasswordUseCase;
-  final bool _isOtpEnabled;
 
   void updateEmail(String value) {
     emit(
@@ -83,7 +80,7 @@ class SignUpCubit extends Cubit<SignUpState> {
           ),
         );
       case Success(:final value):
-        if (_isOtpEnabled) {
+        if (AppConfig.instance.isOtpEnabled) {
           emit(
             state.copyWith(
               status: SignUpStatus.otpSent,

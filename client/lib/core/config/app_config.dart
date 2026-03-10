@@ -57,7 +57,7 @@ final class AppConfig {
     );
     final isOtpEnabled = const bool.fromEnvironment(
       'IS_OTP_ENABLED',
-      defaultValue: true,
+      defaultValue: false,
     );
     return AppConfig._(
       env: stringValues['ENV']!,

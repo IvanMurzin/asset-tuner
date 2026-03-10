@@ -19,7 +19,7 @@ void main() {
     });
 
     test('emits OTP navigation when OTP is enabled', () async {
-      final cubit = SignUpCubit(useCase, isOtpEnabled: true);
+      final cubit = SignUpCubit(useCase);
       cubit.updateEmail('user@example.com');
       cubit.updatePassword('Password123!');
       cubit.updateConfirmPassword('Password123!');
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('skips OTP navigation when OTP is disabled', () async {
-      final cubit = SignUpCubit(useCase, isOtpEnabled: false);
+      final cubit = SignUpCubit(useCase);
       cubit.updateEmail('user@example.com');
       cubit.updatePassword('Password123!');
       cubit.updateConfirmPassword('Password123!');

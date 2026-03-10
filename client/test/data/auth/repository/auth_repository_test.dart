@@ -6,6 +6,7 @@ import 'package:asset_tuner/data/auth/dto/auth_session_dto.dart';
 import 'package:asset_tuner/data/auth/repository/auth_repository.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
+import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -139,6 +140,44 @@ void main() {
       );
     });
   });
+
+  group('AuthRepository.signUpWithPassword', () {
+    late _FakeAuthDataSource dataSource;
+
+    setUp(() {
+      dataSource = _FakeAuthDataSource();
+    });
+
+    tearDown(() async {
+      await dataSource.dispose();
+    });
+
+    test('signs in immediately when OTP is disabled', () async {
+      final repository = AuthRepository(dataSource);
+
+      final result = await repository.signUpWithPassword(
+        'user@example.com',
+        'Password123!',
+      );
+
+      expect(result, isA<Success<OtpVerificationEntity>>());
+      expect(dataSource.signInWithPasswordCalls, 1);
+      expect(dataSource.lastSignInEmail, 'user@example.com');
+      expect(await repository.getCachedSession(), isNotNull);
+    });
+
+    test('does not perform password sign-in when OTP is enabled', () async {
+      final repository = AuthRepository(dataSource);
+
+      final result = await repository.signUpWithPassword(
+        'user@example.com',
+        'Password123!',
+      );
+
+      expect(result, isA<Success<OtpVerificationEntity>>());
+      expect(dataSource.signInWithPasswordCalls, 0);
+    });
+  });
 }
 
 class _FakeAuthDataSource implements IAuthDataSource {
@@ -147,7 +186,9 @@ class _FakeAuthDataSource implements IAuthDataSource {
   AuthSessionDto? currentSessionValue;
   AuthProvider? lastOAuthProvider;
   String? lastResendEmail;
+  String? lastSignInEmail;
   int resendSignUpOtpCalls = 0;
+  int signInWithPasswordCalls = 0;
 
   @override
   AuthSessionDto? currentSession() => currentSessionValue;
@@ -170,7 +211,14 @@ class _FakeAuthDataSource implements IAuthDataSource {
   }
 
   @override
-  Future<void> signInWithPassword(String email, String password) async {}
+  Future<void> signInWithPassword(String email, String password) async {
+    signInWithPasswordCalls += 1;
+    lastSignInEmail = email;
+    currentSessionValue = AuthSessionDto(
+      userId: 'signed-in-user',
+      email: email,
+    );
+  }
 
   @override
   Future<void> signOut() async {}
