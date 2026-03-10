@@ -27,7 +27,7 @@
 ## Предлагаемое решение
 1. Добавить `isOtpEnabled` в `AppConfig`.
 2. Расширить `SignUp` flow: два сценария пост-успеха.
-3. При `false` сразу запускать `UserCubit.bootstrap()` и переход в `AppRoutes.main`.
+3. При `false` сразу возвращаться на `AppRoutes.home`; дальнейшее решение по маршруту должен принимать splash/session/profile orchestration.
 4. Синхронизировать поведение с документацией auth.
 
 ## Изменения API/контрактов/конфига

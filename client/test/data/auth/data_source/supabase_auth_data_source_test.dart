@@ -26,4 +26,20 @@ void main() {
       );
     });
   });
+
+  group('SupabaseAuthDataSource.oauthQueryParams', () {
+    test('uses select_account prompt for Google provider', () {
+      expect(
+        SupabaseAuthDataSource.oauthQueryParams(AuthProvider.google),
+        const {'prompt': 'select_account'},
+      );
+    });
+
+    test('returns null for Apple provider', () {
+      expect(
+        SupabaseAuthDataSource.oauthQueryParams(AuthProvider.apple),
+        isNull,
+      );
+    });
+  });
 }

@@ -23,7 +23,7 @@ import 'package:asset_tuner/presentation/balance/widget/subaccount_detail_loadin
 import 'package:asset_tuner/presentation/balance/widget/subaccount_history_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/balance/widget/subaccount_history_section.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
-import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
+import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 
 class SubaccountDetailPage extends StatelessWidget {
   const SubaccountDetailPage({
@@ -82,7 +82,8 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
             if (navigation.destination == SubaccountInfoDestination.signIn) {
               context.go(AppRoutes.signIn);
             }
-            if (navigation.destination == SubaccountInfoDestination.backDeleted) {
+            if (navigation.destination ==
+                SubaccountInfoDestination.backDeleted) {
               context.pop(true);
             }
           },
@@ -90,7 +91,8 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
         BlocListener<SubaccountUpdateCubit, SubaccountUpdateState>(
           listenWhen: (prev, curr) => prev.status != curr.status,
           listener: (context, state) async {
-            if (state.status != SubaccountUpdateStatus.success || state.subaccount == null) {
+            if (state.status != SubaccountUpdateStatus.success ||
+                state.subaccount == null) {
               return;
             }
             final accountInfoCubit = context.read<AccountInfoCubit>();
@@ -130,9 +132,11 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
         builder: (context, state) {
           final spacing = context.dsSpacing;
           final subaccount = state.subaccount;
-          final title = widget.initialTitle ?? subaccount?.name ?? l10n.notAvailable;
+          final title =
+              widget.initialTitle ?? subaccount?.name ?? l10n.notAvailable;
 
-          if (subaccount == null && state.status == SubaccountInfoStatus.loading) {
+          if (subaccount == null &&
+              state.status == SubaccountInfoStatus.loading) {
             return Scaffold(
               appBar: DSAppBar(title: title),
               body: SafeArea(child: const SubaccountDetailLoadingSkeleton()),
@@ -151,10 +155,10 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
             );
           }
 
-          final user = context.watch<UserCubit>().state;
+          final profileState = context.watch<ProfileCubit>().state;
           final rates = context.watch<AssetsCubit>().state.snapshot;
-          final baseCurrency = user.profile?.baseCurrency ?? 'USD';
-          final baseUsdPrice = _baseUsdPrice(user, rates);
+          final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
+          final baseUsdPrice = _baseUsdPrice(profileState, rates);
 
           final current = state.entries.isEmpty
               ? (subaccount.currentAmount ?? Decimal.zero)
@@ -163,7 +167,9 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
           Decimal? converted;
           if (current == Decimal.zero) {
             converted = Decimal.zero;
-          } else if (baseUsdPrice != null && assetUsd != null && baseUsdPrice != Decimal.zero) {
+          } else if (baseUsdPrice != null &&
+              assetUsd != null &&
+              baseUsdPrice != Decimal.zero) {
             converted = divideToDecimal(current * assetUsd, baseUsdPrice);
           }
           final isUnpriced = current != Decimal.zero && converted == null;
@@ -196,23 +202,30 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
                           if (state.failureCode != null) ...[
                             DSInlineBanner(
                               title: title,
-                              message: state.failureMessage ?? l10n.errorGeneric,
+                              message:
+                                  state.failureMessage ?? l10n.errorGeneric,
                               variant: DSInlineBannerVariant.danger,
                             ),
                             SizedBox(height: spacing.s12),
                           ],
-                          if (updateState.status == SubaccountUpdateStatus.error) ...[
+                          if (updateState.status ==
+                              SubaccountUpdateStatus.error) ...[
                             DSInlineBanner(
                               title: title,
-                              message: updateState.failureMessage ?? l10n.errorGeneric,
+                              message:
+                                  updateState.failureMessage ??
+                                  l10n.errorGeneric,
                               variant: DSInlineBannerVariant.danger,
                             ),
                             SizedBox(height: spacing.s12),
                           ],
-                          if (deleteState.status == SubaccountDeleteStatus.error) ...[
+                          if (deleteState.status ==
+                              SubaccountDeleteStatus.error) ...[
                             DSInlineBanner(
                               title: title,
-                              message: deleteState.failureMessage ?? l10n.errorGeneric,
+                              message:
+                                  deleteState.failureMessage ??
+                                  l10n.errorGeneric,
                               variant: DSInlineBannerVariant.danger,
                             ),
                             SizedBox(height: spacing.s12),
@@ -243,8 +256,14 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
                             onUpdate: () async {
                               final saved = await context.push<bool>(
                                 AppRoutes.accountSubaccountBalance
-                                    .replaceFirst(':accountId', widget.accountId)
-                                    .replaceFirst(':subaccountId', widget.subaccountId),
+                                    .replaceFirst(
+                                      ':accountId',
+                                      widget.accountId,
+                                    )
+                                    .replaceFirst(
+                                      ':subaccountId',
+                                      widget.subaccountId,
+                                    ),
                               );
                               if (saved == true && context.mounted) {
                                 setState(() => _hasUnsyncedChange = true);
@@ -258,19 +277,24 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
                               if (name == null || !context.mounted) {
                                 return;
                               }
-                              await context.read<SubaccountUpdateCubit>().submit(
-                                subaccountId: widget.subaccountId,
-                                name: name,
-                              );
+                              await context
+                                  .read<SubaccountUpdateCubit>()
+                                  .submit(
+                                    subaccountId: widget.subaccountId,
+                                    name: name,
+                                  );
                             },
                             onDelete: () async {
-                              final confirmed = await _confirmDelete(context, l10n);
+                              final confirmed = await _confirmDelete(
+                                context,
+                                l10n,
+                              );
                               if (!confirmed || !context.mounted) {
                                 return;
                               }
-                              await context.read<SubaccountDeleteCubit>().submit(
-                                widget.subaccountId,
-                              );
+                              await context
+                                  .read<SubaccountDeleteCubit>()
+                                  .submit(widget.subaccountId);
                             },
                           ),
                           SizedBox(height: spacing.s24),
@@ -289,13 +313,23 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
                                 currentBalance: current,
                                 convertedValue: converted,
                                 isLoadingMore: state.isLoadingMore,
-                                canLoadMore: state.nextCursor != null && !state.isLoadingMore,
-                                onLoadMore: () => context.read<SubaccountInfoCubit>().loadMore(),
+                                canLoadMore:
+                                    state.nextCursor != null &&
+                                    !state.isLoadingMore,
+                                onLoadMore: () => context
+                                    .read<SubaccountInfoCubit>()
+                                    .loadMore(),
                                 onAddBalance: () async {
                                   final saved = await context.push<bool>(
                                     AppRoutes.accountSubaccountBalance
-                                        .replaceFirst(':accountId', widget.accountId)
-                                        .replaceFirst(':subaccountId', widget.subaccountId),
+                                        .replaceFirst(
+                                          ':accountId',
+                                          widget.accountId,
+                                        )
+                                        .replaceFirst(
+                                          ':subaccountId',
+                                          widget.subaccountId,
+                                        ),
                                   );
                                   if (saved == true && context.mounted) {
                                     setState(() => _hasUnsyncedChange = true);
@@ -314,19 +348,25 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
     );
   }
 
-  Decimal? _baseUsdPrice(UserState user, RatesSnapshotEntity? snapshot) {
-    final baseCurrency = user.profile?.baseCurrency ?? 'USD';
+  Decimal? _baseUsdPrice(
+    ProfileState profileState,
+    RatesSnapshotEntity? snapshot,
+  ) {
+    final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
     if (baseCurrency == 'USD') {
       return Decimal.one;
     }
-    final baseAssetId = user.profile?.baseAssetId;
+    final baseAssetId = profileState.profile?.baseAssetId;
     if (baseAssetId == null) {
       return null;
     }
     return snapshot?.usdPriceByAssetId[baseAssetId];
   }
 
-  Future<bool> _confirmDelete(BuildContext context, AppLocalizations l10n) async {
+  Future<bool> _confirmDelete(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => DSDialog(
@@ -342,7 +382,10 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
     return result ?? false;
   }
 
-  Future<String?> _showRenameDialog(BuildContext context, {required String initial}) async {
+  Future<String?> _showRenameDialog(
+    BuildContext context, {
+    required String initial,
+  }) async {
     final l10n = AppLocalizations.of(context)!;
     final value = await showDialog<String?>(
       context: context,
@@ -362,7 +405,8 @@ class _RenameSubaccountDialog extends StatefulWidget {
   final String initial;
 
   @override
-  State<_RenameSubaccountDialog> createState() => _RenameSubaccountDialogState();
+  State<_RenameSubaccountDialog> createState() =>
+      _RenameSubaccountDialogState();
 }
 
 class _RenameSubaccountDialogState extends State<_RenameSubaccountDialog> {
@@ -384,7 +428,10 @@ class _RenameSubaccountDialogState extends State<_RenameSubaccountDialog> {
   Widget build(BuildContext context) {
     return DSDialog(
       title: widget.l10n.subaccountRenameCta,
-      content: DSTextField(label: widget.l10n.accountsNameLabel, controller: _controller),
+      content: DSTextField(
+        label: widget.l10n.accountsNameLabel,
+        controller: _controller,
+      ),
       primaryLabel: widget.l10n.save,
       secondaryLabel: widget.l10n.cancel,
       onSecondary: () => Navigator.of(context).pop(),

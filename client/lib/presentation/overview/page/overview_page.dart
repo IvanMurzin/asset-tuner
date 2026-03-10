@@ -21,8 +21,9 @@ import 'package:asset_tuner/presentation/overview/widget/overview_account_card.d
 import 'package:asset_tuner/presentation/overview/widget/overview_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_summary_card.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
-import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_account_item.dart';
+import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
+import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
 
 class OverviewPage extends StatelessWidget {
   const OverviewPage({super.key});
@@ -31,16 +32,37 @@ class OverviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocListener<UserCubit, UserState>(
+    return BlocListener<SessionCubit, SessionState>(
       listenWhen: (prev, curr) => prev.status != curr.status,
       listener: (context, state) {
-        if (state.status == UserStatus.unauthenticated) {
+        if (state.status == SessionStatus.unauthenticated) {
           context.go(AppRoutes.signIn);
         }
       },
-      child: BlocBuilder<UserCubit, UserState>(
-        builder: (context, userState) {
-          final baseCurrency = userState.profile?.baseCurrency ?? 'USD';
+      child: BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, profileState) {
+          if ((profileState.status == ProfileStatus.initial ||
+                  profileState.status == ProfileStatus.loading) &&
+              profileState.profile == null) {
+            return const Scaffold(
+              body: SafeArea(child: OverviewLoadingSkeleton()),
+            );
+          }
+
+          if (profileState.status == ProfileStatus.error &&
+              profileState.profile == null) {
+            return Scaffold(
+              appBar: DSAppBar(title: l10n.mainTitle),
+              body: DSInlineError(
+                title: l10n.splashErrorTitle,
+                message: profileState.failureMessage ?? l10n.errorGeneric,
+                actionLabel: l10n.splashRetry,
+                onAction: () => context.read<ProfileCubit>().refresh(),
+              ),
+            );
+          }
+
+          final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
 
           return Scaffold(
             appBar: DSAppBar(
@@ -52,7 +74,8 @@ class OverviewPage extends StatelessWidget {
                     child: DSChip(
                       label: baseCurrency,
                       icon: Icons.currency_exchange,
-                      onTap: () => context.push<String>(AppRoutes.baseCurrencySettings),
+                      onTap: () =>
+                          context.push<String>(AppRoutes.baseCurrencySettings),
                     ),
                   ),
                 ),
@@ -79,12 +102,17 @@ class OverviewPage extends StatelessWidget {
                         children: [
                           SizedBox(height: context.dsSpacing.s24),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: context.dsSpacing.s24),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.dsSpacing.s24,
+                            ),
                             child: DSInlineError(
                               title: l10n.splashErrorTitle,
-                              message: accountsState.failureMessage ?? l10n.errorGeneric,
+                              message:
+                                  accountsState.failureMessage ??
+                                  l10n.errorGeneric,
                               actionLabel: l10n.splashRetry,
-                              onAction: () => context.read<AccountsCubit>().load(),
+                              onAction: () =>
+                                  context.read<AccountsCubit>().load(),
                             ),
                           ),
                         ],
@@ -95,7 +123,7 @@ class OverviewPage extends StatelessWidget {
                       builder: (context, assetsState) {
                         return _OverviewReady(
                           accounts: accountsState.accounts,
-                          userState: userState,
+                          profileState: profileState,
                           assetsState: assetsState,
                         );
                       },
@@ -112,20 +140,24 @@ class OverviewPage extends StatelessWidget {
 }
 
 class _OverviewReady extends StatelessWidget {
-  const _OverviewReady({required this.accounts, required this.userState, required this.assetsState});
+  const _OverviewReady({
+    required this.accounts,
+    required this.profileState,
+    required this.assetsState,
+  });
 
   final List<AccountEntity> accounts;
-  final UserState userState;
+  final ProfileState profileState;
   final AssetsState assetsState;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final spacing = context.dsSpacing;
-    final baseCurrency = userState.profile?.baseCurrency ?? 'USD';
+    final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
     final snapshot = assetsState.snapshot;
 
-    final baseUsdPrice = _resolveBaseUsdPrice(userState, snapshot);
+    final baseUsdPrice = _resolveBaseUsdPrice(profileState, snapshot);
 
     final activeAccounts = accounts.where((item) => !item.archived).toList();
     final items =
@@ -147,11 +179,16 @@ class _OverviewReady extends StatelessWidget {
             .toList()
           ..sort((a, b) => a.accountName.compareTo(b.accountName));
 
-    final total = items.fold<Decimal>(Decimal.zero, (acc, item) => acc + item.total);
+    final total = items.fold<Decimal>(
+      Decimal.zero,
+      (acc, item) => acc + item.total,
+    );
 
     final ratesText = snapshot?.asOf == null
         ? l10n.overviewRatesUnavailable
-        : l10n.overviewRatesUpdatedAt(context.dsFormatters.formatDateTime(snapshot!.asOf));
+        : l10n.overviewRatesUpdatedAt(
+            context.dsFormatters.formatDateTime(snapshot!.asOf),
+          );
 
     if (items.isEmpty) {
       return ListView(
@@ -161,7 +198,10 @@ class _OverviewReady extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: spacing.s24),
             child: OverviewSummaryCard(
               totalLabel: l10n.overviewTotalLabel,
-              totalValue: context.dsFormatters.formatMoney(Decimal.zero, baseCurrency),
+              totalValue: context.dsFormatters.formatMoney(
+                Decimal.zero,
+                baseCurrency,
+              ),
               pricedTotalLabel: null,
               pricedTotalValue: null,
               ratesText: ratesText,
@@ -257,12 +297,15 @@ class _OverviewReady extends StatelessWidget {
     return divideToDecimal(usd, baseUsdPrice);
   }
 
-  Decimal? _resolveBaseUsdPrice(UserState userState, RatesSnapshotEntity? snapshot) {
-    final baseCurrency = userState.profile?.baseCurrency ?? 'USD';
+  Decimal? _resolveBaseUsdPrice(
+    ProfileState profileState,
+    RatesSnapshotEntity? snapshot,
+  ) {
+    final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
     if (baseCurrency == 'USD') {
       return Decimal.one;
     }
-    final baseAssetId = userState.profile?.baseAssetId;
+    final baseAssetId = profileState.profile?.baseAssetId;
     if (baseAssetId == null) {
       return null;
     }

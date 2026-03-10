@@ -15,7 +15,8 @@ import 'package:asset_tuner/presentation/paywall/widget/paywall_legal_text.dart'
 import 'package:asset_tuner/presentation/paywall/widget/paywall_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/paywall/widget/paywall_plan_toggle.dart';
 import 'package:asset_tuner/presentation/paywall/widget/paywall_tier_card.dart';
-import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
+import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
+import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,7 +54,9 @@ class _PaywallPageState extends State<PaywallPage> {
   }
 
   bool get _canContinue {
-    return !_isLoadingOfferings && !_isProcessingAction && _selectedPackage != null;
+    return !_isLoadingOfferings &&
+        !_isProcessingAction &&
+        _selectedPackage != null;
   }
 
   @override
@@ -73,8 +76,10 @@ class _PaywallPageState extends State<PaywallPage> {
       final offering = offerings.current;
       final available = offering?.availablePackages ?? const <Package>[];
 
-      var annual = offering?.annual ?? _findByType(available, PackageType.annual);
-      var monthly = offering?.monthly ?? _findByType(available, PackageType.monthly);
+      var annual =
+          offering?.annual ?? _findByType(available, PackageType.annual);
+      var monthly =
+          offering?.monthly ?? _findByType(available, PackageType.monthly);
 
       annual ??= _findByPeriod(available, 'P1Y');
       monthly ??= _findByPeriod(available, 'P1M');
@@ -86,7 +91,9 @@ class _PaywallPageState extends State<PaywallPage> {
         annual = available.first;
       }
 
-      final selected = annual != null ? PaywallPlanOption.annual : PaywallPlanOption.monthly;
+      final selected = annual != null
+          ? PaywallPlanOption.annual
+          : PaywallPlanOption.monthly;
 
       if (!mounted) {
         return;
@@ -136,36 +143,6 @@ class _PaywallPageState extends State<PaywallPage> {
     return null;
   }
 
-  String _monthlyPrice(AppLocalizations l10n) {
-    final monthly = _monthlyPackage;
-    if (monthly != null) {
-      return l10n.paywallMonthlyPrice(monthly.storeProduct.priceString);
-    }
-
-    final annual = _annualPackage;
-    if (annual != null) {
-      final price = annual.storeProduct.pricePerMonthString ?? annual.storeProduct.priceString;
-      return l10n.paywallMonthlyPrice(price);
-    }
-
-    return l10n.paywallMonthlyPrice('--');
-  }
-
-  String _yearlyPrice(AppLocalizations l10n) {
-    final annual = _annualPackage;
-    if (annual != null) {
-      return l10n.paywallYearlyPrice(annual.storeProduct.priceString);
-    }
-
-    final monthly = _monthlyPackage;
-    if (monthly != null) {
-      final price = monthly.storeProduct.pricePerYearString ?? monthly.storeProduct.priceString;
-      return l10n.paywallYearlyPrice(price);
-    }
-
-    return l10n.paywallYearlyPrice('--');
-  }
-
   String _selectorMonthlyPrice() {
     final monthly = _monthlyPackage;
     if (monthly != null) {
@@ -173,7 +150,8 @@ class _PaywallPageState extends State<PaywallPage> {
     }
     final annual = _annualPackage;
     if (annual != null) {
-      return annual.storeProduct.pricePerMonthString ?? annual.storeProduct.priceString;
+      return annual.storeProduct.pricePerMonthString ??
+          annual.storeProduct.priceString;
     }
     return '--';
   }
@@ -185,7 +163,8 @@ class _PaywallPageState extends State<PaywallPage> {
     }
     final monthly = _monthlyPackage;
     if (monthly != null) {
-      return monthly.storeProduct.pricePerYearString ?? monthly.storeProduct.priceString;
+      return monthly.storeProduct.pricePerYearString ??
+          monthly.storeProduct.priceString;
     }
     return '--';
   }
@@ -208,7 +187,8 @@ class _PaywallPageState extends State<PaywallPage> {
       final code = PurchasesErrorHelper.getErrorCode(error);
       if (code != PurchasesErrorCode.purchaseCancelledError && mounted) {
         setState(() {
-          _errorMessage = error.message ?? AppLocalizations.of(context)!.errorGeneric;
+          _errorMessage =
+              error.message ?? AppLocalizations.of(context)!.errorGeneric;
         });
       }
     } catch (_) {
@@ -251,7 +231,7 @@ class _PaywallPageState extends State<PaywallPage> {
   }
 
   Future<void> _onPurchaseOrRestoreCompleted() async {
-    await context.read<UserCubit>().syncSubscription();
+    await context.read<ProfileCubit>().syncSubscription();
     if (!mounted) {
       return;
     }
@@ -284,17 +264,6 @@ class _PaywallPageState extends State<PaywallPage> {
     }
   }
 
-  String _reasonMessage(AppLocalizations l10n) {
-    switch (widget.args.reason) {
-      case PaywallReason.accountsLimit:
-        return l10n.paywallReasonAccounts;
-      case PaywallReason.subaccountsLimit:
-        return l10n.paywallReasonSubaccounts;
-      case PaywallReason.baseCurrency:
-        return l10n.paywallReasonBaseCurrency;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -303,189 +272,200 @@ class _PaywallPageState extends State<PaywallPage> {
     final typography = context.dsTypography;
     final config = AppConfig.instance;
 
-    return BlocListener<UserCubit, UserState>(
+    return BlocListener<SessionCubit, SessionState>(
       listenWhen: (prev, curr) => prev.status != curr.status,
       listener: (context, state) {
-        if (state.status == UserStatus.unauthenticated) {
+        if (state.status == SessionStatus.unauthenticated) {
           context.go(AppRoutes.signIn);
         }
       },
-      child: BlocBuilder<UserCubit, UserState>(
-        builder: (context, state) {
-          if (!state.isAuthenticated) {
-            return Scaffold(
-              body: DSInlineError(
-                title: l10n.splashErrorTitle,
-                message: l10n.errorGeneric,
-                actionLabel: l10n.splashRetry,
-                onAction: context.read<UserCubit>().bootstrap,
-              ),
-            );
-          }
-
-          if (state.profile?.plan == 'pro') {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (context.mounted) {
-                context.pop(null);
+      child: BlocBuilder<SessionCubit, SessionState>(
+        builder: (context, sessionState) {
+          return BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, profileState) {
+              if (!sessionState.isAuthenticated) {
+                return Scaffold(
+                  body: DSInlineError(
+                    title: l10n.splashErrorTitle,
+                    message: l10n.errorGeneric,
+                    actionLabel: l10n.splashRetry,
+                    onAction: () => context.read<SessionCubit>().bootstrap(),
+                  ),
+                );
               }
-            });
-            return const Scaffold(body: SizedBox.shrink());
-          }
 
-          final freeFeatures = [
-            l10n.paywallFreeFeatureAccounts,
-            l10n.paywallFreeFeatureSubaccounts,
-            l10n.paywallFreeFeatureFiat,
-            l10n.paywallFreeFeatureCrypto,
-          ];
+              if (!profileState.isReady) {
+                return Scaffold(
+                  body: DSInlineError(
+                    title: l10n.splashErrorTitle,
+                    message: profileState.failureMessage ?? l10n.errorGeneric,
+                    actionLabel: l10n.splashRetry,
+                    onAction: () => context.read<ProfileCubit>().refresh(),
+                  ),
+                );
+              }
 
-          final proFeatures = [
-            l10n.paywallProFeatureAccounts,
-            l10n.paywallProFeatureSubaccounts,
-            l10n.paywallProFeatureFiat,
-            l10n.paywallProFeatureCrypto,
-          ];
+              if (profileState.profile?.plan == 'pro') {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (context.mounted) {
+                    context.pop(null);
+                  }
+                });
+                return const Scaffold(body: SizedBox.shrink());
+              }
 
-          final freeCompactFeatures = [freeFeatures[0], freeFeatures[1], freeFeatures[2]];
+              final freeFeatures = [
+                l10n.paywallFreeFeatureAccounts,
+                l10n.paywallFreeFeatureSubaccounts,
+                l10n.paywallFreeFeatureFiat,
+                l10n.paywallFreeFeatureCrypto,
+              ];
 
-          final proCompactFeatures = [proFeatures[0], proFeatures[1], proFeatures[2]];
+              final proFeatures = [
+                l10n.paywallProFeatureAccounts,
+                l10n.paywallProFeatureSubaccounts,
+                l10n.paywallProFeatureFiat,
+                l10n.paywallProFeatureCrypto,
+              ];
 
-          return Scaffold(
-            body: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(spacing.s16, spacing.s4, spacing.s16, spacing.s8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    PaywallHeader(
-                      restoreLabel: l10n.paywallRestore,
-                      isBusy: _isProcessingAction,
-                      onClose: () => context.pop(null),
-                      onRestore: _onRestorePressed,
+              final freeCompactFeatures = [
+                freeFeatures[0],
+                freeFeatures[1],
+                freeFeatures[2],
+              ];
+
+              final proCompactFeatures = [
+                proFeatures[0],
+                proFeatures[1],
+                proFeatures[2],
+              ];
+
+              return Scaffold(
+                body: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      spacing.s16,
+                      spacing.s4,
+                      spacing.s16,
+                      spacing.s8,
                     ),
-                    SizedBox(height: spacing.s8),
-                    Center(
-                      child: Column(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(14),
-                            child: Image.asset(
-                              'assets/icon/icon.png',
-                              width: 52,
-                              height: 52,
-                              fit: BoxFit.cover,
-                            ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        PaywallHeader(
+                          restoreLabel: l10n.paywallRestore,
+                          isBusy: _isProcessingAction,
+                          onClose: () => context.pop(null),
+                          onRestore: _onRestorePressed,
+                        ),
+                        SizedBox(height: spacing.s8),
+                        Center(
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(14),
+                                child: Image.asset(
+                                  'assets/icon/icon.png',
+                                  width: 52,
+                                  height: 52,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              SizedBox(height: spacing.s12),
+                              Text(
+                                l10n.paywallUnlockTitle,
+                                textAlign: TextAlign.center,
+                                style: typography.h2.copyWith(
+                                  color: colors.textPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: spacing.s8),
+                              Text(
+                                l10n.paywallSubtitle,
+                                textAlign: TextAlign.center,
+                                style: typography.body.copyWith(
+                                  color: colors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(height: spacing.s4),
+                            ],
                           ),
-                          // SizedBox(height: spacing.s8),
-                          // Text(
-                          // l10n.appTitle,
-                          // style: typography.h3.copyWith(
-                          // color: colors.textTertiary,
-                          // fontWeight: FontWeight.w500,
-                          // ),
-                          // ),
-                          SizedBox(height: spacing.s12),
-                          Text(
-                            l10n.paywallUnlockTitle,
-                            textAlign: TextAlign.center,
-                            style: typography.h2.copyWith(
-                              color: colors.textPrimary,
-                              fontWeight: FontWeight.w700,
-                            ),
+                        ),
+                        SizedBox(height: spacing.s8),
+                        if (_errorMessage != null) ...[
+                          PaywallErrorBanner(
+                            title: l10n.paywallTitle,
+                            message: _errorMessage!,
+                            actionLabel: l10n.splashRetry,
+                            onAction: _loadOfferings,
                           ),
                           SizedBox(height: spacing.s8),
-                          Text(
-                            l10n.paywallSubtitle,
-                            textAlign: TextAlign.center,
-                            style: typography.body.copyWith(
-                              color: colors.textSecondary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: spacing.s4),
-                          // Text(
-                          // _reasonMessage(l10n),
-                          // textAlign: TextAlign.center,
-                          // style: typography.caption.copyWith(
-                          // color: colors.textTertiary,
-                          // ),
-                          // ),
                         ],
-                      ),
-                    ),
-                    SizedBox(height: spacing.s8),
-                    if (_errorMessage != null) ...[
-                      PaywallErrorBanner(
-                        title: l10n.paywallTitle,
-                        message: _errorMessage!,
-                        actionLabel: l10n.splashRetry,
-                        onAction: _loadOfferings,
-                      ),
-                      SizedBox(height: spacing.s8),
-                    ],
-                    Expanded(
-                      child: _isLoadingOfferings
-                          ? const PaywallLoadingSkeleton()
-                          : SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: Column(
-                                children: [
-                                  PaywallPlanToggle(
-                                    monthlyLabel: l10n.paywallPlanMonthlyTitle,
-                                    yearlyLabel: l10n.paywallPlanAnnualTitle,
-                                    selectedOption: _selectedOption,
-                                    monthlyEnabled: _monthlyEnabled,
-                                    yearlyEnabled: _annualEnabled,
-                                    monthlyPrice: _selectorMonthlyPrice(),
-                                    yearlyPrice: _selectorYearlyPrice(),
-                                    onChanged: (next) => setState(() => _selectedOption = next),
+                        Expanded(
+                          child: _isLoadingOfferings
+                              ? const PaywallLoadingSkeleton()
+                              : SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: Column(
+                                    children: [
+                                      PaywallPlanToggle(
+                                        monthlyLabel:
+                                            l10n.paywallPlanMonthlyTitle,
+                                        yearlyLabel:
+                                            l10n.paywallPlanAnnualTitle,
+                                        selectedOption: _selectedOption,
+                                        monthlyEnabled: _monthlyEnabled,
+                                        yearlyEnabled: _annualEnabled,
+                                        monthlyPrice: _selectorMonthlyPrice(),
+                                        yearlyPrice: _selectorYearlyPrice(),
+                                        onChanged: (next) => setState(
+                                          () => _selectedOption = next,
+                                        ),
+                                      ),
+                                      SizedBox(height: spacing.s8),
+                                      PaywallTierCard(
+                                        title: l10n.paywallFreeTitle,
+                                        features: freeCompactFeatures,
+                                        dense: true,
+                                      ),
+                                      SizedBox(height: spacing.s8),
+                                      PaywallTierCard(
+                                        title: l10n.paywallProTitle,
+                                        features: proCompactFeatures,
+                                        highlighted: true,
+                                        badgeText: l10n.paywallMostPopular,
+                                        dense: true,
+                                      ),
+                                      SizedBox(height: spacing.s8),
+                                    ],
                                   ),
-                                  // SizedBox(height: spacing.s8),
-                                  // PaywallPriceSummary(
-                                  // monthlyLine: _monthlyPrice(l10n),
-                                  // yearlyLine: _yearlyPrice(l10n),
-                                  // selectedOption: _selectedOption,
-                                  // ),
-                                  SizedBox(height: spacing.s8),
-                                  PaywallTierCard(
-                                    title: l10n.paywallFreeTitle,
-                                    features: freeCompactFeatures,
-                                    dense: true,
-                                  ),
-                                  SizedBox(height: spacing.s8),
-                                  PaywallTierCard(
-                                    title: l10n.paywallProTitle,
-                                    features: proCompactFeatures,
-                                    highlighted: true,
-                                    badgeText: l10n.paywallMostPopular,
-                                    dense: true,
-                                  ),
-                                  SizedBox(height: spacing.s8),
-                                ],
-                              ),
-                            ),
+                                ),
+                        ),
+                        SizedBox(height: spacing.s8),
+                        PaywallFooter(
+                          continueLabel: l10n.paywallContinue,
+                          dismissLabel: l10n.paywallDismiss,
+                          isLoading: _isProcessingAction,
+                          isContinueEnabled: _canContinue,
+                          onContinue: _onContinuePressed,
+                          onDismiss: () => context.pop(null),
+                        ),
+                        SizedBox(height: spacing.s4),
+                        PaywallLegalText(
+                          prefix: l10n.paywallLegalPrefix,
+                          termsLabel: l10n.paywallLegalTerms,
+                          privacyLabel: l10n.paywallLegalPrivacy,
+                          onTermsTap: () => _openUrl(config.termsOfUseUrl),
+                          onPrivacyTap: () => _openUrl(config.privacyPolicyUrl),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: spacing.s8),
-                    PaywallFooter(
-                      continueLabel: l10n.paywallContinue,
-                      dismissLabel: l10n.paywallDismiss,
-                      isLoading: _isProcessingAction,
-                      isContinueEnabled: _canContinue,
-                      onContinue: _onContinuePressed,
-                      onDismiss: () => context.pop(null),
-                    ),
-                    SizedBox(height: spacing.s4),
-                    PaywallLegalText(
-                      prefix: l10n.paywallLegalPrefix,
-                      termsLabel: l10n.paywallLegalTerms,
-                      privacyLabel: l10n.paywallLegalPrivacy,
-                      onTermsTap: () => _openUrl(config.termsOfUseUrl),
-                      onPrivacyTap: () => _openUrl(config.privacyPolicyUrl),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),

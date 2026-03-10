@@ -46,7 +46,7 @@
 - Зависит от `IMP-DS-003`.
 
 ## Риски и anti-regression
-- Не нарушить текущую логику `UserCubit.updateBaseCurrency`.
+- Не нарушить текущую логику `ProfileCubit.updateBaseCurrency`.
 
 ## Ссылки на текущую реализацию
 - [base_currency_settings_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/settings/page/base_currency_settings_page.dart)

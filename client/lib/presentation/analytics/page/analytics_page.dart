@@ -17,12 +17,12 @@ import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/widget/analytics_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
-import 'package:asset_tuner/presentation/user/bloc/user_cubit.dart';
+import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 
 Future<void> _refreshAnalyticsSources(BuildContext context) async {
   context.read<AnalyticsCubit>().invalidateCache();
   await Future.wait([
-    context.read<UserCubit>().refresh(silent: true),
+    context.read<ProfileCubit>().refresh(silent: true),
     context.read<AccountsCubit>().refresh(),
     context.read<AssetsCubit>().refresh(),
   ]);
@@ -129,7 +129,10 @@ class _Body extends StatelessWidget {
     return ListView(
       children: [
         if (state.breakdown.isNotEmpty) ...[
-          _AnalyticsPieChart(breakdown: state.breakdown, colors: context.dsColors),
+          _AnalyticsPieChart(
+            breakdown: state.breakdown,
+            colors: context.dsColors,
+          ),
           SizedBox(height: spacing.s24),
         ],
         DSSectionTitle(title: l10n.analyticsBreakdownTitle),
@@ -170,8 +173,14 @@ class _Body extends StatelessWidget {
               subtitleText: '${item.accountName} · ${item.subaccountName}',
               deltaText: '$sign$diffStr ${item.assetCode}',
               deltaColor: deltaColor,
-              baseLineText: context.dsFormatters.formatMoney(item.diffBaseAmount, currency),
-              trailingPrimaryText: context.dsFormatters.formatMoney(item.diffBaseAmount, currency),
+              baseLineText: context.dsFormatters.formatMoney(
+                item.diffBaseAmount,
+                currency,
+              ),
+              trailingPrimaryText: context.dsFormatters.formatMoney(
+                item.diffBaseAmount,
+                currency,
+              ),
             ),
           );
         }),
@@ -208,7 +217,10 @@ class _BreakdownCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(item.assetCode, style: typography.caption.copyWith(color: colors.textSecondary)),
+        Text(
+          item.assetCode,
+          style: typography.caption.copyWith(color: colors.textSecondary),
+        ),
         SizedBox(height: spacing.s4),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -295,13 +307,23 @@ class _AnalyticsPieChart extends StatelessWidget {
         title: item.assetCode,
         showTitle: true,
         radius: 48,
-        titleStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textPrimary),
+        titleStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: colors.textPrimary,
+        ),
       );
     }).toList();
 
     return SizedBox(
       height: 220,
-      child: PieChart(PieChartData(sections: sections, sectionsSpace: 2, centerSpaceRadius: 32)),
+      child: PieChart(
+        PieChartData(
+          sections: sections,
+          sectionsSpace: 2,
+          centerSpaceRadius: 32,
+        ),
+      ),
     );
   }
 

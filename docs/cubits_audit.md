@@ -75,7 +75,7 @@
 - Запросы к серверу:
   - `GET api/me` (через `BootstrapProfileUseCase`)
   - `auth.signOut()` при невалидной сессии
-  - `restoreSession()` сам по себе использует cached session (без явного HTTP в коде)
+  - восстановление session теперь идёт через `watchSession()` в auth-репозитории, с immediate emission cached/current session без отдельного `restoreSession()` контракта
 
 ## 5) `SignInCubit`
 - Где живет: `client/lib/presentation/auth/bloc/sign_in_cubit.dart`

@@ -17,7 +17,7 @@
 1. `GOOGLE_IOS_CLIENT_ID`
 2. `GOOGLE_ANDROID_CLIENT_ID`
 3. `APPLE_SERVICE_ID`
-4. `APPLE_REDIRECT_URI`
+4. `OAUTH_REDIRECT_URI`
 
 Примечание: значения секретов не коммитятся в репозиторий; используются локальные файлы конфигурации.
 
@@ -35,3 +35,4 @@
 1. Не смешивать ключи dev/prod проектов Supabase.
 2. Проверить, что в проде включены только production redirect URLs.
 3. При ротации Apple key обновить секреты в Supabase и задокументировать дату ротации.
+google auth callback: https://qbeqjggcbbbrrcwsheui.supabase.co/auth/v1/callback

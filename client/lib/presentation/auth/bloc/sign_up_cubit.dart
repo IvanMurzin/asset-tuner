@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_up_with_password_usecase.dart';
+import 'package:asset_tuner/presentation/auth/bloc/auth_form_validators.dart';
 
 part 'sign_up_state.dart';
 part 'sign_up_cubit.freezed.dart';
@@ -14,7 +15,14 @@ class SignUpCubit extends Cubit<SignUpState> {
   final SignUpWithPasswordUseCase _signUpWithPasswordUseCase;
 
   void updateEmail(String value) {
-    emit(state.copyWith(email: value, emailError: null, bannerFailureCode: null, bannerType: null));
+    emit(
+      state.copyWith(
+        email: value,
+        emailError: null,
+        bannerFailureCode: null,
+        bannerType: null,
+      ),
+    );
   }
 
   void updatePassword(String value) {
@@ -48,8 +56,17 @@ class SignUpCubit extends Cubit<SignUpState> {
       return;
     }
 
-    emit(state.copyWith(status: SignUpStatus.loading, bannerFailureCode: null, bannerType: null));
-    final result = await _signUpWithPasswordUseCase(state.email.trim(), state.password);
+    emit(
+      state.copyWith(
+        status: SignUpStatus.loading,
+        bannerFailureCode: null,
+        bannerType: null,
+      ),
+    );
+    final result = await _signUpWithPasswordUseCase(
+      state.email.trim(),
+      state.password,
+    );
     if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
@@ -79,8 +96,8 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   bool _validate() {
     final email = state.email.trim();
-    final emailValid = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
-    final passwordValid = _validatePassword(state.password);
+    final emailValid = AuthFormValidators.isValidEmail(email);
+    final passwordValid = AuthFormValidators.isValidPassword(state.password);
     final confirmValid = state.password == state.confirmPassword;
 
     if (!emailValid || !passwordValid || !confirmValid) {
@@ -94,11 +111,5 @@ class SignUpCubit extends Cubit<SignUpState> {
       return false;
     }
     return true;
-  }
-
-  bool _validatePassword(String password) {
-    final hasLetters = password.contains(RegExp(r'[A-Za-z]'));
-    final hasNumbers = password.contains(RegExp(r'\d'));
-    return password.length >= 6 && hasLetters && hasNumbers;
   }
 }

@@ -1,36 +1,41 @@
+import 'dart:async';
+
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
-import 'package:asset_tuner/data/auth/data_source/supabase_auth_data_source.dart';
+import 'package:asset_tuner/data/auth/data_source/i_auth_data_source.dart';
+import 'package:asset_tuner/data/auth/dto/auth_session_dto.dart';
 import 'package:asset_tuner/data/auth/mapper/auth_session_mapper.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 @LazySingleton(as: IAuthRepository)
 class AuthRepository implements IAuthRepository {
-  AuthRepository(this._dataSource);
+  AuthRepository(
+    this._dataSource, {
+    @Named('oauthSignInTimeout')
+    Duration oAuthSignInTimeout = const Duration(seconds: 90),
+  }) : _oAuthSignInTimeout = oAuthSignInTimeout;
 
-  final SupabaseAuthDataSource _dataSource;
+  final IAuthDataSource _dataSource;
+  final Duration _oAuthSignInTimeout;
   AuthSessionEntity? _cachedSession;
 
   @override
-  Future<Result<AuthSessionEntity?>> restoreSession() async {
-    try {
-      final dto = _dataSource.currentSession();
-      final entity = dto == null ? null : AuthSessionMapper.toEntity(dto);
-      _cachedSession = entity;
-      logger.i('AuthRepository.restoreSession success: ${entity != null}');
-      return Success(entity);
-    } catch (error) {
-      logger.e('AuthRepository.restoreSession failed', error: error);
-      return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to restore session'),
-      );
-    }
+  Stream<AuthSessionEntity?> watchSession() async* {
+    yield _syncCachedSession(_dataSource.currentSession());
+
+    yield* _dataSource.onAuthStateChange().map((authState) {
+      final session = authState.event == AuthChangeEvent.signedOut
+          ? null
+          : _dataSource.currentSession();
+      return _syncCachedSession(session);
+    }).distinct();
   }
 
   @override
@@ -47,65 +52,95 @@ class AuthRepository implements IAuthRepository {
     return entity;
   }
 
+  AuthSessionEntity? _syncCachedSession(AuthSessionDto? dto) {
+    final entity = dto == null ? null : AuthSessionMapper.toEntity(dto);
+    _cachedSession = entity;
+    return entity;
+  }
+
   @override
-  Future<Result<void>> requestEmailOtp(String email) async {
+  Future<Result<void>> resendSignUpOtp(String email) async {
     try {
-      await _dataSource.signInWithOtp(email);
-      logger.i('AuthRepository.requestEmailOtp success');
+      await _dataSource.resendSignUpOtp(email);
+      logger.i('AuthRepository.resendSignUpOtp success');
       return const Success(null);
     } catch (error) {
-      logger.e('AuthRepository.requestEmailOtp failed', error: error);
+      logger.e('AuthRepository.resendSignUpOtp failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to request OTP'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to resend OTP',
+        ),
       );
     }
   }
 
   @override
-  Future<Result<AuthSessionEntity>> confirmEmailOtp(String email) async {
-    try {
-      final dto = _dataSource.currentSession();
-      if (dto == null) {
-        return const FailureResult(
-          Failure(code: 'unauthorized', message: 'Session not established'),
-        );
-      }
-      final entity = AuthSessionMapper.toEntity(dto);
-      _cachedSession = entity;
-      logger.i('AuthRepository.confirmEmailOtp success');
-      return Success(entity);
-    } catch (error) {
-      logger.e('AuthRepository.confirmEmailOtp failed', error: error);
-      return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to confirm OTP'),
-      );
-    }
-  }
-
-  @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
+  Future<Result<AuthSessionEntity>> signInWithOAuth(
+    AuthProvider provider,
+  ) async {
+    StreamSubscription<AuthState>? authSubscription;
+    Timer? timeoutTimer;
+    final signedInCompleter = Completer<AuthSessionEntity>();
     try {
       if (provider == AuthProvider.email) {
         return const FailureResult(
-          Failure(code: 'validation', message: 'Use email OTP or password sign-in'),
+          Failure(
+            code: 'validation',
+            message: 'Use email OTP or password sign-in',
+          ),
         );
       }
+      authSubscription = _dataSource.onAuthStateChange().listen(
+        (state) {
+          if (state.event != AuthChangeEvent.signedIn ||
+              signedInCompleter.isCompleted) {
+            return;
+          }
+          final session = state.session;
+          if (session == null) {
+            return;
+          }
+          final email = session.user.email ?? '';
+          signedInCompleter.complete(
+            _syncCachedSession(
+              AuthSessionDto(userId: session.user.id, email: email),
+            )!,
+          );
+        },
+        onError: (Object error, StackTrace stackTrace) {
+          if (!signedInCompleter.isCompleted) {
+            signedInCompleter.completeError(error, stackTrace);
+          }
+        },
+      );
+      timeoutTimer = Timer(_oAuthSignInTimeout, () {
+        if (!signedInCompleter.isCompleted) {
+          signedInCompleter.completeError(
+            TimeoutException('OAuth sign-in timed out', _oAuthSignInTimeout),
+          );
+        }
+      });
       await _dataSource.signInWithOAuth(provider);
-      final dto = _dataSource.currentSession();
-      if (dto == null) {
-        return const FailureResult(
-          Failure(code: 'unknown', message: 'OAuth session not established'),
-        );
-      }
-      final entity = AuthSessionMapper.toEntity(dto);
-      _cachedSession = entity;
+      final entity = await signedInCompleter.future;
       logger.i('AuthRepository.signInWithOAuth success: $provider');
       return Success(entity);
+    } on TimeoutException catch (error) {
+      logger.e('AuthRepository.signInWithOAuth timed out', error: error);
+      return const FailureResult(
+        Failure(code: 'timeout', message: 'OAuth sign-in timed out'),
+      );
     } catch (error) {
       logger.e('AuthRepository.signInWithOAuth failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign in'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to sign in',
+        ),
       );
+    } finally {
+      timeoutTimer?.cancel();
+      await authSubscription?.cancel();
     }
   }
 
@@ -119,7 +154,10 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.signOut failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign out'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to sign out',
+        ),
       );
     }
   }
@@ -135,7 +173,10 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.deleteAccount failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to delete account'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to delete account',
+        ),
       );
     }
   }
@@ -144,20 +185,25 @@ class AuthRepository implements IAuthRepository {
   Future<Result<void>> signInWithPassword(String email, String password) async {
     try {
       await _dataSource.signInWithPassword(email, password);
-      final dto = _dataSource.currentSession();
-      _cachedSession = dto == null ? null : AuthSessionMapper.toEntity(dto);
+      _syncCachedSession(_dataSource.currentSession());
       logger.i('AuthRepository.signInWithPassword success');
       return const Success(null);
     } catch (error) {
       logger.e('AuthRepository.signInWithPassword failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign in'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to sign in',
+        ),
       );
     }
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(
+    String email,
+    String password,
+  ) async {
     try {
       await _dataSource.signUpWithPassword(email, password);
       logger.i('AuthRepository.signUpWithPassword success');
@@ -165,13 +211,19 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.signUpWithPassword failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign up'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to sign up',
+        ),
       );
     }
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(
+    String email,
+    String code,
+  ) async {
     try {
       final dto = await _dataSource.verifySignUpOtp(email: email, token: code);
       if (dto == null) {
@@ -179,20 +231,26 @@ class AuthRepository implements IAuthRepository {
           Failure(code: 'unauthorized', message: 'OTP verification failed'),
         );
       }
-      final entity = AuthSessionMapper.toEntity(dto);
-      _cachedSession = entity;
+      final entity = _syncCachedSession(dto)!;
       logger.i('AuthRepository.verifySignUpOtp success');
       return Success(entity);
     } catch (error) {
       logger.e('AuthRepository.verifySignUpOtp failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to verify OTP'),
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to verify OTP',
+        ),
       );
     }
   }
 
   @override
   Future<List<AuthProvider>> getAvailableProviders() {
-    return Future.value(const [AuthProvider.email, AuthProvider.google, AuthProvider.apple]);
+    return Future.value(const [
+      AuthProvider.email,
+      AuthProvider.google,
+      AuthProvider.apple,
+    ]);
   }
 }

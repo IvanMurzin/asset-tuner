@@ -4,18 +4,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/types/result.dart';
-import 'package:asset_tuner/domain/auth/usecase/request_email_otp_usecase.dart';
+import 'package:asset_tuner/domain/auth/usecase/resend_sign_up_otp_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/verify_sign_up_otp_usecase.dart';
+import 'package:asset_tuner/presentation/auth/bloc/auth_form_validators.dart';
 
 part 'otp_state.dart';
 part 'otp_cubit.freezed.dart';
 
 @injectable
 class OtpCubit extends Cubit<OtpState> {
-  OtpCubit(this._verifySignUpOtpUseCase, this._requestEmailOtpUseCase) : super(const OtpState());
+  OtpCubit(this._verifySignUpOtpUseCase, this._resendSignUpOtpUseCase)
+    : super(const OtpState());
 
   final VerifySignUpOtpUseCase _verifySignUpOtpUseCase;
-  final RequestEmailOtpUseCase _requestEmailOtpUseCase;
+  final ResendSignUpOtpUseCase _resendSignUpOtpUseCase;
 
   static const _resendCooldown = Duration(seconds: 60);
 
@@ -29,7 +31,7 @@ class OtpCubit extends Cubit<OtpState> {
 
   Future<void> verify() async {
     final code = state.code.trim();
-    if (code.length != 6) {
+    if (!AuthFormValidators.isValidOtpCode(code)) {
       emit(state.copyWith(codeError: OtpFieldError.invalidLength));
       return;
     }
@@ -50,7 +52,9 @@ class OtpCubit extends Cubit<OtpState> {
         emit(
           state.copyWith(
             status: OtpStatus.idle,
-            navigation: const OtpNavigation(destination: OtpDestination.overview),
+            navigation: const OtpNavigation(
+              destination: OtpDestination.overview,
+            ),
           ),
         );
     }
@@ -62,11 +66,13 @@ class OtpCubit extends Cubit<OtpState> {
 
   Future<void> resend() async {
     final email = state.email;
-    if (email.isEmpty || state.isResendInProgress || state.resendCooldownUntil != null) {
+    if (email.isEmpty ||
+        state.isResendInProgress ||
+        state.resendCooldownUntil != null) {
       return;
     }
     emit(state.copyWith(isResendInProgress: true, bannerFailureCode: null));
-    final result = await _requestEmailOtpUseCase(email);
+    final result = await _resendSignUpOtpUseCase(email);
     if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
