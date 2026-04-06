@@ -12,14 +12,15 @@
    - private key (`.p8`) для backend-секрета.
 3. Redirect URL, используемые Supabase Auth (из dashboard проекта).
 
-## 2) Что добавить в клиентские конфиги (placeholders)
+## 2) Что добавить в клиентские конфиги
 В `.config.dev.json` и `.config.prod.json` должны быть добавлены поля:
-1. `GOOGLE_IOS_CLIENT_ID`
-2. `GOOGLE_ANDROID_CLIENT_ID`
-3. `APPLE_SERVICE_ID`
-4. `OAUTH_REDIRECT_URI`
+1. `OAUTH_REDIRECT_URI`
+2. `IS_OTP_ENABLED`
 
-Примечание: значения секретов не коммитятся в репозиторий; используются локальные файлы конфигурации.
+Примечание:
+1. OAuth client id/secret для Google/Apple хранятся и настраиваются в Supabase Dashboard, не в `--dart-define`.
+2. Значения локальных конфигов не коммитятся в репозиторий.
+3. `IS_OTP_ENABLED=true` включает OTP-step после sign-up, `false` пропускает OTP-step.
 
 ## 3) Что включить в Supabase Dashboard
 1. Auth -> Providers -> Google: включить, указать client id/secret.
@@ -35,4 +36,3 @@
 1. Не смешивать ключи dev/prod проектов Supabase.
 2. Проверить, что в проде включены только production redirect URLs.
 3. При ротации Apple key обновить секреты в Supabase и задокументировать дату ротации.
-google auth callback: https://qbeqjggcbbbrrcwsheui.supabase.co/auth/v1/callback

@@ -14,27 +14,27 @@
 
 ## Проблема
 ### Текущее поведение
-OAuth кнопки в UI есть, но отсутствует формализованная задача по полному конфигурированию ключей и environment-полей в клиенте.
+OAuth кнопки в UI есть, но процесс owner-настройки провайдеров в Supabase и mobile redirect flow не был формализован в одном месте.
 
 ### Ожидаемое поведение
-Google/Apple auth работают в dev и prod по единому documented flow, а необходимые поля конфигурации явно определены.
+Google/Apple auth работают в dev и prod по единому documented flow, а responsibilities между client config и Supabase provider settings явно определены.
 
 ## Root-cause hypothesis
-Конфиг-контракт в [app_config.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core/config/app_config.dart) не содержит OAuth-параметры, а процесс owner-настройки разрознен.
+Процесс owner-настройки был разрознен: какие параметры задаются через client config, а какие через Supabase Auth Providers, было описано неполно.
 
 ## Предлагаемое решение
-1. Добавить поля OAuth в `AppConfig` и `.config*.json` (через placeholders).
+1. Зафиксировать минимальный client config для OAuth-flow (`OAUTH_REDIRECT_URI`) без дублирования provider credentials в app config.
 2. Зафиксировать owner-чеклист действий в Supabase/Auth providers.
 3. Проверить end-to-end для `signInWithOAuth(google|apple)`.
 
 ## Изменения API/контрактов/конфига
-- `AppConfig` расширяется OAuth-полями.
-- `.config.dev.json`/`.config.prod.json`/examples обновляются новыми ключами.
+- Client config использует `OAUTH_REDIRECT_URI` для mobile callback.
+- OAuth provider credentials хранятся и настраиваются в Supabase Dashboard.
 
 ## Acceptance Criteria
 1. Given OAuth настроен в Supabase, when пользователь нажимает Google/Apple, then логин завершается с переходом в main flow.
 2. Given отсутствует корректный конфиг, when приложение стартует, then ошибка конфигурации детерминированна и диагностируема.
-3. Given dev/prod окружения, when запускается auth flow, then используются окружение-специфичные ключи.
+3. Given dev/prod окружения, when запускается auth flow, then используются окружение-специфичные настройки Supabase providers и redirect URLs.
 
 ## Тест-сценарии
 ### Manual
@@ -57,8 +57,8 @@ Google/Apple auth работают в dev и prod по единому documented
 - [app_config.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core/config/app_config.dart)
 
 ## Implementation note
-- Добавлены OAuth config-поля в `AppConfig` с явной диагностикой отсутствующих ключей.
-- Обновлены `.config.dev/.prod` и `.example` новыми OAuth placeholders для dev/prod.
+- Зафиксирован рабочий OAuth flow через Supabase providers + `OAUTH_REDIRECT_URI` в client config.
+- Обновлены `.config.dev/.prod` и `.example` для единообразного OAuth redirect контракта.
 - В `SupabaseAuthDataSource` выделен тестируемый маппинг `AuthProvider -> OAuthProvider` и добавлен unit test.
 - Обновлён owner checklist по OAuth setup в Supabase/Auth providers.
-- Проверки: `flutter analyze` (warning-only, 3 pre-existing warning), `flutter test test/data/auth/data_source/supabase_auth_data_source_test.dart` (passed).
+- Проверки: `flutter analyze` (pass), `flutter test test/data/auth/data_source/supabase_auth_data_source_test.dart` (pass).

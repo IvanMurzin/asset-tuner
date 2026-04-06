@@ -13,7 +13,11 @@ class DSButton extends StatelessWidget {
     this.isLoading = false,
     this.fullWidth = false,
     this.leadingIcon,
-  });
+    this.leading,
+  }) : assert(
+         leadingIcon == null || leading == null,
+         'Use either leadingIcon or leading, not both.',
+       );
 
   final String label;
   final VoidCallback? onPressed;
@@ -21,6 +25,7 @@ class DSButton extends StatelessWidget {
   final bool isLoading;
   final bool fullWidth;
   final IconData? leadingIcon;
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +55,18 @@ class DSButton extends StatelessWidget {
           DSLoader(size: spacing.s16, strokeWidth: 2, color: baseForeground),
         ],
       );
-    } else if (leadingIcon != null) {
+    } else if (leadingIcon != null || leading != null) {
+      final leadingWidget = leadingIcon != null
+          ? Icon(leadingIcon, size: spacing.s16, color: baseForeground)
+          : SizedBox(
+              width: spacing.s16,
+              height: spacing.s16,
+              child: Center(child: leading),
+            );
       content = Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(leadingIcon, size: spacing.s16, color: baseForeground),
+          leadingWidget,
           SizedBox(width: spacing.s8),
           Text(label, style: labelStyle),
         ],
@@ -101,10 +113,15 @@ class DSButton extends StatelessWidget {
             onTap: isInteractive ? onPressed : null,
             borderRadius: BorderRadius.circular(radius.r12),
             overlayColor: WidgetStateProperty.resolveWith(
-              (states) => states.contains(WidgetState.pressed) ? overlayColor : Colors.transparent,
+              (states) => states.contains(WidgetState.pressed)
+                  ? overlayColor
+                  : Colors.transparent,
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: spacing.s16, vertical: spacing.s12),
+              padding: EdgeInsets.symmetric(
+                horizontal: spacing.s16,
+                vertical: spacing.s12,
+              ),
               child: Row(
                 mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,

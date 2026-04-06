@@ -36,6 +36,8 @@ flutter:
     - assets/icon/icon.png
     - assets/icon/lang-en.svg
     - assets/icon/lang-ru.svg
+    - assets/icon/google.svg
+    - assets/icon/apple.svg
 
 flutter_launcher_icons:
   android: true
