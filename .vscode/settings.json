@@ -1,5 +1,6 @@
 {
   "debug.toolBarLocation": "floating",
+  "dart.lineLength": 100,
   "dart.flutterHotReloadOnSave": "all",
   "dart.hotReloadProgress": "notification",
   "dart.previewHotReloadOnSaveWatcher": true,

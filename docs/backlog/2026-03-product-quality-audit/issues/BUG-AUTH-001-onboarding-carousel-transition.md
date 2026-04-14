@@ -4,7 +4,7 @@
 - ID: `BUG-AUTH-001`
 - Тип: `Bug`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `SCR-003`, `SCR-001`, `FTR-001`
 
 ## Экран/модуль/слой
@@ -53,3 +53,9 @@
 ## Ссылки на текущую реализацию
 - [onboarding_carousel_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/onboarding/page/onboarding_carousel_page.dart)
 - [home_gate_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/auth/widget/home_gate_page.dart)
+
+## Implementation note
+- Что сделано: упрощен transition между onboarding-слайдами до нативного slide-перехода `PageView`; убран `AnimatedSlide` из контентного блока и удалены конкурирующие анимации (`AnimatedOpacity` в контенте, `AnimatedScale` + `AnimatedSwitcher` в `_OnboardingHero`), при этом логика завершения onboarding (`OnboardingCarouselStorage` + переход в `home`) сохранена без изменений.
+- Измененные файлы: `client/lib/presentation/onboarding/page/onboarding_carousel_page.dart`, `docs/backlog/2026-03-product-quality-audit/issues/BUG-AUTH-001-onboarding-carousel-transition.md`, `docs/backlog/2026-03-product-quality-audit/INDEX.md`.
+- Проверки: `cd client && flutter analyze` (pass).
+- Не запускалось: `flutter test` (в рамках задачи обязательным quality gate был только `flutter analyze`; отдельные widget/golden тесты для onboarding не были частью текущего изменения).

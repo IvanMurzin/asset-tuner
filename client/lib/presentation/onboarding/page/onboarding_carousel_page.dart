@@ -96,7 +96,6 @@ class _OnboardingCarouselPageState extends State<OnboardingCarouselPage> {
                     slide: slide,
                     showSkip: index != _pageCount - 1,
                     onSkip: _goToLast,
-                    isActive: _currentPage == index,
                   );
                 },
               ),
@@ -120,13 +119,11 @@ class _OnboardingSlideContent extends StatelessWidget {
     required this.slide,
     required this.showSkip,
     required this.onSkip,
-    required this.isActive,
   });
 
   final _OnboardingSlideData slide;
   final bool showSkip;
   final VoidCallback onSkip;
-  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -162,30 +159,20 @@ class _OnboardingSlideContent extends StatelessWidget {
                   physics: const BouncingScrollPhysics(),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                    child: AnimatedOpacity(
-                      opacity: isActive ? 1 : 0.78,
-                      duration: const Duration(milliseconds: 260),
-                      curve: Curves.easeOutCubic,
-                      child: AnimatedSlide(
-                        offset: isActive ? Offset.zero : const Offset(0, 0.03),
-                        duration: const Duration(milliseconds: 260),
-                        curve: Curves.easeOutCubic,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (slide.kind == _OnboardingSlideKind.realSetup) ...[
-                                _OnboardingTitle(slide: slide),
-                                SizedBox(height: spacing.s24),
-                                _OnboardingHero(slide: slide, isActive: isActive),
-                              ] else ...[
-                                _OnboardingHero(slide: slide, isActive: isActive),
-                                SizedBox(height: spacing.s32),
-                                _OnboardingTitle(slide: slide),
-                              ],
-                            ],
-                          ),
-                        ),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (slide.kind == _OnboardingSlideKind.realSetup) ...[
+                            _OnboardingTitle(slide: slide),
+                            SizedBox(height: spacing.s24),
+                            _OnboardingHero(slide: slide),
+                          ] else ...[
+                            _OnboardingHero(slide: slide),
+                            SizedBox(height: spacing.s32),
+                            _OnboardingTitle(slide: slide),
+                          ],
+                        ],
                       ),
                     ),
                   ),
@@ -237,36 +224,25 @@ class _OnboardingTitle extends StatelessWidget {
 }
 
 class _OnboardingHero extends StatelessWidget {
-  const _OnboardingHero({required this.slide, required this.isActive});
+  const _OnboardingHero({required this.slide});
 
   final _OnboardingSlideData slide;
-  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedScale(
-      scale: isActive ? 1 : 0.985,
-      duration: const Duration(milliseconds: 260),
-      curve: Curves.easeOutCubic,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 280),
-        switchInCurve: Curves.easeOutCubic,
-        switchOutCurve: Curves.easeOutCubic,
-        child: switch (slide.kind) {
-          _OnboardingSlideKind.totalWealth => const _OnboardingTotalWealthHero(
-            key: ValueKey('hero_total'),
-          ),
-          _OnboardingSlideKind.realSetup => _OnboardingRealSetupHero(
-            key: const ValueKey('hero_setup'),
-            accounts: slide.previewAccounts,
-          ),
-          _OnboardingSlideKind.quickUpdates => _OnboardingQuickUpdatesHero(
-            key: const ValueKey('hero_quick'),
-            caption: slide.heroCaption ?? '',
-          ),
-        },
+    return switch (slide.kind) {
+      _OnboardingSlideKind.totalWealth => const _OnboardingTotalWealthHero(
+        key: ValueKey('hero_total'),
       ),
-    );
+      _OnboardingSlideKind.realSetup => _OnboardingRealSetupHero(
+        key: const ValueKey('hero_setup'),
+        accounts: slide.previewAccounts,
+      ),
+      _OnboardingSlideKind.quickUpdates => _OnboardingQuickUpdatesHero(
+        key: const ValueKey('hero_quick'),
+        caption: slide.heroCaption ?? '',
+      ),
+    };
   }
 }
 
