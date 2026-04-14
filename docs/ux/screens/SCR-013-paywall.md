@@ -24,7 +24,7 @@ Explain why an action is locked on the free tier and offer subscription purchase
 - DS: `DSButton`
 - needs component: `DSAppBar` or modal header with close
 - needs component: `DSPlanCard` (selectable plan option)
-- needs component: `DSInlineBanner` (entitlements verification error, purchase errors)
+- needs component: `DSSnackBar` (entitlements verification error, purchase errors)
 - needs component: `DSLoadingOverlay` (purchase in progress)
 
 ## Actions & navigation

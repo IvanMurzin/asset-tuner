@@ -207,6 +207,7 @@
   "subaccountCreateTitle": "Добавить счет",
   "subaccountCreateCta": "Добавить счет",
   "subaccountCurrencyLabel": "Валюта",
+  "subaccountCurrencyRequired": "Выберите валюту",
   "subaccountNameHint": "например, USDT (TRC20)",
   "subaccountEmptyTitle": "Пока нет счетов",
   "subaccountEmptyBody": "Добавьте активы, которые хранятся в этом аккаунте.",

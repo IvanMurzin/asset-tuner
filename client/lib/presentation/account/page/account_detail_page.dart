@@ -2,13 +2,14 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_dialog.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
@@ -97,6 +98,42 @@ class AccountDetailPage extends StatelessWidget {
             deleteCubit.reset();
           },
         ),
+        BlocListener<AccountInfoCubit, AccountInfoState>(
+          listenWhen: (prev, curr) =>
+              prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+          listener: (context, state) {
+            logger.e('Account detail load failed: ${state.failureCode}');
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: state.failureMessage ?? l10n.errorGeneric,
+            );
+          },
+        ),
+        BlocListener<AccountArchiveCubit, AccountArchiveState>(
+          listenWhen: (prev, curr) =>
+              prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+          listener: (context, state) {
+            logger.e('Account archive action failed: ${state.failureCode}');
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: state.failureMessage ?? l10n.errorGeneric,
+            );
+          },
+        ),
+        BlocListener<AccountDeleteCubit, AccountDeleteState>(
+          listenWhen: (prev, curr) =>
+              prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+          listener: (context, state) {
+            logger.e('Account delete action failed: ${state.failureCode}');
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: state.failureMessage ?? l10n.errorGeneric,
+            );
+          },
+        ),
       ],
       child: BlocBuilder<AccountInfoCubit, AccountInfoState>(
         builder: (context, infoState) {
@@ -176,35 +213,12 @@ class AccountDetailPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (infoState.failureCode != null) ...[
-                            DSInlineBanner(
-                              title: account.name,
-                              message: infoState.failureMessage ?? l10n.errorGeneric,
-                              variant: DSInlineBannerVariant.danger,
-                            ),
-                            SizedBox(height: spacing.s12),
-                          ],
-                          if (archiveState.status == AccountArchiveStatus.error) ...[
-                            DSInlineBanner(
-                              title: account.name,
-                              message: archiveState.failureMessage ?? l10n.errorGeneric,
-                              variant: DSInlineBannerVariant.danger,
-                            ),
-                            SizedBox(height: spacing.s12),
-                          ],
-                          if (deleteState.status == AccountDeleteStatus.error) ...[
-                            DSInlineBanner(
-                              title: account.name,
-                              message: deleteState.failureMessage ?? l10n.errorGeneric,
-                              variant: DSInlineBannerVariant.danger,
-                            ),
-                            SizedBox(height: spacing.s12),
-                          ],
                           if (account.archived) ...[
-                            DSInlineBanner(
-                              title: account.name,
-                              message: l10n.accountDetailArchivedHint,
-                              variant: DSInlineBannerVariant.info,
+                            Text(
+                              l10n.accountDetailArchivedHint,
+                              style: context.dsTypography.body.copyWith(
+                                color: context.dsColors.textSecondary,
+                              ),
                             ),
                             SizedBox(height: spacing.s12),
                           ],

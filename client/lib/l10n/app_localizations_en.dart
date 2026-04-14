@@ -532,6 +532,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subaccountCurrencyLabel => 'Currency';
 
   @override
+  String get subaccountCurrencyRequired => 'Select a currency';
+
+  @override
   String get subaccountNameHint => 'e.g., USDT (TRC20)';
 
   @override

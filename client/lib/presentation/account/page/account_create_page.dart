@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
@@ -46,32 +47,51 @@ class _AccountCreatePageState extends State<AccountCreatePage> {
 
     return BlocProvider(
       create: (_) => getIt<AccountCreateCubit>(),
-      child: BlocListener<AccountCreateCubit, AccountCreateState>(
-        listenWhen: (prev, curr) => prev.status != curr.status,
-        listener: (context, state) async {
-          if (state.status == AccountCreateStatus.error &&
-              state.failureCode == 'limit_accounts_reached') {
-            if (!context.mounted) return;
-            await context.push(
-              AppRoutes.paywall,
-              extra: const PaywallArgs(reason: PaywallReason.accountsLimit),
-            );
-            return;
-          }
-          if (state.status != AccountCreateStatus.success || state.account == null) {
-            return;
-          }
-          final account = state.account!;
-          context.read<AccountsCubit>().create(account);
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<AccountCreateCubit, AccountCreateState>(
+            listenWhen: (prev, curr) => prev.status != curr.status,
+            listener: (context, state) async {
+              if (state.status == AccountCreateStatus.error &&
+                  state.failureCode == 'limit_accounts_reached') {
+                if (!context.mounted) return;
+                await context.push(
+                  AppRoutes.paywall,
+                  extra: const PaywallArgs(reason: PaywallReason.accountsLimit),
+                );
+                return;
+              }
+              if (state.status != AccountCreateStatus.success || state.account == null) {
+                return;
+              }
+              final account = state.account!;
+              context.read<AccountsCubit>().create(account);
 
-          if (!context.mounted) {
-            return;
-          }
-          context.replace(
-            AppRoutes.accountDetail.replaceFirst(':accountId', account.id),
-            extra: AccountDetailExtra(initialTitle: account.name, initialAccountType: account.type),
-          );
-        },
+              if (!context.mounted) {
+                return;
+              }
+              context.replace(
+                AppRoutes.accountDetail.replaceFirst(':accountId', account.id),
+                extra: AccountDetailExtra(
+                  initialTitle: account.name,
+                  initialAccountType: account.type,
+                ),
+              );
+            },
+          ),
+          BlocListener<AccountCreateCubit, AccountCreateState>(
+            listenWhen: (prev, curr) =>
+                prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+            listener: (context, state) {
+              logger.e('Account create failed: ${state.failureCode}');
+              showDSSnackBar(
+                context,
+                variant: DSSnackBarVariant.error,
+                message: state.failureMessage ?? l10n.errorGeneric,
+              );
+            },
+          ),
+        ],
         child: BlocBuilder<AccountCreateCubit, AccountCreateState>(
           builder: (context, state) {
             final spacing = context.dsSpacing;
@@ -85,19 +105,15 @@ class _AccountCreatePageState extends State<AccountCreatePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (state.status == AccountCreateStatus.error) ...[
-                        DSInlineBanner(
-                          title: l10n.accountsTitle,
-                          message: state.failureMessage ?? l10n.errorGeneric,
-                          variant: DSInlineBannerVariant.danger,
-                        ),
-                        SizedBox(height: spacing.s16),
-                      ],
                       DSTextField(
                         label: l10n.accountsNameLabel,
                         hintText: l10n.accountsNameHint,
                         controller: _nameController,
+                        errorText: state.nameError == AccountCreateFieldError.required
+                            ? l10n.accountsNameRequired
+                            : null,
                         enabled: !isSaving,
+                        onChanged: (_) => context.read<AccountCreateCubit>().clearNameError(),
                       ),
                       SizedBox(height: spacing.s24),
                       DSSectionTitle(title: l10n.accountsTypeLabel),

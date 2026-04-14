@@ -17,7 +17,7 @@ Allow users to view current plan status and manage/cancel their subscription via
 - DS: `DSCard`
 - DS: `DSButton`
 - needs component: `DSAppBar`
-- needs component: `DSInlineBanner` (errors)
+- needs component: `DSSnackBar` (errors)
 - needs component: `DSSkeleton` (loading)
 
 ## Actions & navigation

@@ -27,15 +27,21 @@ class AccountUpdateCubit extends Cubit<AccountUpdateState> {
       emit(
         state.copyWith(
           status: AccountUpdateStatus.error,
+          nameError: AccountUpdateFieldError.required,
           failureCode: 'validation',
-          failureMessage: 'Name is required',
+          failureMessage: null,
         ),
       );
       return;
     }
 
     emit(
-      state.copyWith(status: AccountUpdateStatus.loading, failureCode: null, failureMessage: null),
+      state.copyWith(
+        status: AccountUpdateStatus.loading,
+        nameError: null,
+        failureCode: null,
+        failureMessage: null,
+      ),
     );
 
     final session = await _getCachedSession();
@@ -56,11 +62,19 @@ class AccountUpdateCubit extends Cubit<AccountUpdateState> {
         emit(
           state.copyWith(
             status: AccountUpdateStatus.error,
+            nameError: null,
             failureCode: failure.code,
             failureMessage: failure.message,
           ),
         );
     }
+  }
+
+  void clearNameError() {
+    if (state.nameError == null) {
+      return;
+    }
+    emit(state.copyWith(nameError: null));
   }
 
   void reset() {

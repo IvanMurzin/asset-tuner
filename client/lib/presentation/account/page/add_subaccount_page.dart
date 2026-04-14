@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
@@ -10,9 +11,9 @@ import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
 import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_radio_row.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
@@ -37,6 +38,8 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
 
   AssetKind? _kind;
   AssetEntity? _selectedAsset;
+  String? _currencyErrorText;
+  String? _balanceErrorText;
 
   @override
   void initState() {
@@ -58,41 +61,57 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
 
     return BlocProvider(
       create: (_) => getIt<SubaccountCreateCubit>(),
-      child: BlocListener<SubaccountCreateCubit, SubaccountCreateState>(
-        listenWhen: (prev, curr) => prev.status != curr.status,
-        listener: (context, state) async {
-          if (state.status == SubaccountCreateStatus.error &&
-              state.failureCode == 'limit_subaccounts_reached') {
-            if (!context.mounted) return;
-            await context.push(
-              AppRoutes.paywall,
-              extra: const PaywallArgs(reason: PaywallReason.subaccountsLimit),
-            );
-            return;
-          }
-          if (state.status != SubaccountCreateStatus.success || state.subaccount == null) {
-            return;
-          }
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<SubaccountCreateCubit, SubaccountCreateState>(
+            listenWhen: (prev, curr) => prev.status != curr.status,
+            listener: (context, state) async {
+              if (state.status == SubaccountCreateStatus.error &&
+                  state.failureCode == 'limit_subaccounts_reached') {
+                if (!context.mounted) return;
+                await context.push(
+                  AppRoutes.paywall,
+                  extra: const PaywallArgs(reason: PaywallReason.subaccountsLimit),
+                );
+                return;
+              }
+              if (state.status != SubaccountCreateStatus.success || state.subaccount == null) {
+                return;
+              }
 
-          final accountInfoCubit = context.read<AccountInfoCubit>();
-          final accountsCubit = context.read<AccountsCubit>();
-          final created = state.subaccount!;
-          accountInfoCubit.applyCreatedSubaccount(created);
-          accountsCubit.refresh(silent: true);
+              final accountInfoCubit = context.read<AccountInfoCubit>();
+              final accountsCubit = context.read<AccountsCubit>();
+              final created = state.subaccount!;
+              accountInfoCubit.applyCreatedSubaccount(created);
+              accountsCubit.refresh(silent: true);
 
-          if (!context.mounted) {
-            return;
-          }
-          context.replace(
-            AppRoutes.accountSubaccountDetail
-                .replaceFirst(':accountId', widget.accountId)
-                .replaceFirst(':subaccountId', created.id),
-            extra: SubaccountDetailExtra(
-              account: accountInfoCubit.state.account,
-              subaccount: created,
-            ),
-          );
-        },
+              if (!context.mounted) {
+                return;
+              }
+              context.replace(
+                AppRoutes.accountSubaccountDetail
+                    .replaceFirst(':accountId', widget.accountId)
+                    .replaceFirst(':subaccountId', created.id),
+                extra: SubaccountDetailExtra(
+                  account: accountInfoCubit.state.account,
+                  subaccount: created,
+                ),
+              );
+            },
+          ),
+          BlocListener<SubaccountCreateCubit, SubaccountCreateState>(
+            listenWhen: (prev, curr) =>
+                prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+            listener: (context, state) {
+              logger.e('Subaccount create failed: ${state.failureCode}');
+              showDSSnackBar(
+                context,
+                variant: DSSnackBarVariant.error,
+                message: state.failureMessage ?? l10n.errorGeneric,
+              );
+            },
+          ),
+        ],
         child: BlocBuilder<SubaccountCreateCubit, SubaccountCreateState>(
           builder: (context, createState) {
             final spacing = context.dsSpacing;
@@ -100,11 +119,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
             final allAssets = _kind == null
                 ? const <AssetEntity>[]
                 : assetsState.assets.where((item) => item.kind == _kind).toList();
-            final canSubmit =
-                _selectedAsset != null &&
-                _nameController.text.trim().isNotEmpty &&
-                _balanceController.text.trim().isNotEmpty &&
-                createState.status != SubaccountCreateStatus.loading;
+            final canSubmit = createState.status != SubaccountCreateStatus.loading;
 
             return Scaffold(
               appBar: DSAppBar(title: l10n.subaccountCreateTitle),
@@ -114,25 +129,27 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (createState.status == SubaccountCreateStatus.error) ...[
-                        DSInlineBanner(
-                          title: l10n.subaccountCreateTitle,
-                          message: createState.failureMessage ?? l10n.errorGeneric,
-                          variant: DSInlineBannerVariant.danger,
-                        ),
-                        SizedBox(height: spacing.s16),
-                      ],
                       DSTextField(
                         label: l10n.accountsNameLabel,
                         hintText: l10n.subaccountNameHint,
                         controller: _nameController,
+                        errorText: createState.nameError == SubaccountCreateFieldError.required
+                            ? l10n.accountsNameRequired
+                            : null,
                         enabled: createState.status != SubaccountCreateStatus.loading,
+                        onChanged: (_) => context.read<SubaccountCreateCubit>().clearNameError(),
                       ),
                       SizedBox(height: spacing.s12),
                       DSDecimalField(
                         label: l10n.addBalanceAmountLabel,
                         controller: _balanceController,
+                        errorText: _balanceErrorText,
                         enabled: createState.status != SubaccountCreateStatus.loading,
+                        onChanged: (_) {
+                          if (_balanceErrorText != null) {
+                            setState(() => _balanceErrorText = null);
+                          }
+                        },
                       ),
                       SizedBox(height: spacing.s24),
                       DSSectionTitle(title: l10n.accountsTypeLabel),
@@ -176,13 +193,17 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                         emptyResultsTitle: l10n.assetNoMatchesTitle,
                         emptyResultsMessage: l10n.assetNoMatchesBody,
                         enabled: _kind != null,
+                        errorText: _currencyErrorText,
                         onSelect: (id) {
                           final asset = allAssets.where((item) => item.id == id).firstOrNull;
                           if (asset?.isLocked ?? false) {
                             context.push(AppRoutes.paywall);
                             return;
                           }
-                          setState(() => _selectedAsset = asset);
+                          setState(() {
+                            _selectedAsset = asset;
+                            _currencyErrorText = null;
+                          });
                         },
                       ),
                       const Spacer(),
@@ -194,6 +215,14 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                             ? () async {
                                 final asset = _selectedAsset;
                                 final amount = _tryParse(_balanceController.text);
+                                setState(() {
+                                  _currencyErrorText = asset == null
+                                      ? l10n.subaccountCurrencyRequired
+                                      : null;
+                                  _balanceErrorText = amount == null
+                                      ? l10n.addBalanceValidationAmount
+                                      : null;
+                                });
                                 if (asset == null || amount == null) {
                                   return;
                                 }

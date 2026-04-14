@@ -28,7 +28,7 @@ Show an account total and its subaccounts (счета), and allow adding subacco
 - needs component: `DSOverflowMenu` (edit/archive/delete)
 - needs component: `DSSubaccountCard` or `DSListRow` (subaccount row)
 - needs component: `DSConfirmDialog` (delete subaccount, archive, delete)
-- needs component: `DSInlineBanner` (errors, offline)
+- needs component: `DSSnackBar` (errors, offline)
 - needs component: `DSEmptyState` (no subaccounts)
 
 ## Actions & navigation

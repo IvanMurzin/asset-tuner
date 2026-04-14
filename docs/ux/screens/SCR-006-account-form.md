@@ -21,7 +21,7 @@ Create a new account or edit an existing account’s name/type.
 - DS: `DSCard`
 - needs component: `DSAppBar`
 - needs component: `DSSegmentedControl` or `DSRadioGroup` (account type)
-- needs component: `DSInlineBanner` (errors, paywall explanation)
+- needs component: `DSSnackBar` (errors, paywall explanation)
 
 ## Actions & navigation
 - Save:

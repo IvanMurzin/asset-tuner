@@ -23,15 +23,21 @@ class AccountCreateCubit extends Cubit<AccountCreateState> {
       emit(
         state.copyWith(
           status: AccountCreateStatus.error,
+          nameError: AccountCreateFieldError.required,
           failureCode: 'validation',
-          failureMessage: 'Name is required',
+          failureMessage: null,
         ),
       );
       return;
     }
 
     emit(
-      state.copyWith(status: AccountCreateStatus.loading, failureCode: null, failureMessage: null),
+      state.copyWith(
+        status: AccountCreateStatus.loading,
+        nameError: null,
+        failureCode: null,
+        failureMessage: null,
+      ),
     );
 
     final session = await _getCachedSession();
@@ -52,11 +58,19 @@ class AccountCreateCubit extends Cubit<AccountCreateState> {
         emit(
           state.copyWith(
             status: AccountCreateStatus.error,
+            nameError: null,
             failureCode: failure.code,
             failureMessage: failure.message,
           ),
         );
     }
+  }
+
+  void clearNameError() {
+    if (state.nameError == null) {
+      return;
+    }
+    emit(state.copyWith(nameError: null));
   }
 
   void reset() {

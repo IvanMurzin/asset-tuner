@@ -14,7 +14,7 @@ Verify the user’s email after sign-up by entering an OTP.
 ## Components
 - DS: `DSTextField` (OTP)
 - DS: `DSButton` (primary + secondary + text variants)
-- needs component: `DSInlineBanner` (non-blocking info/error messages)
+- needs component: `DSSnackBar` (non-blocking info/error messages)
 
 ## Actions & navigation
 - Submit OTP:

@@ -26,7 +26,7 @@ Show a subaccount (счёт) current balance and balance history, and allow upda
 - DS: `DSButton`
 - needs component: `DSAppBar`
 - needs component: `DSListRow` (history row)
-- needs component: `DSInlineBanner` (errors, offline)
+- needs component: `DSSnackBar` (errors, offline)
 - needs component: `DSEmptyState` (no history)
 - needs component: `DSSkeleton` (loading)
 

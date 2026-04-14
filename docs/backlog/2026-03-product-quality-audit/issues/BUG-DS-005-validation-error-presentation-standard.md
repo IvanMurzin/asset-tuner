@@ -4,7 +4,7 @@
 - ID: `BUG-DS-005`
 - Тип: `Bug`
 - Приоритет: `P0`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-006`, `SCR-006`, `SCR-008`, `SCR-011`
 
 ## Экран/модуль/слой
@@ -54,3 +54,37 @@
 - [account_create_cubit.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/bloc/account_create_cubit.dart)
 - [subaccount_create_cubit.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/bloc/subaccount_create_cubit.dart)
 - [subaccount_balance_cubit.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/bloc/subaccount_balance_cubit.dart)
+
+## Implementation note
+- Что сделано:
+  - Для `account create/update` добавлены field-level ошибки в state/cubit (`nameError`) и вывод `errorText` в `DSTextField`; при вводе ошибка очищается.
+  - Для `add subaccount` добавлены inline-ошибки под полями `name`, `currency`, `amount`; `DSCurrencyPicker` расширен поддержкой `errorText`.
+  - Для `add balance` добавлена inline-ошибка под `amount` при пустом/невалидном вводе.
+  - На формах `account/subaccount/balance` баннер оставлен только для non-validation ошибок (`failureCode != validation`).
+  - В локализацию добавлен ключ `subaccountCurrencyRequired` (`en/ru`).
+- Тесты:
+  - Добавлены unit tests на маппинг field-error в cubit state:
+    - `client/test/presentation/account/bloc/account_form_validation_cubit_test.dart`
+    - `client/test/presentation/balance/bloc/subaccount_create_cubit_test.dart`
+- Измененные файлы:
+  - `client/lib/presentation/account/bloc/account_create_cubit.dart`
+  - `client/lib/presentation/account/bloc/account_create_state.dart`
+  - `client/lib/presentation/account/bloc/account_update_cubit.dart`
+  - `client/lib/presentation/account/bloc/account_update_state.dart`
+  - `client/lib/presentation/account/page/account_create_page.dart`
+  - `client/lib/presentation/account/page/account_update_page.dart`
+  - `client/lib/presentation/account/page/add_subaccount_page.dart`
+  - `client/lib/presentation/balance/bloc/subaccount_create_cubit.dart`
+  - `client/lib/presentation/balance/bloc/subaccount_create_state.dart`
+  - `client/lib/presentation/balance/page/add_balance_page.dart`
+  - `client/lib/core_ui/components/ds_currency_picker.dart`
+  - `client/lib/l10n/app_en.arb`
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_localizations.dart`
+  - `client/lib/l10n/app_localizations_en.dart`
+  - `client/lib/l10n/app_localizations_ru.dart`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/account/bloc/account_form_validation_cubit_test.dart test/presentation/balance/bloc/subaccount_create_cubit_test.dart` (pass)
+  - `cd client && dart run build_runner build --delete-conflicting-outputs` (failed: `injectable_generator` не смог резолвить function type в `lib/core/localization/locale_cubit.dart`, pre-existing проблема вне текущего scope)

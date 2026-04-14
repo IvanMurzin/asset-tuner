@@ -1107,6 +1107,12 @@ abstract class AppLocalizations {
   /// **'Currency'**
   String get subaccountCurrencyLabel;
 
+  /// No description provided for @subaccountCurrencyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a currency'**
+  String get subaccountCurrencyRequired;
+
   /// No description provided for @subaccountNameHint.
   ///
   /// In en, this message translates to:

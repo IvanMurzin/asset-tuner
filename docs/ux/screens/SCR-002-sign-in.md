@@ -17,7 +17,7 @@ Authenticate the user via email + password, with optional Google/Apple sign-in i
 - DS: `DSTextField` (email + password)
 - DS: `DSButton` (primary + secondary + text variants)
 - needs component: `DSOAuthButton` (Google/Apple branded buttons)
-- needs component: `DSInlineBanner` (non-blocking info/error messages)
+- needs component: `DSSnackBar` (non-blocking info/error messages)
 
 ## Actions & navigation
 - Submit sign-in:

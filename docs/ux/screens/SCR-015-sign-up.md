@@ -16,7 +16,7 @@ Create a new account via email + password and send an OTP verification code.
 ## Components
 - DS: `DSTextField` (email + password + confirm password)
 - DS: `DSButton` (primary + secondary + text variants)
-- needs component: `DSInlineBanner` (non-blocking info/error messages)
+- needs component: `DSSnackBar` (non-blocking info/error messages)
 
 ## Actions & navigation
 - Submit sign-up:

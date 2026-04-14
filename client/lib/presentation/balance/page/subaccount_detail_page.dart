@@ -2,12 +2,13 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_dialog.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
@@ -125,6 +126,42 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
             deleteCubit.reset();
           },
         ),
+        BlocListener<SubaccountInfoCubit, SubaccountInfoState>(
+          listenWhen: (prev, curr) =>
+              prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+          listener: (context, state) {
+            logger.e('Subaccount detail load failed: ${state.failureCode}');
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: state.failureMessage ?? l10n.errorGeneric,
+            );
+          },
+        ),
+        BlocListener<SubaccountUpdateCubit, SubaccountUpdateState>(
+          listenWhen: (prev, curr) =>
+              prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+          listener: (context, state) {
+            logger.e('Subaccount rename failed: ${state.failureCode}');
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: state.failureMessage ?? l10n.errorGeneric,
+            );
+          },
+        ),
+        BlocListener<SubaccountDeleteCubit, SubaccountDeleteState>(
+          listenWhen: (prev, curr) =>
+              prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+          listener: (context, state) {
+            logger.e('Subaccount delete failed: ${state.failureCode}');
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: state.failureMessage ?? l10n.errorGeneric,
+            );
+          },
+        ),
       ],
       child: BlocBuilder<SubaccountInfoCubit, SubaccountInfoState>(
         builder: (context, state) {
@@ -193,30 +230,6 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (state.failureCode != null) ...[
-                            DSInlineBanner(
-                              title: title,
-                              message: state.failureMessage ?? l10n.errorGeneric,
-                              variant: DSInlineBannerVariant.danger,
-                            ),
-                            SizedBox(height: spacing.s12),
-                          ],
-                          if (updateState.status == SubaccountUpdateStatus.error) ...[
-                            DSInlineBanner(
-                              title: title,
-                              message: updateState.failureMessage ?? l10n.errorGeneric,
-                              variant: DSInlineBannerVariant.danger,
-                            ),
-                            SizedBox(height: spacing.s12),
-                          ],
-                          if (deleteState.status == SubaccountDeleteStatus.error) ...[
-                            DSInlineBanner(
-                              title: title,
-                              message: deleteState.failureMessage ?? l10n.errorGeneric,
-                              variant: DSInlineBannerVariant.danger,
-                            ),
-                            SizedBox(height: spacing.s12),
-                          ],
                           SubaccountDetailHeaderCard(
                             subaccountName: subaccount.name,
                             accountName: state.account?.name,
@@ -228,10 +241,11 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
                           ),
                           if (isUnpriced) ...[
                             SizedBox(height: spacing.s12),
-                            DSInlineBanner(
-                              title: l10n.unpriced,
-                              message: l10n.positionUnpricedHint,
-                              variant: DSInlineBannerVariant.warning,
+                            Text(
+                              l10n.positionUnpricedHint,
+                              style: context.dsTypography.body.copyWith(
+                                color: context.dsColors.textSecondary,
+                              ),
                             ),
                           ],
                           SizedBox(height: spacing.s16),

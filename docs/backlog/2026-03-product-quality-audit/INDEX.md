@@ -22,7 +22,7 @@
 2. [BUG-DS-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-DS-002-left-aligned-money-inputs.md) `P1`
 3. [IMP-DS-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-DS-003-ds-currency-badge-component.md) `P1`
 4. [IMP-DS-004](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-DS-004-ds-balance-input-component.md) `P1`
-5. [BUG-DS-005](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-DS-005-validation-error-presentation-standard.md) `P0`
+5. [BUG-DS-005](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-DS-005-validation-error-presentation-standard.md) `P0` `Done`
 
 ### CUR
 1. [BUG-CUR-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-CUR-001-base-currency-screen-redesign.md) `P1`

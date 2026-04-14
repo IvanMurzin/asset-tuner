@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_base_currency_value_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/components/ds_unlock_currencies_card.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
@@ -31,13 +32,29 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocListener<SessionCubit, SessionState>(
-      listenWhen: (prev, curr) => prev.status != curr.status,
-      listener: (context, state) {
-        if (state.status == SessionStatus.unauthenticated) {
-          context.go(AppRoutes.signIn);
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<SessionCubit, SessionState>(
+          listenWhen: (prev, curr) => prev.status != curr.status,
+          listener: (context, state) {
+            if (state.status == SessionStatus.unauthenticated) {
+              context.go(AppRoutes.signIn);
+            }
+          },
+        ),
+        BlocListener<ProfileCubit, ProfileState>(
+          listenWhen: (prev, curr) =>
+              prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+          listener: (context, state) {
+            logger.e('Base currency update failed: ${state.failureCode}');
+            showDSSnackBar(
+              context,
+              variant: DSSnackBarVariant.error,
+              message: state.failureMessage ?? l10n.errorGeneric,
+            );
+          },
+        ),
+      ],
       child: BlocBuilder<SessionCubit, SessionState>(
         builder: (context, sessionState) {
           return BlocBuilder<ProfileCubit, ProfileState>(
@@ -170,14 +187,6 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                                 setState(() => _selectedCode = matched.code.toUpperCase());
                               },
                             ),
-                            if (profileState.failureCode != null) ...[
-                              SizedBox(height: spacing.s16),
-                              DSInlineBanner(
-                                title: l10n.baseCurrencySettingsTitle,
-                                message: profileState.failureMessage ?? l10n.errorGeneric,
-                                variant: DSInlineBannerVariant.danger,
-                              ),
-                            ],
                             const Spacer(),
                             DSButton(
                               label: l10n.baseCurrencySettingsSave,

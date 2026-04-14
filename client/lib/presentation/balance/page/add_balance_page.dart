@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_date_picker_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
-import 'package:asset_tuner/core_ui/components/ds_inline_banner.dart';
+import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
@@ -35,6 +36,7 @@ class AddBalancePage extends StatefulWidget {
 class _AddBalancePageState extends State<AddBalancePage> {
   late final TextEditingController _amountController;
   late DateTime _date;
+  String? _amountErrorText;
 
   @override
   void initState() {
@@ -55,30 +57,46 @@ class _AddBalancePageState extends State<AddBalancePage> {
 
     return BlocProvider(
       create: (_) => getIt<SubaccountBalanceCubit>(),
-      child: BlocListener<SubaccountBalanceCubit, SubaccountBalanceState>(
-        listenWhen: (prev, curr) => prev.status != curr.status,
-        listener: (context, state) async {
-          if (state.status != SubaccountBalanceStatus.success || state.entry == null) {
-            return;
-          }
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<SubaccountBalanceCubit, SubaccountBalanceState>(
+            listenWhen: (prev, curr) => prev.status != curr.status,
+            listener: (context, state) async {
+              if (state.status != SubaccountBalanceStatus.success || state.entry == null) {
+                return;
+              }
 
-          final accountInfoCubit = context.read<AccountInfoCubit>();
-          final accountsCubit = context.read<AccountsCubit>();
-          final subaccountInfoCubit = context.read<SubaccountInfoCubit>();
-          final entry = state.entry!;
-          accountInfoCubit.applyUpdatedSubaccountBalance(
-            subaccountId: widget.subaccountId,
-            amountAtomic: entry.amountAtomic,
-            amountDecimals: entry.amountDecimals,
-          );
-          accountsCubit.refresh(silent: true);
-          subaccountInfoCubit.refreshHistory(showLoading: true);
+              final accountInfoCubit = context.read<AccountInfoCubit>();
+              final accountsCubit = context.read<AccountsCubit>();
+              final subaccountInfoCubit = context.read<SubaccountInfoCubit>();
+              final entry = state.entry!;
+              accountInfoCubit.applyUpdatedSubaccountBalance(
+                subaccountId: widget.subaccountId,
+                amountAtomic: entry.amountAtomic,
+                amountDecimals: entry.amountDecimals,
+              );
+              accountsCubit.refresh(silent: true);
+              subaccountInfoCubit.refreshHistory(showLoading: true);
 
-          if (!context.mounted) {
-            return;
-          }
-          context.pop(true);
-        },
+              if (!context.mounted) {
+                return;
+              }
+              context.pop(true);
+            },
+          ),
+          BlocListener<SubaccountBalanceCubit, SubaccountBalanceState>(
+            listenWhen: (prev, curr) =>
+                prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+            listener: (context, state) {
+              logger.e('Set balance failed: ${state.failureCode}');
+              showDSSnackBar(
+                context,
+                variant: DSSnackBarVariant.error,
+                message: state.failureMessage ?? l10n.errorGeneric,
+              );
+            },
+          ),
+        ],
         child: BlocBuilder<SubaccountBalanceCubit, SubaccountBalanceState>(
           builder: (context, state) {
             final spacing = context.dsSpacing;
@@ -92,14 +110,6 @@ class _AddBalancePageState extends State<AddBalancePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (state.status == SubaccountBalanceStatus.error) ...[
-                        DSInlineBanner(
-                          title: l10n.subaccountUpdateBalanceCta,
-                          message: state.failureMessage ?? l10n.errorGeneric,
-                          variant: DSInlineBannerVariant.danger,
-                        ),
-                        SizedBox(height: spacing.s16),
-                      ],
                       Expanded(
                         child: SingleChildScrollView(
                           child: DSCard(
@@ -116,7 +126,13 @@ class _AddBalancePageState extends State<AddBalancePage> {
                                 DSDecimalField(
                                   label: l10n.addBalanceAmountLabel,
                                   controller: _amountController,
+                                  errorText: _amountErrorText,
                                   enabled: !isLoading,
+                                  onChanged: (_) {
+                                    if (_amountErrorText != null) {
+                                      setState(() => _amountErrorText = null);
+                                    }
+                                  },
                                 ),
                               ],
                             ),
@@ -133,6 +149,9 @@ class _AddBalancePageState extends State<AddBalancePage> {
                             : () async {
                                 final amount = _parseDecimal(_amountController.text);
                                 if (amount == null) {
+                                  setState(
+                                    () => _amountErrorText = l10n.addBalanceValidationAmount,
+                                  );
                                   return;
                                 }
                                 await context.read<SubaccountBalanceCubit>().submit(

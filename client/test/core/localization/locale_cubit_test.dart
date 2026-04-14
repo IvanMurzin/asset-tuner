@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:asset_tuner/core/local_storage/locale_storage.dart';
 import 'package:asset_tuner/core/localization/locale_cubit.dart';
+import 'package:asset_tuner/core/localization/system_locale_provider.dart';
 import 'package:asset_tuner/core/supabase/supabase_error_translator.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +25,7 @@ void main() {
     });
 
     test('uses system locale when no override is stored', () async {
-      cubit = LocaleCubit(storage, systemLocaleProvider: () => const Locale('ru', 'GE'));
+      cubit = LocaleCubit(storage, _FakeSystemLocaleProvider(const Locale('ru', 'GE')));
 
       await cubit!.load();
 
@@ -37,7 +38,7 @@ void main() {
 
     test('restores explicit override and keeps it across restart', () async {
       SharedPreferences.setMockInitialValues({'locale_override': 'en'});
-      cubit = LocaleCubit(storage, systemLocaleProvider: () => const Locale('ru'));
+      cubit = LocaleCubit(storage, _FakeSystemLocaleProvider(const Locale('ru')));
 
       await cubit!.load();
 
@@ -51,7 +52,7 @@ void main() {
 
     test('reset to system removes override from storage', () async {
       SharedPreferences.setMockInitialValues({'locale_override': 'en'});
-      cubit = LocaleCubit(storage, systemLocaleProvider: () => const Locale('ru'));
+      cubit = LocaleCubit(storage, _FakeSystemLocaleProvider(const Locale('ru')));
 
       await cubit!.load();
       await cubit!.setLocale(null);
@@ -64,7 +65,7 @@ void main() {
 
     test('cleans invalid stored override and falls back to system locale', () async {
       SharedPreferences.setMockInitialValues({'locale_override': 'en-US'});
-      cubit = LocaleCubit(storage, systemLocaleProvider: () => const Locale('ru'));
+      cubit = LocaleCubit(storage, _FakeSystemLocaleProvider(const Locale('ru')));
 
       await cubit!.load();
 
@@ -75,4 +76,13 @@ void main() {
       expect(SupabaseErrorTranslator.translate('unknown_error'), contains('неизвестная ошибка'));
     });
   });
+}
+
+class _FakeSystemLocaleProvider implements ISystemLocaleProvider {
+  const _FakeSystemLocaleProvider(this.locale);
+
+  final Locale locale;
+
+  @override
+  Locale getCurrentLocale() => locale;
 }

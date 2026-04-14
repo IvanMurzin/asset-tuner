@@ -21,7 +21,7 @@ Allow the user to change their base currency, enforcing free-tier limits and ref
 - needs component: `DSSelectList` (single-select list with search)
 - needs component: `DSSearchField`
 - needs component: `DSRadioRow`
-- needs component: `DSInlineBanner` (paywall prompt, entitlements warning, errors)
+- needs component: `DSSnackBar` (paywall prompt, entitlements warning, errors)
 - needs component: `DSSkeleton` (loading)
 
 ## Actions & navigation

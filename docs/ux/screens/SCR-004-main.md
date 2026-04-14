@@ -33,7 +33,7 @@ Primary navigation:
 - needs component: `DSTotalValue` (large total typography + skeleton loading) or reuse DS typography
 - needs component: `DSAccountCard` (gradient card by account type)
 - needs component: `DSChip` (base currency pill)
-- needs component: `DSInlineBanner` (offline / missing rates / errors)
+- needs component: `DSSnackBar` (offline / missing rates / errors)
 - needs component: `DSSkeleton` (loading placeholders)
 - needs component: `DSPullToRefresh` (or platform-native wrapper)
 

@@ -1,5 +1,6 @@
 import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
@@ -8,7 +9,6 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
-import 'package:asset_tuner/presentation/paywall/widget/paywall_error_banner.dart';
 import 'package:asset_tuner/presentation/paywall/widget/paywall_footer.dart';
 import 'package:asset_tuner/presentation/paywall/widget/paywall_header.dart';
 import 'package:asset_tuner/presentation/paywall/widget/paywall_legal_text.dart';
@@ -41,7 +41,6 @@ class _PaywallPageState extends State<PaywallPage> {
   PaywallPlanOption _selectedOption = PaywallPlanOption.annual;
   bool _isLoadingOfferings = true;
   bool _isProcessingAction = false;
-  String? _errorMessage;
 
   bool get _monthlyEnabled => _monthlyPackage != null;
   bool get _annualEnabled => _annualPackage != null;
@@ -66,7 +65,6 @@ class _PaywallPageState extends State<PaywallPage> {
   Future<void> _loadOfferings() async {
     setState(() {
       _isLoadingOfferings = true;
-      _errorMessage = null;
     });
 
     try {
@@ -105,8 +103,8 @@ class _PaywallPageState extends State<PaywallPage> {
       }
       setState(() {
         _isLoadingOfferings = false;
-        _errorMessage = AppLocalizations.of(context)!.paywallNoOfferings;
       });
+      _showError(AppLocalizations.of(context)!.paywallNoOfferings, code: 'paywall_load_offerings');
     }
   }
 
@@ -169,7 +167,6 @@ class _PaywallPageState extends State<PaywallPage> {
 
     setState(() {
       _isProcessingAction = true;
-      _errorMessage = null;
     });
 
     try {
@@ -178,15 +175,14 @@ class _PaywallPageState extends State<PaywallPage> {
     } on PlatformException catch (error) {
       final code = PurchasesErrorHelper.getErrorCode(error);
       if (code != PurchasesErrorCode.purchaseCancelledError && mounted) {
-        setState(() {
-          _errorMessage = error.message ?? AppLocalizations.of(context)!.errorGeneric;
-        });
+        _showError(
+          error.message ?? AppLocalizations.of(context)!.errorGeneric,
+          code: 'paywall_purchase',
+        );
       }
     } catch (_) {
       if (mounted) {
-        setState(() {
-          _errorMessage = AppLocalizations.of(context)!.errorGeneric;
-        });
+        _showError(AppLocalizations.of(context)!.errorGeneric, code: 'paywall_purchase');
       }
     } finally {
       if (mounted) {
@@ -202,7 +198,6 @@ class _PaywallPageState extends State<PaywallPage> {
 
     setState(() {
       _isProcessingAction = true;
-      _errorMessage = null;
     });
 
     try {
@@ -210,9 +205,7 @@ class _PaywallPageState extends State<PaywallPage> {
       await _onPurchaseOrRestoreCompleted();
     } catch (_) {
       if (mounted) {
-        setState(() {
-          _errorMessage = AppLocalizations.of(context)!.errorGeneric;
-        });
+        _showError(AppLocalizations.of(context)!.errorGeneric, code: 'paywall_restore');
       }
     } finally {
       if (mounted) {
@@ -253,6 +246,14 @@ class _PaywallPageState extends State<PaywallPage> {
         message: AppLocalizations.of(context)!.errorGeneric,
       );
     }
+  }
+
+  void _showError(String message, {required String code}) {
+    if (!mounted) {
+      return;
+    }
+    logger.e('Paywall error: $code');
+    showDSSnackBar(context, variant: DSSnackBarVariant.error, message: message);
   }
 
   @override
@@ -372,15 +373,6 @@ class _PaywallPageState extends State<PaywallPage> {
                           ),
                         ),
                         SizedBox(height: spacing.s8),
-                        if (_errorMessage != null) ...[
-                          PaywallErrorBanner(
-                            title: l10n.paywallTitle,
-                            message: _errorMessage!,
-                            actionLabel: l10n.splashRetry,
-                            onAction: _loadOfferings,
-                          ),
-                          SizedBox(height: spacing.s8),
-                        ],
                         Expanded(
                           child: _isLoadingOfferings
                               ? const PaywallLoadingSkeleton()

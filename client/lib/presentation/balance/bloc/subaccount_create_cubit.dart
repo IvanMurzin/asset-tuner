@@ -29,8 +29,9 @@ class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
       emit(
         state.copyWith(
           status: SubaccountCreateStatus.error,
+          nameError: SubaccountCreateFieldError.required,
           failureCode: 'validation',
-          failureMessage: 'Name is required',
+          failureMessage: null,
         ),
       );
       return;
@@ -39,6 +40,7 @@ class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
     emit(
       state.copyWith(
         status: SubaccountCreateStatus.loading,
+        nameError: null,
         failureCode: null,
         failureMessage: null,
       ),
@@ -68,11 +70,19 @@ class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
         emit(
           state.copyWith(
             status: SubaccountCreateStatus.error,
+            nameError: null,
             failureCode: failure.code,
             failureMessage: failure.message,
           ),
         );
     }
+  }
+
+  void clearNameError() {
+    if (state.nameError == null) {
+      return;
+    }
+    emit(state.copyWith(nameError: null));
   }
 
   void reset() {

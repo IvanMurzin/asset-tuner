@@ -21,7 +21,7 @@ Create a new subaccount (счёт) inside an account by selecting a currency/tok
 - DS: `DSSearchField` + list (asset picker)
 - DS: `DSDecimalField` (balance)
 - DS: `DSButton` (Add/Cancel)
-- DS: `DSInlineBanner` (errors)
+- DS: `DSSnackBar` (errors)
 - DS: `DSSkeleton` (loading catalog)
 
 ## Actions & navigation

@@ -26,7 +26,7 @@ Show a simple analytics view:
 - DS: `DSListRow` (legend rows / update rows)
 - needs component: `DSChartDonut` (or a minimal chart wrapper)
 - needs component: `DSSkeleton` (loading)
-- needs component: `DSInlineBanner` (offline/error)
+- needs component: `DSSnackBar` (offline/error)
 - needs component: `DSEmptyState`
 
 ## Actions & navigation

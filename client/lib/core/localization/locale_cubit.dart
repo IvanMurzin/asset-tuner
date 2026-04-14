@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:asset_tuner/core/local_storage/locale_storage.dart';
+import 'package:asset_tuner/core/localization/system_locale_provider.dart';
 import 'package:asset_tuner/core/supabase/supabase_error_translator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -11,12 +12,10 @@ part 'locale_state.dart';
 
 @lazySingleton
 class LocaleCubit extends Cubit<LocaleState> {
-  LocaleCubit(this._storage, {Locale Function()? systemLocaleProvider})
-    : _systemLocaleProvider = systemLocaleProvider ?? _defaultSystemLocaleProvider,
-      super(const LocaleState());
+  LocaleCubit(this._storage, this._systemLocaleProvider) : super(const LocaleState());
 
   final LocaleStorage _storage;
-  final Locale Function() _systemLocaleProvider;
+  final ISystemLocaleProvider _systemLocaleProvider;
 
   Future<void> load() async {
     final storedTag = await _storage.readLocaleTag();
@@ -25,7 +24,9 @@ class LocaleCubit extends Cubit<LocaleState> {
       await _storage.writeLocaleTag(null);
     }
     final effectiveTag =
-        normalizedStoredTag ?? _normalizeTag(_systemLocaleProvider().languageCode) ?? 'en';
+        normalizedStoredTag ??
+        _normalizeTag(_systemLocaleProvider.getCurrentLocale().languageCode) ??
+        'en';
     emit(state.copyWith(localeTag: normalizedStoredTag));
     SupabaseErrorTranslator.setLanguage(SupportedLanguageExtension.fromCode(effectiveTag));
   }
@@ -34,7 +35,8 @@ class LocaleCubit extends Cubit<LocaleState> {
     final tag = _normalizeTag(locale?.languageCode);
     await _storage.writeLocaleTag(tag);
     emit(state.copyWith(localeTag: tag));
-    final effectiveTag = tag ?? _normalizeTag(_systemLocaleProvider().languageCode) ?? 'en';
+    final effectiveTag =
+        tag ?? _normalizeTag(_systemLocaleProvider.getCurrentLocale().languageCode) ?? 'en';
     SupabaseErrorTranslator.setLanguage(SupportedLanguageExtension.fromCode(effectiveTag));
   }
 
@@ -45,8 +47,6 @@ class LocaleCubit extends Cubit<LocaleState> {
     }
     return Locale.fromSubtags(languageCode: tag);
   }
-
-  static Locale _defaultSystemLocaleProvider() => PlatformDispatcher.instance.locale;
 
   String? _normalizeTag(String? tag) {
     final normalized = tag?.trim().toLowerCase();

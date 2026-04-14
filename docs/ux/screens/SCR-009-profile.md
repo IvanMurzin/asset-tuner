@@ -24,7 +24,7 @@ Provide access to user preferences and account-level settings, including base cu
 - DS: `DSButton` (sign-out if included)
 - needs component: `DSAppBar`
 - needs component: `DSListRow` (settings row with trailing value)
-- needs component: `DSInlineBanner` (entitlements refresh errors)
+- needs component: `DSSnackBar` (entitlements refresh errors)
 
 ## Actions & navigation
 - Tap “Base currency” → `SCR-012`.

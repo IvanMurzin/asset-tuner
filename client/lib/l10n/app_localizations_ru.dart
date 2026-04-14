@@ -535,6 +535,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subaccountCurrencyLabel => 'Валюта';
 
   @override
+  String get subaccountCurrencyRequired => 'Выберите валюту';
+
+  @override
   String get subaccountNameHint => 'например, USDT (TRC20)';
 
   @override

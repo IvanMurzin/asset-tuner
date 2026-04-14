@@ -207,6 +207,7 @@
   "subaccountCreateTitle": "Add subaccount",
   "subaccountCreateCta": "Add subaccount",
   "subaccountCurrencyLabel": "Currency",
+  "subaccountCurrencyRequired": "Select a currency",
   "subaccountNameHint": "e.g., USDT (TRC20)",
   "subaccountEmptyTitle": "No subaccounts yet",
   "subaccountEmptyBody": "Add the holdings you have in this account.",

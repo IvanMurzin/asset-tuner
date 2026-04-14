@@ -21,7 +21,7 @@ Create a **snapshot** balance entry for a subaccount (счёт) for **today**.
 - DS: `DSCard`
 - needs component: `DSAppBar`
 - needs component: `DSDecimalField` (Decimal-safe input + locale separators)
-- needs component: `DSInlineBanner` (network errors)
+- needs component: `DSSnackBar` (network errors)
 
 ## Actions & navigation
 - Save:

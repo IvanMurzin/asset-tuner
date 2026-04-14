@@ -37,6 +37,7 @@ class DSCurrencyPicker extends StatelessWidget {
     this.maxRecent = 5,
     this.maxSearchResults = 50,
     this.enabled = true,
+    this.errorText,
   });
 
   final List<DSCurrencyPickerOption> options;
@@ -52,6 +53,7 @@ class DSCurrencyPicker extends StatelessWidget {
   final int maxRecent;
   final int maxSearchResults;
   final bool enabled;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -62,60 +64,69 @@ class DSCurrencyPicker extends StatelessWidget {
         ? null
         : options.where((option) => option.id == selectedId).firstOrNull;
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(context.dsRadius.r12),
-      onTap: enabled ? () => _openSheet(context) : null,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
-        decoration: BoxDecoration(
-          color: enabled ? colors.surface : colors.surfaceAlt,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
           borderRadius: BorderRadius.circular(context.dsRadius.r12),
-          border: Border.all(color: colors.border),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(context.dsRadius.r8),
-              ),
-              alignment: Alignment.center,
-              child: Icon(Icons.currency_exchange, color: colors.primary, size: 20),
+          onTap: enabled ? () => _openSheet(context) : null,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
+            decoration: BoxDecoration(
+              color: enabled ? colors.surface : colors.surfaceAlt,
+              borderRadius: BorderRadius.circular(context.dsRadius.r12),
+              border: Border.all(color: errorText == null ? colors.border : colors.danger),
             ),
-            SizedBox(width: spacing.s12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    selectedTitleText,
-                    style: typography.caption.copyWith(color: colors.textSecondary),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: colors.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(context.dsRadius.r8),
                   ),
-                  SizedBox(height: spacing.s4),
-                  Text(
-                    selected == null ? searchHintText : _displayTitle(selected),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: typography.body.copyWith(
-                      color: selected == null ? colors.textTertiary : colors.textPrimary,
-                      fontWeight: selected == null ? FontWeight.w400 : FontWeight.w700,
-                    ),
+                  alignment: Alignment.center,
+                  child: Icon(Icons.currency_exchange, color: colors.primary, size: 20),
+                ),
+                SizedBox(width: spacing.s12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        selectedTitleText,
+                        style: typography.caption.copyWith(color: colors.textSecondary),
+                      ),
+                      SizedBox(height: spacing.s4),
+                      Text(
+                        selected == null ? searchHintText : _displayTitle(selected),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: typography.body.copyWith(
+                          color: selected == null ? colors.textTertiary : colors.textPrimary,
+                          fontWeight: selected == null ? FontWeight.w400 : FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                SizedBox(width: spacing.s8),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: enabled ? colors.textSecondary : colors.textTertiary,
+                ),
+              ],
             ),
-            SizedBox(width: spacing.s8),
-            Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: enabled ? colors.textSecondary : colors.textTertiary,
-            ),
-          ],
+          ),
         ),
-      ),
+        if (errorText != null) ...[
+          SizedBox(height: spacing.s8),
+          Text(errorText!, style: typography.caption.copyWith(color: colors.danger)),
+        ],
+      ],
     );
   }
 
