@@ -15,8 +15,7 @@ abstract class SessionState with _$SessionState {
     String? failureMessage,
   }) = _SessionState;
 
-  bool get isAuthenticated =>
-      status == SessionStatus.authenticated && session != null;
+  bool get isAuthenticated => status == SessionStatus.authenticated && session != null;
 
   bool get isBusy => isSigningOut || isDeletingAccount;
 }

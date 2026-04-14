@@ -18,10 +18,7 @@ class MainShellPage extends StatelessWidget {
 
   final StatefulNavigationShell navigationShell;
 
-  void _maybeFeedAnalytics(
-    BuildContext context, {
-    bool forceForAnalyticsTab = false,
-  }) {
+  void _maybeFeedAnalytics(BuildContext context, {bool forceForAnalyticsTab = false}) {
     if (!forceForAnalyticsTab && navigationShell.currentIndex != 1) {
       return;
     }
@@ -37,9 +34,7 @@ class MainShellPage extends StatelessWidget {
     final accounts = accountsState.status == AccountsStatus.ready
         ? accountsState.accounts
         : <AccountEntity>[];
-    final assets = assetsState.status == AssetsStatus.ready
-        ? assetsState.assets
-        : <AssetEntity>[];
+    final assets = assetsState.status == AssetsStatus.ready ? assetsState.assets : <AssetEntity>[];
     final snapshot = assetsState.snapshot;
 
     context.read<AnalyticsCubit>().onSourceDataReady(
@@ -56,9 +51,7 @@ class MainShellPage extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AccountsCubit>(
-          create: (_) => getIt<AccountsCubit>()..load(),
-        ),
+        BlocProvider<AccountsCubit>(create: (_) => getIt<AccountsCubit>()..load()),
         BlocProvider<AssetsCubit>(create: (_) => getIt<AssetsCubit>()..load()),
         BlocProvider<AnalyticsCubit>(create: (_) => getIt<AnalyticsCubit>()),
       ],
@@ -75,8 +68,7 @@ class MainShellPage extends StatelessWidget {
             },
           ),
           BlocListener<ProfileCubit, ProfileState>(
-            listenWhen: (prev, curr) =>
-                prev.profile != curr.profile || prev.status != curr.status,
+            listenWhen: (prev, curr) => prev.profile != curr.profile || prev.status != curr.status,
             listener: (context, state) => _maybeFeedAnalytics(context),
           ),
           BlocListener<AccountsCubit, AccountsState>(

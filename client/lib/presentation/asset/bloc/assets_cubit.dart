@@ -15,11 +15,8 @@ part 'assets_state.dart';
 
 @injectable
 class AssetsCubit extends Cubit<AssetsState> {
-  AssetsCubit(
-    this._getCachedSession,
-    this._getAssets,
-    this._getLatestUsdRates,
-  ) : super(const AssetsState());
+  AssetsCubit(this._getCachedSession, this._getAssets, this._getLatestUsdRates)
+    : super(const AssetsState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final GetAssetsUseCase _getAssets;

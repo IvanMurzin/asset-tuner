@@ -13,8 +13,7 @@ part 'otp_cubit.freezed.dart';
 
 @injectable
 class OtpCubit extends Cubit<OtpState> {
-  OtpCubit(this._verifySignUpOtpUseCase, this._resendSignUpOtpUseCase)
-    : super(const OtpState());
+  OtpCubit(this._verifySignUpOtpUseCase, this._resendSignUpOtpUseCase) : super(const OtpState());
 
   final VerifySignUpOtpUseCase _verifySignUpOtpUseCase;
   final ResendSignUpOtpUseCase _resendSignUpOtpUseCase;
@@ -52,9 +51,7 @@ class OtpCubit extends Cubit<OtpState> {
         emit(
           state.copyWith(
             status: OtpStatus.idle,
-            navigation: const OtpNavigation(
-              destination: OtpDestination.overview,
-            ),
+            navigation: const OtpNavigation(destination: OtpDestination.overview),
           ),
         );
     }
@@ -66,9 +63,7 @@ class OtpCubit extends Cubit<OtpState> {
 
   Future<void> resend() async {
     final email = state.email;
-    if (email.isEmpty ||
-        state.isResendInProgress ||
-        state.resendCooldownUntil != null) {
+    if (email.isEmpty || state.isResendInProgress || state.resendCooldownUntil != null) {
       return;
     }
     emit(state.copyWith(isResendInProgress: true, bannerFailureCode: null));

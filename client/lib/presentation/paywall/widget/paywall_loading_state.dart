@@ -19,10 +19,7 @@ class PaywallLoadingState extends StatelessWidget {
         children: [
           DSLoader(size: spacing.s32),
           SizedBox(height: spacing.s12),
-          Text(
-            message,
-            style: typography.body.copyWith(color: colors.textSecondary),
-          ),
+          Text(message, style: typography.body.copyWith(color: colors.textSecondary)),
         ],
       ),
     );

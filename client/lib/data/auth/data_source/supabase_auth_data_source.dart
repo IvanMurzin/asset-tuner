@@ -58,9 +58,7 @@ class SupabaseAuthDataSource implements IAuthDataSource {
     return switch (provider) {
       AuthProvider.google => OAuthProvider.google,
       AuthProvider.apple => OAuthProvider.apple,
-      AuthProvider.email => throw StateError(
-        'OAuth is not supported for $provider',
-      ),
+      AuthProvider.email => throw StateError('OAuth is not supported for $provider'),
     };
   }
 
@@ -79,15 +77,8 @@ class SupabaseAuthDataSource implements IAuthDataSource {
   }
 
   @override
-  Future<AuthSessionDto?> verifySignUpOtp({
-    required String email,
-    required String token,
-  }) async {
-    final response = await _client.auth.verifyOTP(
-      email: email,
-      token: token,
-      type: OtpType.signup,
-    );
+  Future<AuthSessionDto?> verifySignUpOtp({required String email, required String token}) async {
+    final response = await _client.auth.verifyOTP(email: email, token: token, type: OtpType.signup);
     final user = response.session?.user;
     if (user == null) {
       return null;

@@ -28,10 +28,7 @@ class PaywallHeader extends StatelessWidget {
         TextButton(
           onPressed: isBusy ? null : onRestore,
           style: TextButton.styleFrom(
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.s8,
-              vertical: spacing.s8,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s8),
             minimumSize: const Size(44, 36),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),

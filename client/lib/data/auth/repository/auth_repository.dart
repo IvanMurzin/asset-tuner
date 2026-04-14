@@ -19,8 +19,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthRepository implements IAuthRepository {
   AuthRepository(
     this._dataSource, {
-    @Named('oauthSignInTimeout')
-    Duration oAuthSignInTimeout = const Duration(seconds: 90),
+    @Named('oauthSignInTimeout') Duration oAuthSignInTimeout = const Duration(seconds: 90),
   }) : _oAuthSignInTimeout = oAuthSignInTimeout;
 
   final IAuthDataSource _dataSource;
@@ -68,34 +67,25 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.resendSignUpOtp failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to resend OTP',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to resend OTP'),
       );
     }
   }
 
   @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(
-    AuthProvider provider,
-  ) async {
+  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
     StreamSubscription<AuthState>? authSubscription;
     Timer? timeoutTimer;
     final signedInCompleter = Completer<AuthSessionEntity>();
     try {
       if (provider == AuthProvider.email) {
         return const FailureResult(
-          Failure(
-            code: 'validation',
-            message: 'Use email OTP or password sign-in',
-          ),
+          Failure(code: 'validation', message: 'Use email OTP or password sign-in'),
         );
       }
       authSubscription = _dataSource.onAuthStateChange().listen(
         (state) {
-          if (state.event != AuthChangeEvent.signedIn ||
-              signedInCompleter.isCompleted) {
+          if (state.event != AuthChangeEvent.signedIn || signedInCompleter.isCompleted) {
             return;
           }
           final session = state.session;
@@ -104,9 +94,7 @@ class AuthRepository implements IAuthRepository {
           }
           final email = session.user.email ?? '';
           signedInCompleter.complete(
-            _syncCachedSession(
-              AuthSessionDto(userId: session.user.id, email: email),
-            )!,
+            _syncCachedSession(AuthSessionDto(userId: session.user.id, email: email))!,
           );
         },
         onError: (Object error, StackTrace stackTrace) {
@@ -128,16 +116,11 @@ class AuthRepository implements IAuthRepository {
       return Success(entity);
     } on TimeoutException catch (error) {
       logger.e('AuthRepository.signInWithOAuth timed out', error: error);
-      return const FailureResult(
-        Failure(code: 'timeout', message: 'OAuth sign-in timed out'),
-      );
+      return const FailureResult(Failure(code: 'timeout', message: 'OAuth sign-in timed out'));
     } catch (error) {
       logger.e('AuthRepository.signInWithOAuth failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to sign in',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign in'),
       );
     } finally {
       timeoutTimer?.cancel();
@@ -155,10 +138,7 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.signOut failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to sign out',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign out'),
       );
     }
   }
@@ -174,10 +154,7 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.deleteAccount failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to delete account',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to delete account'),
       );
     }
   }
@@ -192,19 +169,13 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.signInWithPassword failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to sign in',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign in'),
       );
     }
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  ) async {
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
     try {
       await _dataSource.signUpWithPassword(email, password);
       if (!AppConfig.instance.isOtpEnabled) {
@@ -219,19 +190,13 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.signUpWithPassword failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to sign up',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to sign up'),
       );
     }
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(
-    String email,
-    String code,
-  ) async {
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
     try {
       final dto = await _dataSource.verifySignUpOtp(email: email, token: code);
       if (dto == null) {
@@ -245,20 +210,13 @@ class AuthRepository implements IAuthRepository {
     } catch (error) {
       logger.e('AuthRepository.verifySignUpOtp failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(
-          error,
-          fallbackMessage: 'Unable to verify OTP',
-        ),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to verify OTP'),
       );
     }
   }
 
   @override
   Future<List<AuthProvider>> getAvailableProviders() {
-    return Future.value(const [
-      AuthProvider.email,
-      AuthProvider.google,
-      AuthProvider.apple,
-    ]);
+    return Future.value(const [AuthProvider.email, AuthProvider.google, AuthProvider.apple]);
   }
 }

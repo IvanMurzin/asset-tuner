@@ -61,4 +61,4 @@
 
 ### CONF
 1. [BUG-CONF-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-CONF-001-app-config-auth-flags-and-oauth-placeholders.md) `P0` `Done`
-2. [BUG-CONF-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-CONF-002-system-default-theme-and-locale.md) `P1`
+2. [BUG-CONF-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-CONF-002-system-default-theme-and-locale.md) `P1` `Done`

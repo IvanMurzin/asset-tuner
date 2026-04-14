@@ -74,9 +74,7 @@ class ManageSubscriptionPage extends StatelessWidget {
                         SizedBox(height: context.dsSpacing.s12),
                         DSCard(
                           child: Text(
-                            isPaid
-                                ? l10n.settingsPlanPaid
-                                : l10n.settingsPlanFree,
+                            isPaid ? l10n.settingsPlanPaid : l10n.settingsPlanFree,
                             style: context.dsTypography.h2,
                           ),
                         ),
@@ -88,9 +86,7 @@ class ManageSubscriptionPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DSButton(
-                                label: isPaid
-                                    ? l10n.subscriptionManage
-                                    : l10n.subscriptionUpgrade,
+                                label: isPaid ? l10n.subscriptionManage : l10n.subscriptionUpgrade,
                                 fullWidth: true,
                                 isLoading: profileState.isSyncingSubscription,
                                 onPressed: profileState.isSyncingSubscription
@@ -101,15 +97,11 @@ class ManageSubscriptionPage extends StatelessWidget {
                                           if (!context.mounted) {
                                             return;
                                           }
-                                          await context
-                                              .read<ProfileCubit>()
-                                              .syncSubscription();
+                                          await context.read<ProfileCubit>().syncSubscription();
                                           if (!context.mounted) {
                                             return;
                                           }
-                                          await context
-                                              .read<AssetsCubit>()
-                                              .refresh(silent: true);
+                                          await context.read<AssetsCubit>().refresh(silent: true);
                                           return;
                                         }
                                         await context.push<bool>(
@@ -130,28 +122,22 @@ class ManageSubscriptionPage extends StatelessWidget {
                                     ? null
                                     : () async {
                                         try {
-                                          await getIt<RevenueCatService>()
-                                              .restorePurchases();
+                                          await getIt<RevenueCatService>().restorePurchases();
                                           if (!context.mounted) {
                                             return;
                                           }
-                                          await context
-                                              .read<ProfileCubit>()
-                                              .syncSubscription();
+                                          await context.read<ProfileCubit>().syncSubscription();
                                           if (!context.mounted) {
                                             return;
                                           }
-                                          await context
-                                              .read<AssetsCubit>()
-                                              .refresh(silent: true);
+                                          await context.read<AssetsCubit>().refresh(silent: true);
                                           if (!context.mounted) {
                                             return;
                                           }
                                           showDSSnackBar(
                                             context,
                                             variant: DSSnackBarVariant.success,
-                                            message:
-                                                l10n.subscriptionRestoreSuccess,
+                                            message: l10n.subscriptionRestoreSuccess,
                                           );
                                         } catch (_) {
                                           if (!context.mounted) {

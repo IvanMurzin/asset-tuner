@@ -24,9 +24,7 @@ class DSSegmentedControl extends StatelessWidget {
     final typography = context.dsTypography;
     final spacing = context.dsSpacing;
 
-    final isSelected = <bool>[
-      for (var i = 0; i < labels.length; i++) i == selectedIndex,
-    ];
+    final isSelected = <bool>[for (var i = 0; i < labels.length; i++) i == selectedIndex];
 
     return Container(
       decoration: BoxDecoration(
@@ -60,9 +58,7 @@ class DSSegmentedControl extends StatelessWidget {
               child: Text(
                 labels[i],
                 style: typography.body.copyWith(
-                  color: disabledIndices.contains(i)
-                      ? colors.textTertiary
-                      : null,
+                  color: disabledIndices.contains(i) ? colors.textTertiary : null,
                 ),
               ),
             ),

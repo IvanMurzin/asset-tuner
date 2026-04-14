@@ -15,17 +15,18 @@ class PaywallLoadingSkeleton extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.s12,
-              vertical: spacing.s12,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(radius.r12),
               border: Border.all(color: context.dsColors.border),
             ),
             child: Row(
               children: [
-                const DSSkeleton(height: 18, width: 18, borderRadius: BorderRadius.all(Radius.circular(9))),
+                const DSSkeleton(
+                  height: 18,
+                  width: 18,
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
                 SizedBox(width: spacing.s12),
                 Expanded(child: DSSkeleton(height: 18, width: 100)),
                 SizedBox(width: spacing.s12),
@@ -35,17 +36,18 @@ class PaywallLoadingSkeleton extends StatelessWidget {
           ),
           SizedBox(height: spacing.s8),
           Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.s12,
-              vertical: spacing.s12,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(radius.r12),
               border: Border.all(color: context.dsColors.border),
             ),
             child: Row(
               children: [
-                const DSSkeleton(height: 18, width: 18, borderRadius: BorderRadius.all(Radius.circular(9))),
+                const DSSkeleton(
+                  height: 18,
+                  width: 18,
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
                 SizedBox(width: spacing.s12),
                 Expanded(child: DSSkeleton(height: 18, width: 100)),
                 SizedBox(width: spacing.s12),
@@ -56,10 +58,7 @@ class PaywallLoadingSkeleton extends StatelessWidget {
           SizedBox(height: spacing.s8),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.s12,
-              vertical: spacing.s12,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(radius.r12),
               border: Border.all(color: context.dsColors.border),
@@ -101,10 +100,7 @@ class PaywallLoadingSkeleton extends StatelessWidget {
           SizedBox(height: spacing.s8),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.s12,
-              vertical: spacing.s12,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(radius.r12),
               border: Border.all(color: context.dsColors.primary, width: 2),

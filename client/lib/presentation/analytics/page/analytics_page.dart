@@ -129,10 +129,7 @@ class _Body extends StatelessWidget {
     return ListView(
       children: [
         if (state.breakdown.isNotEmpty) ...[
-          _AnalyticsPieChart(
-            breakdown: state.breakdown,
-            colors: context.dsColors,
-          ),
+          _AnalyticsPieChart(breakdown: state.breakdown, colors: context.dsColors),
           SizedBox(height: spacing.s24),
         ],
         DSSectionTitle(title: l10n.analyticsBreakdownTitle),
@@ -141,10 +138,7 @@ class _Body extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.only(bottom: spacing.s8),
             child: DSCard(
-              padding: EdgeInsets.symmetric(
-                horizontal: spacing.s12,
-                vertical: spacing.s8,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s8),
               child: _BreakdownCard(
                 item: entry.value,
                 index: entry.key,
@@ -173,14 +167,8 @@ class _Body extends StatelessWidget {
               subtitleText: '${item.accountName} · ${item.subaccountName}',
               deltaText: '$sign$diffStr ${item.assetCode}',
               deltaColor: deltaColor,
-              baseLineText: context.dsFormatters.formatMoney(
-                item.diffBaseAmount,
-                currency,
-              ),
-              trailingPrimaryText: context.dsFormatters.formatMoney(
-                item.diffBaseAmount,
-                currency,
-              ),
+              baseLineText: context.dsFormatters.formatMoney(item.diffBaseAmount, currency),
+              trailingPrimaryText: context.dsFormatters.formatMoney(item.diffBaseAmount, currency),
             ),
           );
         }),
@@ -217,10 +205,7 @@ class _BreakdownCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          item.assetCode,
-          style: typography.caption.copyWith(color: colors.textSecondary),
-        ),
+        Text(item.assetCode, style: typography.caption.copyWith(color: colors.textSecondary)),
         SizedBox(height: spacing.s4),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -307,23 +292,13 @@ class _AnalyticsPieChart extends StatelessWidget {
         title: item.assetCode,
         showTitle: true,
         radius: 48,
-        titleStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: colors.textPrimary,
-        ),
+        titleStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textPrimary),
       );
     }).toList();
 
     return SizedBox(
       height: 220,
-      child: PieChart(
-        PieChartData(
-          sections: sections,
-          sectionsSpace: 2,
-          centerSpaceRadius: 32,
-        ),
-      ),
+      child: PieChart(PieChartData(sections: sections, sectionsSpace: 2, centerSpaceRadius: 32)),
     );
   }
 

@@ -36,51 +36,37 @@ void main() {
       await repository.dispose();
     });
 
-    test(
-      'becomes authenticated and logs into RevenueCat once per user',
-      () async {
-        cubit.bootstrap();
-        await _flush();
-        repository.emitSession(
-          const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'),
-        );
-        await _flush();
-        repository.emitSession(
-          const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'),
-        );
-        await _flush();
+    test('becomes authenticated and logs into RevenueCat once per user', () async {
+      cubit.bootstrap();
+      await _flush();
+      repository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'));
+      await _flush();
+      repository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'));
+      await _flush();
 
-        expect(cubit.state.status, SessionStatus.authenticated);
-        expect(cubit.state.session?.userId, 'user-1');
-        expect(revenueCatService.loggedInUserIds, ['user-1']);
-      },
-    );
+      expect(cubit.state.status, SessionStatus.authenticated);
+      expect(cubit.state.session?.userId, 'user-1');
+      expect(revenueCatService.loggedInUserIds, ['user-1']);
+    });
 
-    test(
-      'clears state and logs out from RevenueCat on signed out session',
-      () async {
-        cubit.bootstrap();
-        await _flush();
-        repository.emitSession(
-          const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'),
-        );
-        await _flush();
+    test('clears state and logs out from RevenueCat on signed out session', () async {
+      cubit.bootstrap();
+      await _flush();
+      repository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'));
+      await _flush();
 
-        repository.emitSession(null);
-        await _flush();
+      repository.emitSession(null);
+      await _flush();
 
-        expect(cubit.state.status, SessionStatus.unauthenticated);
-        expect(cubit.state.session, isNull);
-        expect(revenueCatService.logOutCalls, 1);
-      },
-    );
+      expect(cubit.state.status, SessionStatus.unauthenticated);
+      expect(cubit.state.session, isNull);
+      expect(revenueCatService.logOutCalls, 1);
+    });
 
     test('signOut waits for auth stream before clearing state', () async {
       cubit.bootstrap();
       await _flush();
-      repository.emitSession(
-        const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'),
-      );
+      repository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'));
       await _flush();
 
       final completer = Completer<Result<void>>();
@@ -105,14 +91,11 @@ void main() {
     test('signOut failure keeps authenticated session', () async {
       cubit.bootstrap();
       await _flush();
-      repository.emitSession(
-        const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'),
-      );
+      repository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'));
       await _flush();
 
-      repository.signOutResult = () async => const FailureResult(
-        Failure(code: 'sign_out_failed', message: 'Unable to sign out'),
-      );
+      repository.signOutResult = () async =>
+          const FailureResult(Failure(code: 'sign_out_failed', message: 'Unable to sign out'));
 
       await cubit.signOut();
 
@@ -125,9 +108,7 @@ void main() {
     test('deleteAccount waits for auth stream before clearing state', () async {
       cubit.bootstrap();
       await _flush();
-      repository.emitSession(
-        const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'),
-      );
+      repository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'a@test.dev'));
       await _flush();
 
       final completer = Completer<Result<void>>();
@@ -184,19 +165,14 @@ class _FakeAuthRepository implements IAuthRepository {
   Future<AuthSessionEntity?> getCachedSession() async => null;
 
   @override
-  Future<Result<void>> resendSignUpOtp(String email) async =>
+  Future<Result<void>> resendSignUpOtp(String email) async => const Success(null);
+
+  @override
+  Future<Result<void>> signInWithPassword(String email, String password) async =>
       const Success(null);
 
   @override
-  Future<Result<void>> signInWithPassword(
-    String email,
-    String password,
-  ) async => const Success(null);
-
-  @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(
-    AuthProvider provider,
-  ) async {
+  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
     throw UnimplementedError();
   }
 
@@ -210,18 +186,12 @@ class _FakeAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  ) async {
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(
-    String email,
-    String code,
-  ) async {
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
     throw UnimplementedError();
   }
 }

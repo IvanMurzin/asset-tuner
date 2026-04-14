@@ -60,8 +60,7 @@ class AccountDetailPage extends StatelessWidget {
         ),
         BlocListener<AccountsCubit, AccountsState>(
           listenWhen: (prev, curr) =>
-              prev.accounts.length != curr.accounts.length ||
-              prev.accounts != curr.accounts,
+              prev.accounts.length != curr.accounts.length || prev.accounts != curr.accounts,
           listener: (context, state) {
             context.read<AccountInfoCubit>().setAccount(
               context.read<AccountsCubit>().findById(accountId),
@@ -71,8 +70,7 @@ class AccountDetailPage extends StatelessWidget {
         BlocListener<AccountArchiveCubit, AccountArchiveState>(
           listenWhen: (prev, curr) => prev.status != curr.status,
           listener: (context, state) async {
-            if (state.status != AccountArchiveStatus.success ||
-                state.account == null) {
+            if (state.status != AccountArchiveStatus.success || state.account == null) {
               return;
             }
             final accountsCubit = context.read<AccountsCubit>();
@@ -87,8 +85,7 @@ class AccountDetailPage extends StatelessWidget {
         BlocListener<AccountDeleteCubit, AccountDeleteState>(
           listenWhen: (prev, curr) => prev.status != curr.status,
           listener: (context, state) async {
-            if (state.status != AccountDeleteStatus.success ||
-                state.deletedAccountId == null) {
+            if (state.status != AccountDeleteStatus.success || state.deletedAccountId == null) {
               return;
             }
             final accountsCubit = context.read<AccountsCubit>();
@@ -106,15 +103,10 @@ class AccountDetailPage extends StatelessWidget {
           final spacing = context.dsSpacing;
 
           final account = infoState.account;
-          if (account == null &&
-              infoState.status == AccountInfoStatus.loading) {
+          if (account == null && infoState.status == AccountInfoStatus.loading) {
             return Scaffold(
               appBar: DSAppBar(title: initialTitle ?? l10n.accountsTitle),
-              body: SafeArea(
-                child: AccountDetailLoadingSkeleton(
-                  accountType: initialAccountType,
-                ),
-              ),
+              body: SafeArea(child: AccountDetailLoadingSkeleton(accountType: initialAccountType)),
             );
           }
 
@@ -134,15 +126,8 @@ class AccountDetailPage extends StatelessWidget {
           final assetsState = context.watch<AssetsCubit>().state;
           final rates = assetsState.snapshot;
           final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
-          final baseUsdPrice = _baseUsdPrice(
-            profileState,
-            assetsState.snapshot,
-          );
-          final total = _toBase(
-            account.totals?.totalUsd,
-            baseCurrency,
-            baseUsdPrice,
-          );
+          final baseUsdPrice = _baseUsdPrice(profileState, assetsState.snapshot);
+          final total = _toBase(account.totals?.totalUsd, baseCurrency, baseUsdPrice);
 
           final items = infoState.subaccounts.map((subaccount) {
             final asset = subaccount.asset;
@@ -151,9 +136,7 @@ class AccountDetailPage extends StatelessWidget {
             Decimal? converted;
             if (original == Decimal.zero) {
               converted = Decimal.zero;
-            } else if (baseUsdPrice != null &&
-                assetUsd != null &&
-                baseUsdPrice != Decimal.zero) {
+            } else if (baseUsdPrice != null && assetUsd != null && baseUsdPrice != Decimal.zero) {
               converted = divideToDecimal(original * assetUsd, baseUsdPrice);
             }
 
@@ -196,30 +179,23 @@ class AccountDetailPage extends StatelessWidget {
                           if (infoState.failureCode != null) ...[
                             DSInlineBanner(
                               title: account.name,
-                              message:
-                                  infoState.failureMessage ?? l10n.errorGeneric,
+                              message: infoState.failureMessage ?? l10n.errorGeneric,
                               variant: DSInlineBannerVariant.danger,
                             ),
                             SizedBox(height: spacing.s12),
                           ],
-                          if (archiveState.status ==
-                              AccountArchiveStatus.error) ...[
+                          if (archiveState.status == AccountArchiveStatus.error) ...[
                             DSInlineBanner(
                               title: account.name,
-                              message:
-                                  archiveState.failureMessage ??
-                                  l10n.errorGeneric,
+                              message: archiveState.failureMessage ?? l10n.errorGeneric,
                               variant: DSInlineBannerVariant.danger,
                             ),
                             SizedBox(height: spacing.s12),
                           ],
-                          if (deleteState.status ==
-                              AccountDeleteStatus.error) ...[
+                          if (deleteState.status == AccountDeleteStatus.error) ...[
                             DSInlineBanner(
                               title: account.name,
-                              message:
-                                  deleteState.failureMessage ??
-                                  l10n.errorGeneric,
+                              message: deleteState.failureMessage ?? l10n.errorGeneric,
                               variant: DSInlineBannerVariant.danger,
                             ),
                             SizedBox(height: spacing.s12),
@@ -249,10 +225,7 @@ class AccountDetailPage extends StatelessWidget {
                             deleteLabel: l10n.accountsDelete,
                             onEdit: () async {
                               await context.push<String>(
-                                AppRoutes.accountEdit.replaceFirst(
-                                  ':accountId',
-                                  account.id,
-                                ),
+                                AppRoutes.accountEdit.replaceFirst(':accountId', account.id),
                               );
                             },
                             onArchiveToggle: () async {
@@ -270,16 +243,11 @@ class AccountDetailPage extends StatelessWidget {
                               );
                             },
                             onDelete: () async {
-                              final confirmed = await _confirmDelete(
-                                context,
-                                l10n,
-                              );
+                              final confirmed = await _confirmDelete(context, l10n);
                               if (!confirmed || !context.mounted) {
                                 return;
                               }
-                              await context.read<AccountDeleteCubit>().submit(
-                                account.id,
-                              );
+                              await context.read<AccountDeleteCubit>().submit(account.id);
                             },
                           ),
                           SizedBox(height: spacing.s24),
@@ -298,17 +266,13 @@ class AccountDetailPage extends StatelessWidget {
                                 );
                               },
                               onOpenSubaccount: (item) async {
-                                final subaccount = infoState.subaccounts
-                                    .firstWhere(
-                                      (s) => s.id == item.subaccountId,
-                                    );
+                                final subaccount = infoState.subaccounts.firstWhere(
+                                  (s) => s.id == item.subaccountId,
+                                );
                                 await context.push<bool>(
                                   AppRoutes.accountSubaccountDetail
                                       .replaceFirst(':accountId', account.id)
-                                      .replaceFirst(
-                                        ':subaccountId',
-                                        item.subaccountId,
-                                      ),
+                                      .replaceFirst(':subaccountId', item.subaccountId),
                                   extra: SubaccountDetailExtra(
                                     initialTitle: item.name,
                                     account: account,
@@ -331,10 +295,7 @@ class AccountDetailPage extends StatelessWidget {
     );
   }
 
-  Decimal? _baseUsdPrice(
-    ProfileState profileState,
-    RatesSnapshotEntity? snapshot,
-  ) {
+  Decimal? _baseUsdPrice(ProfileState profileState, RatesSnapshotEntity? snapshot) {
     final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
     if (baseCurrency == 'USD') {
       return Decimal.one;
@@ -346,11 +307,7 @@ class AccountDetailPage extends StatelessWidget {
     return snapshot?.usdPriceByAssetId[baseAssetId];
   }
 
-  Decimal? _toBase(
-    Decimal? totalUsd,
-    String baseCurrency,
-    Decimal? baseUsdPrice,
-  ) {
+  Decimal? _toBase(Decimal? totalUsd, String baseCurrency, Decimal? baseUsdPrice) {
     final usd = totalUsd ?? Decimal.zero;
     if (baseCurrency == 'USD') {
       return usd;
@@ -369,9 +326,7 @@ class AccountDetailPage extends StatelessWidget {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => DSDialog(
-        title: archive
-            ? l10n.accountsArchiveConfirmTitle
-            : l10n.accountsUnarchiveConfirmTitle,
+        title: archive ? l10n.accountsArchiveConfirmTitle : l10n.accountsUnarchiveConfirmTitle,
         content: archive ? Text(l10n.accountsArchiveConfirmBody) : null,
         primaryLabel: archive ? l10n.accountsArchive : l10n.accountsUnarchive,
         secondaryLabel: l10n.cancel,
@@ -382,10 +337,7 @@ class AccountDetailPage extends StatelessWidget {
     return result ?? false;
   }
 
-  Future<bool> _confirmDelete(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) async {
+  Future<bool> _confirmDelete(BuildContext context, AppLocalizations l10n) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => DSDialog(

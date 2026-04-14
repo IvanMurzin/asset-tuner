@@ -44,10 +44,7 @@ class PaywallLegalText extends StatelessWidget {
             ),
           ),
         ),
-        Text(
-          '•',
-          style: typography.caption.copyWith(color: colors.textTertiary),
-        ),
+        Text('•', style: typography.caption.copyWith(color: colors.textTertiary)),
         GestureDetector(
           onTap: onPrivacyTap,
           child: Text(

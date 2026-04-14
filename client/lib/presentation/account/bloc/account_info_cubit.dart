@@ -15,8 +15,7 @@ part 'account_info_state.dart';
 
 @injectable
 class AccountInfoCubit extends Cubit<AccountInfoState> {
-  AccountInfoCubit(this._getCachedSession, this._getSubaccounts)
-    : super(const AccountInfoState());
+  AccountInfoCubit(this._getCachedSession, this._getSubaccounts) : super(const AccountInfoState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final GetSubaccountsUseCase _getSubaccounts;

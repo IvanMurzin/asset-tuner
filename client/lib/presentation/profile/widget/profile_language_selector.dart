@@ -15,13 +15,17 @@ class ProfileLanguageSelector extends StatelessWidget {
 
   String _currentLabel(AppLocalizations l10n, String? localeTag) {
     return switch (localeTag) {
+      null => l10n.profileLanguageSystem,
       'ru' => l10n.profileLanguageRussian,
       _ => l10n.profileLanguageEnglish,
     };
   }
 
   String _currentIconPath(String? localeTag) {
-    return localeTag == 'ru' ? _assetLangRu : _assetLangEn;
+    return switch (localeTag) {
+      'ru' => _assetLangRu,
+      _ => _assetLangEn,
+    };
   }
 
   @override
@@ -43,6 +47,10 @@ class ProfileLanguageSelector extends StatelessWidget {
       ),
       itemBuilder: (context) => [
         PopupMenuItem<int>(
+          value: 0,
+          child: _LanguageMenuItem(iconPath: _assetLangEn, label: l10n.profileLanguageSystem),
+        ),
+        PopupMenuItem<int>(
           value: 1,
           child: _LanguageMenuItem(iconPath: _assetLangEn, label: l10n.profileLanguageEnglish),
         ),
@@ -54,6 +62,9 @@ class ProfileLanguageSelector extends StatelessWidget {
       onSelected: (value) {
         final cubit = context.read<LocaleCubit>();
         switch (value) {
+          case 0:
+            cubit.setLocale(null);
+            break;
           case 1:
             cubit.setLocale(const Locale('en'));
             break;

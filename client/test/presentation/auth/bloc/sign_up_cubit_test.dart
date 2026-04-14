@@ -50,10 +50,7 @@ void main() {
 
 class _FakeAuthRepository implements IAuthRepository {
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  ) async {
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
     return Success(OtpVerificationEntity(email: email));
   }
 
@@ -64,29 +61,19 @@ class _FakeAuthRepository implements IAuthRepository {
   Future<AuthSessionEntity?> getCachedSession() async => null;
 
   @override
-  Future<Result<void>> resendSignUpOtp(String email) async =>
+  Future<Result<void>> resendSignUpOtp(String email) async => const Success(null);
+
+  @override
+  Future<Result<void>> signInWithPassword(String email, String password) async =>
       const Success(null);
 
   @override
-  Future<Result<void>> signInWithPassword(
-    String email,
-    String password,
-  ) async => const Success(null);
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async =>
+      const FailureResult(Failure(code: 'not_implemented', message: 'not implemented'));
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(
-    String email,
-    String code,
-  ) async => const FailureResult(
-    Failure(code: 'not_implemented', message: 'not implemented'),
-  );
-
-  @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(
-    AuthProvider provider,
-  ) async => const FailureResult(
-    Failure(code: 'not_implemented', message: 'not implemented'),
-  );
+  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async =>
+      const FailureResult(Failure(code: 'not_implemented', message: 'not implemented'));
 
   @override
   Future<List<AuthProvider>> getAvailableProviders() async => const [];

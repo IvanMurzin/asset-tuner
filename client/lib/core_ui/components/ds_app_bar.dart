@@ -47,8 +47,7 @@ class _DSAppBarState extends State<DSAppBar> {
     final colors = context.dsColors;
     final typography = context.dsTypography;
     final canPop = _canPop ?? false;
-    final effectiveLeading =
-        widget.leading ?? (canPop ? BackButton(onPressed: context.pop) : null);
+    final effectiveLeading = widget.leading ?? (canPop ? BackButton(onPressed: context.pop) : null);
 
     return AppBar(
       title: Text(widget.title, style: typography.h2.copyWith(color: colors.textPrimary)),

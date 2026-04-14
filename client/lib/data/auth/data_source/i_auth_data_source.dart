@@ -9,10 +9,7 @@ abstract interface class IAuthDataSource {
   Future<void> signInWithPassword(String email, String password);
   Future<void> signInWithOAuth(AuthProvider provider);
   Future<void> signUpWithPassword(String email, String password);
-  Future<AuthSessionDto?> verifySignUpOtp({
-    required String email,
-    required String token,
-  });
+  Future<AuthSessionDto?> verifySignUpOtp({required String email, required String token});
   Future<void> signOut();
   Future<void> deleteMyAccount();
 }

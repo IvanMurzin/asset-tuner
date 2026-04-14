@@ -6,17 +6,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() {
   group('SupabaseAuthDataSource.mapOAuthProvider', () {
     test('maps Google provider', () {
-      expect(
-        SupabaseAuthDataSource.mapOAuthProvider(AuthProvider.google),
-        OAuthProvider.google,
-      );
+      expect(SupabaseAuthDataSource.mapOAuthProvider(AuthProvider.google), OAuthProvider.google);
     });
 
     test('maps Apple provider', () {
-      expect(
-        SupabaseAuthDataSource.mapOAuthProvider(AuthProvider.apple),
-        OAuthProvider.apple,
-      );
+      expect(SupabaseAuthDataSource.mapOAuthProvider(AuthProvider.apple), OAuthProvider.apple);
     });
 
     test('throws for email provider', () {
@@ -29,17 +23,13 @@ void main() {
 
   group('SupabaseAuthDataSource.oauthQueryParams', () {
     test('uses select_account prompt for Google provider', () {
-      expect(
-        SupabaseAuthDataSource.oauthQueryParams(AuthProvider.google),
-        const {'prompt': 'select_account'},
-      );
+      expect(SupabaseAuthDataSource.oauthQueryParams(AuthProvider.google), const {
+        'prompt': 'select_account',
+      });
     });
 
     test('returns null for Apple provider', () {
-      expect(
-        SupabaseAuthDataSource.oauthQueryParams(AuthProvider.apple),
-        isNull,
-      );
+      expect(SupabaseAuthDataSource.oauthQueryParams(AuthProvider.apple), isNull);
     });
   });
 }

@@ -12,25 +12,21 @@ import 'package:asset_tuner/core/supabase/supabase_initializer.dart';
 
 Future<void> main() async {
   Bloc.observer = AppBlocObserver();
-  runZonedGuarded(
-    () async {
-      WidgetsFlutterBinding.ensureInitialized();
-      AppConfig.init();
-      await SupabaseInitializer.init();
-      await RevenueCatInitializer.init();
-      await configureDependencies();
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    AppConfig.init();
+    await SupabaseInitializer.init();
+    await RevenueCatInitializer.init();
+    await configureDependencies();
 
-      final locale = WidgetsBinding.instance.platformDispatcher.locale;
-      logger.i('locale_active: ${locale.toLanguageTag()}');
+    final locale = WidgetsBinding.instance.platformDispatcher.locale;
+    logger.i('locale_active: ${locale.toLanguageTag()}');
 
-      FlutterError.onError = (details) {
-        logger.e('Flutter error:', error: details, stackTrace: details.stack);
-        FlutterError.presentError(details);
-      };
+    FlutterError.onError = (details) {
+      logger.e('Flutter error:', error: details, stackTrace: details.stack);
+      FlutterError.presentError(details);
+    };
 
-      runApp(const App());
-    },
-    (error, stackTrace) =>
-        logger.e('Unhandled exception:', error: error, stackTrace: stackTrace),
-  );
+    runApp(const App());
+  }, (error, stackTrace) => logger.e('Unhandled exception:', error: error, stackTrace: stackTrace));
 }

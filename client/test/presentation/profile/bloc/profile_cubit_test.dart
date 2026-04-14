@@ -44,9 +44,7 @@ void main() {
     test('loads profile when session becomes authenticated', () async {
       cubit.bootstrap();
       await _flush();
-      authRepository.emitSession(
-        const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'),
-      );
+      authRepository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'));
       await _flush();
 
       expect(cubit.state.status, ProfileStatus.ready);
@@ -56,9 +54,7 @@ void main() {
     test('clears profile when session becomes unauthenticated', () async {
       cubit.bootstrap();
       await _flush();
-      authRepository.emitSession(
-        const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'),
-      );
+      authRepository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'));
       await _flush();
 
       authRepository.emitSession(null);
@@ -71,13 +67,9 @@ void main() {
     test('updates base currency in ready state', () async {
       cubit.bootstrap();
       await _flush();
-      authRepository.emitSession(
-        const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'),
-      );
+      authRepository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'));
       await _flush();
-      profileRepository.updateBaseCurrencyResult = Success(
-        _profile(baseAssetId: 'eur-asset-id'),
-      );
+      profileRepository.updateBaseCurrencyResult = Success(_profile(baseAssetId: 'eur-asset-id'));
 
       await cubit.updateBaseCurrency('EUR');
 
@@ -88,9 +80,7 @@ void main() {
     test('syncSubscription refreshes plan', () async {
       cubit.bootstrap();
       await _flush();
-      authRepository.emitSession(
-        const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'),
-      );
+      authRepository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'));
       await _flush();
       profileRepository.updatePlanResult = Success(
         _profile(baseAssetId: 'base-asset-id', plan: 'pro'),
@@ -126,19 +116,14 @@ class _FakeAuthRepository implements IAuthRepository {
   Future<AuthSessionEntity?> getCachedSession() async => null;
 
   @override
-  Future<Result<void>> resendSignUpOtp(String email) async =>
+  Future<Result<void>> resendSignUpOtp(String email) async => const Success(null);
+
+  @override
+  Future<Result<void>> signInWithPassword(String email, String password) async =>
       const Success(null);
 
   @override
-  Future<Result<void>> signInWithPassword(
-    String email,
-    String password,
-  ) async => const Success(null);
-
-  @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(
-    AuthProvider provider,
-  ) async {
+  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
     throw UnimplementedError();
   }
 
@@ -146,29 +131,19 @@ class _FakeAuthRepository implements IAuthRepository {
   Future<Result<void>> signOut() async => const Success(null);
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(
-    String email,
-    String password,
-  ) async {
+  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(
-    String email,
-    String code,
-  ) async {
+  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) async {
     throw UnimplementedError();
   }
 }
 
 class _FakeProfileRepository implements IProfileRepository {
-  Result<ProfileEntity> getProfileResult = Success(
-    _profile(baseAssetId: 'base-asset-id'),
-  );
-  Result<ProfileEntity> updateBaseCurrencyResult = Success(
-    _profile(baseAssetId: 'base-asset-id'),
-  );
+  Result<ProfileEntity> getProfileResult = Success(_profile(baseAssetId: 'base-asset-id'));
+  Result<ProfileEntity> updateBaseCurrencyResult = Success(_profile(baseAssetId: 'base-asset-id'));
   Result<ProfileEntity> updatePlanResult = Success(
     _profile(baseAssetId: 'base-asset-id', plan: 'pro'),
   );

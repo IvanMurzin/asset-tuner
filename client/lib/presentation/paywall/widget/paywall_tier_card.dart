@@ -45,10 +45,7 @@ class PaywallTierCard extends StatelessWidget {
           ),
           child: DSCard(
             bordered: false,
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.s12,
-              vertical: verticalPadding,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: verticalPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -68,8 +65,7 @@ class PaywallTierCard extends StatelessWidget {
                     textStyle: featureStyle,
                     dense: dense,
                   ),
-                  if (i != features.length - 1)
-                    SizedBox(height: dense ? spacing.s8 : spacing.s12),
+                  if (i != features.length - 1) SizedBox(height: dense ? spacing.s8 : spacing.s12),
                 ],
               ],
             ),
@@ -80,10 +76,7 @@ class PaywallTierCard extends StatelessWidget {
             top: dense ? -12 : -14,
             left: dense ? spacing.s16 : spacing.s24,
             child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: badgeHorizontal,
-                vertical: badgeVertical,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: badgeHorizontal, vertical: badgeVertical),
               decoration: BoxDecoration(
                 color: colors.primary,
                 borderRadius: BorderRadius.circular(999),

@@ -32,21 +32,18 @@ void main() {
       expect(repository.updatedBaseCurrency, isNull);
     });
 
-    test(
-      'defaults base currency to USD when profile has no base asset',
-      () async {
-        final incomplete = _profile(baseAssetId: null);
-        final fixed = _profile(baseAssetId: 'usd-asset-id');
-        repository.getProfileResult = Success(incomplete);
-        repository.updateBaseCurrencyResult = Success(fixed);
+    test('defaults base currency to USD when profile has no base asset', () async {
+      final incomplete = _profile(baseAssetId: null);
+      final fixed = _profile(baseAssetId: 'usd-asset-id');
+      repository.getProfileResult = Success(incomplete);
+      repository.updateBaseCurrencyResult = Success(fixed);
 
-        final result = await useCase();
+      final result = await useCase();
 
-        expect(repository.updatedBaseCurrency, 'USD');
-        expect(result, isA<Success<ProfileEntity>>());
-        expect((result as Success<ProfileEntity>).value, fixed);
-      },
-    );
+      expect(repository.updatedBaseCurrency, 'USD');
+      expect(result, isA<Success<ProfileEntity>>());
+      expect((result as Success<ProfileEntity>).value, fixed);
+    });
 
     test('propagates get profile failure', () async {
       repository.getProfileResult = const FailureResult(
@@ -74,12 +71,8 @@ void main() {
 }
 
 class _FakeProfileRepository implements IProfileRepository {
-  Result<ProfileEntity> getProfileResult = Success(
-    _profile(baseAssetId: 'base-asset-id'),
-  );
-  Result<ProfileEntity> updateBaseCurrencyResult = Success(
-    _profile(baseAssetId: 'base-asset-id'),
-  );
+  Result<ProfileEntity> getProfileResult = Success(_profile(baseAssetId: 'base-asset-id'));
+  Result<ProfileEntity> updateBaseCurrencyResult = Success(_profile(baseAssetId: 'base-asset-id'));
   String? updatedBaseCurrency;
 
   @override

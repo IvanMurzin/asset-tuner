@@ -22,11 +22,8 @@ enum AnalyticsDestination { signIn }
 
 @injectable
 class AnalyticsCubit extends Cubit<AnalyticsState> {
-  AnalyticsCubit(
-    this._getSubaccounts,
-    this._getCurrentBalances,
-    this._getHistory,
-  ) : super(const AnalyticsState());
+  AnalyticsCubit(this._getSubaccounts, this._getCurrentBalances, this._getHistory)
+    : super(const AnalyticsState());
 
   final GetSubaccountsUseCase _getSubaccounts;
   final GetCurrentBalancesUseCase _getCurrentBalances;
@@ -162,7 +159,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
       final subaccounts = subaccountsByAccount.values.expand((list) => list).toList();
       final subaccountIds = subaccounts.map((item) => item.id).toSet();
-      if (      subaccountIds.isEmpty) {
+      if (subaccountIds.isEmpty) {
         _lastSourceFingerprint = fingerprint;
         emit(
           state.copyWith(

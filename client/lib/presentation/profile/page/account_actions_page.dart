@@ -55,9 +55,7 @@ class AccountActionsPage extends StatelessWidget {
                         variant: DSButtonVariant.secondary,
                         fullWidth: true,
                         isLoading: state.isSigningOut,
-                        onPressed: isBusy
-                            ? null
-                            : context.read<SessionCubit>().signOut,
+                        onPressed: isBusy ? null : context.read<SessionCubit>().signOut,
                       ),
                     ),
                     SizedBox(height: context.dsSpacing.s24),
@@ -79,9 +77,7 @@ class AccountActionsPage extends StatelessWidget {
                             variant: DSButtonVariant.danger,
                             fullWidth: true,
                             isLoading: state.isDeletingAccount,
-                            onPressed: isBusy
-                                ? null
-                                : () => _confirmDelete(context, l10n),
+                            onPressed: isBusy ? null : () => _confirmDelete(context, l10n),
                           ),
                         ],
                       ),
@@ -96,10 +92,7 @@ class AccountActionsPage extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmDelete(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) async {
+  Future<void> _confirmDelete(BuildContext context, AppLocalizations l10n) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => DSDialog(

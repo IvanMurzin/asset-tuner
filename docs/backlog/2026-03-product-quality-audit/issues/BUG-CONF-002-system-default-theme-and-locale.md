@@ -4,7 +4,7 @@
 - ID: `BUG-CONF-002`
 - Тип: `Bug`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-002`, `SCR-009`, app bootstrap
 
 ## Экран/модуль/слой
@@ -54,3 +54,8 @@
 - [locale_cubit.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core/localization/locale_cubit.dart)
 - [theme_mode_cubit.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core_ui/theme/theme_mode_cubit.dart)
 - [app.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/app.dart)
+
+## Implementation note
+- Что сделано: убран eager write дефолтной локали в `LocaleCubit.load()`, введен tri-state контракт (`null` = system, `en/ru` = explicit override), `SupabaseErrorTranslator` теперь получает язык из explicit override или из system locale при `null`; в `MaterialApp` убран fallback на `en`, чтобы при `null` locale приложение следовало системной локали; в профиле добавлен выбор языка `System`, который сбрасывает override через `setLocale(null)`.
+- Измененные файлы: `client/lib/core/localization/locale_cubit.dart`, `client/lib/app.dart`, `client/lib/presentation/profile/widget/profile_language_selector.dart`, `client/test/core/localization/locale_cubit_test.dart`, `client/test/core_ui/theme/theme_mode_cubit_test.dart`, `docs/backlog/2026-03-product-quality-audit/issues/BUG-CONF-002-system-default-theme-and-locale.md`, `docs/backlog/2026-03-product-quality-audit/INDEX.md`.
+- Проверки: `cd client && flutter analyze` (pass), `cd client && flutter test test/core/localization/locale_cubit_test.dart` (pass), `cd client && flutter test test/core_ui/theme/theme_mode_cubit_test.dart` (pass).

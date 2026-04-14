@@ -26,19 +26,11 @@ class SignInCubit extends Cubit<SignInState> {
   final GetAuthProvidersUseCase _getAuthProvidersUseCase;
 
   void updateEmail(String value) {
-    emit(
-      state.copyWith(email: value, emailError: null, bannerFailureCode: null),
-    );
+    emit(state.copyWith(email: value, emailError: null, bannerFailureCode: null));
   }
 
   void updatePassword(String value) {
-    emit(
-      state.copyWith(
-        password: value,
-        passwordError: null,
-        bannerFailureCode: null,
-      ),
-    );
+    emit(state.copyWith(password: value, passwordError: null, bannerFailureCode: null));
   }
 
   Future<void> signIn() async {
@@ -52,10 +44,7 @@ class SignInCubit extends Cubit<SignInState> {
     }
 
     emit(state.copyWith(status: SignInStatus.loading, bannerFailureCode: null));
-    final result = await _signInWithPasswordUseCase(
-      state.email.trim(),
-      state.password,
-    );
+    final result = await _signInWithPasswordUseCase(state.email.trim(), state.password);
     if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
@@ -97,9 +86,7 @@ class SignInCubit extends Cubit<SignInState> {
     emit(
       state.copyWith(
         status: SignInStatus.idle,
-        navigation: const SignInNavigation(
-          destination: SignInDestination.overview,
-        ),
+        navigation: const SignInNavigation(destination: SignInDestination.overview),
       ),
     );
   }
@@ -109,9 +96,7 @@ class SignInCubit extends Cubit<SignInState> {
     if (isClosed) return;
     emit(
       state.copyWith(
-        availableProviders: providers
-            .where((provider) => provider != AuthProvider.email)
-            .toList(),
+        availableProviders: providers.where((provider) => provider != AuthProvider.email).toList(),
       ),
     );
   }

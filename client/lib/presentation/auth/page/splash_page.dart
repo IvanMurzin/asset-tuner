@@ -63,10 +63,7 @@ class SplashPage extends StatelessWidget {
 
               return Scaffold(
                 body: isLoading
-                    ? DSSplashLayout(
-                        title: l10n.appTitle,
-                        status: l10n.splashPreparingProfile,
-                      )
+                    ? DSSplashLayout(title: l10n.appTitle, status: l10n.splashPreparingProfile)
                     : hasBlockingError
                     ? Center(
                         child: Padding(
@@ -77,10 +74,7 @@ class SplashPage extends StatelessWidget {
                           ),
                         ),
                       )
-                    : DSSplashLayout(
-                        title: l10n.appTitle,
-                        status: l10n.splashPreparingProfile,
-                      ),
+                    : DSSplashLayout(title: l10n.appTitle, status: l10n.splashPreparingProfile),
               );
             },
           );

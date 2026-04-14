@@ -43,11 +43,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     _sessionSubscription = _watchSession().listen(
       (session) => unawaited(_handleSessionChanged(session)),
       onError: (Object error, StackTrace stackTrace) {
-        logger.e(
-          'Profile session stream failed',
-          error: error,
-          stackTrace: stackTrace,
-        );
+        logger.e('Profile session stream failed', error: error, stackTrace: stackTrace);
         if (isClosed) {
           return;
         }
@@ -93,11 +89,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     try {
       if (!silent || state.status != ProfileStatus.ready) {
         emit(
-          state.copyWith(
-            status: ProfileStatus.loading,
-            failureCode: null,
-            failureMessage: null,
-          ),
+          state.copyWith(status: ProfileStatus.loading, failureCode: null, failureMessage: null),
         );
       }
 
@@ -118,12 +110,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           );
         case FailureResult(failure: final failure):
           if (silent && state.profile != null) {
-            emit(
-              state.copyWith(
-                failureCode: failure.code,
-                failureMessage: failure.message,
-              ),
-            );
+            emit(state.copyWith(failureCode: failure.code, failureMessage: failure.message));
           } else {
             emit(
               state.copyWith(
@@ -150,13 +137,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        isUpdatingBaseCurrency: true,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(isUpdatingBaseCurrency: true, failureCode: null, failureMessage: null));
 
     final result = await _updateBaseCurrency(code);
     if (isClosed) {
@@ -190,20 +171,13 @@ class ProfileCubit extends Cubit<ProfileState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        isSyncingSubscription: true,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(isSyncingSubscription: true, failureCode: null, failureMessage: null));
 
     try {
       final result = await _updatePlan('pro').timeout(
         const Duration(seconds: 30),
-        onTimeout: () => const FailureResult(
-          Failure(code: 'TIMEOUT', message: 'Subscription sync timed out'),
-        ),
+        onTimeout: () =>
+            const FailureResult(Failure(code: 'TIMEOUT', message: 'Subscription sync timed out')),
       );
       if (isClosed) {
         return;

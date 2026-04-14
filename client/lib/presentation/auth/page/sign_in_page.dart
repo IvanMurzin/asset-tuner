@@ -26,8 +26,7 @@ class SignInPage extends StatelessWidget {
       child: BlocConsumer<SignInCubit, SignInState>(
         listenWhen: (prev, curr) =>
             curr.navigation != null ||
-            (curr.bannerFailureCode != null &&
-                curr.bannerFailureCode != prev.bannerFailureCode),
+            (curr.bannerFailureCode != null && curr.bannerFailureCode != prev.bannerFailureCode),
         listener: (context, state) async {
           final navigation = state.navigation;
           if (navigation != null) {
@@ -42,11 +41,7 @@ class SignInPage extends StatelessWidget {
               ? (state.bannerFailureMessage ?? l10n.errorGeneric)
               : null;
           if (message != null && context.mounted) {
-            showDSSnackBar(
-              context,
-              variant: DSSnackBarVariant.error,
-              message: message,
-            );
+            showDSSnackBar(context, variant: DSSnackBarVariant.error, message: message);
           }
         },
         builder: (context, state) {
@@ -73,10 +68,7 @@ class SignInPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          AuthHero(
-                            title: l10n.signInTitle,
-                            subtitle: l10n.signInBody,
-                          ),
+                          AuthHero(title: l10n.signInTitle, subtitle: l10n.signInBody),
                           SizedBox(height: spacing.s24),
                           SignInEmailField(
                             label: l10n.emailLabel,
@@ -87,10 +79,7 @@ class SignInPage extends StatelessWidget {
                           SignInPasswordField(
                             label: l10n.passwordLabel,
                             hint: l10n.passwordHint,
-                            errorText: _passwordErrorText(
-                              l10n,
-                              state.passwordError,
-                            ),
+                            errorText: _passwordErrorText(l10n, state.passwordError),
                           ),
                           if (providers.isNotEmpty) ...[
                             SizedBox(height: spacing.s24),
@@ -121,20 +110,14 @@ class SignInPage extends StatelessWidget {
                           label: l10n.signInPrimary,
                           isLoading: isLoading,
                           fullWidth: true,
-                          onPressed: isLoading
-                              ? null
-                              : context.read<SignInCubit>().signIn,
+                          onPressed: isLoading ? null : context.read<SignInCubit>().signIn,
                         ),
                         SizedBox(height: spacing.s16),
                         TextButton(
-                          onPressed: isLoading
-                              ? null
-                              : () => context.go(AppRoutes.signUp),
+                          onPressed: isLoading ? null : () => context.go(AppRoutes.signUp),
                           child: Text(
                             l10n.switchToSignUp,
-                            style: typography.body.copyWith(
-                              color: context.dsColors.primary,
-                            ),
+                            style: typography.body.copyWith(color: context.dsColors.primary),
                           ),
                         ),
                       ],

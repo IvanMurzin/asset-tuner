@@ -20,10 +20,7 @@ class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
   final GetCachedSessionUseCase _getCachedSession;
   final GetBalanceHistoryUseCase _getHistory;
 
-  Future<void> load({
-    required AccountEntity account,
-    required SubaccountEntity subaccount,
-  }) async {
+  Future<void> load({required AccountEntity account, required SubaccountEntity subaccount}) async {
     emit(
       state.copyWith(
         status: SubaccountInfoStatus.ready,

@@ -54,9 +54,7 @@ class _PaywallPageState extends State<PaywallPage> {
   }
 
   bool get _canContinue {
-    return !_isLoadingOfferings &&
-        !_isProcessingAction &&
-        _selectedPackage != null;
+    return !_isLoadingOfferings && !_isProcessingAction && _selectedPackage != null;
   }
 
   @override
@@ -76,10 +74,8 @@ class _PaywallPageState extends State<PaywallPage> {
       final offering = offerings.current;
       final available = offering?.availablePackages ?? const <Package>[];
 
-      var annual =
-          offering?.annual ?? _findByType(available, PackageType.annual);
-      var monthly =
-          offering?.monthly ?? _findByType(available, PackageType.monthly);
+      var annual = offering?.annual ?? _findByType(available, PackageType.annual);
+      var monthly = offering?.monthly ?? _findByType(available, PackageType.monthly);
 
       annual ??= _findByPeriod(available, 'P1Y');
       monthly ??= _findByPeriod(available, 'P1M');
@@ -91,9 +87,7 @@ class _PaywallPageState extends State<PaywallPage> {
         annual = available.first;
       }
 
-      final selected = annual != null
-          ? PaywallPlanOption.annual
-          : PaywallPlanOption.monthly;
+      final selected = annual != null ? PaywallPlanOption.annual : PaywallPlanOption.monthly;
 
       if (!mounted) {
         return;
@@ -150,8 +144,7 @@ class _PaywallPageState extends State<PaywallPage> {
     }
     final annual = _annualPackage;
     if (annual != null) {
-      return annual.storeProduct.pricePerMonthString ??
-          annual.storeProduct.priceString;
+      return annual.storeProduct.pricePerMonthString ?? annual.storeProduct.priceString;
     }
     return '--';
   }
@@ -163,8 +156,7 @@ class _PaywallPageState extends State<PaywallPage> {
     }
     final monthly = _monthlyPackage;
     if (monthly != null) {
-      return monthly.storeProduct.pricePerYearString ??
-          monthly.storeProduct.priceString;
+      return monthly.storeProduct.pricePerYearString ?? monthly.storeProduct.priceString;
     }
     return '--';
   }
@@ -187,8 +179,7 @@ class _PaywallPageState extends State<PaywallPage> {
       final code = PurchasesErrorHelper.getErrorCode(error);
       if (code != PurchasesErrorCode.purchaseCancelledError && mounted) {
         setState(() {
-          _errorMessage =
-              error.message ?? AppLocalizations.of(context)!.errorGeneric;
+          _errorMessage = error.message ?? AppLocalizations.of(context)!.errorGeneric;
         });
       }
     } catch (_) {
@@ -328,27 +319,14 @@ class _PaywallPageState extends State<PaywallPage> {
                 l10n.paywallProFeatureCrypto,
               ];
 
-              final freeCompactFeatures = [
-                freeFeatures[0],
-                freeFeatures[1],
-                freeFeatures[2],
-              ];
+              final freeCompactFeatures = [freeFeatures[0], freeFeatures[1], freeFeatures[2]];
 
-              final proCompactFeatures = [
-                proFeatures[0],
-                proFeatures[1],
-                proFeatures[2],
-              ];
+              final proCompactFeatures = [proFeatures[0], proFeatures[1], proFeatures[2]];
 
               return Scaffold(
                 body: SafeArea(
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      spacing.s16,
-                      spacing.s4,
-                      spacing.s16,
-                      spacing.s8,
-                    ),
+                    padding: EdgeInsets.fromLTRB(spacing.s16, spacing.s4, spacing.s16, spacing.s8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -411,18 +389,14 @@ class _PaywallPageState extends State<PaywallPage> {
                                   child: Column(
                                     children: [
                                       PaywallPlanToggle(
-                                        monthlyLabel:
-                                            l10n.paywallPlanMonthlyTitle,
-                                        yearlyLabel:
-                                            l10n.paywallPlanAnnualTitle,
+                                        monthlyLabel: l10n.paywallPlanMonthlyTitle,
+                                        yearlyLabel: l10n.paywallPlanAnnualTitle,
                                         selectedOption: _selectedOption,
                                         monthlyEnabled: _monthlyEnabled,
                                         yearlyEnabled: _annualEnabled,
                                         monthlyPrice: _selectorMonthlyPrice(),
                                         yearlyPrice: _selectorYearlyPrice(),
-                                        onChanged: (next) => setState(
-                                          () => _selectedOption = next,
-                                        ),
+                                        onChanged: (next) => setState(() => _selectedOption = next),
                                       ),
                                       SizedBox(height: spacing.s8),
                                       PaywallTierCard(

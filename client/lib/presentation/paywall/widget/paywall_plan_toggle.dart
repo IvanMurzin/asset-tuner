@@ -77,9 +77,7 @@ class _SelectionDot extends StatelessWidget {
           width: selected ? 8 : 0,
           height: selected ? 8 : 0,
           decoration: BoxDecoration(
-            color: enabled
-                ? colors.primary
-                : colors.textTertiary.withValues(alpha: 0.5),
+            color: enabled ? colors.primary : colors.textTertiary.withValues(alpha: 0.5),
             shape: BoxShape.circle,
           ),
         ),
@@ -113,19 +111,12 @@ class _PlanItem extends StatelessWidget {
     final content = AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       curve: Curves.easeOutCubic,
-      padding: EdgeInsets.symmetric(
-        horizontal: spacing.s12,
-        vertical: spacing.s12,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
       decoration: BoxDecoration(
-        color: selected
-            ? colors.surface
-            : colors.surfaceAlt.withValues(alpha: 0.55),
+        color: selected ? colors.surface : colors.surfaceAlt.withValues(alpha: 0.55),
         borderRadius: BorderRadius.circular(radius.r12),
         border: Border.all(
-          color: selected
-              ? colors.primary.withValues(alpha: 0.75)
-              : colors.border,
+          color: selected ? colors.primary.withValues(alpha: 0.75) : colors.border,
         ),
         boxShadow: selected
             ? [
@@ -157,9 +148,7 @@ class _PlanItem extends StatelessWidget {
             price,
             textAlign: TextAlign.right,
             style: typography.body.copyWith(
-              color: enabled
-                  ? colors.textPrimary
-                  : colors.textTertiary.withValues(alpha: 0.7),
+              color: enabled ? colors.textPrimary : colors.textTertiary.withValues(alpha: 0.7),
               fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
             ),
           ),
@@ -173,11 +162,7 @@ class _PlanItem extends StatelessWidget {
 
     return Material(
       color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(radius.r12),
-        onTap: onTap,
-        child: content,
-      ),
+      child: InkWell(borderRadius: BorderRadius.circular(radius.r12), onTap: onTap, child: content),
     );
   }
 }

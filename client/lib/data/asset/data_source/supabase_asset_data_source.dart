@@ -18,9 +18,7 @@ class SupabaseAssetDataSource {
 
   Future<List<AssetDto>> fetchAssets() async {
     final now = DateTime.now();
-    if (_cached != null &&
-        _cachedAt != null &&
-        now.difference(_cachedAt!) < _cacheTtl) {
+    if (_cached != null && _cachedAt != null && now.difference(_cachedAt!) < _cacheTtl) {
       return _cached!;
     }
 

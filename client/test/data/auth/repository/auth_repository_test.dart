@@ -32,9 +32,7 @@ void main() {
 
       await expectLater(
         repository.watchSession().take(1),
-        emits(
-          const AuthSessionEntity(userId: 'user-1', email: 'user@example.com'),
-        ),
+        emits(const AuthSessionEntity(userId: 'user-1', email: 'user@example.com')),
       );
     });
 
@@ -46,9 +44,7 @@ void main() {
 
       Future<void>.delayed(Duration.zero, () {
         dataSource.currentSessionValue = null;
-        dataSource.authStateController.add(
-          const AuthState(AuthChangeEvent.signedOut, null),
-        );
+        dataSource.authStateController.add(const AuthState(AuthChangeEvent.signedOut, null));
       });
 
       await expectLater(
@@ -97,17 +93,11 @@ void main() {
 
     test('returns signed-in session and updates cache', () async {
       final repository = AuthRepository(dataSource);
-      final dto = const AuthSessionDto(
-        userId: 'oauth-user',
-        email: 'oauth@example.com',
-      );
+      final dto = const AuthSessionDto(userId: 'oauth-user', email: 'oauth@example.com');
 
       Future<void>.delayed(Duration.zero, () {
         dataSource.authStateController.add(
-          AuthState(
-            AuthChangeEvent.signedIn,
-            _session(userId: dto.userId, email: dto.email),
-          ),
+          AuthState(AuthChangeEvent.signedIn, _session(userId: dto.userId, email: dto.email)),
         );
       });
 
@@ -116,10 +106,7 @@ void main() {
       expect(result, isA<Success<AuthSessionEntity>>());
       expect(
         (result as Success<AuthSessionEntity>).value,
-        const AuthSessionEntity(
-          userId: 'oauth-user',
-          email: 'oauth@example.com',
-        ),
+        const AuthSessionEntity(userId: 'oauth-user', email: 'oauth@example.com'),
       );
       expect(await repository.getCachedSession(), result.value);
       expect(dataSource.lastOAuthProvider, AuthProvider.google);
@@ -134,10 +121,7 @@ void main() {
       final result = await repository.signInWithOAuth(AuthProvider.google);
 
       expect(result, isA<FailureResult<AuthSessionEntity>>());
-      expect(
-        (result as FailureResult<AuthSessionEntity>).failure.code,
-        'timeout',
-      );
+      expect((result as FailureResult<AuthSessionEntity>).failure.code, 'timeout');
     });
   });
 
@@ -155,10 +139,7 @@ void main() {
     test('signs in immediately when OTP is disabled', () async {
       final repository = AuthRepository(dataSource);
 
-      final result = await repository.signUpWithPassword(
-        'user@example.com',
-        'Password123!',
-      );
+      final result = await repository.signUpWithPassword('user@example.com', 'Password123!');
 
       expect(result, isA<Success<OtpVerificationEntity>>());
       expect(dataSource.signInWithPasswordCalls, 1);
@@ -169,10 +150,7 @@ void main() {
     test('does not perform password sign-in when OTP is enabled', () async {
       final repository = AuthRepository(dataSource);
 
-      final result = await repository.signUpWithPassword(
-        'user@example.com',
-        'Password123!',
-      );
+      final result = await repository.signUpWithPassword('user@example.com', 'Password123!');
 
       expect(result, isA<Success<OtpVerificationEntity>>());
       expect(dataSource.signInWithPasswordCalls, 0);
@@ -214,10 +192,7 @@ class _FakeAuthDataSource implements IAuthDataSource {
   Future<void> signInWithPassword(String email, String password) async {
     signInWithPasswordCalls += 1;
     lastSignInEmail = email;
-    currentSessionValue = AuthSessionDto(
-      userId: 'signed-in-user',
-      email: email,
-    );
+    currentSessionValue = AuthSessionDto(userId: 'signed-in-user', email: email);
   }
 
   @override
@@ -227,10 +202,7 @@ class _FakeAuthDataSource implements IAuthDataSource {
   Future<void> signUpWithPassword(String email, String password) async {}
 
   @override
-  Future<AuthSessionDto?> verifySignUpOtp({
-    required String email,
-    required String token,
-  }) async {
+  Future<AuthSessionDto?> verifySignUpOtp({required String email, required String token}) async {
     return null;
   }
 

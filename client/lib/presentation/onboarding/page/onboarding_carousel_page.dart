@@ -76,9 +76,7 @@ class _OnboardingCarouselPageState extends State<OnboardingCarouselPage> {
     final colors = context.dsColors;
 
     final slides = _OnboardingSlideData.buildAll(l10n);
-    final primaryLabel = _isLastPage
-        ? l10n.onboardingCarouselGetStarted
-        : l10n.onboardingContinue;
+    final primaryLabel = _isLastPage ? l10n.onboardingCarouselGetStarted : l10n.onboardingContinue;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -137,12 +135,7 @@ class _OnboardingSlideContent extends StatelessWidget {
     final typography = context.dsTypography;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        spacing.s24,
-        spacing.s12,
-        spacing.s24,
-        spacing.s24,
-      ),
+      padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s12, spacing.s24, spacing.s24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -155,9 +148,7 @@ class _OnboardingSlideContent extends StatelessWidget {
                       onPressed: onSkip,
                       child: Text(
                         AppLocalizations.of(context)!.onboardingCarouselSkip,
-                        style: typography.body.copyWith(
-                          color: colors.textSecondary,
-                        ),
+                        style: typography.body.copyWith(color: colors.textSecondary),
                       ),
                     )
                   : null,
@@ -170,9 +161,7 @@ class _OnboardingSlideContent extends StatelessWidget {
                 return SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
                     child: AnimatedOpacity(
                       opacity: isActive ? 1 : 0.78,
                       duration: const Duration(milliseconds: 260),
@@ -185,19 +174,12 @@ class _OnboardingSlideContent extends StatelessWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              if (slide.kind ==
-                                  _OnboardingSlideKind.realSetup) ...[
+                              if (slide.kind == _OnboardingSlideKind.realSetup) ...[
                                 _OnboardingTitle(slide: slide),
                                 SizedBox(height: spacing.s24),
-                                _OnboardingHero(
-                                  slide: slide,
-                                  isActive: isActive,
-                                ),
+                                _OnboardingHero(slide: slide, isActive: isActive),
                               ] else ...[
-                                _OnboardingHero(
-                                  slide: slide,
-                                  isActive: isActive,
-                                ),
+                                _OnboardingHero(slide: slide, isActive: isActive),
                                 SizedBox(height: spacing.s32),
                                 _OnboardingTitle(slide: slide),
                               ],
@@ -233,19 +215,13 @@ class _OnboardingTitle extends StatelessWidget {
         Text(
           slide.title,
           textAlign: TextAlign.center,
-          style: typography.h1.copyWith(
-            height: 1.28,
-            color: colors.textPrimary,
-          ),
+          style: typography.h1.copyWith(height: 1.28, color: colors.textPrimary),
         ),
         SizedBox(height: spacing.s12),
         Text(
           slide.body,
           textAlign: TextAlign.center,
-          style: typography.body.copyWith(
-            color: colors.textSecondary,
-            height: 1.45,
-          ),
+          style: typography.body.copyWith(color: colors.textSecondary, height: 1.45),
         ),
         if (slide.footnote != null) ...[
           SizedBox(height: spacing.s12),
@@ -325,11 +301,7 @@ class _OnboardingTotalWealthHero extends StatelessWidget {
               borderRadius: BorderRadius.circular(radius.r16),
             ),
             alignment: Alignment.center,
-            child: Icon(
-              Icons.query_stats_rounded,
-              color: colors.primary,
-              size: 34,
-            ),
+            child: Icon(Icons.query_stats_rounded, color: colors.primary, size: 34),
           ),
           SizedBox(height: spacing.s24),
           Row(
@@ -403,10 +375,7 @@ class _OnboardingAccountCardPreview extends StatelessWidget {
 
     return DSCard(
       elevation: DSElevationLevel.level0,
-      padding: EdgeInsets.symmetric(
-        horizontal: spacing.s12,
-        vertical: spacing.s12,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
       child: Row(
         children: [
           Container(
@@ -452,10 +421,7 @@ class _OnboardingAccountCardPreview extends StatelessWidget {
     );
   }
 
-  List<Color> _previewGradientColors(
-    BuildContext context,
-    _OnboardingPreviewScheme scheme,
-  ) {
+  List<Color> _previewGradientColors(BuildContext context, _OnboardingPreviewScheme scheme) {
     final colors = context.dsColors;
     return switch (scheme) {
       _OnboardingPreviewScheme.wallet => [colors.primary, colors.info],
@@ -543,12 +509,7 @@ class _OnboardingBottomBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            spacing.s24,
-            spacing.s24,
-            spacing.s24,
-            spacing.s24,
-          ),
+          padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -590,9 +551,7 @@ class _OnboardingDots extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(999),
-            color: isActive
-                ? colors.primary
-                : colors.textTertiary.withValues(alpha: 0.45),
+            color: isActive ? colors.primary : colors.textTertiary.withValues(alpha: 0.45),
           ),
         );
       }),

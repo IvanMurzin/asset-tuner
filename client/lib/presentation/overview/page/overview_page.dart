@@ -44,13 +44,10 @@ class OverviewPage extends StatelessWidget {
           if ((profileState.status == ProfileStatus.initial ||
                   profileState.status == ProfileStatus.loading) &&
               profileState.profile == null) {
-            return const Scaffold(
-              body: SafeArea(child: OverviewLoadingSkeleton()),
-            );
+            return const Scaffold(body: SafeArea(child: OverviewLoadingSkeleton()));
           }
 
-          if (profileState.status == ProfileStatus.error &&
-              profileState.profile == null) {
+          if (profileState.status == ProfileStatus.error && profileState.profile == null) {
             return Scaffold(
               appBar: DSAppBar(title: l10n.mainTitle),
               body: DSInlineError(
@@ -74,8 +71,7 @@ class OverviewPage extends StatelessWidget {
                     child: DSChip(
                       label: baseCurrency,
                       icon: Icons.currency_exchange,
-                      onTap: () =>
-                          context.push<String>(AppRoutes.baseCurrencySettings),
+                      onTap: () => context.push<String>(AppRoutes.baseCurrencySettings),
                     ),
                   ),
                 ),
@@ -102,17 +98,12 @@ class OverviewPage extends StatelessWidget {
                         children: [
                           SizedBox(height: context.dsSpacing.s24),
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: context.dsSpacing.s24,
-                            ),
+                            padding: EdgeInsets.symmetric(horizontal: context.dsSpacing.s24),
                             child: DSInlineError(
                               title: l10n.splashErrorTitle,
-                              message:
-                                  accountsState.failureMessage ??
-                                  l10n.errorGeneric,
+                              message: accountsState.failureMessage ?? l10n.errorGeneric,
                               actionLabel: l10n.splashRetry,
-                              onAction: () =>
-                                  context.read<AccountsCubit>().load(),
+                              onAction: () => context.read<AccountsCubit>().load(),
                             ),
                           ),
                         ],
@@ -179,16 +170,11 @@ class _OverviewReady extends StatelessWidget {
             .toList()
           ..sort((a, b) => a.accountName.compareTo(b.accountName));
 
-    final total = items.fold<Decimal>(
-      Decimal.zero,
-      (acc, item) => acc + item.total,
-    );
+    final total = items.fold<Decimal>(Decimal.zero, (acc, item) => acc + item.total);
 
     final ratesText = snapshot?.asOf == null
         ? l10n.overviewRatesUnavailable
-        : l10n.overviewRatesUpdatedAt(
-            context.dsFormatters.formatDateTime(snapshot!.asOf),
-          );
+        : l10n.overviewRatesUpdatedAt(context.dsFormatters.formatDateTime(snapshot!.asOf));
 
     if (items.isEmpty) {
       return ListView(
@@ -198,10 +184,7 @@ class _OverviewReady extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: spacing.s24),
             child: OverviewSummaryCard(
               totalLabel: l10n.overviewTotalLabel,
-              totalValue: context.dsFormatters.formatMoney(
-                Decimal.zero,
-                baseCurrency,
-              ),
+              totalValue: context.dsFormatters.formatMoney(Decimal.zero, baseCurrency),
               pricedTotalLabel: null,
               pricedTotalValue: null,
               ratesText: ratesText,
@@ -297,10 +280,7 @@ class _OverviewReady extends StatelessWidget {
     return divideToDecimal(usd, baseUsdPrice);
   }
 
-  Decimal? _resolveBaseUsdPrice(
-    ProfileState profileState,
-    RatesSnapshotEntity? snapshot,
-  ) {
+  Decimal? _resolveBaseUsdPrice(ProfileState profileState, RatesSnapshotEntity? snapshot) {
     final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
     if (baseCurrency == 'USD') {
       return Decimal.one;

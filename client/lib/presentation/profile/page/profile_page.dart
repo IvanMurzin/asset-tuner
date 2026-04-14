@@ -71,8 +71,7 @@ class ProfilePage extends StatelessWidget {
               );
             }
 
-            if (profileState.status == ProfileStatus.error &&
-                profileState.profile == null) {
+            if (profileState.status == ProfileStatus.error && profileState.profile == null) {
               return Scaffold(
                 appBar: DSAppBar(title: l10n.profileTitle),
                 body: DSInlineError(
@@ -117,9 +116,7 @@ class ProfilePage extends StatelessWidget {
                               await context.push(AppRoutes.paywall);
                             }
                             if (context.mounted) {
-                              await context.read<ProfileCubit>().refresh(
-                                silent: true,
-                              );
+                              await context.read<ProfileCubit>().refresh(silent: true);
                             }
                           },
                           planActionLabel: profile.plan == 'pro'
@@ -135,13 +132,9 @@ class ProfilePage extends StatelessWidget {
                             children: [
                               DSListRow(
                                 title: l10n.settingsBaseCurrency,
-                                trailing: SettingsRowTrailing(
-                                  value: profile.baseCurrency,
-                                ),
+                                trailing: SettingsRowTrailing(value: profile.baseCurrency),
                                 showDivider: true,
-                                onTap: () => context.push(
-                                  AppRoutes.baseCurrencySettings,
-                                ),
+                                onTap: () => context.push(AppRoutes.baseCurrencySettings),
                               ),
                               const ProfileLanguageSelector(),
                               const ProfileThemeSelector(),
@@ -163,8 +156,7 @@ class ProfilePage extends StatelessWidget {
                               Icons.chevron_right,
                               color: context.dsColors.textTertiary,
                             ),
-                            onTap: () =>
-                                context.push(AppRoutes.archivedAccounts),
+                            onTap: () => context.push(AppRoutes.archivedAccounts),
                           ),
                         ),
                         SizedBox(height: spacing.s24),

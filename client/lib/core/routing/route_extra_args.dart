@@ -8,11 +8,7 @@ final class AccountDetailExtra {
 }
 
 final class SubaccountDetailExtra {
-  const SubaccountDetailExtra({
-    this.initialTitle,
-    this.account,
-    this.subaccount,
-  });
+  const SubaccountDetailExtra({this.initialTitle, this.account, this.subaccount});
   final String? initialTitle;
   final AccountEntity? account;
   final SubaccountEntity? subaccount;

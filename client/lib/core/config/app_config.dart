@@ -51,14 +51,8 @@ final class AppConfig {
     if (_missingRequiredStringKeys(stringValues).isNotEmpty) {
       return null;
     }
-    final logApiResponses = const bool.fromEnvironment(
-      'LOG_API_RESPONSES',
-      defaultValue: false,
-    );
-    final isOtpEnabled = const bool.fromEnvironment(
-      'IS_OTP_ENABLED',
-      defaultValue: false,
-    );
+    final logApiResponses = const bool.fromEnvironment('LOG_API_RESPONSES', defaultValue: false);
+    final isOtpEnabled = const bool.fromEnvironment('IS_OTP_ENABLED', defaultValue: false);
     return AppConfig._(
       env: stringValues['ENV']!,
       supabaseUrl: stringValues['SUPABASE_URL']!,
@@ -96,9 +90,7 @@ final class AppConfig {
     };
   }
 
-  static List<String> _missingRequiredStringKeys(
-    Map<String, String> stringValues,
-  ) {
+  static List<String> _missingRequiredStringKeys(Map<String, String> stringValues) {
     return _requiredStringKeys
         .where((key) => stringValues[key]?.trim().isEmpty ?? true)
         .toList(growable: false);

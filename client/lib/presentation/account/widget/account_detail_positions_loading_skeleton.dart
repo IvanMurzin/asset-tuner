@@ -55,7 +55,6 @@ class AccountDetailPositionsLoadingSkeleton extends StatelessWidget {
           ),
           if (i != 3) const SizedBox(height: 10),
         ],
-
       ],
     );
   }

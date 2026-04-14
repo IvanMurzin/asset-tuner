@@ -16,12 +16,8 @@ part 'session_state.dart';
 
 @injectable
 class SessionCubit extends Cubit<SessionState> {
-  SessionCubit(
-    this._watchSession,
-    this._signOut,
-    this._deleteAccount,
-    this._revenueCatService,
-  ) : super(const SessionState());
+  SessionCubit(this._watchSession, this._signOut, this._deleteAccount, this._revenueCatService)
+    : super(const SessionState());
 
   final WatchSessionUseCase _watchSession;
   final SignOutUseCase _signOut;
@@ -100,13 +96,7 @@ class SessionCubit extends Cubit<SessionState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        isSigningOut: true,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(isSigningOut: true, failureCode: null, failureMessage: null));
 
     final result = await _signOut();
     if (result case FailureResult<void>(failure: final failure)) {
@@ -129,13 +119,7 @@ class SessionCubit extends Cubit<SessionState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        isDeletingAccount: true,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(state.copyWith(isDeletingAccount: true, failureCode: null, failureMessage: null));
 
     final result = await _deleteAccount();
     if (result case FailureResult<void>(failure: final failure)) {
@@ -172,11 +156,7 @@ class SessionCubit extends Cubit<SessionState> {
     try {
       await _revenueCatService.logOut();
     } catch (error, stackTrace) {
-      logger.e(
-        'RevenueCat logOut failed',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      logger.e('RevenueCat logOut failed', error: error, stackTrace: stackTrace);
     } finally {
       _revenueCatUserId = null;
     }
