@@ -39,6 +39,7 @@ class _DSPasswordFieldState extends State<DSPasswordField> {
       controller: widget.controller,
       enabled: widget.enabled,
       obscureText: _obscured,
+      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       onChanged: widget.onChanged,
       style: typography.body.copyWith(color: colors.textPrimary),
       decoration: InputDecoration(

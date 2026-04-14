@@ -18,7 +18,7 @@
 5. [IMP-AUTH-005](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-AUTH-005-post-onboarding-guided-tour.md) `P2` `Done`
 
 ### DS
-1. [BUG-DS-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-DS-001-global-keyboard-dismiss-behavior.md) `P0`
+1. [BUG-DS-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-DS-001-global-keyboard-dismiss-behavior.md) `P0` `Done`
 2. [BUG-DS-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-DS-002-left-aligned-money-inputs.md) `P1`
 3. [IMP-DS-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-DS-003-ds-currency-badge-component.md) `P1`
 4. [IMP-DS-004](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-DS-004-ds-balance-input-component.md) `P1`

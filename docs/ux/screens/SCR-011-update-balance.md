@@ -58,3 +58,5 @@ Create a **snapshot** balance entry for a subaccount (счёт) for **today**.
   - Allowed in MVP v2. Ordering: `entry_date desc, created_at desc`.
 - Offline:
   - Disable save and show “You’re offline. Changes are disabled.”
+- Keyboard + safe area:
+  - Tap outside input dismisses keyboard via DS input callback (`onTapOutside`).

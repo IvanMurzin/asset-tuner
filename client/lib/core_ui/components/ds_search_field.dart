@@ -17,6 +17,7 @@ class DSSearchField extends StatelessWidget {
 
     return TextField(
       controller: controller,
+      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       onChanged: onChanged,
       style: typography.body.copyWith(color: colors.textPrimary),
       decoration: InputDecoration(

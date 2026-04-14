@@ -47,6 +47,7 @@ class DSTextField extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       obscureText: obscureText,
+      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       textAlign: textAlign,

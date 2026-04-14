@@ -37,6 +37,11 @@ Create a new account via email + password and send an OTP verification code.
   - Network/rate limited: show retry guidance.
   - Unknown: safe message + retry.
 
+## Edge cases
+- Keyboard + safe area:
+  - Ensure primary CTA remains reachable (scroll content).
+  - Tap outside input dismisses keyboard via DS input callback (`onTapOutside`).
+
 ## Copy (key text)
 - Title: “Create account”
 - Body: “Join Asset Tuner to sync your portfolio.”

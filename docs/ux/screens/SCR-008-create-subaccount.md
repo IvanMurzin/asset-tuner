@@ -44,6 +44,12 @@ Create a new subaccount (счёт) inside an account by selecting a currency/tok
 - Success:
   - created; close the screen
 
+## Edge cases
+- Keyboard + safe area:
+  - Tap outside input dismisses keyboard via DS input callback (`onTapOutside`).
+- Interactive controls:
+  - Dismiss behavior must not break tap handling for picker/radio/CTA.
+
 ## Copy (key text)
 - Title: “Add subaccount”
 - Name label: “Name”

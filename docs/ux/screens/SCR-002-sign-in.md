@@ -59,3 +59,4 @@ Authenticate the user via email + password, with optional Google/Apple sign-in i
   - Show safe error banner; keep inputs editable.
 - Keyboard + safe area:
   - Ensure primary CTA remains reachable (scroll content).
+  - Tap outside input dismisses keyboard via DS input callback (`onTapOutside`).
