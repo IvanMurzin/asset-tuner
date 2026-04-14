@@ -1,0 +1,7 @@
+interface:
+  display_name: "Backlog Task Solver"
+  short_description: "Implements next backlog issue to commit-ready"
+  default_prompt: "Use $backlog-task-solver to pick the next backlog issue from INDEX.md, implement it, update status/docs, run checks, and provide manual QA steps."
+
+policy:
+  allow_implicit_invocation: true
