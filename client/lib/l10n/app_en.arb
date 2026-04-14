@@ -445,5 +445,26 @@
   },
   "subscriptionManageSuccess": "Subscription status updated.",
   "subscriptionRestoreSuccess": "Purchases restored.",
-  "subscriptionCancelSuccess": "Subscription canceled."
+  "subscriptionCancelSuccess": "Subscription canceled.",
+  "guidedTourSkip": "Skip",
+  "guidedTourNext": "Next",
+  "guidedTourFinish": "Finish",
+  "guidedTourProgress": "Step {current} of {total}",
+  "@guidedTourProgress": {
+    "description": "Guided tour progress label.",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "guidedTourOverviewStep1Title": "Portfolio total",
+  "guidedTourOverviewStep1Body": "This card shows your total value in the selected base currency.",
+  "guidedTourOverviewStep2Title": "Create an account",
+  "guidedTourOverviewStep2Body": "Tap here to add a bank, wallet, exchange, cash, or custom account.",
+  "guidedTourOverviewStep3Title": "Refresh data",
+  "guidedTourOverviewStep3Body": "Pull down on the Main screen to update balances and rates."
 }

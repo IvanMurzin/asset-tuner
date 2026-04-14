@@ -445,5 +445,26 @@
   },
   "subscriptionManageSuccess": "Статус подписки обновлен.",
   "subscriptionRestoreSuccess": "Покупки восстановлены.",
-  "subscriptionCancelSuccess": "Подписка отменена."
+  "subscriptionCancelSuccess": "Подписка отменена.",
+  "guidedTourSkip": "Пропустить",
+  "guidedTourNext": "Далее",
+  "guidedTourFinish": "Завершить",
+  "guidedTourProgress": "Шаг {current} из {total}",
+  "@guidedTourProgress": {
+    "description": "Подпись прогресса guided tour.",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "guidedTourOverviewStep1Title": "Итог портфеля",
+  "guidedTourOverviewStep1Body": "В этой карточке отображается общая стоимость активов в выбранной базовой валюте.",
+  "guidedTourOverviewStep2Title": "Создайте аккаунт",
+  "guidedTourOverviewStep2Body": "Нажмите здесь, чтобы добавить банковский, биржевой, кошелёк, наличный или другой тип аккаунта.",
+  "guidedTourOverviewStep3Title": "Обновляйте данные",
+  "guidedTourOverviewStep3Body": "Потяните экран «Главная» вниз, чтобы обновить балансы и курсы."
 }

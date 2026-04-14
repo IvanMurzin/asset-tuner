@@ -1122,4 +1122,39 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get subscriptionCancelSuccess => 'Подписка отменена.';
+
+  @override
+  String get guidedTourSkip => 'Пропустить';
+
+  @override
+  String get guidedTourNext => 'Далее';
+
+  @override
+  String get guidedTourFinish => 'Завершить';
+
+  @override
+  String guidedTourProgress(int current, int total) {
+    return 'Шаг $current из $total';
+  }
+
+  @override
+  String get guidedTourOverviewStep1Title => 'Итог портфеля';
+
+  @override
+  String get guidedTourOverviewStep1Body =>
+      'В этой карточке отображается общая стоимость активов в выбранной базовой валюте.';
+
+  @override
+  String get guidedTourOverviewStep2Title => 'Создайте аккаунт';
+
+  @override
+  String get guidedTourOverviewStep2Body =>
+      'Нажмите здесь, чтобы добавить банковский, биржевой, кошелёк, наличный или другой тип аккаунта.';
+
+  @override
+  String get guidedTourOverviewStep3Title => 'Обновляйте данные';
+
+  @override
+  String get guidedTourOverviewStep3Body =>
+      'Потяните экран «Главная» вниз, чтобы обновить балансы и курсы.';
 }

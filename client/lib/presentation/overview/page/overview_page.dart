@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/local_storage/guided_tour_storage.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core/utils/decimal_math.dart';
@@ -18,8 +19,10 @@ import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_account_card.dart';
+import 'package:asset_tuner/presentation/overview/widget/overview_guided_tour_card.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_summary_card.dart';
+import 'package:asset_tuner/presentation/overview/widget/tour_target_highlight.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_account_item.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
@@ -130,7 +133,7 @@ class OverviewPage extends StatelessWidget {
   }
 }
 
-class _OverviewReady extends StatelessWidget {
+class _OverviewReady extends StatefulWidget {
   const _OverviewReady({
     required this.accounts,
     required this.profileState,
@@ -142,15 +145,41 @@ class _OverviewReady extends StatelessWidget {
   final AssetsState assetsState;
 
   @override
+  State<_OverviewReady> createState() => _OverviewReadyState();
+}
+
+class _OverviewReadyState extends State<_OverviewReady> {
+  final GuidedTourStorage _guidedTourStorage = GuidedTourStorage();
+  bool _tourVisible = false;
+  int _tourStepIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGuidedTourState();
+  }
+
+  Future<void> _loadGuidedTourState() async {
+    final completed = await _guidedTourStorage.getCompleted();
+    if (!mounted || completed) {
+      return;
+    }
+    setState(() {
+      _tourVisible = true;
+      _tourStepIndex = 0;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final spacing = context.dsSpacing;
-    final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
-    final snapshot = assetsState.snapshot;
+    final baseCurrency = widget.profileState.profile?.baseCurrency ?? 'USD';
+    final snapshot = widget.assetsState.snapshot;
 
-    final baseUsdPrice = _resolveBaseUsdPrice(profileState, snapshot);
+    final baseUsdPrice = _resolveBaseUsdPrice(widget.profileState, snapshot);
 
-    final activeAccounts = accounts.where((item) => !item.archived).toList();
+    final activeAccounts = widget.accounts.where((item) => !item.archived).toList();
     final items =
         activeAccounts
             .map(
@@ -176,91 +205,131 @@ class _OverviewReady extends StatelessWidget {
         ? l10n.overviewRatesUnavailable
         : l10n.overviewRatesUpdatedAt(context.dsFormatters.formatDateTime(snapshot!.asOf));
 
-    if (items.isEmpty) {
-      return ListView(
-        children: [
-          SizedBox(height: spacing.s24),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
-            child: OverviewSummaryCard(
-              totalLabel: l10n.overviewTotalLabel,
-              totalValue: context.dsFormatters.formatMoney(Decimal.zero, baseCurrency),
-              pricedTotalLabel: null,
-              pricedTotalValue: null,
-              ratesText: ratesText,
-            ),
-          ),
-          SizedBox(height: spacing.s24),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
-            child: DSEmptyCard(
-              icon: Icons.account_balance_outlined,
-              title: l10n.overviewEmptyNoAccountsTitle,
-              message: l10n.overviewEmptyNoAccountsBody,
-              actionLabel: l10n.mainAddAccount,
-              actionLeadingIcon: Icons.add,
-              onAction: () => _openCreateAccountFlow(context),
-            ),
-          ),
-        ],
-      );
+    final showSummaryHighlight = _tourVisible && _tourStepIndex == 0;
+    final showAddAccountHighlight = _tourVisible && _tourStepIndex == 1;
+
+    final listContent = items.isEmpty
+        ? ListView(
+            children: [
+              SizedBox(height: spacing.s24),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+                child: TourTargetHighlight(
+                  isActive: showSummaryHighlight,
+                  child: OverviewSummaryCard(
+                    totalLabel: l10n.overviewTotalLabel,
+                    totalValue: context.dsFormatters.formatMoney(Decimal.zero, baseCurrency),
+                    pricedTotalLabel: null,
+                    pricedTotalValue: null,
+                    ratesText: ratesText,
+                  ),
+                ),
+              ),
+              SizedBox(height: spacing.s24),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+                child: TourTargetHighlight(
+                  isActive: showAddAccountHighlight,
+                  child: DSEmptyCard(
+                    icon: Icons.account_balance_outlined,
+                    title: l10n.overviewEmptyNoAccountsTitle,
+                    message: l10n.overviewEmptyNoAccountsBody,
+                    actionLabel: l10n.mainAddAccount,
+                    actionLeadingIcon: Icons.add,
+                    onAction: () => _openCreateAccountFlow(context),
+                  ),
+                ),
+              ),
+            ],
+          )
+        : ListView(
+            children: [
+              SizedBox(height: spacing.s24),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+                child: TourTargetHighlight(
+                  isActive: showSummaryHighlight,
+                  child: OverviewSummaryCard(
+                    totalLabel: l10n.overviewTotalLabel,
+                    totalValue: context.dsFormatters.formatMoney(total, baseCurrency),
+                    pricedTotalLabel: null,
+                    pricedTotalValue: null,
+                    ratesText: ratesText,
+                  ),
+                ),
+              ),
+              SizedBox(height: spacing.s24),
+              for (final section in _groupByType(items))
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DSSectionTitle(title: _typeLabel(l10n, section.type)),
+                      SizedBox(height: spacing.s12),
+                      for (var i = 0; i < section.items.length; i++) ...[
+                        OverviewAccountCard(
+                          item: section.items[i],
+                          baseCurrency: baseCurrency,
+                          onTap: () => context.push(
+                            AppRoutes.accountDetail.replaceFirst(
+                              ':accountId',
+                              section.items[i].accountId,
+                            ),
+                            extra: AccountDetailExtra(
+                              initialTitle: section.items[i].accountName,
+                              initialAccountType: section.items[i].accountType,
+                            ),
+                          ),
+                        ),
+                        if (i != section.items.length - 1) const SizedBox(height: 10),
+                      ],
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: spacing.s24),
+                child: TourTargetHighlight(
+                  isActive: showAddAccountHighlight,
+                  child: DSButton(
+                    label: l10n.mainAddAccount,
+                    leadingIcon: Icons.add,
+                    fullWidth: true,
+                    onPressed: () => _openCreateAccountFlow(context),
+                  ),
+                ),
+              ),
+              SizedBox(height: spacing.s24),
+            ],
+          );
+
+    if (!_tourVisible) {
+      return listContent;
     }
 
-    final grouped = _groupByType(items);
+    final steps = _buildTourSteps(l10n);
+    final step = steps[_tourStepIndex];
+    final isLastStep = _tourStepIndex == steps.length - 1;
 
-    return ListView(
+    return Stack(
       children: [
-        SizedBox(height: spacing.s24),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: spacing.s24),
-          child: OverviewSummaryCard(
-            totalLabel: l10n.overviewTotalLabel,
-            totalValue: context.dsFormatters.formatMoney(total, baseCurrency),
-            pricedTotalLabel: null,
-            pricedTotalValue: null,
-            ratesText: ratesText,
-          ),
-        ),
-        SizedBox(height: spacing.s24),
-        for (final section in grouped)
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: spacing.s24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DSSectionTitle(title: _typeLabel(l10n, section.type)),
-                SizedBox(height: spacing.s12),
-                for (var i = 0; i < section.items.length; i++) ...[
-                  OverviewAccountCard(
-                    item: section.items[i],
-                    baseCurrency: baseCurrency,
-                    onTap: () => context.push(
-                      AppRoutes.accountDetail.replaceFirst(
-                        ':accountId',
-                        section.items[i].accountId,
-                      ),
-                      extra: AccountDetailExtra(
-                        initialTitle: section.items[i].accountName,
-                        initialAccountType: section.items[i].accountType,
-                      ),
-                    ),
-                  ),
-                  if (i != section.items.length - 1) const SizedBox(height: 10),
-                ],
-                const SizedBox(height: 20),
-              ],
+        listContent,
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(spacing.s16, spacing.s16, spacing.s16, spacing.s24),
+            child: OverviewGuidedTourCard(
+              title: step.title,
+              body: step.body,
+              progressLabel: step.progressLabel,
+              nextLabel: isLastStep ? l10n.guidedTourFinish : l10n.guidedTourNext,
+              skipLabel: l10n.guidedTourSkip,
+              onSkip: _skipTour,
+              onNext: isLastStep ? _completeTour : _nextTourStep,
             ),
           ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: spacing.s24),
-          child: DSButton(
-            label: l10n.mainAddAccount,
-            leadingIcon: Icons.add,
-            fullWidth: true,
-            onPressed: () => _openCreateAccountFlow(context),
-          ),
         ),
-        SizedBox(height: spacing.s24),
       ],
     );
   }
@@ -336,4 +405,64 @@ class _OverviewReady extends StatelessWidget {
   Future<void> _openCreateAccountFlow(BuildContext context) async {
     await context.push<String>(AppRoutes.accountNew);
   }
+
+  Future<void> _nextTourStep() async {
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _tourStepIndex += 1;
+    });
+  }
+
+  Future<void> _skipTour() async {
+    await _finishTour();
+  }
+
+  Future<void> _completeTour() async {
+    await _finishTour();
+  }
+
+  Future<void> _finishTour() async {
+    await _guidedTourStorage.setCompleted();
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _tourVisible = false;
+      _tourStepIndex = 0;
+    });
+  }
+
+  List<_OverviewTourStepData> _buildTourSteps(AppLocalizations l10n) {
+    return [
+      _OverviewTourStepData(
+        title: l10n.guidedTourOverviewStep1Title,
+        body: l10n.guidedTourOverviewStep1Body,
+        progressLabel: l10n.guidedTourProgress(1, 3),
+      ),
+      _OverviewTourStepData(
+        title: l10n.guidedTourOverviewStep2Title,
+        body: l10n.guidedTourOverviewStep2Body,
+        progressLabel: l10n.guidedTourProgress(2, 3),
+      ),
+      _OverviewTourStepData(
+        title: l10n.guidedTourOverviewStep3Title,
+        body: l10n.guidedTourOverviewStep3Body,
+        progressLabel: l10n.guidedTourProgress(3, 3),
+      ),
+    ];
+  }
+}
+
+class _OverviewTourStepData {
+  const _OverviewTourStepData({
+    required this.title,
+    required this.body,
+    required this.progressLabel,
+  });
+
+  final String title;
+  final String body;
+  final String progressLabel;
 }

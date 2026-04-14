@@ -2246,6 +2246,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Subscription canceled.'**
   String get subscriptionCancelSuccess;
+
+  /// No description provided for @guidedTourSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get guidedTourSkip;
+
+  /// No description provided for @guidedTourNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get guidedTourNext;
+
+  /// No description provided for @guidedTourFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get guidedTourFinish;
+
+  /// Guided tour progress label.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String guidedTourProgress(int current, int total);
+
+  /// No description provided for @guidedTourOverviewStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio total'**
+  String get guidedTourOverviewStep1Title;
+
+  /// No description provided for @guidedTourOverviewStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'This card shows your total value in the selected base currency.'**
+  String get guidedTourOverviewStep1Body;
+
+  /// No description provided for @guidedTourOverviewStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account'**
+  String get guidedTourOverviewStep2Title;
+
+  /// No description provided for @guidedTourOverviewStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to add a bank, wallet, exchange, cash, or custom account.'**
+  String get guidedTourOverviewStep2Body;
+
+  /// No description provided for @guidedTourOverviewStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh data'**
+  String get guidedTourOverviewStep3Title;
+
+  /// No description provided for @guidedTourOverviewStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull down on the Main screen to update balances and rates.'**
+  String get guidedTourOverviewStep3Body;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

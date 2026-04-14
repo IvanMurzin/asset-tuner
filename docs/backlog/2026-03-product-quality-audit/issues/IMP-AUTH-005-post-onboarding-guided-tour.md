@@ -4,7 +4,7 @@
 - ID: `IMP-AUTH-005`
 - Тип: `Improvement`
 - Приоритет: `P2`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `SCR-004`, `SCR-006`, `SCR-003`
 
 ## Экран/модуль/слой
@@ -51,3 +51,10 @@
 ## Ссылки на текущую реализацию
 - [home_gate_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/auth/widget/home_gate_page.dart)
 - [overview_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/overview/page/overview_page.dart)
+
+## Implementation note
+- Что сделано: реализован one-time guided tour на экране Main (`Overview`) в 3 шага с подсветкой ключевых CTA-блоков (итоговая карточка, блок/кнопка добавления аккаунта), добавлены действия `Skip` и `Finish`; при `skip` и при завершении тура состояние фиксируется локально и повторно тур не показывается.
+- Локальное состояние: добавлен `GuidedTourStorage` на `SharedPreferences` с флагом `guided_tour_overview_completed`.
+- Локализация: добавлены RU/EN строки для прогресса и текстов 3 шагов guided tour.
+- Измененные файлы: `client/lib/presentation/overview/page/overview_page.dart`, `client/lib/presentation/overview/widget/overview_guided_tour_card.dart`, `client/lib/presentation/overview/widget/tour_target_highlight.dart`, `client/lib/core/local_storage/guided_tour_storage.dart`, `client/lib/l10n/app_en.arb`, `client/lib/l10n/app_ru.arb`, `client/lib/l10n/app_localizations.dart`, `client/lib/l10n/app_localizations_en.dart`, `client/lib/l10n/app_localizations_ru.dart`, `client/test/core/local_storage/guided_tour_storage_test.dart`, `docs/backlog/2026-03-product-quality-audit/issues/IMP-AUTH-005-post-onboarding-guided-tour.md`, `docs/backlog/2026-03-product-quality-audit/INDEX.md`.
+- Проверки: `cd client && flutter gen-l10n` (pass), `cd client && flutter analyze` (pass), `cd client && flutter test test/core/local_storage/guided_tour_storage_test.dart` (pass).

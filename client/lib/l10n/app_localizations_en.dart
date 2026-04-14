@@ -1116,4 +1116,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionCancelSuccess => 'Subscription canceled.';
+
+  @override
+  String get guidedTourSkip => 'Skip';
+
+  @override
+  String get guidedTourNext => 'Next';
+
+  @override
+  String get guidedTourFinish => 'Finish';
+
+  @override
+  String guidedTourProgress(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get guidedTourOverviewStep1Title => 'Portfolio total';
+
+  @override
+  String get guidedTourOverviewStep1Body =>
+      'This card shows your total value in the selected base currency.';
+
+  @override
+  String get guidedTourOverviewStep2Title => 'Create an account';
+
+  @override
+  String get guidedTourOverviewStep2Body =>
+      'Tap here to add a bank, wallet, exchange, cash, or custom account.';
+
+  @override
+  String get guidedTourOverviewStep3Title => 'Refresh data';
+
+  @override
+  String get guidedTourOverviewStep3Body =>
+      'Pull down on the Main screen to update balances and rates.';
 }
