@@ -78,6 +78,7 @@ class _OtpPageState extends State<OtpPage> {
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
+          final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
           final typography = context.dsTypography;
           final isLoading = state.status == OtpStatus.loading;
           final otpEnabled = !isLoading && !state.isResendInProgress;
@@ -91,67 +92,50 @@ class _OtpPageState extends State<OtpPage> {
             resizeToAvoidBottomInset: false,
             appBar: DSAppBar(title: l10n.otpTitle),
             body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        spacing.s24,
-                        spacing.s24,
-                        spacing.s24,
-                        spacing.s16,
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+                padding: EdgeInsets.fromLTRB(
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s24 + keyboardInset,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AuthHero(title: l10n.otpTitle, subtitle: l10n.otpBodyWithEmail(email)),
+                    SizedBox(height: spacing.s32),
+                    DSOtpInput(
+                      controller: _otpController,
+                      onChanged: context.read<OtpCubit>().updateCode,
+                      errorText: _codeErrorText(l10n, state.codeError),
+                      enabled: otpEnabled,
+                      autofocus: true,
+                    ),
+                    SizedBox(height: spacing.s16),
+                    _ResendCaption(
+                      isLoading: isLoading,
+                      isResendInProgress: state.isResendInProgress,
+                      onResend: () => context.read<OtpCubit>().resend(),
+                    ),
+                    SizedBox(height: spacing.s24),
+                    DSButton(
+                      label: l10n.verifyOtp,
+                      isLoading: isLoading,
+                      fullWidth: true,
+                      onPressed: isLoading ? null : context.read<OtpCubit>().verify,
+                    ),
+                    SizedBox(height: spacing.s12),
+                    TextButton(
+                      onPressed: isLoading ? null : () => context.go(AppRoutes.signUp),
+                      child: Text(
+                        l10n.changeEmail,
+                        style: typography.body.copyWith(color: context.dsColors.primary),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          AuthHero(title: l10n.otpTitle, subtitle: l10n.otpBodyWithEmail(email)),
-                          SizedBox(height: spacing.s32),
-                          DSOtpInput(
-                            controller: _otpController,
-                            onChanged: context.read<OtpCubit>().updateCode,
-                            errorText: _codeErrorText(l10n, state.codeError),
-                            enabled: otpEnabled,
-                            autofocus: true,
-                          ),
-                          SizedBox(height: spacing.s16),
-                          _ResendCaption(
-                            isLoading: isLoading,
-                            isResendInProgress: state.isResendInProgress,
-                            onResend: () => context.read<OtpCubit>().resend(),
-                          ),
-                        ],
-                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      spacing.s24,
-                      spacing.s16,
-                      spacing.s24,
-                      spacing.s24,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        DSButton(
-                          label: l10n.verifyOtp,
-                          isLoading: isLoading,
-                          fullWidth: true,
-                          onPressed: isLoading ? null : context.read<OtpCubit>().verify,
-                        ),
-                        SizedBox(height: spacing.s12),
-                        TextButton(
-                          onPressed: isLoading ? null : () => context.go(AppRoutes.signUp),
-                          child: Text(
-                            l10n.changeEmail,
-                            style: typography.body.copyWith(color: context.dsColors.primary),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

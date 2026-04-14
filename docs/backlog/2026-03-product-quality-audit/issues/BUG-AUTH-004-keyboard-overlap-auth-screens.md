@@ -4,7 +4,7 @@
 - ID: `BUG-AUTH-004`
 - Тип: `Bug`
 - Приоритет: `P0`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `SCR-002`, `SCR-015`, `SCR-016`
 
 ## Экран/модуль/слой
@@ -52,3 +52,9 @@
 - [sign_in_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/auth/page/sign_in_page.dart)
 - [sign_up_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/auth/page/sign_up_page.dart)
 - [otp_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/auth/page/otp_page.dart)
+
+## Implementation note
+- Что сделано: auth-экраны переведены на единый прокручиваемый контент (`SingleChildScrollView`) без фиксированного footer-блока над клавиатурой; добавлены `ClampingScrollPhysics` и `keyboardDismissBehavior: manual`, нижний отступ учитывает `MediaQuery.viewInsetsOf(context).bottom`.
+- Дополнительно: в `DSAppBar` отключен визуальный `scrolledUnder`-эффект (фон app bar больше не меняется при скролле контента под app bar).
+- Измененные файлы: `client/lib/presentation/auth/page/sign_in_page.dart`, `client/lib/presentation/auth/page/sign_up_page.dart`, `client/lib/presentation/auth/page/otp_page.dart`, `client/lib/core_ui/components/ds_app_bar.dart`.
+- Проверки: `cd client && flutter analyze` (pass).

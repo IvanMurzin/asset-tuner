@@ -58,6 +58,7 @@ class SignUpPage extends StatelessWidget {
         },
         builder: (context, state) {
           final spacing = context.dsSpacing;
+          final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
           final typography = context.dsTypography;
           final isLoading = state.status == SignUpStatus.loading;
 
@@ -65,71 +66,54 @@ class SignUpPage extends StatelessWidget {
             resizeToAvoidBottomInset: false,
             appBar: DSAppBar(title: l10n.signUpTitle),
             body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        spacing.s24,
-                        spacing.s24,
-                        spacing.s24,
-                        spacing.s16,
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+                padding: EdgeInsets.fromLTRB(
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s24 + keyboardInset,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AuthHero(title: l10n.signUpTitle, subtitle: l10n.signUpBody),
+                    SizedBox(height: spacing.s24),
+                    SignUpEmailField(
+                      label: l10n.emailLabel,
+                      hint: l10n.emailHint,
+                      errorText: _emailErrorText(l10n, state.emailError),
+                    ),
+                    SizedBox(height: spacing.s16),
+                    SignUpPasswordField(
+                      label: l10n.passwordLabel,
+                      hint: l10n.passwordHint,
+                      errorText: _passwordErrorText(l10n, state.passwordError),
+                    ),
+                    SizedBox(height: spacing.s16),
+                    SignUpConfirmPasswordField(
+                      label: l10n.confirmPasswordLabel,
+                      hint: l10n.confirmPasswordHint,
+                      errorText: _confirmErrorText(l10n, state.confirmPasswordError),
+                    ),
+                    SizedBox(height: spacing.s24),
+                    DSButton(
+                      label: l10n.signUpPrimary,
+                      isLoading: isLoading,
+                      fullWidth: true,
+                      onPressed: isLoading ? null : context.read<SignUpCubit>().submit,
+                    ),
+                    SizedBox(height: spacing.s16),
+                    TextButton(
+                      onPressed: isLoading ? null : () => context.go(AppRoutes.signIn),
+                      child: Text(
+                        l10n.switchToSignIn,
+                        style: typography.body.copyWith(color: context.dsColors.primary),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          AuthHero(title: l10n.signUpTitle, subtitle: l10n.signUpBody),
-                          SizedBox(height: spacing.s24),
-                          SignUpEmailField(
-                            label: l10n.emailLabel,
-                            hint: l10n.emailHint,
-                            errorText: _emailErrorText(l10n, state.emailError),
-                          ),
-                          SizedBox(height: spacing.s16),
-                          SignUpPasswordField(
-                            label: l10n.passwordLabel,
-                            hint: l10n.passwordHint,
-                            errorText: _passwordErrorText(l10n, state.passwordError),
-                          ),
-                          SizedBox(height: spacing.s16),
-                          SignUpConfirmPasswordField(
-                            label: l10n.confirmPasswordLabel,
-                            hint: l10n.confirmPasswordHint,
-                            errorText: _confirmErrorText(l10n, state.confirmPasswordError),
-                          ),
-                        ],
-                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      spacing.s24,
-                      spacing.s16,
-                      spacing.s24,
-                      spacing.s24,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        DSButton(
-                          label: l10n.signUpPrimary,
-                          isLoading: isLoading,
-                          fullWidth: true,
-                          onPressed: isLoading ? null : context.read<SignUpCubit>().submit,
-                        ),
-                        SizedBox(height: spacing.s16),
-                        TextButton(
-                          onPressed: isLoading ? null : () => context.go(AppRoutes.signIn),
-                          child: Text(
-                            l10n.switchToSignIn,
-                            style: typography.body.copyWith(color: context.dsColors.primary),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

@@ -52,12 +52,15 @@ class _DSAppBarState extends State<DSAppBar> {
     return AppBar(
       title: Text(widget.title, style: typography.h2.copyWith(color: colors.textPrimary)),
       backgroundColor: colors.background,
+      surfaceTintColor: Colors.transparent,
       leading: effectiveLeading,
       automaticallyImplyLeading: effectiveLeading == null,
       foregroundColor: colors.textPrimary,
       centerTitle: widget.centerTitle,
       actions: widget.actions,
       elevation: 0,
+      scrolledUnderElevation: 0,
+      shadowColor: Colors.transparent,
     );
   }
 }
