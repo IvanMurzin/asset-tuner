@@ -4,7 +4,7 @@
 - ID: `BUG-SUB-002`
 - Тип: `Bug`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-005`, `SCR-008`
 
 ## Экран/модуль/слой
@@ -48,3 +48,13 @@
 
 ## Ссылки на текущую реализацию
 - [add_subaccount_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/page/add_subaccount_page.dart)
+
+## Implementation note
+- Реализация выполнена в рамках `IMP-DS-003`.
+- На экране `Add subaccount` удалены `fiat/crypto` radio controls.
+- Валюта теперь выбирается через `AssetCurrencyBadge` в suffix поля суммы.
+- Bottom sheet поддерживает tabs `Fiat/Crypto` и selection в одном flow.
+- Paywall-логика для locked assets сохранена через callback `onLocked`.
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/asset/widget/asset_currency_badge_test.dart test/presentation/account/page/add_subaccount_page_test.dart test/presentation/balance/bloc/subaccount_create_cubit_test.dart` (pass)

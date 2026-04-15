@@ -4,7 +4,7 @@
 - ID: `IMP-CUR-004`
 - Тип: `Improvement`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-003`, `FTR-005`, `SCR-008`, `SCR-012`
 
 ## Экран/модуль/слой
@@ -53,4 +53,13 @@
 
 ## Ссылки на текущую реализацию
 - [add_subaccount_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/page/add_subaccount_page.dart)
-- [ds_currency_picker.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core_ui/components/ds_currency_picker.dart)
+- [asset_currency_badge.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/asset/widget/asset_currency_badge.dart)
+
+## Implementation note
+- Реализация выполнена в рамках `IMP-DS-003`.
+- Добавлены режимы `CurrencyType.fiat|crypto|all` в shared widget `AssetCurrencyBadge`.
+- В режиме `all` реализованы tabs `Fiat/Crypto` под поиском внутри bottom sheet.
+- `Add subaccount` переведен на режим `all`, `base currency` использует режим `fiat`.
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/asset/widget/asset_currency_badge_test.dart test/presentation/account/page/add_subaccount_page_test.dart test/presentation/balance/bloc/subaccount_create_cubit_test.dart` (pass)

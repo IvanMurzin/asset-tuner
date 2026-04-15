@@ -13,6 +13,7 @@ class DSDecimalField extends StatelessWidget {
     this.readOnly = false,
     this.textAlign = TextAlign.start,
     this.onChanged,
+    this.suffix,
   });
 
   final String? label;
@@ -23,6 +24,7 @@ class DSDecimalField extends StatelessWidget {
   final bool readOnly;
   final TextAlign textAlign;
   final ValueChanged<String>? onChanged;
+  final Widget? suffix;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class DSDecimalField extends StatelessWidget {
       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,+-]'))],
       textAlign: textAlign,
       onChanged: onChanged,
+      suffix: suffix,
     );
   }
 }

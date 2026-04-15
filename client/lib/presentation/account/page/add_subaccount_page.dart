@@ -9,18 +9,17 @@ import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_currency_picker.dart';
 import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
-import 'package:asset_tuner/core_ui/components/ds_radio_row.dart';
-import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
+import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
+import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_create_cubit.dart';
 
 class AddSubaccountPage extends StatefulWidget {
@@ -36,7 +35,6 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
   late final TextEditingController _nameController;
   late final TextEditingController _balanceController;
 
-  AssetKind? _kind;
   AssetEntity? _selectedAsset;
   String? _currencyErrorText;
   String? _balanceErrorText;
@@ -46,6 +44,12 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
     super.initState();
     _nameController = TextEditingController();
     _balanceController = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _applyDefaultCurrencySelection(context);
+    });
   }
 
   @override
@@ -63,6 +67,14 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
       create: (_) => getIt<SubaccountCreateCubit>(),
       child: MultiBlocListener(
         listeners: [
+          BlocListener<AccountInfoCubit, AccountInfoState>(
+            listenWhen: (prev, curr) => prev.account?.type != curr.account?.type,
+            listener: (context, _) => _applyDefaultCurrencySelection(context),
+          ),
+          BlocListener<AssetsCubit, AssetsState>(
+            listenWhen: (prev, curr) => prev.status != curr.status || prev.assets != curr.assets,
+            listener: (context, _) => _applyDefaultCurrencySelection(context),
+          ),
           BlocListener<SubaccountCreateCubit, SubaccountCreateState>(
             listenWhen: (prev, curr) => prev.status != curr.status,
             listener: (context, state) async {
@@ -115,10 +127,6 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
         child: BlocBuilder<SubaccountCreateCubit, SubaccountCreateState>(
           builder: (context, createState) {
             final spacing = context.dsSpacing;
-            final assetsState = context.watch<AssetsCubit>().state;
-            final allAssets = _kind == null
-                ? const <AssetEntity>[]
-                : assetsState.assets.where((item) => item.kind == _kind).toList();
             final canSubmit = createState.status != SubaccountCreateStatus.loading;
 
             return Scaffold(
@@ -145,65 +153,32 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                         controller: _balanceController,
                         errorText: _balanceErrorText,
                         enabled: createState.status != SubaccountCreateStatus.loading,
+                        suffix: AssetCurrencyBadge(
+                          currencyType: CurrencyType.all,
+                          selectedSlug: _selectedAsset?.code,
+                          sheetTitleText: l10n.baseCurrencySettingsPickerTitle,
+                          placeholderText: l10n.subaccountCurrencyLabel,
+                          searchHintText: l10n.assetSearchHint,
+                          fiatTabText: l10n.assetKindFiat,
+                          cryptoTabText: l10n.assetKindCrypto,
+                          emptyResultsTitle: l10n.assetNoMatchesTitle,
+                          emptyResultsMessage: l10n.assetNoMatchesBody,
+                          enabled: createState.status != SubaccountCreateStatus.loading,
+                          errorText: _currencyErrorText,
+                          onSelected: (asset) {
+                            setState(() {
+                              _selectedAsset = asset;
+                              _currencyErrorText = null;
+                            });
+                          },
+                          onLocked: (_) {
+                            context.push(AppRoutes.paywall);
+                          },
+                        ),
                         onChanged: (_) {
                           if (_balanceErrorText != null) {
                             setState(() => _balanceErrorText = null);
                           }
-                        },
-                      ),
-                      SizedBox(height: spacing.s24),
-                      DSSectionTitle(title: l10n.accountsTypeLabel),
-                      SizedBox(height: spacing.s8),
-                      DSRadioRow(
-                        title: l10n.assetKindFiat,
-                        selected: _kind == AssetKind.fiat,
-                        onTap: () => setState(() {
-                          _kind = AssetKind.fiat;
-                          _selectedAsset = null;
-                        }),
-                      ),
-                      DSRadioRow(
-                        title: l10n.assetKindCrypto,
-                        selected: _kind == AssetKind.crypto,
-                        onTap: () => setState(() {
-                          _kind = AssetKind.crypto;
-                          _selectedAsset = null;
-                        }),
-                      ),
-                      SizedBox(height: spacing.s12),
-                      DSCurrencyPicker(
-                        options: [
-                          for (final asset in allAssets)
-                            DSCurrencyPickerOption(
-                              id: asset.id,
-                              primaryText: asset.code,
-                              secondaryText: asset.name,
-                              tertiaryText: asset.code,
-                              searchTerms: [asset.code, asset.name],
-                              locked: asset.isLocked ?? false,
-                            ),
-                        ],
-                        selectedId: _selectedAsset?.id,
-                        searchHintText: _kind == null
-                            ? '${l10n.assetKindFiat} / ${l10n.assetKindCrypto}'
-                            : l10n.assetSearchHint,
-                        recentTitleText: l10n.currencyPickerRecentTitle,
-                        selectedTitleText: l10n.subaccountCurrencyLabel,
-                        changeSelectionText: l10n.currencyPickerChangeAction,
-                        emptyResultsTitle: l10n.assetNoMatchesTitle,
-                        emptyResultsMessage: l10n.assetNoMatchesBody,
-                        enabled: _kind != null,
-                        errorText: _currencyErrorText,
-                        onSelect: (id) {
-                          final asset = allAssets.where((item) => item.id == id).firstOrNull;
-                          if (asset?.isLocked ?? false) {
-                            context.push(AppRoutes.paywall);
-                            return;
-                          }
-                          setState(() {
-                            _selectedAsset = asset;
-                            _currencyErrorText = null;
-                          });
                         },
                       ),
                       const Spacer(),
@@ -257,12 +232,49 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
       return null;
     }
   }
-}
 
-extension<T> on Iterable<T> {
-  T? get firstOrNull {
-    for (final item in this) {
-      return item;
+  void _applyDefaultCurrencySelection(BuildContext context) {
+    if (_selectedAsset != null) {
+      return;
+    }
+
+    final assetsState = context.read<AssetsCubit>().state;
+    final accountType = context.read<AccountInfoCubit>().state.account?.type;
+    final defaultAsset = _resolveDefaultAsset(assetsState: assetsState, accountType: accountType);
+    if (defaultAsset == null) {
+      return;
+    }
+
+    setState(() {
+      _selectedAsset = defaultAsset;
+      _currencyErrorText = null;
+    });
+  }
+
+  AssetEntity? _resolveDefaultAsset({
+    required AssetsState assetsState,
+    required AccountType? accountType,
+  }) {
+    final preferred = switch (accountType) {
+      AccountType.wallet || AccountType.exchange => assetsState.cryptoAssets,
+      AccountType.bank || AccountType.cash || AccountType.other || null => assetsState.fiatAssets,
+    };
+    final preferredUnlocked = _firstUnlocked(preferred);
+    if (preferredUnlocked != null) {
+      return preferredUnlocked;
+    }
+
+    final fallback = preferred == assetsState.fiatAssets
+        ? assetsState.cryptoAssets
+        : assetsState.fiatAssets;
+    return _firstUnlocked(fallback);
+  }
+
+  AssetEntity? _firstUnlocked(List<AssetEntity> items) {
+    for (final asset in items) {
+      if (!(asset.isLocked ?? false)) {
+        return asset;
+      }
     }
     return null;
   }

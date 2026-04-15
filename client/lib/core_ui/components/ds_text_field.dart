@@ -18,6 +18,7 @@ class DSTextField extends StatelessWidget {
     this.onChanged,
     this.maxLines = 1,
     this.onTap,
+    this.suffix,
   });
 
   final String? label;
@@ -33,6 +34,7 @@ class DSTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final int maxLines;
   final VoidCallback? onTap;
+  final Widget? suffix;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +88,15 @@ class DSTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(radius.r12),
           borderSide: BorderSide(color: colors.danger, width: 1.5),
         ),
+        suffixIcon: suffix == null
+            ? null
+            : Padding(
+                padding: EdgeInsets.only(right: spacing.s8),
+                child: suffix,
+              ),
+        suffixIconConstraints: suffix == null
+            ? null
+            : BoxConstraints(minHeight: spacing.s32, minWidth: spacing.s32),
       ),
     );
   }
