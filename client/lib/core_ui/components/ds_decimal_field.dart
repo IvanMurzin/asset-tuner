@@ -11,6 +11,7 @@ class DSDecimalField extends StatelessWidget {
     this.controller,
     this.enabled = true,
     this.readOnly = false,
+    this.textAlign = TextAlign.start,
     this.onChanged,
   });
 
@@ -20,6 +21,7 @@ class DSDecimalField extends StatelessWidget {
   final TextEditingController? controller;
   final bool enabled;
   final bool readOnly;
+  final TextAlign textAlign;
   final ValueChanged<String>? onChanged;
 
   @override
@@ -33,7 +35,7 @@ class DSDecimalField extends StatelessWidget {
       readOnly: readOnly,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,+-]'))],
-      textAlign: TextAlign.end,
+      textAlign: textAlign,
       onChanged: onChanged,
     );
   }

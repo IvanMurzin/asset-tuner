@@ -40,10 +40,7 @@ class AccountTypeCard extends StatelessWidget {
           padding: EdgeInsets.all(spacing.s12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(radius.r12),
-            border: Border.all(
-              color: selected ? accentColor : colors.border,
-              width: selected ? 2 : 1,
-            ),
+            border: Border.all(color: selected ? accentColor : colors.border, width: 1),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

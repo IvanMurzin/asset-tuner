@@ -4,7 +4,7 @@
 - ID: `BUG-DS-002`
 - Тип: `Bug`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `SCR-008`, `SCR-011`, `SCR-010`
 
 ## Экран/модуль/слой
@@ -47,3 +47,18 @@
 
 ## Ссылки на текущую реализацию
 - [ds_decimal_field.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core_ui/components/ds_decimal_field.dart)
+
+## Implementation note
+- Что сделано:
+  - В `DSDecimalField` дефолтное выравнивание изменено с `TextAlign.end` на `TextAlign.start`.
+  - Публичный API `DSDecimalField` расширен опциональным параметром `textAlign` для обратной совместимости и точечной настройки.
+  - Добавлен widget test на дефолтный left align и на явный override align.
+  - Проверены usage `DSDecimalField`: локальные `textAlign` overrides в приложении отсутствуют.
+- Измененные файлы:
+  - `client/lib/core_ui/components/ds_decimal_field.dart`
+  - `client/test/core_ui/components/ds_decimal_field_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-DS-002-left-aligned-money-inputs.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/core_ui/components/ds_decimal_field_test.dart` (pass)
