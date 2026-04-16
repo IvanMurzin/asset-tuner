@@ -8,8 +8,8 @@ import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
+import 'package:asset_tuner/core_ui/components/ds_balance_input.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/components/ds_text_field.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
@@ -148,12 +148,13 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                         onChanged: (_) => context.read<SubaccountCreateCubit>().clearNameError(),
                       ),
                       SizedBox(height: spacing.s12),
-                      DSDecimalField(
+                      DSBalanceInput(
                         label: l10n.addBalanceAmountLabel,
                         controller: _balanceController,
-                        errorText: _balanceErrorText,
+                        amountErrorText: _balanceErrorText,
+                        currencyErrorText: _currencyErrorText,
                         enabled: createState.status != SubaccountCreateStatus.loading,
-                        suffix: AssetCurrencyBadge(
+                        currencyBadge: AssetCurrencyBadge(
                           currencyType: CurrencyType.all,
                           selectedSlug: _selectedAsset?.code,
                           sheetTitleText: l10n.baseCurrencySettingsPickerTitle,
@@ -164,7 +165,6 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                           emptyResultsTitle: l10n.assetNoMatchesTitle,
                           emptyResultsMessage: l10n.assetNoMatchesBody,
                           enabled: createState.status != SubaccountCreateStatus.loading,
-                          errorText: _currencyErrorText,
                           onSelected: (asset) {
                             setState(() {
                               _selectedAsset = asset;

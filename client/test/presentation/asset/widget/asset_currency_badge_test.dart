@@ -136,6 +136,38 @@ void main() {
       expect(selectedAsset, isNull);
       expect(lockedAsset?.id, 'fiat-eur');
     });
+
+    testWidgets('hides dropdown icon when disabled', (tester) async {
+      assetsCubit = _TestAssetsCubit(
+        AssetsState(
+          status: AssetsStatus.ready,
+          assets: [_asset(id: 'fiat-usd', kind: AssetKind.fiat, code: 'USD', name: 'US Dollar')],
+        ),
+      );
+
+      await tester.pumpWidget(
+        _TestHarness(
+          assetsCubit: assetsCubit,
+          child: AssetCurrencyBadge(
+            currencyType: CurrencyType.fiat,
+            selectedSlug: 'USD',
+            sheetTitleText: 'Choose currency',
+            placeholderText: 'Currency',
+            searchHintText: 'Search',
+            fiatTabText: 'Fiat',
+            cryptoTabText: 'Crypto',
+            emptyResultsTitle: 'No results',
+            emptyResultsMessage: 'Try another query',
+            enabled: false,
+            onSelected: (_) {},
+            onLocked: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.text('USD'), findsOneWidget);
+      expect(find.byIcon(Icons.keyboard_arrow_down_rounded), findsNothing);
+    });
   });
 }
 

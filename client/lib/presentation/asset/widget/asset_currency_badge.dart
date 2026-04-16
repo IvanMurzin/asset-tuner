@@ -82,12 +82,14 @@ class AssetCurrencyBadge extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(width: spacing.s4),
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 18,
-                      color: enabled ? colors.textSecondary : colors.textTertiary,
-                    ),
+                    if (enabled) ...[
+                      SizedBox(width: spacing.s4),
+                      Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        size: 18,
+                        color: colors.textSecondary,
+                      ),
+                    ],
                   ],
                 ),
               ),

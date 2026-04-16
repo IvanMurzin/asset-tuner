@@ -4,7 +4,7 @@
 - ID: `IMP-DS-004`
 - Тип: `Improvement`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `SCR-008`, `SCR-011`, `SCR-010`
 
 ## Экран/модуль/слой
@@ -52,3 +52,16 @@ Amount input и selector валюты собраны разными элемен
 ## Ссылки на текущую реализацию
 - [ds_decimal_field.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core_ui/components/ds_decimal_field.dart)
 - [add_balance_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/page/add_balance_page.dart)
+
+## Implementation note
+- Что сделано:
+  - Добавлен новый DS-компонент `client/lib/core_ui/components/ds_balance_input.dart`, объединяющий amount field + currency badge в единый control.
+  - Переведена форма `Add subaccount` на `DSBalanceInput` в `client/lib/presentation/account/page/add_subaccount_page.dart`.
+  - Переведен экран `Set balance` на `DSBalanceInput` в `client/lib/presentation/balance/page/add_balance_page.dart`.
+  - В `Set balance` валюта показывается через `AssetCurrencyBadge` в disabled-режиме (readonly, без открытия selector).
+  - Inline-валидация amount/currency перенесена в `DSBalanceInput` (`amountErrorText` + `currencyErrorText`).
+  - Добавлены widget-тесты состояний `enabled/disabled/error` в `client/test/core_ui/components/ds_balance_input_test.dart`.
+  - Добавлены widget-тесты set-balance readonly/validation в `client/test/presentation/balance/page/add_balance_page_test.dart`.
+- Автопроверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/core_ui/components/ds_balance_input_test.dart test/presentation/account/page/add_subaccount_page_test.dart test/presentation/asset/widget/asset_currency_badge_test.dart test/presentation/balance/page/add_balance_page_test.dart` (pass)

@@ -5,15 +5,16 @@ import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
+import 'package:asset_tuner/core_ui/components/ds_balance_input.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_date_picker_field.dart';
-import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
+import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_balance_cubit.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_info_cubit.dart';
 
@@ -54,6 +55,9 @@ class _AddBalancePageState extends State<AddBalancePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final selectedAssetCode = context.select<SubaccountInfoCubit, String?>(
+      (cubit) => cubit.state.subaccount?.asset?.code,
+    );
 
     return BlocProvider(
       create: (_) => getIt<SubaccountBalanceCubit>(),
@@ -123,11 +127,25 @@ class _AddBalancePageState extends State<AddBalancePage> {
                                   onChanged: (value) => setState(() => _date = value),
                                 ),
                                 SizedBox(height: spacing.s16),
-                                DSDecimalField(
+                                DSBalanceInput(
                                   label: l10n.addBalanceAmountLabel,
                                   controller: _amountController,
-                                  errorText: _amountErrorText,
+                                  amountErrorText: _amountErrorText,
                                   enabled: !isLoading,
+                                  currencyBadge: AssetCurrencyBadge(
+                                    currencyType: CurrencyType.all,
+                                    selectedSlug: selectedAssetCode,
+                                    sheetTitleText: l10n.baseCurrencySettingsPickerTitle,
+                                    placeholderText: l10n.subaccountCurrencyLabel,
+                                    searchHintText: l10n.assetSearchHint,
+                                    fiatTabText: l10n.assetKindFiat,
+                                    cryptoTabText: l10n.assetKindCrypto,
+                                    emptyResultsTitle: l10n.assetNoMatchesTitle,
+                                    emptyResultsMessage: l10n.assetNoMatchesBody,
+                                    enabled: false,
+                                    onSelected: (_) {},
+                                    onLocked: (_) {},
+                                  ),
                                   onChanged: (_) {
                                     if (_amountErrorText != null) {
                                       setState(() => _amountErrorText = null);
