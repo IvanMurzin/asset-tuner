@@ -1,4 +1,5 @@
 import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core_ui/components/ds_unlock_currencies_card.dart';
 import 'package:asset_tuner/core_ui/theme/app_theme.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
@@ -7,6 +8,7 @@ import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart';
+import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
 import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
@@ -85,6 +87,37 @@ void main() {
       expect(find.text('EUR'), findsOneWidget);
       expect(find.text('USD'), findsNothing);
     });
+
+    testWidgets('shows unlock card for free plan and opens paywall by action tap', (tester) async {
+      profileCubit = _TestProfileCubit(
+        ProfileState(
+          status: ProfileStatus.ready,
+          profile: _profile(baseCode: 'USD', plan: 'free', fiatLimit: 5),
+        ),
+      );
+      PaywallArgs? openedArgs;
+
+      await _pumpPage(
+        tester,
+        sessionCubit: sessionCubit,
+        profileCubit: profileCubit,
+        assetsCubit: assetsCubit,
+        onPaywallOpened: (args) => openedArgs = args,
+      );
+
+      final context = tester.element(find.byType(BaseCurrencySettingsPage));
+      final l10n = AppLocalizations.of(context)!;
+
+      expect(find.byType(DSUnlockCurrenciesCard), findsOneWidget);
+      expect(find.text(l10n.paywallFeatureCurrencies), findsOneWidget);
+      expect(find.text(l10n.baseCurrencySettingsPaywallHint), findsOneWidget);
+      expect(find.text(l10n.paywallUpgrade), findsOneWidget);
+
+      await tester.tap(find.text(l10n.paywallUpgrade));
+      await tester.pumpAndSettle();
+
+      expect(openedArgs?.reason, PaywallReason.baseCurrency);
+    });
   });
 }
 
@@ -93,6 +126,7 @@ Future<void> _pumpPage(
   required SessionCubit sessionCubit,
   required ProfileCubit profileCubit,
   required AssetsCubit assetsCubit,
+  ValueChanged<PaywallArgs?>? onPaywallOpened,
 }) async {
   final router = GoRouter(
     initialLocation: AppRoutes.baseCurrencySettings,
@@ -109,7 +143,13 @@ Future<void> _pumpPage(
         ),
       ),
       GoRoute(path: AppRoutes.signIn, builder: (context, state) => const SizedBox.shrink()),
-      GoRoute(path: AppRoutes.paywall, builder: (context, state) => const SizedBox.shrink()),
+      GoRoute(
+        path: AppRoutes.paywall,
+        builder: (context, state) {
+          onPaywallOpened?.call(state.extra as PaywallArgs?);
+          return const SizedBox.shrink();
+        },
+      ),
     ],
   );
 
@@ -163,13 +203,13 @@ class _TestAssetsCubit extends Cubit<AssetsState> implements AssetsCubit {
   Future<void> refresh({bool silent = false}) async {}
 }
 
-ProfileEntity _profile({required String baseCode}) {
+ProfileEntity _profile({required String baseCode, String plan = 'pro', int? fiatLimit}) {
   return ProfileEntity(
     userId: 'user-1',
     baseAssetId: 'asset-$baseCode',
     baseAsset: _asset(id: 'asset-$baseCode', kind: AssetKind.fiat, code: baseCode, name: baseCode),
-    plan: 'pro',
-    entitlements: const EntitlementsEntity(fiatLimit: null),
+    plan: plan,
+    entitlements: EntitlementsEntity(fiatLimit: fiatLimit),
   );
 }
 

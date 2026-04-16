@@ -128,90 +128,94 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
           builder: (context, createState) {
             final spacing = context.dsSpacing;
             final canSubmit = createState.status != SubaccountCreateStatus.loading;
+            final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
             return Scaffold(
               appBar: DSAppBar(title: l10n.subaccountCreateTitle),
               body: SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(spacing.s24, spacing.s24, spacing.s24, spacing.s16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DSTextField(
-                        label: l10n.accountsNameLabel,
-                        hintText: l10n.subaccountNameHint,
-                        controller: _nameController,
-                        errorText: createState.nameError == SubaccountCreateFieldError.required
-                            ? l10n.accountsNameRequired
-                            : null,
+                child: ListView(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: EdgeInsets.fromLTRB(
+                    spacing.s24,
+                    spacing.s24,
+                    spacing.s24,
+                    spacing.s16 + bottomInset,
+                  ),
+                  children: [
+                    DSTextField(
+                      label: l10n.accountsNameLabel,
+                      hintText: l10n.subaccountNameHint,
+                      controller: _nameController,
+                      errorText: createState.nameError == SubaccountCreateFieldError.required
+                          ? l10n.accountsNameRequired
+                          : null,
+                      enabled: createState.status != SubaccountCreateStatus.loading,
+                      onChanged: (_) => context.read<SubaccountCreateCubit>().clearNameError(),
+                    ),
+                    SizedBox(height: spacing.s12),
+                    DSBalanceInput(
+                      label: l10n.addBalanceAmountLabel,
+                      controller: _balanceController,
+                      amountErrorText: _balanceErrorText,
+                      currencyErrorText: _currencyErrorText,
+                      enabled: createState.status != SubaccountCreateStatus.loading,
+                      currencyBadge: AssetCurrencyBadge(
+                        currencyType: CurrencyType.all,
+                        selectedSlug: _selectedAsset?.code,
+                        sheetTitleText: l10n.baseCurrencySettingsPickerTitle,
+                        placeholderText: l10n.subaccountCurrencyLabel,
+                        searchHintText: l10n.assetSearchHint,
+                        fiatTabText: l10n.assetKindFiat,
+                        cryptoTabText: l10n.assetKindCrypto,
+                        emptyResultsTitle: l10n.assetNoMatchesTitle,
+                        emptyResultsMessage: l10n.assetNoMatchesBody,
                         enabled: createState.status != SubaccountCreateStatus.loading,
-                        onChanged: (_) => context.read<SubaccountCreateCubit>().clearNameError(),
-                      ),
-                      SizedBox(height: spacing.s12),
-                      DSBalanceInput(
-                        label: l10n.addBalanceAmountLabel,
-                        controller: _balanceController,
-                        amountErrorText: _balanceErrorText,
-                        currencyErrorText: _currencyErrorText,
-                        enabled: createState.status != SubaccountCreateStatus.loading,
-                        currencyBadge: AssetCurrencyBadge(
-                          currencyType: CurrencyType.all,
-                          selectedSlug: _selectedAsset?.code,
-                          sheetTitleText: l10n.baseCurrencySettingsPickerTitle,
-                          placeholderText: l10n.subaccountCurrencyLabel,
-                          searchHintText: l10n.assetSearchHint,
-                          fiatTabText: l10n.assetKindFiat,
-                          cryptoTabText: l10n.assetKindCrypto,
-                          emptyResultsTitle: l10n.assetNoMatchesTitle,
-                          emptyResultsMessage: l10n.assetNoMatchesBody,
-                          enabled: createState.status != SubaccountCreateStatus.loading,
-                          onSelected: (asset) {
-                            setState(() {
-                              _selectedAsset = asset;
-                              _currencyErrorText = null;
-                            });
-                          },
-                          onLocked: (_) {
-                            context.push(AppRoutes.paywall);
-                          },
-                        ),
-                        onChanged: (_) {
-                          if (_balanceErrorText != null) {
-                            setState(() => _balanceErrorText = null);
-                          }
+                        onSelected: (asset) {
+                          setState(() {
+                            _selectedAsset = asset;
+                            _currencyErrorText = null;
+                          });
+                        },
+                        onLocked: (_) {
+                          context.push(AppRoutes.paywall);
                         },
                       ),
-                      const Spacer(),
-                      DSButton(
-                        label: l10n.subaccountCreateCta,
-                        fullWidth: true,
-                        isLoading: createState.status == SubaccountCreateStatus.loading,
-                        onPressed: canSubmit
-                            ? () async {
-                                final asset = _selectedAsset;
-                                final amount = _tryParse(_balanceController.text);
-                                setState(() {
-                                  _currencyErrorText = asset == null
-                                      ? l10n.subaccountCurrencyRequired
-                                      : null;
-                                  _balanceErrorText = amount == null
-                                      ? l10n.addBalanceValidationAmount
-                                      : null;
-                                });
-                                if (asset == null || amount == null) {
-                                  return;
-                                }
-                                await context.read<SubaccountCreateCubit>().submit(
-                                  accountId: widget.accountId,
-                                  name: _nameController.text,
-                                  asset: asset,
-                                  snapshotAmount: amount,
-                                );
+                      onChanged: (_) {
+                        if (_balanceErrorText != null) {
+                          setState(() => _balanceErrorText = null);
+                        }
+                      },
+                    ),
+                    SizedBox(height: spacing.s24),
+                    DSButton(
+                      label: l10n.subaccountCreateCta,
+                      fullWidth: true,
+                      isLoading: createState.status == SubaccountCreateStatus.loading,
+                      onPressed: canSubmit
+                          ? () async {
+                              final asset = _selectedAsset;
+                              final amount = _tryParse(_balanceController.text);
+                              setState(() {
+                                _currencyErrorText = asset == null
+                                    ? l10n.subaccountCurrencyRequired
+                                    : null;
+                                _balanceErrorText = amount == null
+                                    ? l10n.addBalanceValidationAmount
+                                    : null;
+                              });
+                              if (asset == null || amount == null) {
+                                return;
                               }
-                            : null,
-                      ),
-                    ],
-                  ),
+                              await context.read<SubaccountCreateCubit>().submit(
+                                accountId: widget.accountId,
+                                name: _nameController.text,
+                                asset: asset,
+                                snapshotAmount: amount,
+                              );
+                            }
+                          : null,
+                    ),
+                  ],
                 ),
               ),
             );

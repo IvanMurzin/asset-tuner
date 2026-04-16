@@ -4,7 +4,7 @@
 - ID: `BUG-SUB-001`
 - Тип: `Bug`
 - Приоритет: `P0`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-005`, `SCR-008`
 
 ## Экран/модуль/слой
@@ -48,3 +48,18 @@
 
 ## Ссылки на текущую реализацию
 - [add_subaccount_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/page/add_subaccount_page.dart)
+
+## Implementation note
+- Экран `Add subaccount` переведён на scrollable-root: вместо статичного `Column` используется `ListView` с `keyboardDismissBehavior: onDrag`.
+- Добавлен keyboard-safe отступ снизу через `MediaQuery.viewInsetsOf(context).bottom`, чтобы CTA оставалась доступной при открытой клавиатуре.
+- Сохранена текущая бизнес-логика сабмита/валидации/навигации; изменён только layout-слой.
+- Добавлен widget test на наличие scrollable root:
+  - [add_subaccount_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/account/page/add_subaccount_page_test.dart)
+- Изменённые файлы:
+  - [add_subaccount_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/page/add_subaccount_page.dart)
+  - [add_subaccount_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/account/page/add_subaccount_page_test.dart)
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/account/page/add_subaccount_page_test.dart` (pass)
+- Пропущено:
+  - `cd client && flutter test` (не запускался; выполнен целевой тест по изменённому экрану).

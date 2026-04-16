@@ -100,6 +100,13 @@ void main() {
       expect(find.text('USD'), findsNothing);
     });
 
+    testWidgets('uses scrollable root for keyboard-safe layout', (tester) async {
+      await pumpPage(tester, accountType: AccountType.bank);
+
+      final listView = tester.widget<ListView>(find.byType(ListView));
+      expect(listView.keyboardDismissBehavior, ScrollViewKeyboardDismissBehavior.onDrag);
+    });
+
     testWidgets('preselects first fiat currency for bank account type', (tester) async {
       await pumpPage(tester, accountType: AccountType.bank);
 

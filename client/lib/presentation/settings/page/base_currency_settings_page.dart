@@ -148,7 +148,9 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                             if (!(profile.entitlements.anyBaseCurrency) &&
                                 profile.plan != 'pro') ...[
                               DSUnlockCurrenciesCard(
-                                title: l10n.baseCurrencySettingsPaywallHint,
+                                title: l10n.paywallFeatureCurrencies,
+                                subtitle: l10n.baseCurrencySettingsPaywallHint,
+                                actionLabel: l10n.paywallUpgrade,
                                 onTap: () => context.push(
                                   AppRoutes.paywall,
                                   extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
