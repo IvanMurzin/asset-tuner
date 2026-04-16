@@ -50,8 +50,9 @@ void main() {
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
 
-      expect(find.text('US Dollar • 1 USD ≈ 1 USD'), findsOneWidget);
-      expect(find.text('Bitcoin • Rates unavailable'), findsNothing);
+      expect(find.text('US Dollar'), findsOneWidget);
+      expect(find.text('1 USD ≈ 1 USD'), findsOneWidget);
+      expect(find.text('Bitcoin'), findsNothing);
       expect(find.text('Crypto'), findsNothing);
       expect(find.byIcon(Icons.check_rounded), findsOneWidget);
     });
@@ -89,14 +90,16 @@ void main() {
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
 
-      expect(find.text('US Dollar • 1 USD ≈ 1 USD'), findsOneWidget);
-      expect(find.text('Bitcoin • Rates unavailable'), findsNothing);
+      expect(find.text('US Dollar'), findsOneWidget);
+      expect(find.text('1 USD ≈ 1 USD'), findsOneWidget);
+      expect(find.text('Bitcoin'), findsNothing);
 
       await tester.tap(find.text('Crypto'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Bitcoin • Rates unavailable'), findsOneWidget);
-      expect(find.text('US Dollar • 1 USD ≈ 1 USD'), findsNothing);
+      expect(find.text('Bitcoin'), findsOneWidget);
+      expect(find.text('Rates unavailable'), findsOneWidget);
+      expect(find.text('US Dollar'), findsNothing);
     });
 
     testWidgets('shows rate caption when rate is available', (tester) async {
@@ -134,7 +137,8 @@ void main() {
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
 
-      expect(find.text('Bitcoin • 1 BTC ≈ 2 USD'), findsOneWidget);
+      expect(find.text('Bitcoin'), findsOneWidget);
+      expect(find.text('1 BTC ≈ 2 USD'), findsOneWidget);
     });
 
     testWidgets('shows fallback caption when rate is unavailable', (tester) async {
@@ -168,7 +172,8 @@ void main() {
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
 
-      expect(find.text('Bitcoin • Rates unavailable'), findsOneWidget);
+      expect(find.text('Bitcoin'), findsOneWidget);
+      expect(find.text('Rates unavailable'), findsOneWidget);
     });
 
     testWidgets('calculates non-usd base caption using full assets list', (tester) async {
@@ -209,7 +214,8 @@ void main() {
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
 
-      expect(find.text('Bitcoin • 1 BTC ≈ 2 EUR'), findsOneWidget);
+      expect(find.text('Bitcoin'), findsOneWidget);
+      expect(find.text('1 BTC ≈ 2 EUR'), findsOneWidget);
     });
 
     testWidgets('invokes onLocked and does not invoke onSelected for locked asset', (tester) async {
@@ -245,7 +251,7 @@ void main() {
 
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Euro • Rates unavailable'));
+      await tester.tap(find.text('Euro'));
       await tester.pumpAndSettle();
 
       expect(selectedAsset, isNull);

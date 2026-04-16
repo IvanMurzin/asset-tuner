@@ -73,11 +73,9 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
                       ),
                       SizedBox(height: spacing.s4),
                       Text(
-                        '${asset.name} • ${row.rateCaption}',
-                        style: typography.caption.copyWith(
-                          color: row.hasRate ? colors.textSecondary : colors.textTertiary,
-                        ),
-                        maxLines: 2,
+                        asset.name,
+                        style: typography.caption.copyWith(color: colors.textSecondary),
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -87,16 +85,19 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    if (row.hasRate)
-                      Text(
-                        '≈',
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 140),
+                      child: Text(
+                        row.rateCaption,
+                        textAlign: TextAlign.right,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: typography.caption.copyWith(
-                          color: colors.textTertiary,
-                          fontWeight: FontWeight.w700,
+                          color: row.hasRate ? colors.textTertiary : colors.textSecondary,
+                          fontWeight: FontWeight.w600,
                         ),
-                      )
-                    else
-                      SizedBox(height: typography.caption.fontSize ?? 12),
+                      ),
+                    ),
                     SizedBox(height: spacing.s8),
                     if (locked)
                       Icon(Icons.lock_outline, color: colors.textTertiary, size: 20)
