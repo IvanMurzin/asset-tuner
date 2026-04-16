@@ -1,6 +1,6 @@
 part of 'asset_currency_badge.dart';
 
-class _AssetCurrencyAssetList extends StatelessWidget {
+class _AssetCurrencyAssetList extends StatefulWidget {
   const _AssetCurrencyAssetList({
     required this.source,
     required this.allAssets,
@@ -28,11 +28,57 @@ class _AssetCurrencyAssetList extends StatelessWidget {
   final ValueChanged<_AssetSelectionResult> onSelect;
 
   @override
+  State<_AssetCurrencyAssetList> createState() => _AssetCurrencyAssetListState();
+}
+
+class _AssetCurrencyAssetListState extends State<_AssetCurrencyAssetList> {
+  late AssetCurrencySearchIndex _searchIndex;
+  late int _sourceSignature;
+  late int _allAssetsSignature;
+  late Map<String, AssetEntity> _allAssetsByCode;
+  final Map<String, _AssetPickerRowModel> _rowCache = <String, _AssetPickerRowModel>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _sourceSignature = _computeAssetsSignature(widget.source);
+    _allAssetsSignature = _computeAssetsSignature(widget.allAssets);
+    _searchIndex = AssetCurrencySearchIndex(widget.source);
+    _allAssetsByCode = _buildAllAssetsByCode(widget.allAssets);
+  }
+
+  @override
+  void didUpdateWidget(covariant _AssetCurrencyAssetList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(widget.source, oldWidget.source)) {
+      final nextSourceSignature = _computeAssetsSignature(widget.source);
+      if (nextSourceSignature != _sourceSignature) {
+        _sourceSignature = nextSourceSignature;
+        _searchIndex = AssetCurrencySearchIndex(widget.source);
+        _rowCache.clear();
+      }
+    }
+    if (!identical(widget.allAssets, oldWidget.allAssets)) {
+      final nextAllAssetsSignature = _computeAssetsSignature(widget.allAssets);
+      if (nextAllAssetsSignature != _allAssetsSignature) {
+        _allAssetsSignature = nextAllAssetsSignature;
+        _allAssetsByCode = _buildAllAssetsByCode(widget.allAssets);
+        _rowCache.clear();
+      }
+    }
+    if (widget.baseCurrencyCode != oldWidget.baseCurrencyCode ||
+        !identical(widget.usdPriceByAssetId, oldWidget.usdPriceByAssetId) ||
+        widget.ratesUnavailableText != oldWidget.ratesUnavailableText) {
+      _rowCache.clear();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final spacing = context.dsSpacing;
-    final filtered = _applySearch(source, query);
+    final filtered = _searchIndex.filter(widget.query);
 
-    if (status == AssetsStatus.loading && source.isEmpty) {
+    if (widget.status == AssetsStatus.loading && widget.source.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
     if (filtered.isEmpty) {
@@ -40,8 +86,8 @@ class _AssetCurrencyAssetList extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: spacing.s16),
           child: DSEmptyState(
-            title: emptyResultsTitle,
-            message: emptyResultsMessage,
+            title: widget.emptyResultsTitle,
+            message: widget.emptyResultsMessage,
             icon: Icons.search_off_outlined,
           ),
         ),
@@ -54,27 +100,40 @@ class _AssetCurrencyAssetList extends StatelessWidget {
       separatorBuilder: (context, index) => SizedBox(height: spacing.s12),
       itemBuilder: (context, index) {
         final asset = filtered[index];
-        final row = _buildRow(context, asset);
+        final row = _rowCache.putIfAbsent(asset.id, () => _buildRow(context, asset));
         return _AssetCurrencyAssetRow(
           row: row,
-          isSelected: selectedSlug != null && asset.code.toUpperCase() == selectedSlug,
-          onSelect: onSelect,
+          isSelected:
+              widget.selectedSlug != null && asset.code.toUpperCase() == widget.selectedSlug,
+          onSelect: widget.onSelect,
         );
       },
     );
   }
 
-  List<AssetEntity> _applySearch(List<AssetEntity> items, String value) {
-    final normalized = value.trim().toLowerCase();
-    if (normalized.isEmpty) {
-      return items;
+  int _computeAssetsSignature(List<AssetEntity> assets) {
+    return Object.hashAll(
+      assets.map(
+        (asset) => Object.hash(
+          asset.id,
+          asset.kind,
+          asset.code,
+          asset.name,
+          asset.isLocked,
+          asset.usdRate?.usdPriceAtomic,
+          asset.usdRate?.usdPriceDecimals,
+          asset.usdRate?.asOf.millisecondsSinceEpoch,
+        ),
+      ),
+    );
+  }
+
+  Map<String, AssetEntity> _buildAllAssetsByCode(List<AssetEntity> assets) {
+    final result = <String, AssetEntity>{};
+    for (final asset in assets) {
+      result[asset.code.toUpperCase()] = asset;
     }
-    return items
-        .where((asset) {
-          return asset.code.toLowerCase().contains(normalized) ||
-              asset.name.toLowerCase().contains(normalized);
-        })
-        .toList(growable: false);
+    return result;
   }
 
   _AssetPickerRowModel _buildRow(BuildContext context, AssetEntity asset) {
@@ -84,15 +143,15 @@ class _AssetCurrencyAssetList extends StatelessWidget {
       asset: asset,
       titleText: '$code • ${asset.name}',
       rateCaption: rateCaption,
-      hasRate: rateCaption != ratesUnavailableText,
+      hasRate: rateCaption != widget.ratesUnavailableText,
     );
   }
 
   String _buildRateCaption(BuildContext context, AssetEntity asset, String code) {
-    final baseCode = baseCurrencyCode.trim().toUpperCase();
+    final baseCode = widget.baseCurrencyCode.trim().toUpperCase();
     final rate = _resolveRate(asset: asset, code: code, baseCode: baseCode);
     if (rate == null) {
-      return ratesUnavailableText;
+      return widget.ratesUnavailableText;
     }
     final formatted = context.dsFormatters.formatDecimalFromDecimal(rate, maximumFractionDigits: 8);
     return '1 $code = $formatted $baseCode';
@@ -106,7 +165,7 @@ class _AssetCurrencyAssetList extends StatelessWidget {
     if (code == baseCode) {
       return Decimal.one;
     }
-    final assetUsd = usdPriceByAssetId[asset.id] ?? asset.usdRate?.usdPrice;
+    final assetUsd = widget.usdPriceByAssetId[asset.id] ?? asset.usdRate?.usdPrice;
     if (assetUsd == null) {
       return null;
     }
@@ -124,12 +183,10 @@ class _AssetCurrencyAssetList extends StatelessWidget {
     if (baseCode == 'USD') {
       return Decimal.one;
     }
-    for (final asset in allAssets) {
-      if (asset.code.toUpperCase() != baseCode) {
-        continue;
-      }
-      return usdPriceByAssetId[asset.id] ?? asset.usdRate?.usdPrice;
+    final baseAsset = _allAssetsByCode[baseCode];
+    if (baseAsset == null) {
+      return null;
     }
-    return null;
+    return widget.usdPriceByAssetId[baseAsset.id] ?? baseAsset.usdRate?.usdPrice;
   }
 }

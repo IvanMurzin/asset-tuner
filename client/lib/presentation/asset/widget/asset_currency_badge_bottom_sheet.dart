@@ -28,8 +28,15 @@ class _AssetCurrencyBottomSheet extends StatefulWidget {
 }
 
 class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
+  static const Duration _searchDebounceDuration = Duration(milliseconds: 120);
+
   late final TextEditingController _queryController;
   late final PageController _pageController;
+  Timer? _searchDebounceTimer;
+  List<AssetEntity>? _lastAssetsRef;
+  List<AssetEntity> _fiatAssets = const <AssetEntity>[];
+  List<AssetEntity> _cryptoAssets = const <AssetEntity>[];
+  String _query = '';
   CurrencyType _activeType = CurrencyType.fiat;
 
   @override
@@ -42,6 +49,7 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
 
   @override
   void dispose() {
+    _searchDebounceTimer?.cancel();
     _queryController.dispose();
     _pageController.dispose();
     super.dispose();
@@ -54,7 +62,7 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
     final typography = context.dsTypography;
     final l10n = AppLocalizations.of(context)!;
     final assetsState = context.watch<AssetsCubit>().state;
-    final query = _queryController.text;
+    _syncAssetBuckets(assetsState.assets);
     final selectedSlug = widget.selectedSlug?.trim().toUpperCase();
     final snapshot = assetsState.snapshot;
 
@@ -98,7 +106,7 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
               child: DSSearchField(
                 controller: _queryController,
                 hintText: widget.searchHintText,
-                onChanged: (_) => setState(() {}),
+                onChanged: _onQueryChanged,
               ),
             ),
             if (widget.currencyType == CurrencyType.all)
@@ -123,27 +131,27 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
                       },
                       children: [
                         _AssetCurrencyAssetList(
-                          source: _assetsForType(assetsState.assets, CurrencyType.fiat),
+                          source: _fiatAssets,
                           allAssets: assetsState.assets,
                           status: assetsState.status,
                           selectedSlug: selectedSlug,
                           baseCurrencyCode: widget.baseCurrencyCode,
                           usdPriceByAssetId: snapshot?.usdPriceByAssetId ?? const {},
                           ratesUnavailableText: l10n.overviewRatesUnavailable,
-                          query: query,
+                          query: _query,
                           emptyResultsTitle: widget.emptyResultsTitle,
                           emptyResultsMessage: widget.emptyResultsMessage,
                           onSelect: _onSelect,
                         ),
                         _AssetCurrencyAssetList(
-                          source: _assetsForType(assetsState.assets, CurrencyType.crypto),
+                          source: _cryptoAssets,
                           allAssets: assetsState.assets,
                           status: assetsState.status,
                           selectedSlug: selectedSlug,
                           baseCurrencyCode: widget.baseCurrencyCode,
                           usdPriceByAssetId: snapshot?.usdPriceByAssetId ?? const {},
                           ratesUnavailableText: l10n.overviewRatesUnavailable,
-                          query: query,
+                          query: _query,
                           emptyResultsTitle: widget.emptyResultsTitle,
                           emptyResultsMessage: widget.emptyResultsMessage,
                           onSelect: _onSelect,
@@ -151,14 +159,18 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
                       ],
                     )
                   : _AssetCurrencyAssetList(
-                      source: _assetsForType(assetsState.assets, widget.currencyType),
+                      source: switch (widget.currencyType) {
+                        CurrencyType.fiat => _fiatAssets,
+                        CurrencyType.crypto => _cryptoAssets,
+                        CurrencyType.all => assetsState.assets,
+                      },
                       allAssets: assetsState.assets,
                       status: assetsState.status,
                       selectedSlug: selectedSlug,
                       baseCurrencyCode: widget.baseCurrencyCode,
                       usdPriceByAssetId: snapshot?.usdPriceByAssetId ?? const {},
                       ratesUnavailableText: l10n.overviewRatesUnavailable,
-                      query: query,
+                      query: _query,
                       emptyResultsTitle: widget.emptyResultsTitle,
                       emptyResultsMessage: widget.emptyResultsMessage,
                       onSelect: _onSelect,
@@ -185,15 +197,24 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
     Navigator.of(context).pop(result);
   }
 
-  List<AssetEntity> _assetsForType(List<AssetEntity> assets, CurrencyType currencyType) {
-    return assets
-        .where((asset) {
-          return switch (currencyType) {
-            CurrencyType.fiat => asset.kind == AssetKind.fiat,
-            CurrencyType.crypto => asset.kind == AssetKind.crypto,
-            CurrencyType.all => true,
-          };
-        })
-        .toList(growable: false);
+  void _onQueryChanged(String value) {
+    _searchDebounceTimer?.cancel();
+    _searchDebounceTimer = Timer(_searchDebounceDuration, () {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _query = value;
+      });
+    });
+  }
+
+  void _syncAssetBuckets(List<AssetEntity> assets) {
+    if (identical(_lastAssetsRef, assets)) {
+      return;
+    }
+    _lastAssetsRef = assets;
+    _fiatAssets = assets.where((asset) => asset.kind == AssetKind.fiat).toList(growable: false);
+    _cryptoAssets = assets.where((asset) => asset.kind == AssetKind.crypto).toList(growable: false);
   }
 }

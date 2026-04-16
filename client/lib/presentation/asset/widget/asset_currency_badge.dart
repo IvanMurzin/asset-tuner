@@ -1,5 +1,7 @@
 library;
 
+import 'dart:async';
+
 import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/core_ui/formatting/ds_formatters.dart';
@@ -8,6 +10,7 @@ import 'package:asset_tuner/core_ui/components/ds_search_field.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
+import 'package:asset_tuner/presentation/asset/widget/asset_currency_search_index.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
