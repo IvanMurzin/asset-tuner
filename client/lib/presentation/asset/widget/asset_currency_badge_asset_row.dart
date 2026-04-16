@@ -59,6 +59,7 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
                 ),
                 SizedBox(width: spacing.s16),
                 Expanded(
+                  flex: 6,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -82,12 +83,12 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: spacing.s8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 140),
-                      child: Text(
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
                         row.rateCaption,
                         textAlign: TextAlign.right,
                         maxLines: 1,
@@ -97,15 +98,15 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ),
-                    SizedBox(height: spacing.s8),
-                    if (locked)
-                      Icon(Icons.lock_outline, color: colors.textTertiary, size: 20)
-                    else if (isSelected)
-                      Icon(Icons.check_rounded, color: colors.primary, size: 20)
-                    else
-                      const SizedBox(width: 20, height: 20),
-                  ],
+                      SizedBox(height: spacing.s8),
+                      if (locked)
+                        Icon(Icons.lock_outline, color: colors.textTertiary, size: 20)
+                      else if (isSelected)
+                        Icon(Icons.check_rounded, color: colors.primary, size: 20)
+                      else
+                        const SizedBox(width: 20, height: 20),
+                    ],
+                  ),
                 ),
               ],
             ),

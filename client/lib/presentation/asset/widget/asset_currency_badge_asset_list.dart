@@ -153,8 +153,27 @@ class _AssetCurrencyAssetListState extends State<_AssetCurrencyAssetList> {
     if (rate == null) {
       return widget.ratesUnavailableText;
     }
-    final formatted = context.dsFormatters.formatDecimalFromDecimal(rate, maximumFractionDigits: 8);
-    return '1 $code ≈ $formatted $baseCode';
+    final formatted = _formatRateForCaption(context, rate);
+    return '≈ $formatted $baseCode';
+  }
+
+  String _formatRateForCaption(BuildContext context, Decimal rate) {
+    final abs = rate.toDouble().abs();
+    if (!abs.isFinite || abs == 0) {
+      return context.dsFormatters.formatDecimalFromDecimal(rate, maximumFractionDigits: 0);
+    }
+
+    const significantDigits = 4;
+    final order = (math.log(abs) / math.ln10).floor();
+    final maxFractionDigits = significantDigits - order - 1;
+    final clampedFractionDigits = maxFractionDigits < 0
+        ? 0
+        : (maxFractionDigits > 8 ? 8 : maxFractionDigits);
+
+    return context.dsFormatters.formatDecimalFromDecimal(
+      rate,
+      maximumFractionDigits: clampedFractionDigits,
+    );
   }
 
   Decimal? _resolveRate({

@@ -1,6 +1,7 @@
 library;
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
