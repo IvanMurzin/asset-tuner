@@ -951,10 +951,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get baseCurrencySettingsTitle => 'Base currency';
 
   @override
-  String get baseCurrencySettingsCurrentTitle => 'Current selection';
+  String get baseCurrencySettingsCurrentTitle => 'Your base currency';
 
   @override
-  String get baseCurrencySettingsCurrentBody => 'Totals will be converted to this currency.';
+  String get baseCurrencySettingsCurrentBody => 'All totals are converted to this currency.';
 
   @override
   String get baseCurrencySettingsPickerTitle => 'Choose currency';

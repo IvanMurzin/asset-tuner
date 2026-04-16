@@ -25,7 +25,7 @@
 5. [BUG-DS-005](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-DS-005-validation-error-presentation-standard.md) `P0` `Done`
 
 ### CUR
-1. [BUG-CUR-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-CUR-001-base-currency-screen-redesign.md) `P1`
+1. [BUG-CUR-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-CUR-001-base-currency-screen-redesign.md) `P1` `Done`
 2. [BUG-CUR-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-CUR-002-unlock-currencies-card-redesign.md) `P2`
 3. [BUG-CUR-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-CUR-003-currency-bottom-sheet-row-format.md) `P1`
 4. [IMP-CUR-004](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-CUR-004-universal-currency-picker-modes.md) `P1` `Done`

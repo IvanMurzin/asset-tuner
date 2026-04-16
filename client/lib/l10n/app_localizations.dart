@@ -1932,13 +1932,13 @@ abstract class AppLocalizations {
   /// No description provided for @baseCurrencySettingsCurrentTitle.
   ///
   /// In en, this message translates to:
-  /// **'Current selection'**
+  /// **'Your base currency'**
   String get baseCurrencySettingsCurrentTitle;
 
   /// No description provided for @baseCurrencySettingsCurrentBody.
   ///
   /// In en, this message translates to:
-  /// **'Totals will be converted to this currency.'**
+  /// **'All totals are converted to this currency.'**
   String get baseCurrencySettingsCurrentBody;
 
   /// No description provided for @baseCurrencySettingsPickerTitle.

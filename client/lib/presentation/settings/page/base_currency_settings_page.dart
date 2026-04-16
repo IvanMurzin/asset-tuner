@@ -119,8 +119,8 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             DSBaseCurrencyValueCard(
-                              title: l10n.baseCurrencySettingsTitle,
-                              caption: l10n.baseCurrencyConversionCaption,
+                              title: l10n.baseCurrencySettingsCurrentTitle,
+                              caption: l10n.baseCurrencySettingsCurrentBody,
                               trailing: AssetCurrencyBadge(
                                 currencyType: CurrencyType.fiat,
                                 selectedSlug: (_selectedCode ?? profile.baseCurrency).toUpperCase(),

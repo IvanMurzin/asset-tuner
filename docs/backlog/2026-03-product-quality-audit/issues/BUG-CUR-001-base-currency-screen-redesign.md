@@ -4,7 +4,7 @@
 - ID: `BUG-CUR-001`
 - Тип: `Bug`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-003`, `SCR-012`, `SCR-003`
 
 ## Экран/модуль/слой
@@ -50,3 +50,21 @@
 
 ## Ссылки на текущую реализацию
 - [base_currency_settings_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/settings/page/base_currency_settings_page.dart)
+
+## Implementation note
+- Переработан верхний блок выбора базовой валюты в единую карточку с inline badge-триггером:
+  - [ds_base_currency_value_card.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core_ui/components/ds_base_currency_value_card.dart)
+  - [base_currency_settings_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/settings/page/base_currency_settings_page.dart)
+- Экран переключен на новые copy-ключи карточки (`baseCurrencySettingsCurrentTitle`, `baseCurrencySettingsCurrentBody`) с более однозначным текстом для `en/ru`:
+  - [app_en.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_en.arb)
+  - [app_ru.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_ru.arb)
+  - [app_localizations.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations.dart)
+  - [app_localizations_en.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_en.dart)
+  - [app_localizations_ru.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_ru.dart)
+- Добавлен widget-тест рендера карточки/badge и выбора валюты через badge selector:
+  - [base_currency_settings_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/settings/page/base_currency_settings_page_test.dart)
+- Проверки:
+  - `cd client && flutter test test/presentation/settings/page/base_currency_settings_page_test.dart` (pass)
+  - `cd client && flutter analyze` (pass)
+- Пропущено:
+  - `cd client && flutter test` (не запускался, так как для задачи достаточно целевого widget-теста + обязательного analyze).

@@ -19,40 +19,36 @@ class DSBaseCurrencyValueCard extends StatelessWidget {
     final colors = context.dsColors;
     final spacing = context.dsSpacing;
     final typography = context.dsTypography;
-    final radius = context.dsRadius;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        DSCard(
-          padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(radius.r12),
-                ),
-                child: Icon(Icons.currency_exchange_rounded, color: colors.primary, size: 20),
-              ),
-              SizedBox(width: spacing.s12),
-              Expanded(
-                child: Text(
+    return DSCard(
+      padding: EdgeInsets.all(spacing.s12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   title,
                   style: typography.h3.copyWith(color: colors.textPrimary),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              if (trailing != null) ...[SizedBox(width: spacing.s8), trailing!],
-            ],
+                SizedBox(height: spacing.s4),
+                Text(caption, style: typography.caption.copyWith(color: colors.textSecondary)),
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: spacing.s8),
-        Text(caption, style: typography.caption.copyWith(color: colors.textSecondary)),
-      ],
+          if (trailing != null) ...[
+            SizedBox(width: spacing.s12),
+            Padding(
+              padding: EdgeInsets.only(top: spacing.s4),
+              child: trailing!,
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

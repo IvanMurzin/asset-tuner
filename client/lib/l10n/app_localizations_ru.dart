@@ -956,10 +956,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get baseCurrencySettingsTitle => 'Базовая валюта';
 
   @override
-  String get baseCurrencySettingsCurrentTitle => 'Текущий выбор';
+  String get baseCurrencySettingsCurrentTitle => 'Ваша базовая валюта';
 
   @override
-  String get baseCurrencySettingsCurrentBody => 'Итоги будут конвертироваться в эту валюту.';
+  String get baseCurrencySettingsCurrentBody => 'Все итоги конвертируются в эту валюту.';
 
   @override
   String get baseCurrencySettingsPickerTitle => 'Выберите валюту';
