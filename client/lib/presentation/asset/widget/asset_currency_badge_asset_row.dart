@@ -32,6 +32,7 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.all(spacing.s8),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: 40,
@@ -70,21 +71,41 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      SizedBox(height: spacing.s4),
                       Text(
-                        row.rateCaption,
+                        '${asset.name} • ${row.rateCaption}',
                         style: typography.caption.copyWith(
                           color: row.hasRate ? colors.textSecondary : colors.textTertiary,
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                if (locked)
-                  Icon(Icons.lock_outline, color: colors.textTertiary, size: 20)
-                else if (isSelected)
-                  Icon(Icons.check_rounded, color: colors.primary, size: 20),
+                SizedBox(width: spacing.s8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (row.hasRate)
+                      Text(
+                        '≈',
+                        style: typography.caption.copyWith(
+                          color: colors.textTertiary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    else
+                      SizedBox(height: typography.caption.fontSize ?? 12),
+                    SizedBox(height: spacing.s8),
+                    if (locked)
+                      Icon(Icons.lock_outline, color: colors.textTertiary, size: 20)
+                    else if (isSelected)
+                      Icon(Icons.check_rounded, color: colors.primary, size: 20)
+                    else
+                      const SizedBox(width: 20, height: 20),
+                  ],
+                ),
               ],
             ),
           ),

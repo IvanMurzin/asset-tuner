@@ -141,7 +141,7 @@ class _AssetCurrencyAssetListState extends State<_AssetCurrencyAssetList> {
     final rateCaption = _buildRateCaption(context, asset, code);
     return _AssetPickerRowModel(
       asset: asset,
-      titleText: '$code • ${asset.name}',
+      titleText: code,
       rateCaption: rateCaption,
       hasRate: rateCaption != widget.ratesUnavailableText,
     );
@@ -154,7 +154,7 @@ class _AssetCurrencyAssetListState extends State<_AssetCurrencyAssetList> {
       return widget.ratesUnavailableText;
     }
     final formatted = context.dsFormatters.formatDecimalFromDecimal(rate, maximumFractionDigits: 8);
-    return '1 $code = $formatted $baseCode';
+    return '1 $code ≈ $formatted $baseCode';
   }
 
   Decimal? _resolveRate({
