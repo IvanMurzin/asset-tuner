@@ -2,12 +2,12 @@ part of 'asset_currency_badge.dart';
 
 class _AssetCurrencyAssetRow extends StatelessWidget {
   const _AssetCurrencyAssetRow({
-    required this.asset,
+    required this.row,
     required this.isSelected,
     required this.onSelect,
   });
 
-  final AssetEntity asset;
+  final _AssetPickerRowModel row;
   final bool isSelected;
   final ValueChanged<_AssetSelectionResult> onSelect;
 
@@ -16,6 +16,7 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
     final spacing = context.dsSpacing;
     final colors = context.dsColors;
     final typography = context.dsTypography;
+    final asset = row.asset;
     final locked = asset.isLocked ?? false;
     final slug = asset.code.toUpperCase();
 
@@ -61,7 +62,7 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        slug,
+                        row.titleText,
                         style: typography.body.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
@@ -70,8 +71,10 @@ class _AssetCurrencyAssetRow extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        asset.name,
-                        style: typography.caption.copyWith(color: colors.textSecondary),
+                        row.rateCaption,
+                        style: typography.caption.copyWith(
+                          color: row.hasRate ? colors.textSecondary : colors.textTertiary,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

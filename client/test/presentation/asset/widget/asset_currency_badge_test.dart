@@ -1,7 +1,9 @@
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
+import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
 import 'package:asset_tuner/core_ui/theme/app_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
+import 'package:decimal/decimal.dart';
 import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,8 +50,8 @@ void main() {
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
 
-      expect(find.text('US Dollar'), findsOneWidget);
-      expect(find.text('Bitcoin'), findsNothing);
+      expect(find.text('USD • US Dollar'), findsOneWidget);
+      expect(find.text('BTC • Bitcoin'), findsNothing);
       expect(find.text('Crypto'), findsNothing);
       expect(find.byIcon(Icons.check_rounded), findsOneWidget);
     });
@@ -87,14 +89,130 @@ void main() {
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
 
-      expect(find.text('US Dollar'), findsOneWidget);
-      expect(find.text('Bitcoin'), findsNothing);
+      expect(find.text('USD • US Dollar'), findsOneWidget);
+      expect(find.text('BTC • Bitcoin'), findsNothing);
 
       await tester.tap(find.text('Crypto'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Bitcoin'), findsOneWidget);
-      expect(find.text('US Dollar'), findsNothing);
+      expect(find.text('BTC • Bitcoin'), findsOneWidget);
+      expect(find.text('USD • US Dollar'), findsNothing);
+    });
+
+    testWidgets('shows rate caption when rate is available', (tester) async {
+      assetsCubit = _TestAssetsCubit(
+        AssetsState(
+          status: AssetsStatus.ready,
+          assets: [_asset(id: 'crypto-btc', kind: AssetKind.crypto, code: 'BTC', name: 'Bitcoin')],
+          snapshot: RatesSnapshotEntity(
+            usdPriceByAssetId: {'crypto-btc': Decimal.fromInt(2)},
+            asOf: DateTime.utc(2026, 3, 1),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        _TestHarness(
+          assetsCubit: assetsCubit,
+          child: AssetCurrencyBadge(
+            currencyType: CurrencyType.crypto,
+            selectedSlug: null,
+            sheetTitleText: 'Choose currency',
+            placeholderText: 'Currency',
+            searchHintText: 'Search',
+            fiatTabText: 'Fiat',
+            cryptoTabText: 'Crypto',
+            emptyResultsTitle: 'No results',
+            emptyResultsMessage: 'Try another query',
+            baseCurrencyCode: 'USD',
+            onSelected: (_) {},
+            onLocked: (_) {},
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(AssetCurrencyBadge));
+      await tester.pumpAndSettle();
+
+      expect(find.text('BTC • Bitcoin'), findsOneWidget);
+      expect(find.text('1 BTC = 2 USD'), findsOneWidget);
+    });
+
+    testWidgets('shows fallback caption when rate is unavailable', (tester) async {
+      assetsCubit = _TestAssetsCubit(
+        AssetsState(
+          status: AssetsStatus.ready,
+          assets: [_asset(id: 'crypto-btc', kind: AssetKind.crypto, code: 'BTC', name: 'Bitcoin')],
+        ),
+      );
+
+      await tester.pumpWidget(
+        _TestHarness(
+          assetsCubit: assetsCubit,
+          child: AssetCurrencyBadge(
+            currencyType: CurrencyType.crypto,
+            selectedSlug: null,
+            sheetTitleText: 'Choose currency',
+            placeholderText: 'Currency',
+            searchHintText: 'Search',
+            fiatTabText: 'Fiat',
+            cryptoTabText: 'Crypto',
+            emptyResultsTitle: 'No results',
+            emptyResultsMessage: 'Try another query',
+            baseCurrencyCode: 'EUR',
+            onSelected: (_) {},
+            onLocked: (_) {},
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(AssetCurrencyBadge));
+      await tester.pumpAndSettle();
+
+      expect(find.text('BTC • Bitcoin'), findsOneWidget);
+      expect(find.text('Rates unavailable'), findsOneWidget);
+    });
+
+    testWidgets('calculates non-usd base caption using full assets list', (tester) async {
+      assetsCubit = _TestAssetsCubit(
+        AssetsState(
+          status: AssetsStatus.ready,
+          assets: [
+            _asset(id: 'fiat-eur', kind: AssetKind.fiat, code: 'EUR', name: 'Euro'),
+            _asset(id: 'crypto-btc', kind: AssetKind.crypto, code: 'BTC', name: 'Bitcoin'),
+          ],
+          snapshot: RatesSnapshotEntity(
+            usdPriceByAssetId: {'fiat-eur': Decimal.parse('0.5'), 'crypto-btc': Decimal.one},
+            asOf: DateTime.utc(2026, 3, 1),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        _TestHarness(
+          assetsCubit: assetsCubit,
+          child: AssetCurrencyBadge(
+            currencyType: CurrencyType.crypto,
+            selectedSlug: null,
+            sheetTitleText: 'Choose currency',
+            placeholderText: 'Currency',
+            searchHintText: 'Search',
+            fiatTabText: 'Fiat',
+            cryptoTabText: 'Crypto',
+            emptyResultsTitle: 'No results',
+            emptyResultsMessage: 'Try another query',
+            baseCurrencyCode: 'EUR',
+            onSelected: (_) {},
+            onLocked: (_) {},
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(AssetCurrencyBadge));
+      await tester.pumpAndSettle();
+
+      expect(find.text('BTC • Bitcoin'), findsOneWidget);
+      expect(find.text('1 BTC = 2 EUR'), findsOneWidget);
     });
 
     testWidgets('invokes onLocked and does not invoke onSelected for locked asset', (tester) async {
@@ -130,7 +248,7 @@ void main() {
 
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Euro'));
+      await tester.tap(find.text('EUR • Euro'));
       await tester.pumpAndSettle();
 
       expect(selectedAsset, isNull);

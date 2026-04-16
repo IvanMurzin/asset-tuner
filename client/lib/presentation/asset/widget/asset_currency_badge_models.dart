@@ -6,3 +6,17 @@ class _AssetSelectionResult {
   final AssetEntity asset;
   final bool locked;
 }
+
+class _AssetPickerRowModel {
+  const _AssetPickerRowModel({
+    required this.asset,
+    required this.titleText,
+    required this.rateCaption,
+    required this.hasRate,
+  });
+
+  final AssetEntity asset;
+  final String titleText;
+  final String rateCaption;
+  final bool hasRate;
+}

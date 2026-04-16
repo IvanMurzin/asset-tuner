@@ -93,7 +93,7 @@ void main() {
 
       await tester.tap(find.text('Crypto'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Bitcoin'));
+      await tester.tap(find.text('BTC • Bitcoin'));
       await tester.pumpAndSettle();
 
       expect(find.text('BTC'), findsOneWidget);

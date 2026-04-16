@@ -4,12 +4,12 @@
 - ID: `BUG-CUR-003`
 - Тип: `Bug`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-003`, `FTR-005`, `SCR-008`, `SCR-012`
 
 ## Экран/модуль/слой
 - Currency picker bottom sheet
-- Слой: `core_ui`
+- Слой: `presentation`
 
 ## Проблема
 ### Текущее поведение
@@ -19,7 +19,7 @@
 Формат строки: `CODE • Name` + подпись `1 CODE = X BASE`.
 
 ## Root-cause hypothesis
-В [ds_currency_picker.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core_ui/components/ds_currency_picker.dart) `tertiaryText` часто повторяет `primaryText` и не содержит rate-информацию.
+В [asset_currency_badge_asset_row.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/asset/widget/asset_currency_badge_asset_row.dart) вторичная строка повторяла `code/name` и не содержала rate-информацию.
 
 ## Предлагаемое решение
 1. Перестроить модель отображения строки picker.
@@ -48,4 +48,25 @@
 - Не замедлить рендеринг списка из-за пересчета rates per-row.
 
 ## Ссылки на текущую реализацию
-- [ds_currency_picker.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core_ui/components/ds_currency_picker.dart)
+- [asset_currency_badge.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/asset/widget/asset_currency_badge.dart)
+- [asset_currency_badge_bottom_sheet.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/asset/widget/asset_currency_badge_bottom_sheet.dart)
+
+## Implementation note
+- Обновлен формат строки в общем currency picker: теперь `CODE • Name` + подпись `rateCaption` во второй строке.
+  - [asset_currency_badge_models.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/asset/widget/asset_currency_badge_models.dart)
+  - [asset_currency_badge_asset_list.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/asset/widget/asset_currency_badge_asset_list.dart)
+  - [asset_currency_badge_asset_row.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/asset/widget/asset_currency_badge_asset_row.dart)
+  - [asset_currency_badge_bottom_sheet.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/asset/widget/asset_currency_badge_bottom_sheet.dart)
+  - [asset_currency_badge.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/asset/widget/asset_currency_badge.dart)
+- Добавлено вычисление `1 CODE = X BASE` на основе доступного rates snapshot (USD-pivot) и текущей базовой валюты; при отсутствии данных показывается fallback `Rates unavailable`.
+- Обновлены/добавлены widget-тесты на новый формат строки, caption с курсом и fallback:
+  - [asset_currency_badge_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/asset/widget/asset_currency_badge_test.dart)
+  - [add_subaccount_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/account/page/add_subaccount_page_test.dart)
+  - [base_currency_settings_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/settings/page/base_currency_settings_page_test.dart)
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/asset/widget/asset_currency_badge_test.dart` (pass)
+  - `cd client && flutter test test/presentation/account/page/add_subaccount_page_test.dart` (pass)
+  - `cd client && flutter test test/presentation/settings/page/base_currency_settings_page_test.dart` (pass)
+- Пропущено:
+  - `cd client && flutter test` (не запускался; выполнены целевые тесты по измененному функционалу).

@@ -4,6 +4,7 @@ class _AssetCurrencyBottomSheet extends StatefulWidget {
   const _AssetCurrencyBottomSheet({
     required this.currencyType,
     required this.selectedSlug,
+    required this.baseCurrencyCode,
     required this.sheetTitleText,
     required this.searchHintText,
     required this.fiatTabText,
@@ -14,6 +15,7 @@ class _AssetCurrencyBottomSheet extends StatefulWidget {
 
   final CurrencyType currencyType;
   final String? selectedSlug;
+  final String baseCurrencyCode;
   final String sheetTitleText;
   final String searchHintText;
   final String fiatTabText;
@@ -50,9 +52,11 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
     final colors = context.dsColors;
     final spacing = context.dsSpacing;
     final typography = context.dsTypography;
+    final l10n = AppLocalizations.of(context)!;
     final assetsState = context.watch<AssetsCubit>().state;
     final query = _queryController.text;
     final selectedSlug = widget.selectedSlug?.trim().toUpperCase();
+    final snapshot = assetsState.snapshot;
 
     return SafeArea(
       top: false,
@@ -120,8 +124,12 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
                       children: [
                         _AssetCurrencyAssetList(
                           source: _assetsForType(assetsState.assets, CurrencyType.fiat),
+                          allAssets: assetsState.assets,
                           status: assetsState.status,
                           selectedSlug: selectedSlug,
+                          baseCurrencyCode: widget.baseCurrencyCode,
+                          usdPriceByAssetId: snapshot?.usdPriceByAssetId ?? const {},
+                          ratesUnavailableText: l10n.overviewRatesUnavailable,
                           query: query,
                           emptyResultsTitle: widget.emptyResultsTitle,
                           emptyResultsMessage: widget.emptyResultsMessage,
@@ -129,8 +137,12 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
                         ),
                         _AssetCurrencyAssetList(
                           source: _assetsForType(assetsState.assets, CurrencyType.crypto),
+                          allAssets: assetsState.assets,
                           status: assetsState.status,
                           selectedSlug: selectedSlug,
+                          baseCurrencyCode: widget.baseCurrencyCode,
+                          usdPriceByAssetId: snapshot?.usdPriceByAssetId ?? const {},
+                          ratesUnavailableText: l10n.overviewRatesUnavailable,
                           query: query,
                           emptyResultsTitle: widget.emptyResultsTitle,
                           emptyResultsMessage: widget.emptyResultsMessage,
@@ -140,8 +152,12 @@ class _AssetCurrencyBottomSheetState extends State<_AssetCurrencyBottomSheet> {
                     )
                   : _AssetCurrencyAssetList(
                       source: _assetsForType(assetsState.assets, widget.currencyType),
+                      allAssets: assetsState.assets,
                       status: assetsState.status,
                       selectedSlug: selectedSlug,
+                      baseCurrencyCode: widget.baseCurrencyCode,
+                      usdPriceByAssetId: snapshot?.usdPriceByAssetId ?? const {},
+                      ratesUnavailableText: l10n.overviewRatesUnavailable,
                       query: query,
                       emptyResultsTitle: widget.emptyResultsTitle,
                       emptyResultsMessage: widget.emptyResultsMessage,

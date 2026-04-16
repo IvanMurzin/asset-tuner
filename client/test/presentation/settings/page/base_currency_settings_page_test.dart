@@ -79,7 +79,7 @@ void main() {
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Euro'));
+      await tester.tap(find.text('EUR • Euro'));
       await tester.pumpAndSettle();
 
       expect(find.text('EUR'), findsOneWidget);
