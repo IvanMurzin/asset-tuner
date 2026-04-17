@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:decimal/decimal.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
@@ -78,7 +79,7 @@ class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
         emit(
           state.copyWith(
             status: SubaccountInfoStatus.ready,
-            entries: page.entries,
+            entries: _filterZeroDeltaEntries(page.entries),
             nextCursor: page.nextCursor,
             isHistoryLoading: false,
             failureCode: null,
@@ -116,7 +117,7 @@ class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
         emit(
           state.copyWith(
             isLoadingMore: false,
-            entries: [...state.entries, ...page.entries],
+            entries: [...state.entries, ..._filterZeroDeltaEntries(page.entries)],
             nextCursor: page.nextCursor,
           ),
         );
@@ -145,5 +146,17 @@ class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
 
   void consumeNavigation() {
     emit(state.copyWith(navigation: null));
+  }
+
+  List<BalanceEntryEntity> _filterZeroDeltaEntries(List<BalanceEntryEntity> entries) {
+    return entries
+        .where((entry) {
+          final diff = entry.diffAmount;
+          if (diff == null) {
+            return true;
+          }
+          return diff.compareTo(Decimal.zero) != 0;
+        })
+        .toList(growable: false);
   }
 }

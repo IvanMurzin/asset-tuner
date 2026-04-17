@@ -250,7 +250,7 @@ Request:
 Response: `balance_entries` row.
 
 Errors:
-- `validation` (missing amount/date; invalid date)
+- `validation` (missing amount/date; invalid date; `error.message = "amount_unchanged"` when snapshot equals current balance)
 - `not_found` (unknown subaccount or not owned)
 
 ### `POST /rename_subaccount`

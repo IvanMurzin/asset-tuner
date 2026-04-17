@@ -15,7 +15,10 @@ abstract final class SupabaseFailureMapper {
     }
 
     if (error is EdgeFunctionException) {
-      return _createLocalizedFailure(code: _normalizeCode(error.code), rawMessage: error.message);
+      return _createLocalizedFailure(
+        code: _normalizeCode(error.code, message: error.message),
+        rawMessage: error.message,
+      );
     }
 
     if (error is AuthException) {
@@ -52,7 +55,10 @@ abstract final class SupabaseFailureMapper {
           final code = (edgeError['code'] as String?) ?? _mapHttpStatus(error.status);
           final message =
               (edgeError['message'] as String?) ?? (fallbackMessage ?? 'Request failed');
-          return _createLocalizedFailure(code: _normalizeCode(code), rawMessage: message);
+          return _createLocalizedFailure(
+            code: _normalizeCode(code, message: message),
+            rawMessage: message,
+          );
         }
       }
       return _createLocalizedFailure(
@@ -83,9 +89,9 @@ abstract final class SupabaseFailureMapper {
     };
   }
 
-  static String _normalizeCode(String code) {
+  static String _normalizeCode(String code, {String? message}) {
     final normalized = code.trim().toUpperCase();
-    return switch (normalized) {
+    final mapped = switch (normalized) {
       'UNAUTHORIZED' => 'unauthorized',
       'FORBIDDEN' => 'forbidden',
       'NOT_FOUND' => 'not_found',
@@ -98,6 +104,16 @@ abstract final class SupabaseFailureMapper {
       'INTERNAL_ERROR' => 'internal_server_error',
       _ => code,
     };
+
+    if (mapped == 'validation' && _isAmountUnchanged(message)) {
+      return 'amount_unchanged';
+    }
+    return mapped;
+  }
+
+  static bool _isAmountUnchanged(String? message) {
+    final normalized = message?.trim().toLowerCase();
+    return normalized == 'amount_unchanged';
   }
 
   static String _mapHttpStatus(int status) {

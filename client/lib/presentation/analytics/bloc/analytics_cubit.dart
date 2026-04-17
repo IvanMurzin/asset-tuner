@@ -253,7 +253,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
         for (final entry in entries) {
           final diff = entry.diffAmount;
-          if (diff == null) {
+          if (diff == null || diff.compareTo(Decimal.zero) == 0) {
             continue;
           }
           final diffBase = _toBaseAmount(
