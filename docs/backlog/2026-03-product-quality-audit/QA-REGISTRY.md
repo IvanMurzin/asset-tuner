@@ -28,7 +28,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 ## Entries
 
 ### 2026-04-17 19:01 +04 - IMP-SUB-003 - Done
-- Commit: `pending (backlog(IMP-SUB-003))`
+- Commit: `199f508`
 - Changed files:
   - `client/lib/presentation/account/page/add_subaccount_context.dart`
   - `client/lib/presentation/account/page/add_subaccount_page.dart`
