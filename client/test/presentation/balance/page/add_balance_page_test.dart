@@ -1,4 +1,5 @@
 import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core_ui/components/ds_decimal_field.dart';
 import 'package:asset_tuner/core_ui/theme/app_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
@@ -44,6 +45,14 @@ void main() {
       expect(badge.enabled, isFalse);
     });
 
+    testWidgets('prefills amount with current balance', (tester) async {
+      await _pumpPage(tester, subaccountInfoCubit);
+      await tester.pumpAndSettle();
+
+      final amountField = tester.widget<DSDecimalField>(find.byType(DSDecimalField));
+      expect(amountField.controller?.text, '123.45');
+    });
+
     testWidgets('shows inline validation error when amount is empty', (tester) async {
       await _pumpPage(tester, subaccountInfoCubit);
       await tester.pumpAndSettle();
@@ -51,6 +60,10 @@ void main() {
       final context = tester.element(find.byType(AddBalancePage));
       final l10n = AppLocalizations.of(context)!;
 
+      await tester.enterText(
+        find.descendant(of: find.byType(DSDecimalField), matching: find.byType(EditableText)),
+        '',
+      );
       await tester.tap(find.text(l10n.save));
       await tester.pumpAndSettle();
 
@@ -127,6 +140,8 @@ SubaccountEntity _subaccountWithAssetCode(String code) {
     assetId: 'asset-1',
     name: 'Main wallet',
     archived: false,
+    currentAmountAtomic: Decimal.parse('12345'),
+    currentAmountDecimals: 2,
     asset: AssetEntity(
       id: 'asset-1',
       kind: AssetKind.fiat,

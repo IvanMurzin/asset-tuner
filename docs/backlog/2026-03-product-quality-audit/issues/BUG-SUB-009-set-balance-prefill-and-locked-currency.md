@@ -4,7 +4,7 @@
 - ID: `BUG-SUB-009`
 - Тип: `Bug`
 - Приоритет: `P0`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-006`, `SCR-011`
 
 ## Экран/модуль/слой
@@ -48,3 +48,11 @@
 
 ## Ссылки на текущую реализацию
 - [add_balance_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/page/add_balance_page.dart)
+
+## Implementation note
+- В [add_balance_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/page/add_balance_page.dart) поле amount теперь инициализируется из текущего баланса (`SubaccountInfoState.entries.first.snapshotAmount` с fallback на `subaccount.currentAmount`), поэтому форма Set balance открывается с prefill.
+- Валюта остаётся readonly через `DSBalanceInput` + `AssetCurrencyBadge(enabled: false)`, поведение смены валюты не добавлялось.
+- В [add_balance_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/balance/page/add_balance_page_test.dart) добавлен widget-тест на prefill (`123.45`) и скорректирован validation-тест (очистка поля перед submit).
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/balance/page/add_balance_page_test.dart` (pass)

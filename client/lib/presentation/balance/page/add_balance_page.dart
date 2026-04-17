@@ -42,7 +42,8 @@ class _AddBalancePageState extends State<AddBalancePage> {
   @override
   void initState() {
     super.initState();
-    _amountController = TextEditingController();
+    final subaccountState = context.read<SubaccountInfoCubit>().state;
+    _amountController = TextEditingController(text: _initialAmountText(subaccountState));
     _date = widget.initialDate ?? DateTime.now();
   }
 
@@ -200,5 +201,14 @@ class _AddBalancePageState extends State<AddBalancePage> {
     } catch (_) {
       return null;
     }
+  }
+
+  String _initialAmountText(SubaccountInfoState state) {
+    Decimal? initialAmount;
+    if (state.entries.isNotEmpty) {
+      initialAmount = state.entries.first.snapshotAmount;
+    }
+    initialAmount ??= state.subaccount?.currentAmount;
+    return initialAmount?.toString() ?? '';
   }
 }
