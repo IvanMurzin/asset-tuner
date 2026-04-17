@@ -224,6 +224,7 @@
   "subaccountEmptyTitle": "Пока нет счётов",
   "subaccountEmptyBody": "Добавьте активы, которые хранятся на этом счёте.",
   "subaccountListTitle": "Счёта",
+  "subaccountListCaption": "Используйте отдельные счёта для каждой валюты или токена внутри этого аккаунта.",
   "subaccountUpdateBalanceCta": "Установить баланс",
   "subaccountRenameCta": "Переименовать",
   "subaccountRenameTitle": "Переименовать счёт",

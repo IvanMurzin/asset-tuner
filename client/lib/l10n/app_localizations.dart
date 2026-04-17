@@ -1209,6 +1209,12 @@ abstract class AppLocalizations {
   /// **'Subaccounts'**
   String get subaccountListTitle;
 
+  /// No description provided for @subaccountListCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Use separate subaccounts for each currency or token inside this account.'**
+  String get subaccountListCaption;
+
   /// No description provided for @subaccountUpdateBalanceCta.
   ///
   /// In en, this message translates to:
@@ -1506,7 +1512,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallFreeFeatureSubaccounts.
   ///
   /// In en, this message translates to:
-  /// **'Up to 15 sub-accounts'**
+  /// **'Up to 15 subaccounts'**
   String get paywallFreeFeatureSubaccounts;
 
   /// No description provided for @paywallFreeFeatureFiat.
@@ -1530,7 +1536,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallProFeatureSubaccounts.
   ///
   /// In en, this message translates to:
-  /// **'Unlimited sub-accounts'**
+  /// **'Unlimited subaccounts'**
   String get paywallProFeatureSubaccounts;
 
   /// No description provided for @paywallProFeatureFiat.

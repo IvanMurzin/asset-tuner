@@ -27,6 +27,29 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-17 19:20 +04 - BUG-SUB-005 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/presentation/account/widget/account_detail_positions_section.dart`
+  - `client/lib/l10n/app_en.arb`
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_localizations.dart`
+  - `client/lib/l10n/app_localizations_en.dart`
+  - `client/lib/l10n/app_localizations_ru.dart`
+  - `client/test/presentation/account/widget/account_detail_positions_section_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-005-account-detail-subaccounts-caption.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/presentation/account/widget/account_detail_positions_section_test.dart` -> `pass`
+- Manual QA checklist:
+  - [ ] Проверить `SCR-007` с непустым списком счётов: caption под заголовком секции отображается и не ломает layout карточек.
+  - [ ] Проверить `SCR-007` с пустым списком счётов: caption отображается вместе с empty-state и CTA.
+  - [ ] Переключить locale `en/ru` и подтвердить корректную локализацию caption.
+- Notes:
+  - Перегенерация `app_localizations_*` синхронизировала существующие ARB-правки терминологии по счетам, добавленные в предыдущих итерациях.
+
 ### 2026-04-17 19:12 +04 - BUG-SUB-008 - Done
 - Commit: `HEAD`
 - Changed files:

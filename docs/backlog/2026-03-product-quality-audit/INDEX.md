@@ -36,7 +36,7 @@
 2. [BUG-SUB-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-002-remove-fiat-crypto-selector-in-add-subaccount.md) `P1` `Done`
 3. [IMP-SUB-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-SUB-003-contextual-hints-defaults-by-account-type.md) `P1` `Done`
 4. [IMP-SUB-004](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-SUB-004-terminology-consistency-ru-en.md) `P1` `Done`
-5. [BUG-SUB-005](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-005-account-detail-subaccounts-caption.md) `P2`
+5. [BUG-SUB-005](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-005-account-detail-subaccounts-caption.md) `P2` `Done`
 6. [BUG-SUB-006](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-006-subaccount-detail-full-scroll-and-refresh.md) `P0` `Done`
 7. [BUG-SUB-007](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-007-subaccount-history-copy-update.md) `P2`
 8. [BUG-SUB-008](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-008-rename-update-balance-to-set-balance.md) `P1` `Done`

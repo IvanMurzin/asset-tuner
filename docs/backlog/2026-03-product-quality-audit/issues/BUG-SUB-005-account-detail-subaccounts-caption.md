@@ -4,7 +4,7 @@
 - ID: `BUG-SUB-005`
 - Тип: `Bug`
 - Приоритет: `P2`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-008`, `SCR-007`
 
 ## Экран/модуль/слой
@@ -47,3 +47,12 @@
 
 ## Ссылки на текущую реализацию
 - [account_detail_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/page/account_detail_page.dart)
+
+## Implementation note
+- В [account_detail_positions_section.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/widget/account_detail_positions_section.dart) добавлен локализованный caption под заголовком секции; caption рендерится и при пустом, и при непустом списке счётов.
+- В [app_en.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_en.arb) и [app_ru.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_ru.arb) добавлен ключ `subaccountListCaption`.
+- Добавлен widget-тест [account_detail_positions_section_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/account/widget/account_detail_positions_section_test.dart) с проверками caption для empty/non-empty и локали `ru`.
+- Пересобраны локализации: [app_localizations.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations.dart), [app_localizations_en.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_en.dart), [app_localizations_ru.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_ru.dart).
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/account/widget/account_detail_positions_section_test.dart` (pass)

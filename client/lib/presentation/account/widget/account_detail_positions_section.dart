@@ -26,42 +26,41 @@ class AccountDetailPositionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.dsColors;
+    final typography = context.dsTypography;
     final spacing = context.dsSpacing;
     final sortedItems = _sortByBalance(items);
-
-    if (sortedItems.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            DSEmptyState(
-              title: l10n.subaccountEmptyTitle,
-              message: l10n.subaccountEmptyBody,
-              icon: Icons.add_circle_outline,
-            ),
-            SizedBox(height: spacing.s16),
-            DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
-          ],
-        ),
-      );
-    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DSSectionTitle(title: l10n.subaccountListTitle),
         SizedBox(height: spacing.s12),
-        for (var i = 0; i < sortedItems.length; i++) ...[
-          _PositionCard(
-            item: sortedItems[i],
-            baseCurrency: baseCurrency,
-            onTap: () => onOpenSubaccount(sortedItems[i]),
+        Text(
+          l10n.subaccountListCaption,
+          style: typography.caption.copyWith(color: colors.textSecondary),
+        ),
+        SizedBox(height: spacing.s16),
+        if (sortedItems.isEmpty) ...[
+          DSEmptyState(
+            title: l10n.subaccountEmptyTitle,
+            message: l10n.subaccountEmptyBody,
+            icon: Icons.add_circle_outline,
           ),
-          if (i != sortedItems.length - 1) const SizedBox(height: 10),
+          SizedBox(height: spacing.s16),
+          DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
+        ] else ...[
+          for (var i = 0; i < sortedItems.length; i++) ...[
+            _PositionCard(
+              item: sortedItems[i],
+              baseCurrency: baseCurrency,
+              onTap: () => onOpenSubaccount(sortedItems[i]),
+            ),
+            if (i != sortedItems.length - 1) const SizedBox(height: 10),
+          ],
+          SizedBox(height: spacing.s24),
+          DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
         ],
-        SizedBox(height: spacing.s24),
-        DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
       ],
     );
   }

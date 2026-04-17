@@ -590,6 +590,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subaccountListTitle => 'Subaccounts';
 
   @override
+  String get subaccountListCaption =>
+      'Use separate subaccounts for each currency or token inside this account.';
+
+  @override
   String get subaccountUpdateBalanceCta => 'Set balance';
 
   @override
@@ -737,7 +741,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallFreeFeatureAccounts => 'Up to 5 accounts';
 
   @override
-  String get paywallFreeFeatureSubaccounts => 'Up to 15 sub-accounts';
+  String get paywallFreeFeatureSubaccounts => 'Up to 15 subaccounts';
 
   @override
   String get paywallFreeFeatureFiat => '5 top fiat currencies';
@@ -749,7 +753,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallProFeatureAccounts => 'Unlimited accounts';
 
   @override
-  String get paywallProFeatureSubaccounts => 'Unlimited sub-accounts';
+  String get paywallProFeatureSubaccounts => 'Unlimited subaccounts';
 
   @override
   String get paywallProFeatureFiat => '100+ fiat currencies';

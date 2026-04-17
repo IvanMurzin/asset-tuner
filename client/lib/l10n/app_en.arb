@@ -224,6 +224,7 @@
   "subaccountEmptyTitle": "No subaccounts yet",
   "subaccountEmptyBody": "Add the holdings you have in this account.",
   "subaccountListTitle": "Subaccounts",
+  "subaccountListCaption": "Use separate subaccounts for each currency or token inside this account.",
   "subaccountUpdateBalanceCta": "Set balance",
   "subaccountRenameCta": "Rename",
   "subaccountRenameTitle": "Rename subaccount",
