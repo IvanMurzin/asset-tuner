@@ -1,7 +1,0 @@
-interface:
-  display_name: "Backlog Review Refiner"
-  short_description: "Reviews current diff and applies safe fixes"
-  default_prompt: "Use $backlog-review-refiner to review the current git diff, fix confirmed issues by severity, rerun checks, and return manual QA steps."
-
-policy:
-  allow_implicit_invocation: true
