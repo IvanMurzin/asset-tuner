@@ -27,6 +27,24 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-17 19:35 +04 - BUG-PRO-003 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/presentation/profile/page/archived_accounts_page.dart`
+  - `client/test/presentation/profile/page/archived_accounts_page_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-003-archived-navigation-backstack-fix.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/presentation/profile/page/archived_accounts_page_test.dart` -> `pass`
+- Manual QA checklist:
+  - [ ] Проверить flow `Profile -> Archived accounts -> Account detail -> Back`: возврат всегда в archived list.
+  - [ ] Проверить deep link на `/main/accounts/:accountId`: back ведет согласно текущему стеку и не редиректит принудительно в archived.
+  - [ ] Проверить обычный переход из main accounts в detail: поведение back не изменилось.
+- Notes:
+  - Изменение локализовано в archived-flow (замена `go` на `push`), остальные точки входа в `AccountDetailPage` не затронуты.
+
 ### 2026-04-17 19:28 +04 - BUG-SUB-007 - Done
 - Commit: `HEAD`
 - Changed files:

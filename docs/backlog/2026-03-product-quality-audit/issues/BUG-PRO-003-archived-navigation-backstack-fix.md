@@ -4,7 +4,7 @@
 - ID: `BUG-PRO-003`
 - Тип: `Bug`
 - Приоритет: `P0`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `SCR-007`, `SCR-009`, `navigation`
 
 ## Экран/модуль/слой
@@ -48,3 +48,10 @@
 ## Ссылки на текущую реализацию
 - [archived_accounts_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/profile/page/archived_accounts_page.dart)
 - [app_router.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core/routing/app_router.dart)
+
+## Implementation note
+- В [archived_accounts_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/profile/page/archived_accounts_page.dart) переход archived -> account detail переведен с `context.go(...)` на `context.push(...)`, чтобы detail открывался поверх текущего списка archived accounts и корректно возвращался по `back`.
+- Добавлен widget-тест [archived_accounts_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/profile/page/archived_accounts_page_test.dart), который проверяет сценарий `archived -> detail -> back` и возврат в archived list.
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/profile/page/archived_accounts_page_test.dart` (pass)
