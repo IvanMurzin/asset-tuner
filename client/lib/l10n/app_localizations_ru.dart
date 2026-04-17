@@ -541,6 +541,49 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subaccountNameHint => 'например, USDT (TRC20)';
 
   @override
+  String get subaccountNameHintBank => 'например, Накопительный USD';
+
+  @override
+  String get subaccountNameHintWalletExchange => 'например, BTC spot wallet';
+
+  @override
+  String get subaccountNameHintCash => 'например, Наличные дома';
+
+  @override
+  String get subaccountNameHintOther => 'например, Резервный счет';
+
+  @override
+  String get subaccountNameHelperBank =>
+      'Укажите продукт банка или карту, чтобы счёт было легче отличать в списке.';
+
+  @override
+  String get subaccountNameHelperWalletExchange =>
+      'Добавьте сеть или площадку в название, чтобы разделять похожие крипто-счета.';
+
+  @override
+  String get subaccountNameHelperCash =>
+      'Укажите место или назначение, например кошелек, сейф или наличные в поездке.';
+
+  @override
+  String get subaccountNameHelperOther =>
+      'Используйте любое название, по которому вы быстро узнаете этот счёт.';
+
+  @override
+  String get subaccountAmountHelperBank =>
+      'Введите текущий баланс этого счёта. Значение 0 допустимо.';
+
+  @override
+  String get subaccountAmountHelperWalletExchange =>
+      'Введите текущее количество этого актива. Значение 0 допустимо.';
+
+  @override
+  String get subaccountAmountHelperCash => 'Введите сумму наличных на руках. Значение 0 допустимо.';
+
+  @override
+  String get subaccountAmountHelperOther =>
+      'Введите текущую сумму, которую вы ведете в этом счёте. Значение 0 допустимо.';
+
+  @override
   String get subaccountEmptyTitle => 'Пока нет счетов';
 
   @override

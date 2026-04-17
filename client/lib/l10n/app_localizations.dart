@@ -1119,6 +1119,78 @@ abstract class AppLocalizations {
   /// **'e.g., USDT (TRC20)'**
   String get subaccountNameHint;
 
+  /// No description provided for @subaccountNameHintBank.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Savings USD'**
+  String get subaccountNameHintBank;
+
+  /// No description provided for @subaccountNameHintWalletExchange.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., BTC spot wallet'**
+  String get subaccountNameHintWalletExchange;
+
+  /// No description provided for @subaccountNameHintCash.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Cash at home'**
+  String get subaccountNameHintCash;
+
+  /// No description provided for @subaccountNameHintOther.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Emergency reserve'**
+  String get subaccountNameHintOther;
+
+  /// No description provided for @subaccountNameHelperBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the bank product or card name so this subaccount is easy to recognize.'**
+  String get subaccountNameHelperBank;
+
+  /// No description provided for @subaccountNameHelperWalletExchange.
+  ///
+  /// In en, this message translates to:
+  /// **'Include network or venue in the name to separate similar crypto holdings.'**
+  String get subaccountNameHelperWalletExchange;
+
+  /// No description provided for @subaccountNameHelperCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Use location or purpose, for example wallet, safe, or travel cash.'**
+  String get subaccountNameHelperCash;
+
+  /// No description provided for @subaccountNameHelperOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Use any label that helps you quickly identify this subaccount.'**
+  String get subaccountNameHelperOther;
+
+  /// No description provided for @subaccountAmountHelperBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the current balance for this subaccount. Value 0 is allowed.'**
+  String get subaccountAmountHelperBank;
+
+  /// No description provided for @subaccountAmountHelperWalletExchange.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the current amount of this asset. Value 0 is allowed.'**
+  String get subaccountAmountHelperWalletExchange;
+
+  /// No description provided for @subaccountAmountHelperCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter cash currently on hand. Value 0 is allowed.'**
+  String get subaccountAmountHelperCash;
+
+  /// No description provided for @subaccountAmountHelperOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the current amount tracked in this subaccount. Value 0 is allowed.'**
+  String get subaccountAmountHelperOther;
+
   /// No description provided for @subaccountEmptyTitle.
   ///
   /// In en, this message translates to:

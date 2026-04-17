@@ -27,6 +27,31 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-17 19:01 +04 - IMP-SUB-003 - Done
+- Commit: `pending (backlog(IMP-SUB-003))`
+- Changed files:
+  - `client/lib/presentation/account/page/add_subaccount_context.dart`
+  - `client/lib/presentation/account/page/add_subaccount_page.dart`
+  - `client/lib/l10n/app_en.arb`
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_localizations.dart`
+  - `client/lib/l10n/app_localizations_en.dart`
+  - `client/lib/l10n/app_localizations_ru.dart`
+  - `client/test/presentation/account/page/add_subaccount_page_test.dart`
+  - `client/test/presentation/account/page/add_subaccount_context_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/IMP-SUB-003-contextual-hints-defaults-by-account-type.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/presentation/account/page/add_subaccount_page_test.dart` -> `pass`
+  - `cd client && flutter test test/presentation/account/page/add_subaccount_context_test.dart` -> `pass`
+- Manual QA checklist:
+  - [ ] Проверить Add subaccount для `bank`/`wallet`/`exchange`/`cash`/`other` и убедиться, что hints/helpers меняются по типу аккаунта.
+  - [ ] Переключить locale `en`/`ru` и проверить консистентность терминов и контекстных описаний.
+  - [ ] Проверить, что default currency выбирается по expected kind и locked assets не выбираются по умолчанию.
+- Notes:
+  - Поведение prefill amount не изменено: поле суммы стартует пустым, значение `0` остаётся валидным для сабмита.
+
 ### 2026-04-17 17:58 +04 - BUG-SUB-010 - Done
 - Commit: `e11eaab`
 - Changed files:

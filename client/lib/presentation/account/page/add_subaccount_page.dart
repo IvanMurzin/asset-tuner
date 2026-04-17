@@ -18,6 +18,7 @@ import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
+import 'package:asset_tuner/presentation/account/page/add_subaccount_context.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_create_cubit.dart';
@@ -62,6 +63,10 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final accountType = context.select<AccountInfoCubit, AccountType?>(
+      (cubit) => cubit.state.account?.type,
+    );
+    final formContext = AddSubaccountContext.fromAccountType(accountType);
 
     return BlocProvider(
       create: (_) => getIt<SubaccountCreateCubit>(),
@@ -144,13 +149,20 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                   children: [
                     DSTextField(
                       label: l10n.accountsNameLabel,
-                      hintText: l10n.subaccountNameHint,
+                      hintText: _nameHint(l10n, formContext.copyProfile),
                       controller: _nameController,
                       errorText: createState.nameError == SubaccountCreateFieldError.required
                           ? l10n.accountsNameRequired
                           : null,
                       enabled: createState.status != SubaccountCreateStatus.loading,
                       onChanged: (_) => context.read<SubaccountCreateCubit>().clearNameError(),
+                    ),
+                    SizedBox(height: spacing.s4),
+                    Text(
+                      _nameHelper(l10n, formContext.copyProfile),
+                      style: context.dsTypography.caption.copyWith(
+                        color: context.dsColors.textSecondary,
+                      ),
                     ),
                     SizedBox(height: spacing.s12),
                     DSBalanceInput(
@@ -185,6 +197,13 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                           setState(() => _balanceErrorText = null);
                         }
                       },
+                    ),
+                    SizedBox(height: spacing.s4),
+                    Text(
+                      _amountHelper(l10n, formContext.copyProfile),
+                      style: context.dsTypography.caption.copyWith(
+                        color: context.dsColors.textSecondary,
+                      ),
                     ),
                     SizedBox(height: spacing.s24),
                     DSButton(
@@ -244,7 +263,11 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
 
     final assetsState = context.read<AssetsCubit>().state;
     final accountType = context.read<AccountInfoCubit>().state.account?.type;
-    final defaultAsset = _resolveDefaultAsset(assetsState: assetsState, accountType: accountType);
+    final formContext = AddSubaccountContext.fromAccountType(accountType);
+    final defaultAsset = formContext.resolveDefaultAsset(
+      fiatAssets: assetsState.fiatAssets,
+      cryptoAssets: assetsState.cryptoAssets,
+    );
     if (defaultAsset == null) {
       return;
     }
@@ -255,31 +278,30 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
     });
   }
 
-  AssetEntity? _resolveDefaultAsset({
-    required AssetsState assetsState,
-    required AccountType? accountType,
-  }) {
-    final preferred = switch (accountType) {
-      AccountType.wallet || AccountType.exchange => assetsState.cryptoAssets,
-      AccountType.bank || AccountType.cash || AccountType.other || null => assetsState.fiatAssets,
+  String _nameHint(AppLocalizations l10n, AddSubaccountCopyProfile profile) {
+    return switch (profile) {
+      AddSubaccountCopyProfile.bank => l10n.subaccountNameHintBank,
+      AddSubaccountCopyProfile.walletExchange => l10n.subaccountNameHintWalletExchange,
+      AddSubaccountCopyProfile.cash => l10n.subaccountNameHintCash,
+      AddSubaccountCopyProfile.other => l10n.subaccountNameHintOther,
     };
-    final preferredUnlocked = _firstUnlocked(preferred);
-    if (preferredUnlocked != null) {
-      return preferredUnlocked;
-    }
-
-    final fallback = preferred == assetsState.fiatAssets
-        ? assetsState.cryptoAssets
-        : assetsState.fiatAssets;
-    return _firstUnlocked(fallback);
   }
 
-  AssetEntity? _firstUnlocked(List<AssetEntity> items) {
-    for (final asset in items) {
-      if (!(asset.isLocked ?? false)) {
-        return asset;
-      }
-    }
-    return null;
+  String _nameHelper(AppLocalizations l10n, AddSubaccountCopyProfile profile) {
+    return switch (profile) {
+      AddSubaccountCopyProfile.bank => l10n.subaccountNameHelperBank,
+      AddSubaccountCopyProfile.walletExchange => l10n.subaccountNameHelperWalletExchange,
+      AddSubaccountCopyProfile.cash => l10n.subaccountNameHelperCash,
+      AddSubaccountCopyProfile.other => l10n.subaccountNameHelperOther,
+    };
+  }
+
+  String _amountHelper(AppLocalizations l10n, AddSubaccountCopyProfile profile) {
+    return switch (profile) {
+      AddSubaccountCopyProfile.bank => l10n.subaccountAmountHelperBank,
+      AddSubaccountCopyProfile.walletExchange => l10n.subaccountAmountHelperWalletExchange,
+      AddSubaccountCopyProfile.cash => l10n.subaccountAmountHelperCash,
+      AddSubaccountCopyProfile.other => l10n.subaccountAmountHelperOther,
+    };
   }
 }

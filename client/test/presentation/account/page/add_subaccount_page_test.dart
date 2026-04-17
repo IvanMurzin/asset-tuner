@@ -40,7 +40,11 @@ void main() {
       await getIt.reset();
     });
 
-    Future<void> pumpPage(WidgetTester tester, {required AccountType accountType}) async {
+    Future<void> pumpPage(
+      WidgetTester tester, {
+      required AccountType accountType,
+      Locale? locale,
+    }) async {
       accountInfoCubit = _TestAccountInfoCubit(
         AccountInfoState(
           status: AccountInfoStatus.ready,
@@ -71,6 +75,7 @@ void main() {
         MaterialApp.router(
           routerConfig: router,
           theme: lightTheme,
+          locale: locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
         ),
@@ -93,7 +98,7 @@ void main() {
 
       await tester.tap(find.text('Crypto'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('BTC • Bitcoin'));
+      await tester.tap(find.textContaining('BTC').first);
       await tester.pumpAndSettle();
 
       expect(find.text('BTC'), findsOneWidget);
@@ -118,6 +123,53 @@ void main() {
 
       expect(find.text('BTC'), findsOneWidget);
       expect(find.text('USD'), findsNothing);
+    });
+
+    testWidgets('preselects first crypto currency for exchange account type', (tester) async {
+      await pumpPage(tester, accountType: AccountType.exchange);
+
+      expect(find.text('BTC'), findsOneWidget);
+      expect(find.text('USD'), findsNothing);
+    });
+
+    testWidgets('preselects first fiat currency for cash account type', (tester) async {
+      await pumpPage(tester, accountType: AccountType.cash);
+
+      expect(find.text('USD'), findsOneWidget);
+    });
+
+    testWidgets('preselects first fiat currency for other account type', (tester) async {
+      await pumpPage(tester, accountType: AccountType.other);
+
+      expect(find.text('USD'), findsOneWidget);
+    });
+
+    testWidgets('shows contextual hints and helpers for bank account in english', (tester) async {
+      await pumpPage(tester, accountType: AccountType.bank, locale: const Locale('en'));
+
+      expect(find.text('e.g., Savings USD'), findsOneWidget);
+      expect(
+        find.text('Use the bank product or card name so this subaccount is easy to recognize.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Enter the current balance for this subaccount. Value 0 is allowed.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('shows contextual hints and helpers for wallet account in russian', (tester) async {
+      await pumpPage(tester, accountType: AccountType.wallet, locale: const Locale('ru'));
+
+      expect(find.text('например, BTC spot wallet'), findsOneWidget);
+      expect(
+        find.text('Добавьте сеть или площадку в название, чтобы разделять похожие крипто-счета.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Введите текущее количество этого актива. Значение 0 допустимо.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('does not preselect locked currency by default', (tester) async {

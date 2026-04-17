@@ -4,7 +4,7 @@
 - ID: `IMP-SUB-003`
 - Тип: `Improvement`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-004`, `FTR-005`, `SCR-008`
 
 ## Экран/модуль/слой
@@ -50,3 +50,18 @@ Placeholder и helper тексты не учитывают тип родител
 ## Ссылки на текущую реализацию
 - [account_entity.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/domain/account/entity/account_entity.dart)
 - [add_subaccount_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/page/add_subaccount_page.dart)
+
+## Implementation note
+- Добавлен контекстный helper [add_subaccount_context.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/page/add_subaccount_context.dart), который маппит `AccountType` в `copy profile` и `preferred asset kind`, а также выбирает default currency с fallback на противоположный kind и фильтром locked assets.
+- Экран [add_subaccount_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/account/page/add_subaccount_page.dart) переведён на helper:
+  - default currency теперь резолвится через `AddSubaccountContext`,
+  - `hintText` для name и description под полями name/amount зависят от `account.type`,
+  - prefill суммы оставлен пустым (`TextEditingController()` без initial `0`).
+- Добавлены новые локализационные ключи в [app_en.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_en.arb) и [app_ru.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_ru.arb) с последующей регенерацией [app_localizations.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations.dart), [app_localizations_en.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_en.dart), [app_localizations_ru.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_ru.dart).
+- Добавлены/обновлены автотесты:
+  - [add_subaccount_context_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/account/page/add_subaccount_context_test.dart)
+  - [add_subaccount_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/account/page/add_subaccount_page_test.dart)
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/account/page/add_subaccount_page_test.dart` (pass)
+  - `cd client && flutter test test/presentation/account/page/add_subaccount_context_test.dart` (pass)

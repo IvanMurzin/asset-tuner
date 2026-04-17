@@ -538,6 +538,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subaccountNameHint => 'e.g., USDT (TRC20)';
 
   @override
+  String get subaccountNameHintBank => 'e.g., Savings USD';
+
+  @override
+  String get subaccountNameHintWalletExchange => 'e.g., BTC spot wallet';
+
+  @override
+  String get subaccountNameHintCash => 'e.g., Cash at home';
+
+  @override
+  String get subaccountNameHintOther => 'e.g., Emergency reserve';
+
+  @override
+  String get subaccountNameHelperBank =>
+      'Use the bank product or card name so this subaccount is easy to recognize.';
+
+  @override
+  String get subaccountNameHelperWalletExchange =>
+      'Include network or venue in the name to separate similar crypto holdings.';
+
+  @override
+  String get subaccountNameHelperCash =>
+      'Use location or purpose, for example wallet, safe, or travel cash.';
+
+  @override
+  String get subaccountNameHelperOther =>
+      'Use any label that helps you quickly identify this subaccount.';
+
+  @override
+  String get subaccountAmountHelperBank =>
+      'Enter the current balance for this subaccount. Value 0 is allowed.';
+
+  @override
+  String get subaccountAmountHelperWalletExchange =>
+      'Enter the current amount of this asset. Value 0 is allowed.';
+
+  @override
+  String get subaccountAmountHelperCash => 'Enter cash currently on hand. Value 0 is allowed.';
+
+  @override
+  String get subaccountAmountHelperOther =>
+      'Enter the current amount tracked in this subaccount. Value 0 is allowed.';
+
+  @override
   String get subaccountEmptyTitle => 'No subaccounts yet';
 
   @override
