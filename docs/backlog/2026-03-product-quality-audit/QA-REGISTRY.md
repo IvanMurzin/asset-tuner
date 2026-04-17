@@ -27,6 +27,29 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-17 19:28 +04 - BUG-SUB-007 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/presentation/balance/widget/subaccount_history_section.dart`
+  - `client/lib/l10n/app_en.arb`
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_localizations.dart`
+  - `client/lib/l10n/app_localizations_en.dart`
+  - `client/lib/l10n/app_localizations_ru.dart`
+  - `client/test/presentation/balance/page/subaccount_detail_page_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-007-subaccount-history-copy-update.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/presentation/balance/page/subaccount_detail_page_test.dart` -> `pass`
+- Manual QA checklist:
+  - [ ] Проверить `SCR-010` в `en`: заголовок секции равен `Your balance history`, подпись объясняет изменения после snapshot update.
+  - [ ] Проверить `SCR-010` в `ru`: заголовок секции равен `История баланса счёта`, подпись корректно локализована и использует термин `счёт`.
+  - [ ] Проверить оба состояния секции (пустая история и список записей): новый copy отображается и не ломает layout.
+- Notes:
+  - Ключи `positionHistoryTitle` и `positionHistoryDescription` обновлены/добавлены без переименования существующих l10n-идентификаторов.
+
 ### 2026-04-17 19:20 +04 - BUG-SUB-005 - Done
 - Commit: `HEAD`
 - Changed files:

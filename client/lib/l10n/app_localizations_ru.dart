@@ -640,7 +640,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get positionUpdateThisMonth => 'Обновить за этот месяц';
 
   @override
-  String get positionHistoryTitle => 'История';
+  String get positionHistoryTitle => 'История баланса счёта';
+
+  @override
+  String get positionHistoryDescription =>
+      'Показывает, как баланс этого счёта менялся после каждого обновления снимка.';
 
   @override
   String get positionHistoryEmptyTitle => 'Пока нет истории балансов';

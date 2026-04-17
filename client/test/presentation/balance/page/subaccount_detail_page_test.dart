@@ -148,6 +148,43 @@ void main() {
       expect(find.text('Set balance'), findsOneWidget);
       expect(find.text('Update balance'), findsNothing);
     });
+
+    testWidgets('shows updated history copy in en and ru locales', (tester) async {
+      await _pumpPage(
+        tester,
+        subaccountInfoCubit: subaccountInfoCubit,
+        accountInfoCubit: accountInfoCubit,
+        accountsCubit: accountsCubit,
+        profileCubit: profileCubit,
+        assetsCubit: assetsCubit,
+        updateCubit: updateCubit,
+        deleteCubit: deleteCubit,
+      );
+
+      expect(find.text('Your balance history'), findsOneWidget);
+      expect(
+        find.text('See how this subaccount balance changed with each snapshot update.'),
+        findsOneWidget,
+      );
+
+      await _pumpPage(
+        tester,
+        subaccountInfoCubit: subaccountInfoCubit,
+        accountInfoCubit: accountInfoCubit,
+        accountsCubit: accountsCubit,
+        profileCubit: profileCubit,
+        assetsCubit: assetsCubit,
+        updateCubit: updateCubit,
+        deleteCubit: deleteCubit,
+        locale: const Locale('ru'),
+      );
+
+      expect(find.text('История баланса счёта'), findsOneWidget);
+      expect(
+        find.text('Показывает, как баланс этого счёта менялся после каждого обновления снимка.'),
+        findsOneWidget,
+      );
+    });
   });
 }
 
@@ -160,6 +197,7 @@ Future<void> _pumpPage(
   required AssetsCubit assetsCubit,
   required SubaccountUpdateCubit updateCubit,
   required SubaccountDeleteCubit deleteCubit,
+  Locale? locale,
 }) async {
   final router = GoRouter(
     initialLocation: '/',
@@ -192,6 +230,7 @@ Future<void> _pumpPage(
     MaterialApp.router(
       routerConfig: router,
       theme: lightTheme,
+      locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
     ),

@@ -1302,8 +1302,14 @@ abstract class AppLocalizations {
   /// No description provided for @positionHistoryTitle.
   ///
   /// In en, this message translates to:
-  /// **'History'**
+  /// **'Your balance history'**
   String get positionHistoryTitle;
+
+  /// No description provided for @positionHistoryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'See how this subaccount balance changed with each snapshot update.'**
+  String get positionHistoryDescription;
 
   /// No description provided for @positionHistoryEmptyTitle.
   ///

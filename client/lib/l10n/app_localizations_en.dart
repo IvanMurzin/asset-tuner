@@ -636,7 +636,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get positionUpdateThisMonth => 'Update for this month';
 
   @override
-  String get positionHistoryTitle => 'History';
+  String get positionHistoryTitle => 'Your balance history';
+
+  @override
+  String get positionHistoryDescription =>
+      'See how this subaccount balance changed with each snapshot update.';
 
   @override
   String get positionHistoryEmptyTitle => 'No balance history yet';

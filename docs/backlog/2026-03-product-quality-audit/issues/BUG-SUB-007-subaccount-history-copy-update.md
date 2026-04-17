@@ -4,7 +4,7 @@
 - ID: `BUG-SUB-007`
 - Тип: `Bug`
 - Приоритет: `P2`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-006`, `SCR-010`
 
 ## Экран/модуль/слой
@@ -49,3 +49,17 @@
 - [subaccount_history_section.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/widget/subaccount_history_section.dart)
 - [app_en.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_en.arb)
 - [app_ru.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_ru.arb)
+
+## Implementation note
+- В [subaccount_history_section.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/widget/subaccount_history_section.dart) под заголовком секции добавлена локализованная подпись `positionHistoryDescription`, объясняющая смысл изменений баланса по snapshot-обновлениям.
+- Обновлен copy заголовка секции history в [app_en.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_en.arb) и [app_ru.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_ru.arb):
+  - `en`: `Your balance history`
+  - `ru`: `История баланса счёта`
+- Добавлен новый l10n-ключ `positionHistoryDescription` в `en/ru` и синхронизированы сгенерированные файлы локализации:
+  - [app_localizations.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations.dart)
+  - [app_localizations_en.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_en.dart)
+  - [app_localizations_ru.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_ru.dart)
+- Обновлен widget-тест [subaccount_detail_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/balance/page/subaccount_detail_page_test.dart): добавлена проверка нового history copy в `en` и `ru`.
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/balance/page/subaccount_detail_page_test.dart` (pass)

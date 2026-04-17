@@ -38,6 +38,8 @@ class SubaccountHistorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.dsColors;
+    final typography = context.dsTypography;
     final spacing = context.dsSpacing;
 
     return Column(
@@ -45,6 +47,11 @@ class SubaccountHistorySection extends StatelessWidget {
       children: [
         DSSectionTitle(title: l10n.positionHistoryTitle),
         SizedBox(height: spacing.s12),
+        Text(
+          l10n.positionHistoryDescription,
+          style: typography.caption.copyWith(color: colors.textSecondary),
+        ),
+        SizedBox(height: spacing.s16),
         if (entries.isEmpty)
           DSEmptyState(
             title: l10n.positionHistoryEmptyTitle,
