@@ -27,6 +27,27 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-17 19:46 +04 - BUG-PRO-001 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/presentation/profile/page/profile_page.dart`
+  - `client/lib/core/routing/app_router.dart`
+  - `client/lib/core/routing/app_routes.dart`
+  - `client/lib/presentation/profile/page/account_actions_page.dart` (deleted)
+  - `client/test/presentation/profile/page/profile_page_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-001-move-account-actions-into-profile.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/presentation/profile/page/profile_page_test.dart` -> `pass`
+- Manual QA checklist:
+  - [ ] Проверить `SCR-009`: внизу `Profile` видны действия `Sign out` и `Delete account` без перехода на отдельный экран.
+  - [ ] Нажать `Sign out` на Profile и подтвердить переход на `sign-in`.
+  - [ ] Нажать `Delete account` на Profile: confirm-dialog отображается, cancel/confirm работают корректно.
+- Notes:
+  - Удалён nested route `/profile/account`; account actions теперь встроены в `ProfilePage`.
+
 ### 2026-04-17 19:35 +04 - BUG-PRO-003 - Done
 - Commit: `HEAD`
 - Changed files:

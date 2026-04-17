@@ -23,7 +23,6 @@ abstract final class AppRoutes {
   static const String paywall = '/paywall';
   static const String baseCurrencySettings = '/profile/base-currency';
   static const String manageSubscription = '/profile/subscription';
-  static const String accountActions = '/profile/account';
   static const String archivedAccounts = '/profile/archived-accounts';
 
   static const String accountsNewPath = 'accounts/new';
