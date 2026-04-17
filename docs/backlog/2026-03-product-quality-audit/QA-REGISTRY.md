@@ -27,6 +27,34 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-17 17:58 +04 - BUG-SUB-010 - Done
+- Commit: `e11eaab`
+- Changed files:
+  - `backend/supabase/migrations/20260417173000_api_set_subaccount_balance_reject_unchanged.sql`
+  - `client/lib/core/supabase/supabase_failure_mapper.dart`
+  - `client/lib/l10n/supabase_error_localization_en.dart`
+  - `client/lib/l10n/supabase_error_localization_ru.dart`
+  - `client/lib/presentation/analytics/bloc/analytics_cubit.dart`
+  - `client/lib/presentation/balance/bloc/subaccount_info_cubit.dart`
+  - `client/test/core/supabase/supabase_failure_mapper_test.dart`
+  - `client/test/presentation/analytics/bloc/analytics_cubit_test.dart`
+  - `client/test/presentation/balance/bloc/subaccount_info_cubit_test.dart`
+  - `docs/contracts/api_surface.md`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-010-block-zero-delta-updates.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/core/supabase/supabase_failure_mapper_test.dart` -> `pass`
+  - `cd client && flutter test test/presentation/balance/bloc/subaccount_info_cubit_test.dart` -> `pass`
+  - `cd client && flutter test test/presentation/analytics/bloc/analytics_cubit_test.dart` -> `pass`
+  - `cd backend && ./scripts/deploy_supabase.sh --help` -> `pass (with warnings on remote seed DNS step)`
+- Manual QA checklist:
+  - [ ] Повторить Set balance тем же значением и проверить показ локализованной ошибки без сохранения новой записи.
+  - [ ] Проверить, что в Subaccount history не отображаются legacy записи с нулевым diff.
+  - [ ] Проверить, что в Analytics/Updates отсутствуют zero-delta изменения.
+- Notes:
+  - Скрипт backend quality-check при вызове с `--help` фактически выполнил deploy/migration на remote Supabase проект.
+
 ### 2026-04-17 17:02 +04 - BUG-SUB-009 - Done
 - Commit: `748ee1c`
 - Changed files:
