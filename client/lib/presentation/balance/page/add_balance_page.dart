@@ -117,15 +117,22 @@ class _AddBalancePageState extends State<AddBalancePage> {
                     children: [
                       Expanded(
                         child: SingleChildScrollView(
-                          child: DSCard(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                DSDatePickerField(
-                                  label: l10n.addBalanceDateLabel,
-                                  value: _date,
-                                  enabled: !isLoading,
-                                  onChanged: (value) => setState(() => _date = value),
+                              child: DSCard(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.addBalanceHelperSnapshot,
+                                      style: context.dsTypography.body.copyWith(
+                                        color: context.dsColors.textSecondary,
+                                      ),
+                                    ),
+                                    SizedBox(height: spacing.s16),
+                                    DSDatePickerField(
+                                      label: l10n.addBalanceDateLabel,
+                                      value: _date,
+                                      enabled: !isLoading,
+                                      onChanged: (value) => setState(() => _date = value),
                                 ),
                                 SizedBox(height: spacing.s16),
                                 DSBalanceInput(

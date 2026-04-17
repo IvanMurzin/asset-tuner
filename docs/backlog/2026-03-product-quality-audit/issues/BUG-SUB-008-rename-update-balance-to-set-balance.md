@@ -4,7 +4,7 @@
 - ID: `BUG-SUB-008`
 - Тип: `Bug`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-006`, `SCR-011`, `SCR-010`
 
 ## Экран/модуль/слой
@@ -49,3 +49,15 @@ Copy не соответствует snapshot semantics из `FTR-006`.
 ## Ссылки на текущую реализацию
 - [add_balance_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/page/add_balance_page.dart)
 - [subaccount_detail_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/page/subaccount_detail_page.dart)
+
+## Implementation note
+- В [app_en.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_en.arb) и [app_ru.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_ru.arb) обновлен `subaccountUpdateBalanceCta` на `Set balance` / `Установить баланс`; также уточнен helper `addBalanceHelperSnapshot` с формулировкой про установку нового текущего значения.
+- В [add_balance_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/page/add_balance_page.dart) добавлен рендер helper-description на форме Set balance.
+- Пересобраны локализации: [app_localizations.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations.dart), [app_localizations_en.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_en.dart), [app_localizations_ru.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_ru.dart).
+- Добавлены/обновлены widget-тесты:
+  - [add_balance_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/balance/page/add_balance_page_test.dart) — проверка copy `Set balance` + helper для `en/ru`.
+  - [subaccount_detail_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/balance/page/subaccount_detail_page_test.dart) — проверка action-label `Set balance` на `SCR-010`.
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/balance/page/add_balance_page_test.dart` (pass)
+  - `cd client && flutter test test/presentation/balance/page/subaccount_detail_page_test.dart` (pass)

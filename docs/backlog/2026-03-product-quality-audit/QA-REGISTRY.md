@@ -27,6 +27,31 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-17 19:12 +04 - BUG-SUB-008 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/presentation/balance/page/add_balance_page.dart`
+  - `client/lib/l10n/app_en.arb`
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_localizations.dart`
+  - `client/lib/l10n/app_localizations_en.dart`
+  - `client/lib/l10n/app_localizations_ru.dart`
+  - `client/test/presentation/balance/page/add_balance_page_test.dart`
+  - `client/test/presentation/balance/page/subaccount_detail_page_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-SUB-008-rename-update-balance-to-set-balance.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/presentation/balance/page/add_balance_page_test.dart` -> `pass`
+  - `cd client && flutter test test/presentation/balance/page/subaccount_detail_page_test.dart` -> `pass`
+- Manual QA checklist:
+  - [ ] Проверить `SCR-010`: action label отображает `Set balance` / `Установить баланс`.
+  - [ ] Проверить `SCR-011`: title отображает `Set balance` / `Установить баланс`.
+  - [ ] Проверить `SCR-011` в `en/ru`: helper явно объясняет, что задается новое текущее значение баланса.
+- Notes:
+  - Route-имя `update-balance` не менялось (технический identifier сохранен).
+
 ### 2026-04-17 19:06 +04 - IMP-SUB-004 - Done
 - Commit: `HEAD`
 - Changed files:

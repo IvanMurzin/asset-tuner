@@ -590,7 +590,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subaccountListTitle => 'Subaccounts';
 
   @override
-  String get subaccountUpdateBalanceCta => 'Update balance';
+  String get subaccountUpdateBalanceCta => 'Set balance';
 
   @override
   String get subaccountRenameCta => 'Rename';
@@ -674,7 +674,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addBalanceAmountLabel => 'Amount';
 
   @override
-  String get addBalanceHelperSnapshot => 'A snapshot is your balance on that date.';
+  String get addBalanceHelperSnapshot => 'Set the new current balance value for this subaccount.';
 
   @override
   String get addBalanceHelperDelta => 'A change is how much it increased or decreased.';

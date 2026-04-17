@@ -593,7 +593,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subaccountListTitle => 'Счета';
 
   @override
-  String get subaccountUpdateBalanceCta => 'Обновить баланс';
+  String get subaccountUpdateBalanceCta => 'Установить баланс';
 
   @override
   String get subaccountRenameCta => 'Переименовать';
@@ -678,7 +678,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addBalanceAmountLabel => 'Сумма';
 
   @override
-  String get addBalanceHelperSnapshot => 'Снимок — это ваш баланс на выбранную дату.';
+  String get addBalanceHelperSnapshot => 'Вы задаете новое текущее значение баланса этого счёта.';
 
   @override
   String get addBalanceHelperDelta => 'Изменение — насколько он вырос или уменьшился.';

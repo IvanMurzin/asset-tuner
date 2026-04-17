@@ -132,6 +132,22 @@ void main() {
 
       expect(subaccountInfoCubit.refreshCalls, 1);
     });
+
+    testWidgets('shows set balance action label', (tester) async {
+      await _pumpPage(
+        tester,
+        subaccountInfoCubit: subaccountInfoCubit,
+        accountInfoCubit: accountInfoCubit,
+        accountsCubit: accountsCubit,
+        profileCubit: profileCubit,
+        assetsCubit: assetsCubit,
+        updateCubit: updateCubit,
+        deleteCubit: deleteCubit,
+      );
+
+      expect(find.text('Set balance'), findsOneWidget);
+      expect(find.text('Update balance'), findsNothing);
+    });
   });
 }
 

@@ -69,10 +69,33 @@ void main() {
 
       expect(find.text(l10n.addBalanceValidationAmount), findsOneWidget);
     });
+
+    testWidgets('shows set balance copy in english', (tester) async {
+      await _pumpPage(tester, subaccountInfoCubit, locale: const Locale('en'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Set balance'), findsOneWidget);
+      expect(find.text('Set the new current balance value for this subaccount.'), findsOneWidget);
+    });
+
+    testWidgets('shows set balance copy in russian', (tester) async {
+      await _pumpPage(tester, subaccountInfoCubit, locale: const Locale('ru'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Установить баланс'), findsOneWidget);
+      expect(
+        find.text('Вы задаете новое текущее значение баланса этого счёта.'),
+        findsOneWidget,
+      );
+    });
   });
 }
 
-Future<void> _pumpPage(WidgetTester tester, SubaccountInfoCubit subaccountInfoCubit) async {
+Future<void> _pumpPage(
+  WidgetTester tester,
+  SubaccountInfoCubit subaccountInfoCubit, {
+  Locale locale = const Locale('en'),
+}) async {
   final router = GoRouter(
     initialLocation: '/',
     routes: [
@@ -89,6 +112,7 @@ Future<void> _pumpPage(WidgetTester tester, SubaccountInfoCubit subaccountInfoCu
   await tester.pumpWidget(
     MaterialApp.router(
       routerConfig: router,
+      locale: locale,
       theme: lightTheme,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,

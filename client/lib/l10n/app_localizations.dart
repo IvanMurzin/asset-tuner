@@ -1212,7 +1212,7 @@ abstract class AppLocalizations {
   /// No description provided for @subaccountUpdateBalanceCta.
   ///
   /// In en, this message translates to:
-  /// **'Update balance'**
+  /// **'Set balance'**
   String get subaccountUpdateBalanceCta;
 
   /// No description provided for @subaccountRenameCta.
@@ -1380,7 +1380,7 @@ abstract class AppLocalizations {
   /// No description provided for @addBalanceHelperSnapshot.
   ///
   /// In en, this message translates to:
-  /// **'A snapshot is your balance on that date.'**
+  /// **'Set the new current balance value for this subaccount.'**
   String get addBalanceHelperSnapshot;
 
   /// No description provided for @addBalanceHelperDelta.
