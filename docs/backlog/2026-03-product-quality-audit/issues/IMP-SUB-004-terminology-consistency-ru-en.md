@@ -4,7 +4,7 @@
 - ID: `IMP-SUB-004`
 - Тип: `Improvement`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-002`, `FTR-005`, `SCR-007`, `SCR-008`, `SCR-010`
 
 ## Экран/модуль/слой
@@ -50,3 +50,13 @@
 ## Ссылки на текущую реализацию
 - [app_ru.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_ru.arb)
 - [app_en.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_en.arb)
+
+## Implementation note
+- Проведён l10n audit subaccount-строк в `ru/en` и выровнены формулировки без переименования ключей:
+  - [app_ru.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_ru.arb)
+  - [app_en.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_en.arb)
+- В `ru` удалено смешение терминов `суб-аккаунт/аккаунт` в subaccount-контексте, закреплён термин `счёт` (и формы `счёта/счётов`).
+- В `en` унифицировано написание `subaccount` (удалены дефисные варианты `sub-accounts` в paywall copy).
+- Проверка UX-доков на предмет конфликтующего copy по subaccount проведена; дополнительных изменений не потребовалось.
+- Проверки:
+  - `cd client && flutter analyze` (pass)

@@ -27,6 +27,23 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-17 19:06 +04 - IMP-SUB-004 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_en.arb`
+  - `docs/backlog/2026-03-product-quality-audit/issues/IMP-SUB-004-terminology-consistency-ru-en.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+- Manual QA checklist:
+  - [ ] Проверить `SCR-007`/`SCR-008`/`SCR-010` в locale `ru`: во всех subaccount-экранах используется термин «счёт» без «суб-аккаунт».
+  - [ ] Проверить те же сценарии в locale `en`: используется единая форма «subaccount» (без `sub-account`).
+  - [ ] Проверить paywall copy для лимита subaccounts в `ru/en`.
+- Notes:
+  - Изменения ограничены ARB copy и backlog-документацией; ключи локализации не переименовывались.
+
 ### 2026-04-17 19:01 +04 - IMP-SUB-003 - Done
 - Commit: `199f508`
 - Changed files:
