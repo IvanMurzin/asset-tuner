@@ -4,7 +4,7 @@
 - ID: `BUG-SUB-006`
 - Тип: `Bug`
 - Приоритет: `P0`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-006`, `SCR-010`
 
 ## Экран/модуль/слой
@@ -49,3 +49,14 @@
 
 ## Ссылки на текущую реализацию
 - [subaccount_detail_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/page/subaccount_detail_page.dart)
+
+## Implementation note
+- Экран `Subaccount detail` переведён на единый root-scroll: `RefreshIndicator` + `ListView` в [subaccount_detail_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/page/subaccount_detail_page.dart), поэтому теперь скроллится весь экран (header, actions и history вместе).
+- Pull-to-refresh подключён на корневом скролле и вызывает `SubaccountInfoCubit.refreshHistory(showLoading: false)`, что ограничивает trigger верхней позицией списка.
+- Секция history в [subaccount_history_section.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/balance/widget/subaccount_history_section.dart) убрана из вложенного скролла и встраивается в общий поток страницы, при этом `onLoadMore` и кнопка пагинации сохранены.
+- Добавлен widget test [subaccount_detail_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/balance/page/subaccount_detail_page_test.dart):
+  - проверяет, что корневой список двигает весь экран;
+  - проверяет, что refresh не триггерится вне top-позиции и триггерится из top.
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/balance/page/subaccount_detail_page_test.dart` (pass)

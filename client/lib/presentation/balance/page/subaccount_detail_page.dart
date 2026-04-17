@@ -221,82 +221,80 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
             child: Scaffold(
               appBar: DSAppBar(title: title),
               body: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: spacing.s24),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: spacing.s24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SubaccountDetailHeaderCard(
-                            subaccountName: subaccount.name,
-                            accountName: state.account?.name,
-                            assetCode: subaccount.asset?.code,
-                            baseCurrency: baseCurrency,
-                            currentBalance: current,
-                            convertedValue: converted,
-                            ratesAsOf: rates?.asOf,
-                          ),
-                          if (isUnpriced) ...[
-                            SizedBox(height: spacing.s12),
-                            Text(
-                              l10n.positionUnpricedHint,
-                              style: context.dsTypography.body.copyWith(
-                                color: context.dsColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                          SizedBox(height: spacing.s16),
-                          SubaccountDetailActionsRow(
-                            isEnabled: !isMutating,
-                            updateLabel: l10n.subaccountUpdateBalanceCta,
-                            renameLabel: l10n.subaccountRenameCta,
-                            deleteLabel: l10n.subaccountDeleteCta,
-                            onUpdate: () async {
-                              final saved = await context.push<bool>(
-                                AppRoutes.accountSubaccountBalance
-                                    .replaceFirst(':accountId', widget.accountId)
-                                    .replaceFirst(':subaccountId', widget.subaccountId),
-                              );
-                              if (saved == true && context.mounted) {
-                                setState(() => _hasUnsyncedChange = true);
-                              }
-                            },
-                            onRename: () async {
-                              final name = await _showRenameDialog(
-                                context,
-                                initial: subaccount.name,
-                              );
-                              if (name == null || !context.mounted) {
-                                return;
-                              }
-                              await context.read<SubaccountUpdateCubit>().submit(
-                                subaccountId: widget.subaccountId,
-                                name: name,
-                              );
-                            },
-                            onDelete: () async {
-                              final confirmed = await _confirmDelete(context, l10n);
-                              if (!confirmed || !context.mounted) {
-                                return;
-                              }
-                              await context.read<SubaccountDeleteCubit>().submit(
-                                widget.subaccountId,
-                              );
-                            },
-                          ),
-                          SizedBox(height: spacing.s24),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
+                child: RefreshIndicator(
+                  onRefresh: () =>
+                      context.read<SubaccountInfoCubit>().refreshHistory(showLoading: false),
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(height: spacing.s24),
+                      Padding(
                         padding: EdgeInsets.symmetric(horizontal: spacing.s24),
-                        child: state.isHistoryLoading
-                            ? const SubaccountHistoryLoadingSkeleton()
-                            : SubaccountHistorySection(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SubaccountDetailHeaderCard(
+                              subaccountName: subaccount.name,
+                              accountName: state.account?.name,
+                              assetCode: subaccount.asset?.code,
+                              baseCurrency: baseCurrency,
+                              currentBalance: current,
+                              convertedValue: converted,
+                              ratesAsOf: rates?.asOf,
+                            ),
+                            if (isUnpriced) ...[
+                              SizedBox(height: spacing.s12),
+                              Text(
+                                l10n.positionUnpricedHint,
+                                style: context.dsTypography.body.copyWith(
+                                  color: context.dsColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                            SizedBox(height: spacing.s16),
+                            SubaccountDetailActionsRow(
+                              isEnabled: !isMutating,
+                              updateLabel: l10n.subaccountUpdateBalanceCta,
+                              renameLabel: l10n.subaccountRenameCta,
+                              deleteLabel: l10n.subaccountDeleteCta,
+                              onUpdate: () async {
+                                final saved = await context.push<bool>(
+                                  AppRoutes.accountSubaccountBalance
+                                      .replaceFirst(':accountId', widget.accountId)
+                                      .replaceFirst(':subaccountId', widget.subaccountId),
+                                );
+                                if (saved == true && context.mounted) {
+                                  setState(() => _hasUnsyncedChange = true);
+                                }
+                              },
+                              onRename: () async {
+                                final name = await _showRenameDialog(
+                                  context,
+                                  initial: subaccount.name,
+                                );
+                                if (name == null || !context.mounted) {
+                                  return;
+                                }
+                                await context.read<SubaccountUpdateCubit>().submit(
+                                  subaccountId: widget.subaccountId,
+                                  name: name,
+                                );
+                              },
+                              onDelete: () async {
+                                final confirmed = await _confirmDelete(context, l10n);
+                                if (!confirmed || !context.mounted) {
+                                  return;
+                                }
+                                await context.read<SubaccountDeleteCubit>().submit(
+                                  widget.subaccountId,
+                                );
+                              },
+                            ),
+                            SizedBox(height: spacing.s24),
+                            if (state.isHistoryLoading)
+                              SizedBox(height: 360, child: const SubaccountHistoryLoadingSkeleton())
+                            else
+                              SubaccountHistorySection(
                                 entries: state.entries,
                                 assetCode: subaccount.asset?.code,
                                 baseCurrency: baseCurrency,
@@ -316,9 +314,12 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
                                   }
                                 },
                               ),
+                            SizedBox(height: spacing.s24),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
