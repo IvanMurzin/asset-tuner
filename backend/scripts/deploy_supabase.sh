@@ -71,6 +71,3 @@ fi
 
 echo "Done."
 echo "Next: configure hourly cron to POST /functions/v1/rates_sync with header x-scheduler-secret."
- curl -fsS -X POST \
-    -H "x-scheduler-secret: sofksoefkspdfpsdkfpos" \
-    "https://qbeqjggcbbbrrcwsheui.supabase.co/functions/v1/rates_sync"

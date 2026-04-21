@@ -126,8 +126,21 @@ class ManageSubscriptionPage extends StatelessWidget {
                                           if (!context.mounted) {
                                             return;
                                           }
-                                          await context.read<ProfileCubit>().syncSubscription();
+                                          final profileCubit = context.read<ProfileCubit>();
+                                          await profileCubit.syncSubscription();
                                           if (!context.mounted) {
+                                            return;
+                                          }
+                                          final syncedState = profileCubit.state;
+                                          final isPro =
+                                              syncedState.isReady &&
+                                              syncedState.profile?.plan == 'pro';
+                                          if (!isPro) {
+                                            showDSSnackBar(
+                                              context,
+                                              variant: DSSnackBarVariant.error,
+                                              message: l10n.settingsEntitlementsError,
+                                            );
                                             return;
                                           }
                                           await context.read<AssetsCubit>().refresh(silent: true);
