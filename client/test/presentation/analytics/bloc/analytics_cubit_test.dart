@@ -1,17 +1,12 @@
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
+import 'package:asset_tuner/domain/analytics/entity/analytics_summary_entity.dart';
+import 'package:asset_tuner/domain/analytics/repository/i_analytics_repository.dart';
+import 'package:asset_tuner/domain/analytics/usecase/get_analytics_summary_usecase.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
-import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
-import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.dart';
-import 'package:asset_tuner/domain/balance/repository/i_balance_repository.dart';
-import 'package:asset_tuner/domain/balance/usecase/get_balance_history_usecase.dart';
-import 'package:asset_tuner/domain/balance/usecase/get_current_balances_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/entitlements_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
-import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
-import 'package:asset_tuner/domain/subaccount/repository/i_subaccount_repository.dart';
-import 'package:asset_tuner/domain/subaccount/usecase/get_subaccounts_usecase.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,50 +14,39 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('AnalyticsCubit', () {
     test('excludes zero-delta updates from analytics feed', () async {
-      final subaccount = SubaccountEntity(
-        id: 'sub-1',
-        accountId: 'acc-1',
-        assetId: 'asset-1',
-        name: 'BTC wallet',
-        archived: false,
-        createdAt: DateTime.utc(2026, 1, 1),
-        updatedAt: DateTime.utc(2026, 1, 1),
-      );
-
-      final historyEntries = [
-        BalanceEntryEntity(
-          id: 'history-zero',
-          subaccountId: 'sub-1',
-          amountAtomic: Decimal.parse('10000'),
-          amountDecimals: 2,
-          diffAmount: Decimal.zero,
-          createdAt: DateTime.utc(2026, 3, 10),
+      final repository = _FakeAnalyticsRepository(
+        summary: AnalyticsSummaryEntity(
+          baseCurrency: 'USD',
+          asOf: DateTime.utc(2026, 4, 21),
+          breakdown: [
+            AnalyticsBreakdownEntity(
+              assetCode: 'BTC',
+              value: Decimal.fromInt(100),
+              originalAmount: Decimal.fromInt(100),
+            ),
+          ],
+          updates: [
+            AnalyticsUpdateEntity(
+              accountName: 'Wallet',
+              subaccountName: 'BTC wallet',
+              assetCode: 'BTC',
+              diffAmount: Decimal.zero,
+              diffBaseAmount: Decimal.zero,
+              entryDate: DateTime.utc(2026, 4, 21),
+            ),
+            AnalyticsUpdateEntity(
+              accountName: 'Wallet',
+              subaccountName: 'BTC wallet',
+              assetCode: 'BTC',
+              diffAmount: Decimal.fromInt(5),
+              diffBaseAmount: Decimal.fromInt(5),
+              entryDate: DateTime.utc(2026, 4, 20),
+            ),
+          ],
         ),
-        BalanceEntryEntity(
-          id: 'history-positive',
-          subaccountId: 'sub-1',
-          amountAtomic: Decimal.parse('10500'),
-          amountDecimals: 2,
-          diffAmount: Decimal.parse('5'),
-          createdAt: DateTime.utc(2026, 3, 9),
-        ),
-      ];
-
-      final subaccountRepository = _FakeSubaccountRepository(
-        subaccountsByAccount: {
-          'acc-1': [subaccount],
-        },
-      );
-      final balanceRepository = _FakeBalanceRepository(
-        currentBalances: {'sub-1': Decimal.parse('100')},
-        historyBySubaccount: {'sub-1': BalanceHistoryPageEntity(entries: historyEntries)},
       );
 
-      final cubit = AnalyticsCubit(
-        GetSubaccountsUseCase(subaccountRepository),
-        GetCurrentBalancesUseCase(balanceRepository),
-        GetBalanceHistoryUseCase(balanceRepository),
-      );
+      final cubit = AnalyticsCubit(GetAnalyticsSummaryUseCase(repository));
 
       await cubit.onSourceDataReady(
         ProfileEntity(
@@ -71,7 +55,7 @@ void main() {
         ),
         RatesSnapshotEntity(
           usdPriceByAssetId: {'asset-1': Decimal.one},
-          asOf: DateTime.utc(2026, 3, 10),
+          asOf: DateTime.utc(2026, 4, 21),
         ),
         const [
           AssetEntity(
@@ -98,78 +82,20 @@ void main() {
 
       expect(cubit.state.status, AnalyticsStatus.ready);
       expect(cubit.state.updates, hasLength(1));
-      expect(cubit.state.updates.first.diffAmount, Decimal.parse('5'));
+      expect(cubit.state.updates.first.diffAmount, Decimal.fromInt(5));
 
       await cubit.close();
     });
   });
 }
 
-class _FakeSubaccountRepository implements ISubaccountRepository {
-  _FakeSubaccountRepository({required this.subaccountsByAccount});
+class _FakeAnalyticsRepository implements IAnalyticsRepository {
+  _FakeAnalyticsRepository({required this.summary});
 
-  final Map<String, List<SubaccountEntity>> subaccountsByAccount;
-
-  @override
-  Future<Result<List<SubaccountEntity>>> fetchSubaccounts({required String accountId}) async {
-    return Success(subaccountsByAccount[accountId] ?? const <SubaccountEntity>[]);
-  }
+  final AnalyticsSummaryEntity summary;
 
   @override
-  Future<Result<SubaccountEntity>> createSubaccount({
-    required String accountId,
-    required String name,
-    required AssetEntity asset,
-    required Decimal snapshotAmount,
-    required DateTime entryDate,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<SubaccountEntity>> renameSubaccount({
-    required String subaccountId,
-    required String name,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<void>> deleteSubaccount({required String subaccountId}) {
-    throw UnimplementedError();
-  }
-}
-
-class _FakeBalanceRepository implements IBalanceRepository {
-  _FakeBalanceRepository({required this.currentBalances, required this.historyBySubaccount});
-
-  final Map<String, Decimal> currentBalances;
-  final Map<String, BalanceHistoryPageEntity> historyBySubaccount;
-
-  @override
-  Future<Result<BalanceHistoryPageEntity>> fetchHistory({
-    required String subaccountId,
-    required int limit,
-    String? cursor,
-  }) async {
-    return Success(
-      historyBySubaccount[subaccountId] ?? const BalanceHistoryPageEntity(entries: []),
-    );
-  }
-
-  @override
-  Future<Result<BalanceEntryEntity>> updateBalance({
-    required String subaccountId,
-    required DateTime entryDate,
-    required Decimal snapshotAmount,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<Map<String, Decimal>>> fetchCurrentBalances({
-    required Set<String> subaccountIds,
-  }) async {
-    return Success(currentBalances);
+  Future<Result<AnalyticsSummaryEntity>> fetchSummary({int updatesLimit = 200}) async {
+    return Success(summary);
   }
 }

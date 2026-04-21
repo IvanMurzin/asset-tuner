@@ -6,6 +6,7 @@ abstract final class SupabaseApiRoutes {
 
   static const assetsList = 'api/assets/list';
   static const ratesUsd = 'api/rates/usd';
+  static const analyticsSummary = 'api/analytics/summary';
 
   static const accountsList = 'api/accounts/list';
   static const accountsCreate = 'api/accounts/create';

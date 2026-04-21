@@ -2,7 +2,7 @@
 
 This document defines the concrete client-facing API surface: Auth, PostgREST reads, Edge Function operations, filters/pagination, and the error model.
 
-**Last updated:** 2026-02-14
+**Last updated:** 2026-04-21
 
 ## Versioning / breaking changes
 This API surface is **v2** and is intentionally **breaking** vs earlier MVP drafts:
@@ -107,6 +107,48 @@ Contract notes:
     - Treat this read as **expensive** (many rows) and avoid calling it frequently.
     - Cache the latest snapshot in-memory app-wide and persist last-known snapshot for offline start.
     - Refresh at most once per minute (soft TTL). Server updates rates hourly; the client should recalculate conversions locally using the cached USD-pivot snapshot.
+
+## Edge Function reads
+
+### `GET /analytics/summary`
+Returns analytics aggregation for active accounts without client-side fan-out.
+
+Query params:
+- `updatesLimit` (optional, int, default `200`, max `500`)
+
+Response:
+```json
+{
+  "base_currency": "USD",
+  "base_asset_id": "uuid|null",
+  "as_of": "timestamptz|null",
+  "breakdown": [
+    {
+      "asset_id": "uuid",
+      "asset_code": "BTC",
+      "original_amount_atomic": "123000000",
+      "original_amount_decimals": 8,
+      "value_atomic": "6700000000",
+      "value_decimals": 2
+    }
+  ],
+  "updates": [
+    {
+      "account_id": "uuid",
+      "account_name": "Wallet",
+      "subaccount_id": "uuid",
+      "subaccount_name": "BTC wallet",
+      "asset_id": "uuid",
+      "asset_code": "BTC",
+      "diff_atomic": "5000000",
+      "diff_decimals": 8,
+      "diff_base_atomic": "27000000",
+      "diff_base_decimals": 2,
+      "created_at": "timestamptz"
+    }
+  ]
+}
+```
 
 ## PostgREST writes (tables)
 

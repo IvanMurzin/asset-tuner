@@ -68,6 +68,33 @@ type SubaccountHistoryPayload = {
   nextCursor: string | null;
 };
 
+type AnalyticsSummaryPayload = {
+  base_currency: string;
+  base_asset_id: string | null;
+  as_of: string | null;
+  breakdown: Array<{
+    asset_id: string;
+    asset_code: string;
+    original_amount_atomic: string;
+    original_amount_decimals: number;
+    value_atomic: string;
+    value_decimals: number;
+  }>;
+  updates: Array<{
+    account_id: string;
+    account_name: string;
+    subaccount_id: string;
+    subaccount_name: string;
+    asset_id: string;
+    asset_code: string;
+    diff_atomic: string;
+    diff_decimals: number;
+    diff_base_atomic: string;
+    diff_base_decimals: number;
+    created_at: string;
+  }>;
+};
+
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -222,6 +249,20 @@ async function handleRatesUsd(req: Request): Promise<Response> {
   });
 
   return ok(data);
+}
+
+async function handleAnalyticsSummary(req: Request, userId: string): Promise<Response> {
+  const url = new URL(req.url);
+  const updatesLimit = parsePositiveInt(url.searchParams.get('updatesLimit'), 200, 500);
+
+  const data = await rpc<AnalyticsSummaryPayload>('api_analytics_summary', {
+    p_user_id: userId,
+    p_updates_limit: updatesLimit,
+  });
+
+  return ok(data, {
+    updatesLimit,
+  });
 }
 
 async function handleAccountsList(userId: string): Promise<Response> {
@@ -459,6 +500,8 @@ Deno.serve(async (req) => {
       response = await handleAssetsList(req, userId);
     } else if (method === 'GET' && path === '/rates/usd') {
       response = await handleRatesUsd(req);
+    } else if (method === 'GET' && path === '/analytics/summary') {
+      response = await handleAnalyticsSummary(req, userId);
     } else if (method === 'GET' && path === '/accounts/list') {
       response = await handleAccountsList(userId);
     } else if (method === 'POST' && path === '/accounts/create') {

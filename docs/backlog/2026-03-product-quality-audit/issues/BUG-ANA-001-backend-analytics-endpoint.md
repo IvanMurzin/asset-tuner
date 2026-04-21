@@ -4,7 +4,7 @@
 - ID: `BUG-ANA-001`
 - Тип: `Bug`
 - Приоритет: `P0`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-010`, `SCR-017`, `FR-080`, `FR-081`
 
 ## Экран/модуль/слой
@@ -55,3 +55,19 @@ Analytics-tab получает агрегированные данные из о
 ## Ссылки на текущую реализацию
 - [analytics_cubit.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/analytics/bloc/analytics_cubit.dart)
 - [api/index.ts](/Users/ivanmurzin/Projects/pets/asset_tuner/backend/supabase/functions/api/index.ts)
+
+## Implementation note
+- Добавлен backend aggregation endpoint `GET /api/analytics/summary`: edge route в [index.ts](/Users/ivanmurzin/Projects/pets/asset_tuner/backend/supabase/functions/api/index.ts) и SQL RPC [20260421183000_api_analytics_summary.sql](/Users/ivanmurzin/Projects/pets/asset_tuner/backend/supabase/migrations/20260421183000_api_analytics_summary.sql), который возвращает `breakdown`, `updates` и `as_of` без client-side fan-out.
+- В клиенте добавлен отдельный analytics data/domain pipeline:
+  - [supabase_analytics_data_source.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/data/analytics/data_source/supabase_analytics_data_source.dart),
+  - [analytics_repository.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/data/analytics/repository/analytics_repository.dart),
+  - [analytics_summary_entity.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/domain/analytics/entity/analytics_summary_entity.dart),
+  - [get_analytics_summary_usecase.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/domain/analytics/usecase/get_analytics_summary_usecase.dart).
+- [analytics_cubit.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/analytics/bloc/analytics_cubit.dart) переведён с `subaccounts + current balances + history` fan-out на единый `GetAnalyticsSummaryUseCase`; retryable error flow сохранён через существующий `AnalyticsStatus.error`.
+- Обновлён API контракт в [api_surface.md](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/contracts/api_surface.md) и добавлен route-констант [supabase_constants.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/core/supabase/supabase_constants.dart).
+- Обновлён unit test [analytics_cubit_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/analytics/bloc/analytics_cubit_test.dart) под новую архитектуру.
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/analytics/bloc/analytics_cubit_test.dart` (pass)
+  - `cd backend && deno check supabase/functions/api/index.ts` (not executed: environment limitation, `deno` отсутствует)
+  - `cd backend && ./scripts/deploy_supabase.sh --help` (not executed: скрипт выполняет реальные remote deploy/migration steps и не является безопасной локальной проверкой)

@@ -27,6 +27,37 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-21 18:23 +04 - BUG-ANA-001 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `backend/supabase/functions/api/index.ts`
+  - `backend/supabase/migrations/20260421183000_api_analytics_summary.sql`
+  - `client/lib/core/supabase/supabase_constants.dart`
+  - `client/lib/data/analytics/data_source/supabase_analytics_data_source.dart`
+  - `client/lib/data/analytics/dto/analytics_summary_dto.dart`
+  - `client/lib/data/analytics/mapper/analytics_summary_mapper.dart`
+  - `client/lib/data/analytics/repository/analytics_repository.dart`
+  - `client/lib/domain/analytics/entity/analytics_summary_entity.dart`
+  - `client/lib/domain/analytics/repository/i_analytics_repository.dart`
+  - `client/lib/domain/analytics/usecase/get_analytics_summary_usecase.dart`
+  - `client/lib/presentation/analytics/bloc/analytics_cubit.dart`
+  - `client/test/presentation/analytics/bloc/analytics_cubit_test.dart`
+  - `docs/contracts/api_surface.md`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-ANA-001-backend-analytics-endpoint.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/presentation/analytics/bloc/analytics_cubit_test.dart` -> `pass`
+  - `cd backend && deno check supabase/functions/api/index.ts` -> `not executed (environment limitation: deno not installed)`
+  - `cd backend && ./scripts/deploy_supabase.sh --help` -> `not executed (unsafe in this environment: command performs real remote deploy/migrations)`
+- Manual QA checklist:
+  - [ ] Открыть Analytics при непустых аккаунтах и убедиться, что данные загружаются через единый endpoint без каскада history-запросов с клиента.
+  - [ ] Обновить баланс счёта, затем сделать pull-to-refresh в Analytics и проверить, что breakdown/updates отражают изменения.
+  - [ ] Смоделировать ошибку `GET /api/analytics/summary` и проверить retryable error state с рабочей кнопкой повторной загрузки.
+- Notes:
+  - Клиентский fan-out удалён из `AnalyticsCubit`; агрегация перенесена в backend RPC `api_analytics_summary`.
+
 ### 2026-04-21 18:11 +04 - IMP-PRO-006 - Done
 - Commit: `HEAD`
 - Changed files:
