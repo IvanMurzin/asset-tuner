@@ -215,8 +215,15 @@ class _PaywallPageState extends State<PaywallPage> {
   }
 
   Future<void> _onPurchaseOrRestoreCompleted() async {
-    await context.read<ProfileCubit>().syncSubscription();
+    final isPro = await _syncSubscriptionAndConfirmPro();
     if (!mounted) {
+      return;
+    }
+    if (!isPro) {
+      _showError(
+        AppLocalizations.of(context)!.paywallEntitlementsError,
+        code: 'paywall_sync_not_pro',
+      );
       return;
     }
     try {
@@ -226,6 +233,16 @@ class _PaywallPageState extends State<PaywallPage> {
       return;
     }
     context.pop(null);
+  }
+
+  Future<bool> _syncSubscriptionAndConfirmPro() async {
+    final profileCubit = context.read<ProfileCubit>();
+    await profileCubit.syncSubscription();
+    if (!mounted) {
+      return false;
+    }
+    final state = profileCubit.state;
+    return state.isReady && state.profile?.plan == 'pro';
   }
 
   Future<void> _openUrl(String url) async {
