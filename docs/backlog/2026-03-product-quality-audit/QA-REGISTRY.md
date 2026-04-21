@@ -27,6 +27,41 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-21 18:49 +04 - BUG-SUP-001 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/core/routing/app_router.dart`
+  - `client/lib/core/routing/app_routes.dart`
+  - `client/lib/data/profile/data_source/supabase_profile_data_source.dart`
+  - `client/lib/data/profile/repository/profile_repository.dart`
+  - `client/lib/domain/profile/repository/i_profile_repository.dart`
+  - `client/lib/l10n/app_en.arb`
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_localizations.dart`
+  - `client/lib/l10n/app_localizations_en.dart`
+  - `client/lib/l10n/app_localizations_ru.dart`
+  - `client/lib/presentation/profile/page/contact_developer_page.dart`
+  - `client/lib/presentation/profile/page/profile_page.dart`
+  - `client/test/data/profile/data_source/supabase_profile_data_source_test.dart`
+  - `client/test/data/profile/repository/profile_repository_test.dart`
+  - `client/test/domain/profile/usecase/ensure_profile_ready_usecase_test.dart`
+  - `client/test/presentation/profile/bloc/profile_cubit_test.dart`
+  - `client/test/presentation/profile/page/contact_developer_page_test.dart`
+  - `client/test/presentation/profile/page/profile_page_test.dart`
+  - `docs/contracts/api_surface.md`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-SUP-001-contact-developer-screen-and-submit-flow.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter test test/presentation/profile/page/profile_page_test.dart test/presentation/profile/page/contact_developer_page_test.dart test/data/profile/data_source/supabase_profile_data_source_test.dart test/data/profile/repository/profile_repository_test.dart` -> `pass`
+  - `cd client && flutter analyze` -> `pass`
+- Manual QA checklist:
+  - [ ] Открыть Profile -> Contact developer и проверить, что email предзаполнен и недоступен для редактирования.
+  - [ ] Отправить валидное сообщение и проверить success toast `Спасибо, что поделились` и запись в support-таблице backend.
+  - [ ] Смоделировать сетевую ошибку при отправке, убедиться в показе retryable ошибки и успешной повторной отправке.
+- Notes:
+  - Payload клиента синхронизирован с backend validation (`name`, `email?`, `description`); контракт `POST /contact_developer` добавлен в `docs/contracts/api_surface.md`.
+
 ### 2026-04-21 18:31 +04 - BUG-ANA-002 - Done
 - Commit: `HEAD`
 - Changed files:

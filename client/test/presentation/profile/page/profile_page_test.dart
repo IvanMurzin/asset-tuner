@@ -65,7 +65,11 @@ void main() {
         themeModeCubit: themeModeCubit,
       );
 
-      await tester.drag(find.byType(ListView), const Offset(0, -1200));
+      await tester.scrollUntilVisible(
+        find.text('Delete account'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Sign out'), findsOneWidget);
@@ -82,7 +86,11 @@ void main() {
         themeModeCubit: themeModeCubit,
       );
 
-      await tester.drag(find.byType(ListView), const Offset(0, -1200));
+      await tester.scrollUntilVisible(
+        find.text('Sign out'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Sign out'));
@@ -102,7 +110,11 @@ void main() {
         themeModeCubit: themeModeCubit,
       );
 
-      await tester.drag(find.byType(ListView), const Offset(0, -1200));
+      await tester.scrollUntilVisible(
+        find.text('Delete account'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Delete account'));
@@ -115,6 +127,26 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(sessionCubit.deleteAccountCalls, 1);
+    });
+
+    testWidgets('opens contact developer screen from support section', (tester) async {
+      await _pumpPage(
+        tester,
+        sessionCubit: sessionCubit,
+        profileCubit: profileCubit,
+        assetsCubit: assetsCubit,
+        localeCubit: localeCubit,
+        themeModeCubit: themeModeCubit,
+      );
+
+      await tester.drag(find.byType(ListView), const Offset(0, -800));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Contact developer'));
+      await tester.tap(find.text('Contact developer'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Contact developer Stub'), findsOneWidget);
     });
   });
 }
@@ -156,6 +188,10 @@ Future<void> _pumpPage(
       GoRoute(
         path: AppRoutes.archivedAccounts,
         builder: (context, state) => const SizedBox.shrink(),
+      ),
+      GoRoute(
+        path: AppRoutes.contactDeveloper,
+        builder: (context, state) => const Text('Contact developer Stub'),
       ),
     ],
   );

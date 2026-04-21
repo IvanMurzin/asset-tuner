@@ -28,6 +28,7 @@ import 'package:asset_tuner/presentation/overview/page/overview_page.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
 import 'package:asset_tuner/presentation/profile/page/archived_accounts_page.dart';
+import 'package:asset_tuner/presentation/profile/page/contact_developer_page.dart';
 import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
 import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
 import 'package:asset_tuner/presentation/settings/page/manage_subscription_page.dart';
@@ -262,6 +263,11 @@ final appRouter = GoRouter(
                   path: 'archived-accounts',
                   pageBuilder: (context, state) =>
                       slideTransition(context, state, const ArchivedAccountsPage()),
+                ),
+                GoRoute(
+                  path: 'contact-developer',
+                  pageBuilder: (context, state) =>
+                      slideTransition(context, state, const ContactDeveloperPage()),
                 ),
               ],
             ),

@@ -54,4 +54,29 @@ class ProfileRepository implements IProfileRepository {
       );
     }
   }
+
+  @override
+  Future<Result<void>> sendContactDeveloperMessage({
+    required String name,
+    required String email,
+    required String description,
+  }) async {
+    try {
+      await _dataSource.sendContactDeveloperMessage(
+        name: name,
+        email: email,
+        description: description,
+      );
+      logger.i('ProfileRepository.sendContactDeveloperMessage success');
+      return const Success(null);
+    } catch (error) {
+      logger.e('ProfileRepository.sendContactDeveloperMessage failed', error: error);
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(
+          error,
+          fallbackMessage: 'Unable to send message to developer',
+        ),
+      );
+    }
+  }
 }

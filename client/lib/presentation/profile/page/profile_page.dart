@@ -181,6 +181,34 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: spacing.s24),
+                          DSSectionTitle(title: l10n.profileSectionSupport),
+                          SizedBox(height: spacing.s12),
+                          DSCard(
+                            padding: EdgeInsets.zero,
+                            child: DSListRow(
+                              title: l10n.profileContactDeveloperAction,
+                              leading: Icon(
+                                Icons.support_agent_outlined,
+                                color: context.dsColors.textTertiary,
+                              ),
+                              trailing: Icon(
+                                Icons.chevron_right,
+                                color: context.dsColors.textTertiary,
+                              ),
+                              onTap: () async {
+                                final result = await context.push(AppRoutes.contactDeveloper);
+                                if (!context.mounted || result != true) {
+                                  return;
+                                }
+                                showDSSnackBar(
+                                  context,
+                                  variant: DSSnackBarVariant.success,
+                                  message: l10n.profileContactDeveloperSuccess,
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: spacing.s24),
                           DSSectionTitle(title: l10n.profileSectionAccount),
                           SizedBox(height: spacing.s12),
                           DSCard(
