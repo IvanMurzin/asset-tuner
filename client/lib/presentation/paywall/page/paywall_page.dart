@@ -383,6 +383,7 @@ class _PaywallPageState extends State<PaywallPage> {
                                       PaywallPlanToggle(
                                         monthlyLabel: l10n.paywallPlanMonthlyTitle,
                                         yearlyLabel: l10n.paywallPlanAnnualTitle,
+                                        annualBadgeText: l10n.paywallMostPopular,
                                         selectedOption: _selectedOption,
                                         monthlyEnabled: _monthlyEnabled,
                                         yearlyEnabled: _annualEnabled,
@@ -394,6 +395,7 @@ class _PaywallPageState extends State<PaywallPage> {
                                       PaywallTierCard(
                                         title: l10n.paywallFreeTitle,
                                         features: freeCompactFeatures,
+                                        neutral: true,
                                         dense: true,
                                       ),
                                       SizedBox(height: spacing.s8),
@@ -401,7 +403,6 @@ class _PaywallPageState extends State<PaywallPage> {
                                         title: l10n.paywallProTitle,
                                         features: proCompactFeatures,
                                         highlighted: true,
-                                        badgeText: l10n.paywallMostPopular,
                                         dense: true,
                                       ),
                                       SizedBox(height: spacing.s8),

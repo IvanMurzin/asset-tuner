@@ -4,7 +4,7 @@
 - ID: `BUG-PRO-005`
 - Тип: `Bug`
 - Приоритет: `P2`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-009`, `SCR-013`
 
 ## Экран/модуль/слой
@@ -50,3 +50,16 @@
 
 ## Ссылки на текущую реализацию
 - [paywall_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/paywall/page/paywall_page.dart)
+
+## Implementation note
+- В [paywall_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/paywall/page/paywall_page.dart) badge `paywallMostPopular` перенесён с Pro-секции на annual option в `PaywallPlanToggle`; глобальный badge у Pro удалён, purchase/restore flow не менялся.
+- В [paywall_plan_toggle.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/paywall/widget/paywall_plan_toggle.dart) добавлен `annualBadgeText` и визуализация badge внутри annual-плашки.
+- В [paywall_tier_card.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/paywall/widget/paywall_tier_card.dart) добавлен `neutral`-режим для Free-карточки (более нейтральная серая подача), при этом Pro-карточка осталась акцентной (`highlighted`).
+- Добавлены widget-тесты [paywall_visual_hierarchy_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/paywall/widget/paywall_visual_hierarchy_test.dart):
+  - badge отображается на annual,
+  - badge не рендерится без текста,
+  - у Pro-card нет global badge,
+  - Free-card в neutral-режиме рендерит muted check.
+- Проверки:
+  - `cd client && flutter test test/presentation/paywall/widget/paywall_visual_hierarchy_test.dart` (pass)
+  - `cd client && flutter analyze` (pass)

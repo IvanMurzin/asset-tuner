@@ -27,6 +27,26 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-21 18:00 +04 - BUG-PRO-005 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/presentation/paywall/page/paywall_page.dart`
+  - `client/lib/presentation/paywall/widget/paywall_plan_toggle.dart`
+  - `client/lib/presentation/paywall/widget/paywall_tier_card.dart`
+  - `client/test/presentation/paywall/widget/paywall_visual_hierarchy_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-005-paywall-visual-redesign.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter test test/presentation/paywall/widget/paywall_visual_hierarchy_test.dart` -> `pass`
+  - `cd client && flutter analyze` -> `pass`
+- Manual QA checklist:
+  - [ ] Открыть paywall и проверить, что badge `Most popular` отображается только на annual plan option.
+  - [ ] Проверить, что у секции Pro отсутствует global badge и она остаётся визуально акцентной.
+  - [ ] Проверить, что у секции Free нейтральный серый стиль и переключение monthly/annual не ломает purchase flow.
+- Notes:
+  - Изменения ограничены `presentation/paywall` и widget-тестами; purchase/restore логика не изменялась.
+
 ### 2026-04-21 17:53 +04 - BUG-PRO-004 - Done
 - Commit: `HEAD`
 - Changed files:

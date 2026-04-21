@@ -8,6 +8,7 @@ class PaywallTierCard extends StatelessWidget {
     required this.title,
     required this.features,
     this.highlighted = false,
+    this.neutral = false,
     this.badgeText,
     this.dense = false,
   });
@@ -15,6 +16,7 @@ class PaywallTierCard extends StatelessWidget {
   final String title;
   final List<String> features;
   final bool highlighted;
+  final bool neutral;
   final String? badgeText;
   final bool dense;
 
@@ -31,6 +33,15 @@ class PaywallTierCard extends StatelessWidget {
     final cardRadius = dense ? radius.r12 : radius.r16;
     final badgeHorizontal = dense ? spacing.s12 : spacing.s16;
     final badgeVertical = dense ? spacing.s4 : spacing.s8;
+    final borderColor = highlighted
+        ? colors.primary
+        : (neutral ? colors.neutral300 : colors.border);
+    final cardBackground = highlighted
+        ? colors.primary.withValues(alpha: 0.08)
+        : (neutral ? colors.surfaceAlt.withValues(alpha: 0.6) : colors.surface);
+    final titleColor = highlighted
+        ? colors.textPrimary
+        : (neutral ? colors.textSecondary : colors.textPrimary);
 
     return Stack(
       clipBehavior: Clip.none,
@@ -38,36 +49,41 @@ class PaywallTierCard extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(cardRadius),
-            border: Border.all(
-              color: highlighted ? colors.primary : colors.border,
-              width: highlighted ? 2 : 1,
-            ),
+            border: Border.all(color: borderColor, width: highlighted ? 2 : 1),
+            color: cardBackground,
           ),
           child: DSCard(
             bordered: false,
-            padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: verticalPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: (dense ? typography.h3 : typography.h2).copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.w700,
+            padding: EdgeInsets.zero,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: verticalPadding),
+              color: cardBackground,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: (dense ? typography.h3 : typography.h2).copyWith(
+                      color: titleColor,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                SizedBox(height: dense ? spacing.s8 : spacing.s16),
-                for (var i = 0; i < features.length; i++) ...[
-                  _PaywallFeatureRow(
-                    text: features[i],
-                    highlighted: highlighted,
-                    iconSize: iconSize,
-                    textStyle: featureStyle,
-                    dense: dense,
-                  ),
-                  if (i != features.length - 1) SizedBox(height: dense ? spacing.s8 : spacing.s12),
+                  SizedBox(height: dense ? spacing.s8 : spacing.s16),
+                  for (var i = 0; i < features.length; i++) ...[
+                    _PaywallFeatureRow(
+                      text: features[i],
+                      highlighted: highlighted,
+                      neutral: neutral,
+                      iconSize: iconSize,
+                      textStyle: featureStyle,
+                      dense: dense,
+                    ),
+                    if (i != features.length - 1)
+                      SizedBox(height: dense ? spacing.s8 : spacing.s12),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
@@ -99,6 +115,7 @@ class _PaywallFeatureRow extends StatelessWidget {
   const _PaywallFeatureRow({
     required this.text,
     required this.highlighted,
+    required this.neutral,
     required this.iconSize,
     required this.textStyle,
     required this.dense,
@@ -106,6 +123,7 @@ class _PaywallFeatureRow extends StatelessWidget {
 
   final String text;
   final bool highlighted;
+  final bool neutral;
   final double iconSize;
   final TextStyle textStyle;
   final bool dense;
@@ -123,7 +141,9 @@ class _PaywallFeatureRow extends StatelessWidget {
           child: Icon(
             Icons.check,
             size: iconSize,
-            color: highlighted ? colors.primary : colors.textTertiary,
+            color: highlighted
+                ? colors.primary
+                : (neutral ? colors.neutral500 : colors.textTertiary),
           ),
         ),
         SizedBox(width: dense ? spacing.s8 : spacing.s12),

@@ -7,6 +7,7 @@ class PaywallPlanToggle extends StatelessWidget {
     super.key,
     required this.monthlyLabel,
     required this.yearlyLabel,
+    this.annualBadgeText,
     required this.selectedOption,
     required this.monthlyEnabled,
     required this.yearlyEnabled,
@@ -17,6 +18,7 @@ class PaywallPlanToggle extends StatelessWidget {
 
   final String monthlyLabel;
   final String yearlyLabel;
+  final String? annualBadgeText;
   final PaywallPlanOption selectedOption;
   final bool monthlyEnabled;
   final bool yearlyEnabled;
@@ -39,6 +41,7 @@ class PaywallPlanToggle extends StatelessWidget {
         SizedBox(height: spacing.s8),
         _PlanItem(
           label: yearlyLabel,
+          badgeText: annualBadgeText,
           price: yearlyPrice,
           selected: selectedOption == PaywallPlanOption.annual,
           enabled: yearlyEnabled,
@@ -89,6 +92,7 @@ class _SelectionDot extends StatelessWidget {
 class _PlanItem extends StatelessWidget {
   const _PlanItem({
     required this.label,
+    this.badgeText,
     required this.price,
     required this.selected,
     required this.enabled,
@@ -96,6 +100,7 @@ class _PlanItem extends StatelessWidget {
   });
 
   final String label;
+  final String? badgeText;
   final String price;
   final bool selected;
   final bool enabled;
@@ -107,6 +112,7 @@ class _PlanItem extends StatelessWidget {
     final radius = context.dsRadius;
     final colors = context.dsColors;
     final typography = context.dsTypography;
+    final hasBadge = badgeText != null && badgeText!.isNotEmpty;
 
     final content = AnimatedContainer(
       duration: const Duration(milliseconds: 180),
@@ -133,14 +139,36 @@ class _PlanItem extends StatelessWidget {
           _SelectionDot(selected: selected, enabled: enabled),
           SizedBox(width: spacing.s12),
           Expanded(
-            child: Text(
-              label,
-              style: typography.body.copyWith(
-                color: enabled
-                    ? (selected ? colors.textPrimary : colors.textSecondary)
-                    : colors.textTertiary,
-                fontWeight: FontWeight.w700,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: typography.body.copyWith(
+                    color: enabled
+                        ? (selected ? colors.textPrimary : colors.textSecondary)
+                        : colors.textTertiary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (hasBadge) ...[
+                  SizedBox(height: spacing.s4),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s4),
+                    decoration: BoxDecoration(
+                      color: colors.primary,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      badgeText!,
+                      style: typography.caption.copyWith(
+                        color: colors.onPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
           SizedBox(width: spacing.s12),
