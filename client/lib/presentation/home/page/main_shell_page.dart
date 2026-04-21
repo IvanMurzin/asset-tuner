@@ -42,6 +42,7 @@ class MainShellPage extends StatelessWidget {
       snapshot,
       assets,
       accounts,
+      forceRefresh: forceForAnalyticsTab,
     );
   }
 

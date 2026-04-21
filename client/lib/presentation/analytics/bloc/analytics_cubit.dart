@@ -36,8 +36,9 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     ProfileEntity profile,
     RatesSnapshotEntity? rates,
     List<AssetEntity> assets,
-    List<AccountEntity> accounts,
-  ) async {
+    List<AccountEntity> accounts, {
+    bool forceRefresh = false,
+  }) async {
     final activeAccounts = accounts.where((a) => !a.archived).toList(growable: false);
     final fingerprint = _sourceFingerprint(
       profile: profile,
@@ -45,7 +46,9 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       accounts: activeAccounts,
       assets: assets,
     );
-    if (fingerprint == _lastSourceFingerprint && state.status == AnalyticsStatus.ready) {
+    if (!forceRefresh &&
+        fingerprint == _lastSourceFingerprint &&
+        state.status == AnalyticsStatus.ready) {
       return;
     }
     await _fetchFromSource(

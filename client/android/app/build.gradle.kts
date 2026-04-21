@@ -17,7 +17,7 @@ val debugKeystoreFile = rootProject.file("keystores/debug.keystore")
 val useProjectDebugKeystore = debugKeystoreFile.exists()
 
 android {
-    namespace = "com.example.template"
+    namespace = "developer.ivanmurzin.assettuner"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

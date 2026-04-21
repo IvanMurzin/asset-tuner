@@ -59,14 +59,14 @@ void main() {
     testWidgets('shows explanatory captions for complex sections in english', (tester) async {
       await _pumpPage(tester, analyticsCubit: analyticsCubit);
 
-      expect(find.text('Balance snapshots'), findsOneWidget);
+      expect(find.text('Balance updates'), findsOneWidget);
       expect(
         find.text('Shares are calculated in your base currency using the latest available rates.'),
         findsOneWidget,
       );
       expect(
         find.text(
-          'Track your total balance trend from recent snapshots. Rows below show each snapshot change.',
+          'Track your total balance trend from recent updates. Rows below show each update change.',
         ),
         findsOneWidget,
       );
@@ -76,14 +76,14 @@ void main() {
     testWidgets('shows explanatory captions for complex sections in russian', (tester) async {
       await _pumpPage(tester, analyticsCubit: analyticsCubit, locale: const Locale('ru'));
 
-      expect(find.text('Снимки баланса'), findsOneWidget);
+      expect(find.text('Обновления баланса'), findsOneWidget);
       expect(
         find.text('Доли считаются в базовой валюте по последним доступным курсам.'),
         findsOneWidget,
       );
       expect(
         find.text(
-          'Отслеживайте тренд общего баланса по последним снимкам. Ниже показаны изменения каждого снимка.',
+          'Отслеживайте динамику общего баланса по последним обновлениям. Ниже показаны изменения по каждому обновлению.',
         ),
         findsOneWidget,
       );
@@ -133,6 +133,7 @@ class _TestAnalyticsCubit extends Cubit<AnalyticsState> implements AnalyticsCubi
     ProfileEntity profile,
     RatesSnapshotEntity? rates,
     List<AssetEntity> assets,
-    List<AccountEntity> accounts,
-  ) async {}
+    List<AccountEntity> accounts, {
+    bool forceRefresh = false,
+  }) async {}
 }

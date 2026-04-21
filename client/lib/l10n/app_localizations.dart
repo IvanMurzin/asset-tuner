@@ -504,7 +504,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingCarouselBody3.
   ///
   /// In en, this message translates to:
-  /// **'Enter a quick snapshot of your balance. We highlight what changed since last time and keep totals consistent with regularly updated rates.'**
+  /// **'Quickly update your balance. We highlight what changed since last time and keep totals consistent with regularly updated rates.'**
   String get onboardingCarouselBody3;
 
   /// No description provided for @onboardingCarouselBody3Footnote.
@@ -603,12 +603,6 @@ abstract class AppLocalizations {
   /// **'Add account'**
   String get mainAddAccount;
 
-  /// No description provided for @mainBaseCurrencyTooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap to change the currency used for global totals.'**
-  String get mainBaseCurrencyTooltip;
-
   /// No description provided for @analyticsTitle.
   ///
   /// In en, this message translates to:
@@ -630,13 +624,13 @@ abstract class AppLocalizations {
   /// No description provided for @analyticsUpdatesTitle.
   ///
   /// In en, this message translates to:
-  /// **'Balance snapshots'**
+  /// **'Balance updates'**
   String get analyticsUpdatesTitle;
 
   /// No description provided for @analyticsUpdatesCaption.
   ///
   /// In en, this message translates to:
-  /// **'Track your total balance trend from recent snapshots. Rows below show each snapshot change.'**
+  /// **'Track your total balance trend from recent updates. Rows below show each update change.'**
   String get analyticsUpdatesCaption;
 
   /// No description provided for @analyticsEmptyTitle.
@@ -726,7 +720,7 @@ abstract class AppLocalizations {
   /// No description provided for @overviewEmptyNoBalancesBody.
   ///
   /// In en, this message translates to:
-  /// **'Add a snapshot or change to start tracking totals.'**
+  /// **'Add a balance or change to start tracking totals.'**
   String get overviewEmptyNoBalancesBody;
 
   /// No description provided for @overviewEmptyNoBalancesCta.
@@ -794,12 +788,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rates unavailable'**
   String get overviewRatesUnavailable;
-
-  /// No description provided for @overviewSummaryCaption.
-  ///
-  /// In en, this message translates to:
-  /// **'Total is based on priced balances and refreshes after you pull to update data.'**
-  String get overviewSummaryCaption;
 
   /// No description provided for @accountsTitle.
   ///
@@ -1170,7 +1158,7 @@ abstract class AppLocalizations {
   /// No description provided for @subaccountNameHelperBank.
   ///
   /// In en, this message translates to:
-  /// **'Use the bank product or card name so this subaccount is easy to recognize.'**
+  /// **''**
   String get subaccountNameHelperBank;
 
   /// No description provided for @subaccountNameHelperWalletExchange.
@@ -1194,25 +1182,25 @@ abstract class AppLocalizations {
   /// No description provided for @subaccountAmountHelperBank.
   ///
   /// In en, this message translates to:
-  /// **'Enter the current balance for this subaccount. Value 0 is allowed.'**
+  /// **'Enter the current balance for this subaccount.'**
   String get subaccountAmountHelperBank;
 
   /// No description provided for @subaccountAmountHelperWalletExchange.
   ///
   /// In en, this message translates to:
-  /// **'Enter the current amount of this asset. Value 0 is allowed.'**
+  /// **'Enter the current amount of this asset.'**
   String get subaccountAmountHelperWalletExchange;
 
   /// No description provided for @subaccountAmountHelperCash.
   ///
   /// In en, this message translates to:
-  /// **'Enter cash currently on hand. Value 0 is allowed.'**
+  /// **'Enter cash currently on hand.'**
   String get subaccountAmountHelperCash;
 
   /// No description provided for @subaccountAmountHelperOther.
   ///
   /// In en, this message translates to:
-  /// **'Enter the current amount tracked in this subaccount. Value 0 is allowed.'**
+  /// **'Enter the current amount tracked in this subaccount.'**
   String get subaccountAmountHelperOther;
 
   /// No description provided for @subaccountEmptyTitle.
@@ -1332,7 +1320,7 @@ abstract class AppLocalizations {
   /// No description provided for @positionHistoryDescription.
   ///
   /// In en, this message translates to:
-  /// **'See how this subaccount balance changed with each snapshot update.'**
+  /// **'See how this subaccount balance changed with each update.'**
   String get positionHistoryDescription;
 
   /// No description provided for @positionHistoryEmptyTitle.
@@ -1344,7 +1332,7 @@ abstract class AppLocalizations {
   /// No description provided for @positionHistoryEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Add a snapshot or change to start tracking.'**
+  /// **'Add a balance or change to start tracking.'**
   String get positionHistoryEmptyBody;
 
   /// No description provided for @positionHistoryEmptyCta.
@@ -1362,7 +1350,7 @@ abstract class AppLocalizations {
   /// No description provided for @balanceEntrySnapshot.
   ///
   /// In en, this message translates to:
-  /// **'Snapshot'**
+  /// **'Balance'**
   String get balanceEntrySnapshot;
 
   /// No description provided for @balanceEntryDelta.
@@ -1392,7 +1380,7 @@ abstract class AppLocalizations {
   /// No description provided for @addBalanceTypeSnapshot.
   ///
   /// In en, this message translates to:
-  /// **'Snapshot'**
+  /// **'Current balance'**
   String get addBalanceTypeSnapshot;
 
   /// No description provided for @addBalanceTypeDelta.
@@ -2096,6 +2084,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Showing a limited set of results. Refine your search to find more.'**
   String get baseCurrencySettingsResultsHint;
+
+  /// No description provided for @baseCurrencyHowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get baseCurrencyHowTitle;
+
+  /// No description provided for @baseCurrencyHowRatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates updated every hour'**
+  String get baseCurrencyHowRatesTitle;
+
+  /// No description provided for @baseCurrencyHowRatesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We always use fresh exchange rates for every currency.'**
+  String get baseCurrencyHowRatesBody;
+
+  /// No description provided for @baseCurrencyHowConvertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Each position is converted'**
+  String get baseCurrencyHowConvertTitle;
+
+  /// No description provided for @baseCurrencyHowConvertBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Every holding is converted to your base currency at the current rate.'**
+  String get baseCurrencyHowConvertBody;
+
+  /// No description provided for @baseCurrencyHowSumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals are summed'**
+  String get baseCurrencyHowSumTitle;
+
+  /// No description provided for @baseCurrencyHowSumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Converted values add up to your overall portfolio total.'**
+  String get baseCurrencyHowSumBody;
 
   /// No description provided for @currencyPickerRecentTitle.
   ///

@@ -222,7 +222,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingCarouselBody3 =>
-      'Enter a quick snapshot of your balance. We highlight what changed since last time and keep totals consistent with regularly updated rates.';
+      'Quickly update your balance. We highlight what changed since last time and keep totals consistent with regularly updated rates.';
 
   @override
   String get onboardingCarouselBody3Footnote => 'Next: sign in to sync across devices.';
@@ -273,9 +273,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainAddAccount => 'Add account';
 
   @override
-  String get mainBaseCurrencyTooltip => 'Tap to change the currency used for global totals.';
-
-  @override
   String get analyticsTitle => 'Analytics';
 
   @override
@@ -286,11 +283,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Shares are calculated in your base currency using the latest available rates.';
 
   @override
-  String get analyticsUpdatesTitle => 'Balance snapshots';
+  String get analyticsUpdatesTitle => 'Balance updates';
 
   @override
   String get analyticsUpdatesCaption =>
-      'Track your total balance trend from recent snapshots. Rows below show each snapshot change.';
+      'Track your total balance trend from recent updates. Rows below show each update change.';
 
   @override
   String get analyticsEmptyTitle => 'No analytics yet';
@@ -335,7 +332,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewEmptyNoBalancesTitle => 'Add your first balance';
 
   @override
-  String get overviewEmptyNoBalancesBody => 'Add a snapshot or change to start tracking totals.';
+  String get overviewEmptyNoBalancesBody => 'Add a balance or change to start tracking totals.';
 
   @override
   String get overviewEmptyNoBalancesCta => 'Add balance';
@@ -374,10 +371,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overviewRatesUnavailable => 'Rates unavailable';
-
-  @override
-  String get overviewSummaryCaption =>
-      'Total is based on priced balances and refreshes after you pull to update data.';
 
   @override
   String get accountsTitle => 'Accounts';
@@ -565,8 +558,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subaccountNameHintOther => 'e.g., Emergency reserve';
 
   @override
-  String get subaccountNameHelperBank =>
-      'Use the bank product or card name so this subaccount is easy to recognize.';
+  String get subaccountNameHelperBank => '';
 
   @override
   String get subaccountNameHelperWalletExchange =>
@@ -581,19 +573,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use any label that helps you quickly identify this subaccount.';
 
   @override
-  String get subaccountAmountHelperBank =>
-      'Enter the current balance for this subaccount. Value 0 is allowed.';
+  String get subaccountAmountHelperBank => 'Enter the current balance for this subaccount.';
 
   @override
-  String get subaccountAmountHelperWalletExchange =>
-      'Enter the current amount of this asset. Value 0 is allowed.';
+  String get subaccountAmountHelperWalletExchange => 'Enter the current amount of this asset.';
 
   @override
-  String get subaccountAmountHelperCash => 'Enter cash currently on hand. Value 0 is allowed.';
+  String get subaccountAmountHelperCash => 'Enter cash currently on hand.';
 
   @override
-  String get subaccountAmountHelperOther =>
-      'Enter the current amount tracked in this subaccount. Value 0 is allowed.';
+  String get subaccountAmountHelperOther => 'Enter the current amount tracked in this subaccount.';
 
   @override
   String get subaccountEmptyTitle => 'No subaccounts yet';
@@ -655,13 +644,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get positionHistoryDescription =>
-      'See how this subaccount balance changed with each snapshot update.';
+      'See how this subaccount balance changed with each update.';
 
   @override
   String get positionHistoryEmptyTitle => 'No balance history yet';
 
   @override
-  String get positionHistoryEmptyBody => 'Add a snapshot or change to start tracking.';
+  String get positionHistoryEmptyBody => 'Add a balance or change to start tracking.';
 
   @override
   String get positionHistoryEmptyCta => 'Add your first balance';
@@ -670,7 +659,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get positionLoadMore => 'Load more';
 
   @override
-  String get balanceEntrySnapshot => 'Snapshot';
+  String get balanceEntrySnapshot => 'Balance';
 
   @override
   String get balanceEntryDelta => 'Change';
@@ -685,7 +674,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addBalanceEntryTypeLabel => 'Entry type';
 
   @override
-  String get addBalanceTypeSnapshot => 'Snapshot';
+  String get addBalanceTypeSnapshot => 'Current balance';
 
   @override
   String get addBalanceTypeDelta => 'Change';
@@ -1047,6 +1036,28 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get baseCurrencySettingsResultsHint =>
       'Showing a limited set of results. Refine your search to find more.';
+
+  @override
+  String get baseCurrencyHowTitle => 'How it works';
+
+  @override
+  String get baseCurrencyHowRatesTitle => 'Rates updated every hour';
+
+  @override
+  String get baseCurrencyHowRatesBody => 'We always use fresh exchange rates for every currency.';
+
+  @override
+  String get baseCurrencyHowConvertTitle => 'Each position is converted';
+
+  @override
+  String get baseCurrencyHowConvertBody =>
+      'Every holding is converted to your base currency at the current rate.';
+
+  @override
+  String get baseCurrencyHowSumTitle => 'Totals are summed';
+
+  @override
+  String get baseCurrencyHowSumBody => 'Converted values add up to your overall portfolio total.';
 
   @override
   String get currencyPickerRecentTitle => 'Recent';

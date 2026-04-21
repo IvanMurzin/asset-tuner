@@ -21,10 +21,11 @@ class ProfileLanguageSelector extends StatelessWidget {
     };
   }
 
-  String _currentIconPath(String? localeTag) {
+  String? _currentIconPath(String? localeTag) {
     return switch (localeTag) {
       'ru' => _assetLangRu,
-      _ => _assetLangEn,
+      'en' => _assetLangEn,
+      _ => null,
     };
   }
 
@@ -46,10 +47,7 @@ class ProfileLanguageSelector extends StatelessWidget {
         showDivider: true,
       ),
       itemBuilder: (context) => [
-        PopupMenuItem<int>(
-          value: 0,
-          child: _LanguageMenuItem(iconPath: _assetLangEn, label: l10n.profileLanguageSystem),
-        ),
+        PopupMenuItem<int>(value: 0, child: _LanguageMenuItem(label: l10n.profileLanguageSystem)),
         PopupMenuItem<int>(
           value: 1,
           child: _LanguageMenuItem(iconPath: _assetLangEn, label: l10n.profileLanguageEnglish),
@@ -80,16 +78,24 @@ class ProfileLanguageSelector extends StatelessWidget {
 class _LangIcon extends StatelessWidget {
   const _LangIcon({required this.assetPath, this.size = 24});
 
-  final String assetPath;
+  final String? assetPath;
   final double size;
 
   @override
   Widget build(BuildContext context) {
+    if (assetPath == null) {
+      return SizedBox(
+        width: size,
+        height: size,
+        child: Icon(Icons.language_rounded, size: size, color: context.dsColors.textTertiary),
+      );
+    }
+
     return SizedBox(
       width: size,
       height: size,
       child: SvgPicture.asset(
-        assetPath,
+        assetPath!,
         width: size,
         height: size,
         fit: BoxFit.contain,
@@ -102,9 +108,9 @@ class _LangIcon extends StatelessWidget {
 }
 
 class _LanguageMenuItem extends StatelessWidget {
-  const _LanguageMenuItem({required this.iconPath, required this.label});
+  const _LanguageMenuItem({this.iconPath, required this.label});
 
-  final String iconPath;
+  final String? iconPath;
   final String label;
 
   @override

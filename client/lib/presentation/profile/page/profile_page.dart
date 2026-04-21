@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
@@ -20,6 +17,9 @@ import 'package:asset_tuner/presentation/profile/widget/profile_language_selecto
 import 'package:asset_tuner/presentation/profile/widget/profile_theme_selector.dart';
 import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
 import 'package:asset_tuner/presentation/settings/widget/settings_row_trailing.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -210,41 +210,27 @@ class ProfilePage extends StatelessWidget {
                           ),
                           SizedBox(height: spacing.s24),
                           DSSectionTitle(title: l10n.profileSectionAccount),
+                          SizedBox(height: spacing.s16),
+                          DSButton(
+                            label: l10n.settingsSignOut,
+                            variant: DSButtonVariant.secondary,
+                            fullWidth: true,
+                            isLoading: sessionState.isSigningOut,
+                            onPressed: isBusy ? null : context.read<SessionCubit>().signOut,
+                          ),
+                          SizedBox(height: spacing.s16),
+                          DSButton(
+                            label: l10n.profileDeleteAccountCta,
+                            variant: DSButtonVariant.secondary,
+                            fullWidth: true,
+                            isLoading: sessionState.isDeletingAccount,
+                            onPressed: isBusy ? null : () => _confirmDelete(context, l10n),
+                          ),
                           SizedBox(height: spacing.s12),
-                          DSCard(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  l10n.profileAccountActionsSubtitle,
-                                  style: context.dsTypography.body.copyWith(
-                                    color: context.dsColors.textSecondary,
-                                  ),
-                                ),
-                                SizedBox(height: spacing.s16),
-                                DSButton(
-                                  label: l10n.settingsSignOut,
-                                  variant: DSButtonVariant.secondary,
-                                  fullWidth: true,
-                                  isLoading: sessionState.isSigningOut,
-                                  onPressed: isBusy ? null : context.read<SessionCubit>().signOut,
-                                ),
-                                SizedBox(height: spacing.s12),
-                                Text(
-                                  l10n.profileDeleteAccountBody,
-                                  style: context.dsTypography.body.copyWith(
-                                    color: context.dsColors.textSecondary,
-                                  ),
-                                ),
-                                SizedBox(height: spacing.s12),
-                                DSButton(
-                                  label: l10n.profileDeleteAccountCta,
-                                  variant: DSButtonVariant.secondary,
-                                  fullWidth: true,
-                                  isLoading: sessionState.isDeletingAccount,
-                                  onPressed: isBusy ? null : () => _confirmDelete(context, l10n),
-                                ),
-                              ],
+                          Text(
+                            l10n.profileDeleteAccountBody,
+                            style: context.dsTypography.caption.copyWith(
+                              color: context.dsColors.textSecondary,
                             ),
                           ),
                         ],

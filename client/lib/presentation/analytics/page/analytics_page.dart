@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +16,7 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/widget/analytics_loading_skeleton.dart';
+import 'package:asset_tuner/presentation/analytics/widget/analytics_total_trend_chart.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 
@@ -71,27 +70,36 @@ class _Body extends StatelessWidget {
 
   final AnalyticsState state;
 
-  List<_AnalyticsTotalPoint> _totalTrendPoints() {
+  List<AnalyticsTotalTrendPoint> _totalTrendPoints() {
     if (state.breakdown.isEmpty || state.updates.length < 2) {
       return const [];
     }
 
-    final updates = [...state.updates]..sort((a, b) => a.entryDate.compareTo(b.entryDate));
     final currentTotal = state.breakdown.fold<Decimal>(
       Decimal.zero,
       (sum, item) => sum + item.value,
     );
-    final cumulativeDiff = updates.fold<Decimal>(
+    final cumulativeDiff = state.updates.fold<Decimal>(
       Decimal.zero,
       (sum, item) => sum + item.diffBaseAmount,
     );
-    var runningTotal = currentTotal - cumulativeDiff;
-    final points = <_AnalyticsTotalPoint>[];
-    for (final item in updates) {
-      runningTotal += item.diffBaseAmount;
-      points.add(_AnalyticsTotalPoint(date: item.entryDate, total: runningTotal));
+
+    final diffByDate = <DateTime, Decimal>{};
+    for (final item in state.updates) {
+      final date = DateTime(item.entryDate.year, item.entryDate.month, item.entryDate.day);
+      diffByDate[date] = (diffByDate[date] ?? Decimal.zero) + item.diffBaseAmount;
     }
-    return points;
+    final sortedDates = diffByDate.keys.toList()..sort();
+
+    if (sortedDates.length < 2) {
+      return const [];
+    }
+
+    var runningTotal = currentTotal - cumulativeDiff;
+    return [
+      for (final date in sortedDates)
+        AnalyticsTotalTrendPoint(date: date, total: runningTotal += diffByDate[date]!),
+    ];
   }
 
   @override
@@ -141,7 +149,7 @@ class _Body extends StatelessWidget {
               message: l10n.analyticsEmptyBody,
               actionLabel: l10n.mainAddAccount,
               actionLeadingIcon: Icons.add,
-              onAction: () => context.push(AppRoutes.accountNew),
+              onAction: () => context.go(AppRoutes.accountNew),
             ),
           ),
           SizedBox(height: spacing.s24),
@@ -190,7 +198,7 @@ class _Body extends StatelessWidget {
         if (totalTrendPoints.length >= 2)
           Padding(
             padding: EdgeInsets.only(bottom: spacing.s12),
-            child: _AnalyticsTotalTrendChart(points: totalTrendPoints, currency: currency),
+            child: AnalyticsTotalTrendChart(points: totalTrendPoints, currency: currency),
           )
         else
           Padding(
@@ -217,149 +225,11 @@ class _Body extends StatelessWidget {
               deltaText: '$sign$diffStr ${item.assetCode}',
               deltaColor: deltaColor,
               baseLineText: context.dsFormatters.formatMoney(item.diffBaseAmount, currency),
-              trailingPrimaryText: context.dsFormatters.formatMoney(item.diffBaseAmount, currency),
+              showDeltaOnTrailing: true,
             ),
           );
         }),
       ],
-    );
-  }
-}
-
-class _AnalyticsTotalPoint {
-  const _AnalyticsTotalPoint({required this.date, required this.total});
-
-  final DateTime date;
-  final Decimal total;
-}
-
-class _AnalyticsTotalTrendChart extends StatelessWidget {
-  const _AnalyticsTotalTrendChart({required this.points, required this.currency});
-
-  final List<_AnalyticsTotalPoint> points;
-  final String currency;
-
-  @override
-  Widget build(BuildContext context) {
-    final spacing = context.dsSpacing;
-    final typography = context.dsTypography;
-    final colors = context.dsColors;
-    final totals = points
-        .map((item) => double.parse(item.total.toString()))
-        .toList(growable: false);
-    var minY = totals.reduce(math.min);
-    var maxY = totals.reduce(math.max);
-    if (minY == maxY) {
-      final pad = minY == 0 ? 1.0 : minY.abs() * 0.1;
-      minY -= pad;
-      maxY += pad;
-    }
-
-    return DSCard(
-      padding: EdgeInsets.fromLTRB(spacing.s12, spacing.s12, spacing.s12, spacing.s8),
-      child: SizedBox(
-        height: 220,
-        child: LineChart(
-          LineChartData(
-            minX: 0,
-            maxX: (points.length - 1).toDouble(),
-            minY: minY,
-            maxY: maxY,
-            lineBarsData: [
-              LineChartBarData(
-                spots: [
-                  for (var i = 0; i < points.length; i++)
-                    FlSpot(i.toDouble(), double.parse(points[i].total.toString())),
-                ],
-                isCurved: true,
-                color: colors.primary,
-                barWidth: 3,
-                isStrokeCapRound: true,
-                dotData: FlDotData(
-                  show: true,
-                  getDotPainter: (spot, percent, barData, index) {
-                    return FlDotCirclePainter(
-                      radius: 2.8,
-                      color: colors.primary,
-                      strokeColor: colors.surface,
-                      strokeWidth: 1.2,
-                    );
-                  },
-                ),
-                belowBarData: BarAreaData(show: false),
-              ),
-            ],
-            gridData: FlGridData(
-              show: true,
-              drawVerticalLine: false,
-              horizontalInterval: math.max((maxY - minY) / 4, 1),
-              getDrawingHorizontalLine: (value) =>
-                  FlLine(color: colors.border.withValues(alpha: 0.8), strokeWidth: 1),
-            ),
-            borderData: FlBorderData(
-              show: true,
-              border: Border(
-                top: BorderSide.none,
-                right: BorderSide.none,
-                left: BorderSide(color: colors.border.withValues(alpha: 0.8), width: 1),
-                bottom: BorderSide(color: colors.border.withValues(alpha: 0.8), width: 1),
-              ),
-            ),
-            titlesData: FlTitlesData(
-              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: spacing.s32,
-                  interval: 1,
-                  getTitlesWidget: (value, meta) {
-                    final index = value.round();
-                    if (index < 0 || index >= points.length) {
-                      return const SizedBox.shrink();
-                    }
-                    final mid = (points.length - 1) ~/ 2;
-                    final show = index == 0 || index == mid || index == points.length - 1;
-                    if (!show) {
-                      return const SizedBox.shrink();
-                    }
-                    final text = context.dsFormatters.formatDateTime(points[index].date);
-                    return SideTitleWidget(
-                      axisSide: meta.axisSide,
-                      child: Text(
-                        text,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: typography.label.copyWith(color: colors.textSecondary),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            lineTouchData: LineTouchData(
-              touchTooltipData: LineTouchTooltipData(
-                fitInsideHorizontally: true,
-                fitInsideVertically: true,
-                getTooltipItems: (spots) {
-                  return spots
-                      .map((spot) {
-                        final index = spot.x.toInt();
-                        final point = points[index];
-                        return LineTooltipItem(
-                          '${context.dsFormatters.formatDateTime(point.date)}\n'
-                          '${context.dsFormatters.formatMoney(point.total, currency)}',
-                          typography.caption.copyWith(color: colors.textPrimary),
-                        );
-                      })
-                      .toList(growable: false);
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

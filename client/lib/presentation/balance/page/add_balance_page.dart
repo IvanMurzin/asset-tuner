@@ -119,51 +119,49 @@ class _AddBalancePageState extends State<AddBalancePage> {
                     children: [
                       Expanded(
                         child: SingleChildScrollView(
-                          child: DSCard(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  l10n.addBalanceHelperSnapshot,
-                                  style: context.dsTypography.body.copyWith(
-                                    color: context.dsColors.textSecondary,
-                                  ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.addBalanceHelperSnapshot,
+                                style: context.dsTypography.body.copyWith(
+                                  color: context.dsColors.textSecondary,
                                 ),
-                                SizedBox(height: spacing.s16),
-                                DSDatePickerField(
-                                  label: l10n.addBalanceDateLabel,
-                                  value: _date,
-                                  enabled: !isLoading,
-                                  onChanged: (value) => setState(() => _date = value),
+                              ),
+                              SizedBox(height: spacing.s16),
+                              DSDatePickerField(
+                                label: l10n.addBalanceDateLabel,
+                                value: _date,
+                                enabled: false,
+                                onChanged: (_) {},
+                              ),
+                              SizedBox(height: spacing.s16),
+                              DSBalanceInput(
+                                label: l10n.addBalanceAmountLabel,
+                                controller: _amountController,
+                                amountErrorText: _amountErrorText,
+                                enabled: !isLoading,
+                                currencyBadge: AssetCurrencyBadge(
+                                  currencyType: CurrencyType.all,
+                                  selectedSlug: selectedAssetCode,
+                                  sheetTitleText: l10n.baseCurrencySettingsPickerTitle,
+                                  placeholderText: l10n.subaccountCurrencyLabel,
+                                  searchHintText: l10n.assetSearchHint,
+                                  fiatTabText: l10n.assetKindFiat,
+                                  cryptoTabText: l10n.assetKindCrypto,
+                                  emptyResultsTitle: l10n.assetNoMatchesTitle,
+                                  emptyResultsMessage: l10n.assetNoMatchesBody,
+                                  enabled: false,
+                                  onSelected: (_) {},
+                                  onLocked: (_) {},
                                 ),
-                                SizedBox(height: spacing.s16),
-                                DSBalanceInput(
-                                  label: l10n.addBalanceAmountLabel,
-                                  controller: _amountController,
-                                  amountErrorText: _amountErrorText,
-                                  enabled: !isLoading,
-                                  currencyBadge: AssetCurrencyBadge(
-                                    currencyType: CurrencyType.all,
-                                    selectedSlug: selectedAssetCode,
-                                    sheetTitleText: l10n.baseCurrencySettingsPickerTitle,
-                                    placeholderText: l10n.subaccountCurrencyLabel,
-                                    searchHintText: l10n.assetSearchHint,
-                                    fiatTabText: l10n.assetKindFiat,
-                                    cryptoTabText: l10n.assetKindCrypto,
-                                    emptyResultsTitle: l10n.assetNoMatchesTitle,
-                                    emptyResultsMessage: l10n.assetNoMatchesBody,
-                                    enabled: false,
-                                    onSelected: (_) {},
-                                    onLocked: (_) {},
-                                  ),
-                                  onChanged: (_) {
-                                    if (_amountErrorText != null) {
-                                      setState(() => _amountErrorText = null);
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
+                                onChanged: (_) {
+                                  if (_amountErrorText != null) {
+                                    setState(() => _amountErrorText = null);
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ),

@@ -113,7 +113,7 @@ class ArchivedAccountsPage extends StatelessWidget {
   }
 
   void _openAccountDetail(BuildContext context, AccountEntity account) {
-    context.push(
+    context.go(
       AppRoutes.accountDetail.replaceFirst(':accountId', account.id),
       extra: AccountDetailExtra(initialTitle: account.name, initialAccountType: account.type),
     );

@@ -222,7 +222,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onboardingCarouselBody3 =>
-      'Вносите быстрый снимок баланса. Мы подсвечиваем изменения с прошлого раза и держим итоги консистентными за счёт регулярно обновляемых курсов.';
+      'Быстро обновляйте баланс. Мы подсвечиваем изменения с прошлого раза и держим итоги консистентными за счёт регулярно обновляемых курсов.';
 
   @override
   String get onboardingCarouselBody3Footnote =>
@@ -274,9 +274,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mainAddAccount => 'Добавить аккаунт';
 
   @override
-  String get mainBaseCurrencyTooltip => 'Нажмите, чтобы изменить валюту для глобальных итогов.';
-
-  @override
   String get analyticsTitle => 'Аналитика';
 
   @override
@@ -287,11 +284,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Доли считаются в базовой валюте по последним доступным курсам.';
 
   @override
-  String get analyticsUpdatesTitle => 'Снимки баланса';
+  String get analyticsUpdatesTitle => 'Обновления баланса';
 
   @override
   String get analyticsUpdatesCaption =>
-      'Отслеживайте тренд общего баланса по последним снимкам. Ниже показаны изменения каждого снимка.';
+      'Отслеживайте динамику общего баланса по последним обновлениям. Ниже показаны изменения по каждому обновлению.';
 
   @override
   String get analyticsEmptyTitle => 'Пока нет аналитики';
@@ -338,7 +335,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get overviewEmptyNoBalancesTitle => 'Добавьте первый баланс';
 
   @override
-  String get overviewEmptyNoBalancesBody => 'Добавьте снимок или изменение, чтобы увидеть итоги.';
+  String get overviewEmptyNoBalancesBody => 'Добавьте баланс или изменение, чтобы увидеть итоги.';
 
   @override
   String get overviewEmptyNoBalancesCta => 'Добавить баланс';
@@ -377,10 +374,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get overviewRatesUnavailable => 'Курсы недоступны';
-
-  @override
-  String get overviewSummaryCaption =>
-      'Итог считается только по оцененным балансам и обновляется после pull-to-refresh.';
 
   @override
   String get accountsTitle => 'Счета';
@@ -568,8 +561,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subaccountNameHintOther => 'например, Резервный счёт';
 
   @override
-  String get subaccountNameHelperBank =>
-      'Укажите продукт банка или карту, чтобы счёт было легче отличать в списке.';
+  String get subaccountNameHelperBank => '';
 
   @override
   String get subaccountNameHelperWalletExchange =>
@@ -584,19 +576,17 @@ class AppLocalizationsRu extends AppLocalizations {
       'Используйте любое название, по которому вы быстро узнаете этот счёт.';
 
   @override
-  String get subaccountAmountHelperBank =>
-      'Введите текущий баланс этого счёта. Значение 0 допустимо.';
+  String get subaccountAmountHelperBank => 'Введите текущий баланс этого счёта.';
 
   @override
-  String get subaccountAmountHelperWalletExchange =>
-      'Введите текущее количество этого актива. Значение 0 допустимо.';
+  String get subaccountAmountHelperWalletExchange => 'Введите текущее количество этого актива.';
 
   @override
-  String get subaccountAmountHelperCash => 'Введите сумму наличных на руках. Значение 0 допустимо.';
+  String get subaccountAmountHelperCash => 'Введите сумму наличных на руках.';
 
   @override
   String get subaccountAmountHelperOther =>
-      'Введите текущую сумму, которую вы ведете в этом счёте. Значение 0 допустимо.';
+      'Введите текущую сумму, которую вы ведете в этом счёте.';
 
   @override
   String get subaccountEmptyTitle => 'Пока нет счётов';
@@ -659,13 +649,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get positionHistoryDescription =>
-      'Показывает, как баланс этого счёта менялся после каждого обновления снимка.';
+      'Показывает, как баланс этого счёта менялся после каждого обновления.';
 
   @override
   String get positionHistoryEmptyTitle => 'Пока нет истории балансов';
 
   @override
-  String get positionHistoryEmptyBody => 'Добавьте снимок или изменение, чтобы начать отслеживать.';
+  String get positionHistoryEmptyBody => 'Добавьте баланс или изменение, чтобы начать отслеживать.';
 
   @override
   String get positionHistoryEmptyCta => 'Добавить первый баланс';
@@ -674,7 +664,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get positionLoadMore => 'Загрузить еще';
 
   @override
-  String get balanceEntrySnapshot => 'Снимок';
+  String get balanceEntrySnapshot => 'Баланс';
 
   @override
   String get balanceEntryDelta => 'Изменение';
@@ -689,7 +679,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addBalanceEntryTypeLabel => 'Тип записи';
 
   @override
-  String get addBalanceTypeSnapshot => 'Снимок';
+  String get addBalanceTypeSnapshot => 'Текущий баланс';
 
   @override
   String get addBalanceTypeDelta => 'Изменение';
@@ -1053,6 +1043,28 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get baseCurrencySettingsResultsHint =>
       'Показана только часть результатов. Уточните запрос, чтобы найти больше.';
+
+  @override
+  String get baseCurrencyHowTitle => 'Как считается итог';
+
+  @override
+  String get baseCurrencyHowRatesTitle => 'Курсы обновляются каждый час';
+
+  @override
+  String get baseCurrencyHowRatesBody => 'Актуальный курс для каждой валюты — всегда свежий.';
+
+  @override
+  String get baseCurrencyHowConvertTitle => 'Каждая позиция пересчитывается';
+
+  @override
+  String get baseCurrencyHowConvertBody =>
+      'Каждый актив конвертируется в базовую валюту по текущему курсу.';
+
+  @override
+  String get baseCurrencyHowSumTitle => 'Суммы складываются';
+
+  @override
+  String get baseCurrencyHowSumBody => 'Конвертированные суммы складываются в общий итог портфеля.';
 
   @override
   String get currencyPickerRecentTitle => 'Недавние';
