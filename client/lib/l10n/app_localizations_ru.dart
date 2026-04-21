@@ -1006,6 +1006,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsSignOut => 'Выйти';
 
   @override
+  String get profileSignOutConfirmTitle => 'Выйти из аккаунта?';
+
+  @override
+  String get profileSignOutConfirmBody =>
+      'Чтобы снова получить доступ к аккаунту, нужно будет войти заново.';
+
+  @override
+  String get profileSignOutConfirmCta => 'Выйти';
+
+  @override
   String get settingsEntitlementsError => 'Не удалось проверить статус подписки.';
 
   @override

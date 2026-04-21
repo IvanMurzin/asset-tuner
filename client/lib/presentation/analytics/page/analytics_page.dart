@@ -345,6 +345,8 @@ Color _breakdownBarColorAt(int index, DSColors colors) {
 class _AnalyticsPieChart extends StatelessWidget {
   const _AnalyticsPieChart({required this.breakdown, required this.colors});
 
+  static const double _minLabelShare = 0.06;
+
   final List<AnalyticsBreakdownItem> breakdown;
   final DSColors colors;
 
@@ -373,11 +375,13 @@ class _AnalyticsPieChart extends StatelessWidget {
       final item = entry.value;
       final value = double.parse(item.value.toString());
       final color = _colorAt(i);
+      final share = total == 0 ? 0 : value / total;
+      final showTitle = share >= _minLabelShare;
       return PieChartSectionData(
         value: value,
         color: color,
-        title: item.assetCode,
-        showTitle: true,
+        title: showTitle ? item.assetCode : '',
+        showTitle: showTitle,
         radius: 48,
         titleStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textPrimary),
       );

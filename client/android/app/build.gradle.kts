@@ -13,6 +13,36 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
+fun readKeystoreProperty(name: String): String? {
+    return (keystoreProperties[name] as String?)?.trim()?.takeIf { it.isNotEmpty() }
+}
+
+val releaseKeyAlias = readKeystoreProperty("keyAlias")
+val releaseKeyPassword = readKeystoreProperty("keyPassword")
+val releaseStorePassword = readKeystoreProperty("storePassword")
+val releaseStoreFilePath = readKeystoreProperty("storeFile")
+val releaseStoreFile = releaseStoreFilePath?.let { rootProject.file(it) }
+val hasValidReleaseSigning = keystorePropertiesFile.exists() &&
+        releaseKeyAlias != null &&
+        releaseKeyPassword != null &&
+        releaseStorePassword != null &&
+        releaseStoreFile != null &&
+        releaseStoreFile.exists()
+
+val isReleaseTaskRequested = gradle.startParameter.taskNames.any {
+    it.contains("release", ignoreCase = true)
+}
+
+if (isReleaseTaskRequested && !hasValidReleaseSigning) {
+    throw GradleException(
+        """
+        Release signing is not configured.
+        Provide a valid client/android/key.properties with keyAlias, keyPassword, storePassword and existing storeFile.
+        Debug keystore fallback for release is disabled by design.
+        """.trimIndent()
+    )
+}
+
 val debugKeystoreFile = rootProject.file("keystores/debug.keystore")
 val useProjectDebugKeystore = debugKeystoreFile.exists()
 
@@ -39,12 +69,12 @@ android {
                 keyPassword = "android"
             }
         }
-        if (keystorePropertiesFile.exists()) {
+        if (hasValidReleaseSigning) {
             create("release") {
-                keyAlias = keystoreProperties["keyAlias"] as String?
-                keyPassword = keystoreProperties["keyPassword"] as String?
-                storeFile = keystoreProperties["storeFile"]?.let { rootProject.file(it) }
-                storePassword = keystoreProperties["storePassword"] as String?
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+                storeFile = releaseStoreFile
+                storePassword = releaseStorePassword
             }
         }
     }
@@ -66,11 +96,7 @@ android {
             }
         }
         release {
-            signingConfig = when {
-                keystorePropertiesFile.exists() -> signingConfigs.getByName("release")
-                useProjectDebugKeystore -> signingConfigs.getByName("debugProject")
-                else -> signingConfigs.getByName("debug")
-            }
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 }

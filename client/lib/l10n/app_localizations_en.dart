@@ -1000,6 +1000,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSignOut => 'Sign out';
 
   @override
+  String get profileSignOutConfirmTitle => 'Sign out?';
+
+  @override
+  String get profileSignOutConfirmBody => 'You\'ll need to sign in again to access your account.';
+
+  @override
+  String get profileSignOutConfirmCta => 'Sign out';
+
+  @override
   String get settingsEntitlementsError => 'Couldn\'t verify subscription status.';
 
   @override

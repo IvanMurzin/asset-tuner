@@ -2013,6 +2013,24 @@ abstract class AppLocalizations {
   /// **'Sign out'**
   String get settingsSignOut;
 
+  /// No description provided for @profileSignOutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out?'**
+  String get profileSignOutConfirmTitle;
+
+  /// No description provided for @profileSignOutConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll need to sign in again to access your account.'**
+  String get profileSignOutConfirmBody;
+
+  /// No description provided for @profileSignOutConfirmCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get profileSignOutConfirmCta;
+
   /// No description provided for @settingsEntitlementsError.
   ///
   /// In en, this message translates to:
