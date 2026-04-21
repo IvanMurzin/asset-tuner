@@ -7,6 +7,7 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/page/analytics_page.dart';
 import 'package:decimal/decimal.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,6 +39,14 @@ void main() {
               diffBaseAmount: Decimal.fromInt(350),
               entryDate: DateTime(2026, 4, 20, 12, 0),
             ),
+            AnalyticsUpdateItem(
+              accountName: 'Main wallet',
+              subaccountName: 'BTC',
+              assetCode: 'BTC',
+              diffAmount: Decimal.parse('-0.005'),
+              diffBaseAmount: Decimal.parse('-120'),
+              entryDate: DateTime(2026, 4, 18, 9, 0),
+            ),
           ],
         ),
       );
@@ -50,26 +59,31 @@ void main() {
     testWidgets('shows explanatory captions for complex sections in english', (tester) async {
       await _pumpPage(tester, analyticsCubit: analyticsCubit);
 
+      expect(find.text('Balance snapshots'), findsOneWidget);
       expect(
         find.text('Shares are calculated in your base currency using the latest available rates.'),
         findsOneWidget,
       );
       expect(
-        find.text('Each row is a balance snapshot. Green means increase, red means decrease.'),
+        find.text(
+          'Track your total balance trend from recent snapshots. Rows below show each snapshot change.',
+        ),
         findsOneWidget,
       );
+      expect(find.byType(LineChart), findsOneWidget);
     });
 
     testWidgets('shows explanatory captions for complex sections in russian', (tester) async {
       await _pumpPage(tester, analyticsCubit: analyticsCubit, locale: const Locale('ru'));
 
+      expect(find.text('Снимки баланса'), findsOneWidget);
       expect(
         find.text('Доли считаются в базовой валюте по последним доступным курсам.'),
         findsOneWidget,
       );
       expect(
         find.text(
-          'Каждая строка — снимок баланса. Зеленый цвет означает рост, красный — снижение.',
+          'Отслеживайте тренд общего баланса по последним снимкам. Ниже показаны изменения каждого снимка.',
         ),
         findsOneWidget,
       );

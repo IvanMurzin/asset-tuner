@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -69,6 +71,29 @@ class _Body extends StatelessWidget {
 
   final AnalyticsState state;
 
+  List<_AnalyticsTotalPoint> _totalTrendPoints() {
+    if (state.breakdown.isEmpty || state.updates.length < 2) {
+      return const [];
+    }
+
+    final updates = [...state.updates]..sort((a, b) => a.entryDate.compareTo(b.entryDate));
+    final currentTotal = state.breakdown.fold<Decimal>(
+      Decimal.zero,
+      (sum, item) => sum + item.value,
+    );
+    final cumulativeDiff = updates.fold<Decimal>(
+      Decimal.zero,
+      (sum, item) => sum + item.diffBaseAmount,
+    );
+    var runningTotal = currentTotal - cumulativeDiff;
+    final points = <_AnalyticsTotalPoint>[];
+    for (final item in updates) {
+      runningTotal += item.diffBaseAmount;
+      points.add(_AnalyticsTotalPoint(date: item.entryDate, total: runningTotal));
+    }
+    return points;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -125,6 +150,7 @@ class _Body extends StatelessWidget {
     }
 
     final currency = state.baseCurrency ?? 'USD';
+    final totalTrendPoints = _totalTrendPoints();
 
     return ListView(
       children: [
@@ -161,6 +187,19 @@ class _Body extends StatelessWidget {
           style: context.dsTypography.caption.copyWith(color: context.dsColors.textSecondary),
         ),
         SizedBox(height: spacing.s12),
+        if (totalTrendPoints.length >= 2)
+          Padding(
+            padding: EdgeInsets.only(bottom: spacing.s12),
+            child: _AnalyticsTotalTrendChart(points: totalTrendPoints, currency: currency),
+          )
+        else
+          Padding(
+            padding: EdgeInsets.only(bottom: spacing.s12),
+            child: _AnalyticsSnapshotsEmptyCard(
+              title: l10n.analyticsEmptyTitle,
+              message: l10n.analyticsEmptyBody,
+            ),
+          ),
         ...state.updates.take(40).map((item) {
           final diffStr = context.dsFormatters.formatDecimalFromDecimal(
             item.diffAmount,
@@ -183,6 +222,174 @@ class _Body extends StatelessWidget {
           );
         }),
       ],
+    );
+  }
+}
+
+class _AnalyticsTotalPoint {
+  const _AnalyticsTotalPoint({required this.date, required this.total});
+
+  final DateTime date;
+  final Decimal total;
+}
+
+class _AnalyticsTotalTrendChart extends StatelessWidget {
+  const _AnalyticsTotalTrendChart({required this.points, required this.currency});
+
+  final List<_AnalyticsTotalPoint> points;
+  final String currency;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.dsSpacing;
+    final typography = context.dsTypography;
+    final colors = context.dsColors;
+    final totals = points
+        .map((item) => double.parse(item.total.toString()))
+        .toList(growable: false);
+    var minY = totals.reduce(math.min);
+    var maxY = totals.reduce(math.max);
+    if (minY == maxY) {
+      final pad = minY == 0 ? 1.0 : minY.abs() * 0.1;
+      minY -= pad;
+      maxY += pad;
+    }
+
+    return DSCard(
+      padding: EdgeInsets.fromLTRB(spacing.s12, spacing.s12, spacing.s12, spacing.s8),
+      child: SizedBox(
+        height: 220,
+        child: LineChart(
+          LineChartData(
+            minX: 0,
+            maxX: (points.length - 1).toDouble(),
+            minY: minY,
+            maxY: maxY,
+            lineBarsData: [
+              LineChartBarData(
+                spots: [
+                  for (var i = 0; i < points.length; i++)
+                    FlSpot(i.toDouble(), double.parse(points[i].total.toString())),
+                ],
+                isCurved: true,
+                color: colors.primary,
+                barWidth: 3,
+                isStrokeCapRound: true,
+                dotData: FlDotData(
+                  show: true,
+                  getDotPainter: (spot, percent, barData, index) {
+                    return FlDotCirclePainter(
+                      radius: 2.8,
+                      color: colors.primary,
+                      strokeColor: colors.surface,
+                      strokeWidth: 1.2,
+                    );
+                  },
+                ),
+                belowBarData: BarAreaData(show: false),
+              ),
+            ],
+            gridData: FlGridData(
+              show: true,
+              drawVerticalLine: false,
+              horizontalInterval: math.max((maxY - minY) / 4, 1),
+              getDrawingHorizontalLine: (value) =>
+                  FlLine(color: colors.border.withValues(alpha: 0.8), strokeWidth: 1),
+            ),
+            borderData: FlBorderData(
+              show: true,
+              border: Border(
+                top: BorderSide.none,
+                right: BorderSide.none,
+                left: BorderSide(color: colors.border.withValues(alpha: 0.8), width: 1),
+                bottom: BorderSide(color: colors.border.withValues(alpha: 0.8), width: 1),
+              ),
+            ),
+            titlesData: FlTitlesData(
+              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: spacing.s32,
+                  interval: 1,
+                  getTitlesWidget: (value, meta) {
+                    final index = value.round();
+                    if (index < 0 || index >= points.length) {
+                      return const SizedBox.shrink();
+                    }
+                    final mid = (points.length - 1) ~/ 2;
+                    final show = index == 0 || index == mid || index == points.length - 1;
+                    if (!show) {
+                      return const SizedBox.shrink();
+                    }
+                    final text = context.dsFormatters.formatDateTime(points[index].date);
+                    return SideTitleWidget(
+                      axisSide: meta.axisSide,
+                      child: Text(
+                        text,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: typography.label.copyWith(color: colors.textSecondary),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            lineTouchData: LineTouchData(
+              touchTooltipData: LineTouchTooltipData(
+                fitInsideHorizontally: true,
+                fitInsideVertically: true,
+                getTooltipItems: (spots) {
+                  return spots
+                      .map((spot) {
+                        final index = spot.x.toInt();
+                        final point = points[index];
+                        return LineTooltipItem(
+                          '${context.dsFormatters.formatDateTime(point.date)}\n'
+                          '${context.dsFormatters.formatMoney(point.total, currency)}',
+                          typography.caption.copyWith(color: colors.textPrimary),
+                        );
+                      })
+                      .toList(growable: false);
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AnalyticsSnapshotsEmptyCard extends StatelessWidget {
+  const _AnalyticsSnapshotsEmptyCard({required this.title, required this.message});
+
+  final String title;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.dsSpacing;
+    final typography = context.dsTypography;
+    final colors = context.dsColors;
+
+    return DSCard(
+      child: Padding(
+        padding: EdgeInsets.all(spacing.s16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.show_chart_rounded, size: spacing.s24, color: colors.textSecondary),
+            SizedBox(height: spacing.s8),
+            Text(title, style: typography.h3.copyWith(color: colors.textPrimary)),
+            SizedBox(height: spacing.s4),
+            Text(message, style: typography.body.copyWith(color: colors.textSecondary)),
+          ],
+        ),
+      ),
     );
   }
 }

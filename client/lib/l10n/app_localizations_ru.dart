@@ -287,11 +287,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Доли считаются в базовой валюте по последним доступным курсам.';
 
   @override
-  String get analyticsUpdatesTitle => 'Обновления';
+  String get analyticsUpdatesTitle => 'Снимки баланса';
 
   @override
   String get analyticsUpdatesCaption =>
-      'Каждая строка — снимок баланса. Зеленый цвет означает рост, красный — снижение.';
+      'Отслеживайте тренд общего баланса по последним снимкам. Ниже показаны изменения каждого снимка.';
 
   @override
   String get analyticsEmptyTitle => 'Пока нет аналитики';

@@ -286,11 +286,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Shares are calculated in your base currency using the latest available rates.';
 
   @override
-  String get analyticsUpdatesTitle => 'Updates';
+  String get analyticsUpdatesTitle => 'Balance snapshots';
 
   @override
   String get analyticsUpdatesCaption =>
-      'Each row is a balance snapshot. Green means increase, red means decrease.';
+      'Track your total balance trend from recent snapshots. Rows below show each snapshot change.';
 
   @override
   String get analyticsEmptyTitle => 'No analytics yet';

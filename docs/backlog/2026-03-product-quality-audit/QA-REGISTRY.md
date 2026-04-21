@@ -27,6 +27,29 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-21 18:31 +04 - BUG-ANA-002 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/presentation/analytics/page/analytics_page.dart`
+  - `client/lib/l10n/app_en.arb`
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_localizations.dart`
+  - `client/lib/l10n/app_localizations_en.dart`
+  - `client/lib/l10n/app_localizations_ru.dart`
+  - `client/test/presentation/analytics/page/analytics_page_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-ANA-002-analytics-screen-updates-and-charts.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter test test/presentation/analytics/page/analytics_page_test.dart test/presentation/analytics/bloc/analytics_cubit_test.dart` -> `pass`
+  - `cd client && flutter analyze` -> `pass`
+- Manual QA checklist:
+  - [ ] Открыть `SCR-017` и проверить, что секция называется `Balance snapshots` / `Снимки баланса`.
+  - [ ] При наличии минимум двух snapshot-обновлений проверить отображение line chart total и корректные tooltip-значения в базовой валюте.
+  - [ ] При малом количестве данных (0-1 update) проверить fallback-card внутри секции и сохранение loading/error/empty сценариев экрана.
+- Notes:
+  - Time-series построен из доступных backend данных (`breakdown + updates`) без изменения API-контракта.
+
 ### 2026-04-21 18:23 +04 - BUG-ANA-001 - Done
 - Commit: `HEAD`
 - Changed files:

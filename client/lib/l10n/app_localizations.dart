@@ -630,13 +630,13 @@ abstract class AppLocalizations {
   /// No description provided for @analyticsUpdatesTitle.
   ///
   /// In en, this message translates to:
-  /// **'Updates'**
+  /// **'Balance snapshots'**
   String get analyticsUpdatesTitle;
 
   /// No description provided for @analyticsUpdatesCaption.
   ///
   /// In en, this message translates to:
-  /// **'Each row is a balance snapshot. Green means increase, red means decrease.'**
+  /// **'Track your total balance trend from recent snapshots. Rows below show each snapshot change.'**
   String get analyticsUpdatesCaption;
 
   /// No description provided for @analyticsEmptyTitle.
