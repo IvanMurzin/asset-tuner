@@ -273,13 +273,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainAddAccount => 'Add account';
 
   @override
+  String get mainBaseCurrencyTooltip => 'Tap to change the currency used for global totals.';
+
+  @override
   String get analyticsTitle => 'Analytics';
 
   @override
   String get analyticsBreakdownTitle => 'Breakdown';
 
   @override
+  String get analyticsBreakdownCaption =>
+      'Shares are calculated in your base currency using the latest available rates.';
+
+  @override
   String get analyticsUpdatesTitle => 'Updates';
+
+  @override
+  String get analyticsUpdatesCaption =>
+      'Each row is a balance snapshot. Green means increase, red means decrease.';
 
   @override
   String get analyticsEmptyTitle => 'No analytics yet';
@@ -363,6 +374,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overviewRatesUnavailable => 'Rates unavailable';
+
+  @override
+  String get overviewSummaryCaption =>
+      'Total is based on priced balances and refreshes after you pull to update data.';
 
   @override
   String get accountsTitle => 'Accounts';

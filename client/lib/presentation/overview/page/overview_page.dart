@@ -71,10 +71,13 @@ class OverviewPage extends StatelessWidget {
                 Center(
                   child: Padding(
                     padding: EdgeInsets.only(right: context.dsSpacing.s12),
-                    child: DSChip(
-                      label: baseCurrency,
-                      icon: Icons.currency_exchange,
-                      onTap: () => context.push<String>(AppRoutes.baseCurrencySettings),
+                    child: Tooltip(
+                      message: l10n.mainBaseCurrencyTooltip,
+                      child: DSChip(
+                        label: baseCurrency,
+                        icon: Icons.currency_exchange,
+                        onTap: () => context.push<String>(AppRoutes.baseCurrencySettings),
+                      ),
                     ),
                   ),
                 ),
@@ -222,6 +225,7 @@ class _OverviewReadyState extends State<_OverviewReady> {
                     pricedTotalLabel: null,
                     pricedTotalValue: null,
                     ratesText: ratesText,
+                    contextHint: l10n.overviewSummaryCaption,
                   ),
                 ),
               ),
@@ -255,6 +259,7 @@ class _OverviewReadyState extends State<_OverviewReady> {
                     pricedTotalLabel: null,
                     pricedTotalValue: null,
                     ratesText: ratesText,
+                    contextHint: l10n.overviewSummaryCaption,
                   ),
                 ),
               ),

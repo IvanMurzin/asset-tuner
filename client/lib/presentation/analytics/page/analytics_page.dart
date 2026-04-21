@@ -133,6 +133,11 @@ class _Body extends StatelessWidget {
           SizedBox(height: spacing.s24),
         ],
         DSSectionTitle(title: l10n.analyticsBreakdownTitle),
+        SizedBox(height: spacing.s4),
+        Text(
+          l10n.analyticsBreakdownCaption,
+          style: context.dsTypography.caption.copyWith(color: context.dsColors.textSecondary),
+        ),
         SizedBox(height: spacing.s12),
         ...state.breakdown.toList().asMap().entries.map((entry) {
           return Padding(
@@ -150,6 +155,11 @@ class _Body extends StatelessWidget {
         }),
         SizedBox(height: spacing.s24),
         DSSectionTitle(title: l10n.analyticsUpdatesTitle),
+        SizedBox(height: spacing.s4),
+        Text(
+          l10n.analyticsUpdatesCaption,
+          style: context.dsTypography.caption.copyWith(color: context.dsColors.textSecondary),
+        ),
         SizedBox(height: spacing.s12),
         ...state.updates.take(40).map((item) {
           final diffStr = context.dsFormatters.formatDecimalFromDecimal(

@@ -27,6 +27,33 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-21 18:11 +04 - IMP-PRO-006 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/presentation/overview/page/overview_page.dart`
+  - `client/lib/presentation/overview/widget/overview_summary_card.dart`
+  - `client/lib/presentation/analytics/page/analytics_page.dart`
+  - `client/lib/l10n/app_en.arb`
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_localizations.dart`
+  - `client/lib/l10n/app_localizations_en.dart`
+  - `client/lib/l10n/app_localizations_ru.dart`
+  - `client/test/presentation/analytics/page/analytics_page_test.dart`
+  - `client/test/presentation/overview/widget/overview_summary_card_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/IMP-PRO-006-ux-clarity-audit-tooltips.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter test test/presentation/analytics/page/analytics_page_test.dart` -> `pass`
+  - `cd client && flutter test test/presentation/overview/widget/overview_summary_card_test.dart` -> `pass`
+  - `cd client && flutter analyze` -> `pass`
+- Manual QA checklist:
+  - [ ] Открыть `SCR-004` и проверить tooltip на chip базовой валюты (long-press / hover) и caption под карточкой итога.
+  - [ ] Открыть `SCR-017` и проверить, что у секций `Breakdown` и `Updates` отображаются лаконичные поясняющие captions.
+  - [ ] Переключить locale `en/ru` и подтвердить корректную локализацию всех новых подсказок без переполнения layout.
+- Notes:
+  - Добавлены только high-impact подсказки; поэлементные tooltips внутри breakdown/updates не добавлялись, чтобы избежать визуальной перегрузки.
+
 ### 2026-04-21 18:00 +04 - BUG-PRO-005 - Done
 - Commit: `HEAD`
 - Changed files:

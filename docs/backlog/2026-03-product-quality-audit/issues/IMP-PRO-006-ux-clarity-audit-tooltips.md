@@ -4,7 +4,7 @@
 - ID: `IMP-PRO-006`
 - Тип: `Improvement`
 - Приоритет: `P2`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-002`, `FTR-008`, `FTR-010`, `SCR-004`, `SCR-017`
 
 ## Экран/модуль/слой
@@ -45,6 +45,19 @@
 
 ## Риски и anti-regression
 - Не превратить приложение в “tutorial over UI”.
+
+## Implementation note
+- Добавлены точечные подсказки только в high-impact блоках:
+  - `SCR-004`: tooltip для chip базовой валюты и caption под карточкой общего итога.
+  - `SCR-017`: caption под секциями `Breakdown` и `Updates`.
+- Принцип “где не добавлять подсказки” зафиксирован через реализацию:
+  - без новых подсказок в каждой строке breakdown/updates,
+  - без overlay/tutorial на весь экран.
+- Локализация обновлена для `en/ru`, l10n-сгенерированные файлы синхронизированы.
+- Проверки:
+  - `cd client && flutter test test/presentation/analytics/page/analytics_page_test.dart`
+  - `cd client && flutter test test/presentation/overview/widget/overview_summary_card_test.dart`
+  - `cd client && flutter analyze`
 
 ## Ссылки на текущую реализацию
 - [screen_map.md](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/ux/screen_map.md)

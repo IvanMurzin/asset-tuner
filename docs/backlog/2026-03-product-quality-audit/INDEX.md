@@ -49,7 +49,7 @@
 3. [BUG-PRO-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-003-archived-navigation-backstack-fix.md) `P0` `Done`
 4. [BUG-PRO-004](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-004-archived-screen-description.md) `P2` `Done`
 5. [BUG-PRO-005](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-005-paywall-visual-redesign.md) `P2` `Done`
-6. [IMP-PRO-006](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-PRO-006-ux-clarity-audit-tooltips.md) `P2`
+6. [IMP-PRO-006](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-PRO-006-ux-clarity-audit-tooltips.md) `P2` `Done`
 
 ### ANA
 1. [BUG-ANA-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-ANA-001-backend-analytics-endpoint.md) `P0`

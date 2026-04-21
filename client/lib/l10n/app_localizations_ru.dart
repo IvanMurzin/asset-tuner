@@ -274,13 +274,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mainAddAccount => 'Добавить аккаунт';
 
   @override
+  String get mainBaseCurrencyTooltip => 'Нажмите, чтобы изменить валюту для глобальных итогов.';
+
+  @override
   String get analyticsTitle => 'Аналитика';
 
   @override
   String get analyticsBreakdownTitle => 'Разбивка';
 
   @override
+  String get analyticsBreakdownCaption =>
+      'Доли считаются в базовой валюте по последним доступным курсам.';
+
+  @override
   String get analyticsUpdatesTitle => 'Обновления';
+
+  @override
+  String get analyticsUpdatesCaption =>
+      'Каждая строка — снимок баланса. Зеленый цвет означает рост, красный — снижение.';
 
   @override
   String get analyticsEmptyTitle => 'Пока нет аналитики';
@@ -366,6 +377,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get overviewRatesUnavailable => 'Курсы недоступны';
+
+  @override
+  String get overviewSummaryCaption =>
+      'Итог считается только по оцененным балансам и обновляется после pull-to-refresh.';
 
   @override
   String get accountsTitle => 'Счета';

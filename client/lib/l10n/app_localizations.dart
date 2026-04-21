@@ -603,6 +603,12 @@ abstract class AppLocalizations {
   /// **'Add account'**
   String get mainAddAccount;
 
+  /// No description provided for @mainBaseCurrencyTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change the currency used for global totals.'**
+  String get mainBaseCurrencyTooltip;
+
   /// No description provided for @analyticsTitle.
   ///
   /// In en, this message translates to:
@@ -615,11 +621,23 @@ abstract class AppLocalizations {
   /// **'Breakdown'**
   String get analyticsBreakdownTitle;
 
+  /// No description provided for @analyticsBreakdownCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Shares are calculated in your base currency using the latest available rates.'**
+  String get analyticsBreakdownCaption;
+
   /// No description provided for @analyticsUpdatesTitle.
   ///
   /// In en, this message translates to:
   /// **'Updates'**
   String get analyticsUpdatesTitle;
+
+  /// No description provided for @analyticsUpdatesCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Each row is a balance snapshot. Green means increase, red means decrease.'**
+  String get analyticsUpdatesCaption;
 
   /// No description provided for @analyticsEmptyTitle.
   ///
@@ -776,6 +794,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rates unavailable'**
   String get overviewRatesUnavailable;
+
+  /// No description provided for @overviewSummaryCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Total is based on priced balances and refreshes after you pull to update data.'**
+  String get overviewSummaryCaption;
 
   /// No description provided for @accountsTitle.
   ///
