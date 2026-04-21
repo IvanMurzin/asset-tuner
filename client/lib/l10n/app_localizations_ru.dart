@@ -106,6 +106,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get switchToSignIn => 'Уже есть аккаунт? Войти';
 
   @override
+  String get signUpLegalPrefix => 'Создавая аккаунт, вы соглашаетесь с';
+
+  @override
+  String get signUpLegalTerms => 'Условиями';
+
+  @override
+  String get signUpLegalPrivacy => 'Политикой конфиденциальности';
+
+  @override
   String get validationInvalidEmail => 'Введите корректный email.';
 
   @override
@@ -1197,6 +1206,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileContactDeveloperSuccess => 'Спасибо, что поделились';
+
+  @override
+  String get profileSectionLegal => 'Юридическая информация';
+
+  @override
+  String get profileLegalTermsOfUse => 'Условия использования';
+
+  @override
+  String get profileLegalPrivacyPolicy => 'Политика конфиденциальности';
 
   @override
   String get profileSectionAccount => 'Аккаунт';

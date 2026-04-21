@@ -106,6 +106,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get switchToSignIn => 'Already have an account? Sign in';
 
   @override
+  String get signUpLegalPrefix => 'By creating an account, you agree to our';
+
+  @override
+  String get signUpLegalTerms => 'Terms';
+
+  @override
+  String get signUpLegalPrivacy => 'Privacy';
+
+  @override
   String get validationInvalidEmail => 'Enter a valid email.';
 
   @override
@@ -1191,6 +1200,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileContactDeveloperSuccess => 'Thanks for sharing.';
+
+  @override
+  String get profileSectionLegal => 'Legal';
+
+  @override
+  String get profileLegalTermsOfUse => 'Terms of use';
+
+  @override
+  String get profileLegalPrivacyPolicy => 'Privacy policy';
 
   @override
   String get profileSectionAccount => 'Account';

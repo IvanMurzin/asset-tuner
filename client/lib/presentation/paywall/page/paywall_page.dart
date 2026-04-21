@@ -3,6 +3,7 @@ import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core/utils/external_url_launcher.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
@@ -22,7 +23,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PaywallPage extends StatefulWidget {
   const PaywallPage({super.key, required this.args});
@@ -229,23 +229,11 @@ class _PaywallPageState extends State<PaywallPage> {
   }
 
   Future<void> _openUrl(String url) async {
-    final uri = Uri.tryParse(url);
-    if (uri == null) {
-      showDSSnackBar(
-        context,
-        variant: DSSnackBarVariant.error,
-        message: AppLocalizations.of(context)!.errorGeneric,
-      );
-      return;
-    }
-    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-    if (!launched && mounted) {
-      showDSSnackBar(
-        context,
-        variant: DSSnackBarVariant.error,
-        message: AppLocalizations.of(context)!.errorGeneric,
-      );
-    }
+    await launchExternalUrl(
+      context,
+      url: url,
+      errorMessage: AppLocalizations.of(context)!.errorGeneric,
+    );
   }
 
   void _showError(String message, {required String code}) {
@@ -391,7 +379,7 @@ class _PaywallPageState extends State<PaywallPage> {
                                         yearlyPrice: _selectorYearlyPrice(),
                                         onChanged: (next) => setState(() => _selectedOption = next),
                                       ),
-                                      SizedBox(height: spacing.s8),
+                                      SizedBox(height: spacing.s24),
                                       PaywallTierCard(
                                         title: l10n.paywallFreeTitle,
                                         features: freeCompactFeatures,

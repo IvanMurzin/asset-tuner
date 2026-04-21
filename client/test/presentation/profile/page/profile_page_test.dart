@@ -161,6 +161,26 @@ void main() {
 
       expect(find.text('Contact developer Stub'), findsOneWidget);
     });
+
+    testWidgets('shows legal section with terms and privacy rows', (tester) async {
+      await _pumpPage(
+        tester,
+        sessionCubit: sessionCubit,
+        profileCubit: profileCubit,
+        assetsCubit: assetsCubit,
+        localeCubit: localeCubit,
+        themeModeCubit: themeModeCubit,
+      );
+
+      await tester.drag(find.byType(ListView), const Offset(0, -900));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Legal'));
+
+      expect(find.text('Legal'), findsOneWidget);
+      expect(find.text('Terms of use'), findsOneWidget);
+      expect(find.text('Privacy policy'), findsOneWidget);
+    });
   });
 }
 

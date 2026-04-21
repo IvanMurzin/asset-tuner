@@ -1,4 +1,6 @@
+import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core/utils/external_url_launcher.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_card.dart';
@@ -209,6 +211,43 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: spacing.s24),
+                          DSSectionTitle(title: l10n.profileSectionLegal),
+                          SizedBox(height: spacing.s12),
+                          DSCard(
+                            padding: EdgeInsets.zero,
+                            child: Column(
+                              children: [
+                                DSListRow(
+                                  title: l10n.profileLegalTermsOfUse,
+                                  leading: Icon(
+                                    Icons.description_outlined,
+                                    color: context.dsColors.textTertiary,
+                                  ),
+                                  trailing: Icon(
+                                    Icons.chevron_right,
+                                    color: context.dsColors.textTertiary,
+                                  ),
+                                  showDivider: true,
+                                  onTap: () =>
+                                      _openLegalUrl(context, AppConfig.instance.termsOfUseUrl),
+                                ),
+                                DSListRow(
+                                  title: l10n.profileLegalPrivacyPolicy,
+                                  leading: Icon(
+                                    Icons.privacy_tip_outlined,
+                                    color: context.dsColors.textTertiary,
+                                  ),
+                                  trailing: Icon(
+                                    Icons.chevron_right,
+                                    color: context.dsColors.textTertiary,
+                                  ),
+                                  onTap: () =>
+                                      _openLegalUrl(context, AppConfig.instance.privacyPolicyUrl),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: spacing.s24),
                           DSSectionTitle(title: l10n.profileSectionAccount),
                           SizedBox(height: spacing.s16),
                           DSButton(
@@ -281,5 +320,10 @@ class ProfilePage extends StatelessWidget {
     if (confirmed == true && context.mounted) {
       await context.read<SessionCubit>().deleteAccount();
     }
+  }
+
+  Future<void> _openLegalUrl(BuildContext context, String url) async {
+    final l10n = AppLocalizations.of(context)!;
+    await launchExternalUrl(context, url: url, errorMessage: l10n.errorGeneric);
   }
 }
