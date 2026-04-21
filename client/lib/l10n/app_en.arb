@@ -417,6 +417,7 @@
   "profileSectionPortfolio": "Portfolio",
   "profileAccounts": "Accounts",
   "settingsArchivedAccounts": "Archived accounts",
+  "archivedAccountsGlobalTotalHint": "Archived accounts are excluded from your global total.",
   "archivedAccountsEmptyTitle": "No archived accounts",
   "archivedAccountsEmptyBody": "Accounts you archive will appear here.",
   "profileLanguage": "Language",

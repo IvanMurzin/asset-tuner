@@ -26,6 +26,7 @@ class ArchivedAccountsPage extends StatelessWidget {
     return BlocBuilder<AccountsCubit, AccountsState>(
       builder: (context, state) {
         final archived = state.accounts.where((item) => item.archived).toList();
+        final spacing = context.dsSpacing;
 
         if (state.status == AccountsStatus.loading && state.accounts.isEmpty) {
           return Scaffold(
@@ -49,24 +50,42 @@ class ArchivedAccountsPage extends StatelessWidget {
         if (archived.isEmpty) {
           return Scaffold(
             appBar: DSAppBar(title: l10n.settingsArchivedAccounts),
-            body: Center(
-              child: DSEmptyState(
-                title: l10n.archivedAccountsEmptyTitle,
-                message: l10n.archivedAccountsEmptyBody,
-                icon: Icons.archive_outlined,
+            body: Padding(
+              padding: EdgeInsets.all(spacing.s24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _ArchivedAccountsCaption(text: l10n.archivedAccountsGlobalTotalHint),
+                  SizedBox(height: spacing.s16),
+                  Expanded(
+                    child: Center(
+                      child: DSEmptyState(
+                        title: l10n.archivedAccountsEmptyTitle,
+                        message: l10n.archivedAccountsEmptyBody,
+                        icon: Icons.archive_outlined,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
         }
 
-        final spacing = context.dsSpacing;
         return Scaffold(
           appBar: DSAppBar(title: l10n.settingsArchivedAccounts),
           body: ListView.builder(
             padding: EdgeInsets.all(spacing.s24),
-            itemCount: archived.length,
+            itemCount: archived.length + 1,
             itemBuilder: (context, index) {
-              final account = archived[index];
+              if (index == 0) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: spacing.s16),
+                  child: _ArchivedAccountsCaption(text: l10n.archivedAccountsGlobalTotalHint),
+                );
+              }
+
+              final account = archived[index - 1];
               final item = OverviewAccountItem(
                 accountId: account.id,
                 accountName: account.name,
@@ -76,7 +95,7 @@ class ArchivedAccountsPage extends StatelessWidget {
                 hasUnpricedHoldings: false,
               );
               return Padding(
-                padding: EdgeInsets.only(bottom: index < archived.length - 1 ? spacing.s12 : 0),
+                padding: EdgeInsets.only(bottom: index < archived.length ? spacing.s12 : 0),
                 child: Opacity(
                   opacity: _archivedCardOpacity,
                   child: OverviewAccountCard(
@@ -98,5 +117,18 @@ class ArchivedAccountsPage extends StatelessWidget {
       AppRoutes.accountDetail.replaceFirst(':accountId', account.id),
       extra: AccountDetailExtra(initialTitle: account.name, initialAccountType: account.type),
     );
+  }
+}
+
+class _ArchivedAccountsCaption extends StatelessWidget {
+  const _ArchivedAccountsCaption({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.dsColors;
+    final typography = context.dsTypography;
+    return Text(text, style: typography.caption.copyWith(color: colors.textSecondary));
   }
 }

@@ -47,7 +47,7 @@
 1. [BUG-PRO-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-001-move-account-actions-into-profile.md) `P1` `Done`
 2. [BUG-PRO-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-002-archived-list-card-parity.md) `P1` `Done`
 3. [BUG-PRO-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-003-archived-navigation-backstack-fix.md) `P0` `Done`
-4. [BUG-PRO-004](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-004-archived-screen-description.md) `P2`
+4. [BUG-PRO-004](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-004-archived-screen-description.md) `P2` `Done`
 5. [BUG-PRO-005](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-005-paywall-visual-redesign.md) `P2`
 6. [IMP-PRO-006](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/IMP-PRO-006-ux-clarity-audit-tooltips.md) `P2`
 

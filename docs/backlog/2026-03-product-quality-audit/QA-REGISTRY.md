@@ -27,6 +27,29 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-21 17:53 +04 - BUG-PRO-004 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/l10n/app_en.arb`
+  - `client/lib/l10n/app_ru.arb`
+  - `client/lib/l10n/app_localizations.dart`
+  - `client/lib/l10n/app_localizations_en.dart`
+  - `client/lib/l10n/app_localizations_ru.dart`
+  - `client/lib/presentation/profile/page/archived_accounts_page.dart`
+  - `client/test/presentation/profile/page/archived_accounts_page_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-004-archived-screen-description.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/presentation/profile/page/archived_accounts_page_test.dart` -> `pass`
+- Manual QA checklist:
+  - [ ] Открыть `Archived accounts` и проверить, что под заголовком отображается пояснение про исключение архивных счетов из общего баланса.
+  - [ ] Проверить экран archived при непустом и пустом списке: caption виден и не ломает layout.
+  - [ ] Переключить locale `en/ru` и подтвердить корректную локализацию caption.
+- Notes:
+  - Изменения ограничены archived-экраном и l10n; бизнес-логика расчета totals не затронута.
+
 ### 2026-04-21 17:19 +04 - BUG-PRO-002 - Done
 - Commit: `HEAD`
 - Changed files:

@@ -2187,6 +2187,12 @@ abstract class AppLocalizations {
   /// **'Archived accounts'**
   String get settingsArchivedAccounts;
 
+  /// No description provided for @archivedAccountsGlobalTotalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived accounts are excluded from your global total.'**
+  String get archivedAccountsGlobalTotalHint;
+
   /// No description provided for @archivedAccountsEmptyTitle.
   ///
   /// In en, this message translates to:

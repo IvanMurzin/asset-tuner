@@ -4,7 +4,7 @@
 - ID: `BUG-PRO-004`
 - Тип: `Bug`
 - Приоритет: `P2`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-004`, `SCR-009`
 
 ## Экран/модуль/слой
@@ -47,3 +47,11 @@
 
 ## Ссылки на текущую реализацию
 - [archived_accounts_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/profile/page/archived_accounts_page.dart)
+
+## Implementation note
+- В [archived_accounts_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/profile/page/archived_accounts_page.dart) добавлен caption под заголовком archived-экрана в обеих ветках (`empty` и список), текст поясняет, что архивные счета не участвуют в `global total`.
+- Для copy добавлен новый l10n-ключ `archivedAccountsGlobalTotalHint` в [app_en.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_en.arb) и [app_ru.arb](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_ru.arb) с последующей генерацией [app_localizations.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations.dart), [app_localizations_en.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_en.dart), [app_localizations_ru.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/l10n/app_localizations_ru.dart).
+- Обновлён widget-тест [archived_accounts_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/profile/page/archived_accounts_page_test.dart): добавлена проверка caption в основном navigation-flow и отдельная проверка локализации для `ru`.
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/profile/page/archived_accounts_page_test.dart` (pass)

@@ -417,6 +417,7 @@
   "profileSectionPortfolio": "Портфель",
   "profileAccounts": "Счета",
   "settingsArchivedAccounts": "Архивные счета",
+  "archivedAccountsGlobalTotalHint": "Архивные счета не участвуют в общем балансе.",
   "archivedAccountsEmptyTitle": "Нет архивных счетов",
   "archivedAccountsEmptyBody": "Счета, которые вы архивируете, появятся здесь.",
   "profileLanguage": "Язык",

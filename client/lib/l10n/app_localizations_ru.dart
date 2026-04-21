@@ -1098,6 +1098,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsArchivedAccounts => 'Архивные счета';
 
   @override
+  String get archivedAccountsGlobalTotalHint => 'Архивные счета не участвуют в общем балансе.';
+
+  @override
   String get archivedAccountsEmptyTitle => 'Нет архивных счетов';
 
   @override

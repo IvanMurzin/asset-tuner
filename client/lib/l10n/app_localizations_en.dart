@@ -1093,6 +1093,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsArchivedAccounts => 'Archived accounts';
 
   @override
+  String get archivedAccountsGlobalTotalHint =>
+      'Archived accounts are excluded from your global total.';
+
+  @override
   String get archivedAccountsEmptyTitle => 'No archived accounts';
 
   @override

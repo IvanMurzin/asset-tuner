@@ -81,6 +81,7 @@ void main() {
       final l10n = AppLocalizations.of(context)!;
 
       expect(find.text(l10n.settingsArchivedAccounts), findsOneWidget);
+      expect(find.text(l10n.archivedAccountsGlobalTotalHint), findsOneWidget);
       expect(find.text('Archived Wallet'), findsOneWidget);
       expect(find.text('Active Bank'), findsNothing);
       expect(find.byType(OverviewAccountCard), findsOneWidget);
@@ -107,7 +108,39 @@ void main() {
 
       expect(find.byType(ArchivedAccountsPage), findsOneWidget);
       expect(find.text(l10n.settingsArchivedAccounts), findsOneWidget);
+      expect(find.text(l10n.archivedAccountsGlobalTotalHint), findsOneWidget);
       expect(find.text('Archived Wallet'), findsOneWidget);
+    });
+
+    testWidgets('shows archived totals hint for russian locale', (tester) async {
+      final router = GoRouter(
+        initialLocation: AppRoutes.archivedAccounts,
+        routes: [
+          GoRoute(
+            path: AppRoutes.archivedAccounts,
+            builder: (context, state) => BlocProvider<AccountsCubit>.value(
+              value: accountsCubit,
+              child: const ArchivedAccountsPage(),
+            ),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          theme: lightTheme,
+          locale: const Locale('ru'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final context = tester.element(find.byType(ArchivedAccountsPage));
+      final l10n = AppLocalizations.of(context)!;
+
+      expect(find.text(l10n.archivedAccountsGlobalTotalHint), findsOneWidget);
     });
   });
 }
