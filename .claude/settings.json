@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub get)",
+      "Bash(flutter analyze)",
+      "Bash(flutter test*)",
+      "Bash(dart format*)",
+      "Bash(dart run build_runner*)",
+      "Bash(flutter run*)",
+      "Bash(flutter build*)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git branch*)",
+      "Bash(ls*)",
+      "Bash(cat*)",
+      "Bash(head*)",
+      "Bash(cd client*)",
+      "Bash(cd backend*)"
+    ],
+    "deny": [
+      "Bash(git push*)",
+      "Bash(rm -rf*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import sys,json,subprocess; d=json.load(sys.stdin); f=d.get('tool_input',{}).get('file_path',''); subprocess.run(['dart','format','--line-length=100',f],capture_output=True) if f.endswith('.dart') and not f.endswith(('.freezed.dart','.g.dart')) else None\" 2>/dev/null; true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude Code ждёт ввода\" with title \"Asset Tuner\"' 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
