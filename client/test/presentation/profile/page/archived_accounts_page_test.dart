@@ -5,7 +5,9 @@ import 'package:asset_tuner/core_ui/theme/app_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
+import 'package:asset_tuner/presentation/overview/widget/overview_account_card.dart';
 import 'package:asset_tuner/presentation/profile/page/archived_accounts_page.dart';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,7 +22,15 @@ void main() {
         AccountsState(
           status: AccountsStatus.ready,
           accounts: [
-            _account(id: 'account-1', name: 'Archived Wallet', archived: true),
+            _account(
+              id: 'account-1',
+              name: 'Archived Wallet',
+              archived: true,
+              subaccountsCount: 2,
+              totalInBaseAtomic: Decimal.fromInt(123456),
+              totalInBaseDecimals: 2,
+              baseAssetCode: 'USD',
+            ),
             _account(id: 'account-2', name: 'Active Bank', archived: false),
           ],
         ),
@@ -73,6 +83,17 @@ void main() {
       expect(find.text(l10n.settingsArchivedAccounts), findsOneWidget);
       expect(find.text('Archived Wallet'), findsOneWidget);
       expect(find.text('Active Bank'), findsNothing);
+      expect(find.byType(OverviewAccountCard), findsOneWidget);
+      final card = tester.widget<OverviewAccountCard>(find.byType(OverviewAccountCard));
+      expect(card.item.total, Decimal.parse('1234.56'));
+      expect(card.item.subaccountsCount, 2);
+      expect(card.showBalance, isTrue);
+      expect(card.subtitleOverride, isNull);
+
+      final opacity = tester.widget<Opacity>(
+        find.ancestor(of: find.byType(OverviewAccountCard), matching: find.byType(Opacity)),
+      );
+      expect(opacity.opacity, 0.64);
 
       await tester.tap(find.text('Archived Wallet'));
       await tester.pumpAndSettle();
@@ -135,12 +156,26 @@ class _TestAccountsCubit extends Cubit<AccountsState> implements AccountsCubit {
   }
 }
 
-AccountEntity _account({required String id, required String name, required bool archived}) {
+AccountEntity _account({
+  required String id,
+  required String name,
+  required bool archived,
+  int? subaccountsCount,
+  Decimal? totalInBaseAtomic,
+  int? totalInBaseDecimals,
+  String? baseAssetCode,
+}) {
   return AccountEntity(
     id: id,
     name: name,
     type: id == 'account-1' ? AccountType.wallet : AccountType.bank,
     archived: archived,
+    subaccountsCount: subaccountsCount,
+    totals: AccountTotalsEntity(
+      totalInBaseAtomic: totalInBaseAtomic,
+      totalInBaseDecimals: totalInBaseDecimals,
+      baseAssetCode: baseAssetCode,
+    ),
     createdAt: DateTime(2026, 1, 1),
     updatedAt: DateTime(2026, 1, 1),
   );

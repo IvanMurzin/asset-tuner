@@ -17,6 +17,8 @@ import 'package:asset_tuner/presentation/overview/widget/overview_account_item.d
 class ArchivedAccountsPage extends StatelessWidget {
   const ArchivedAccountsPage({super.key});
 
+  static const double _archivedCardOpacity = 0.64;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -69,18 +71,19 @@ class ArchivedAccountsPage extends StatelessWidget {
                 accountId: account.id,
                 accountName: account.name,
                 accountType: account.type,
-                total: Decimal.zero,
-                subaccountsCount: 0,
+                total: account.totals?.totalInBase ?? account.totals?.totalUsd ?? Decimal.zero,
+                subaccountsCount: account.subaccountsCount ?? 0,
                 hasUnpricedHoldings: false,
               );
               return Padding(
                 padding: EdgeInsets.only(bottom: index < archived.length - 1 ? spacing.s12 : 0),
-                child: OverviewAccountCard(
-                  item: item,
-                  baseCurrency: 'USD',
-                  onTap: () => _openAccountDetail(context, account),
-                  showBalance: false,
-                  subtitleOverride: l10n.accountsArchivedSection,
+                child: Opacity(
+                  opacity: _archivedCardOpacity,
+                  child: OverviewAccountCard(
+                    item: item,
+                    baseCurrency: account.totals?.baseAssetCode ?? 'USD',
+                    onTap: () => _openAccountDetail(context, account),
+                  ),
                 ),
               );
             },

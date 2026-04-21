@@ -27,6 +27,24 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
+### 2026-04-21 17:19 +04 - BUG-PRO-002 - Done
+- Commit: `HEAD`
+- Changed files:
+  - `client/lib/presentation/profile/page/archived_accounts_page.dart`
+  - `client/test/presentation/profile/page/archived_accounts_page_test.dart`
+  - `docs/backlog/2026-03-product-quality-audit/issues/BUG-PRO-002-archived-list-card-parity.md`
+  - `docs/backlog/2026-03-product-quality-audit/INDEX.md`
+  - `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
+- Auto checks:
+  - `cd client && flutter analyze` -> `pass`
+  - `cd client && flutter test test/presentation/profile/page/archived_accounts_page_test.dart` -> `pass`
+- Manual QA checklist:
+  - [ ] Проверить экран Archived accounts: в карточке отображаются имя аккаунта, сумма и количество счетов.
+  - [ ] Сверить populated archived-card с main-card по составу полей (без упрощённых заглушек).
+  - [ ] Проверить визуальный archived-state: карточки на archived-экране отображаются с пониженной opacity.
+- Notes:
+  - Archived-карточки используют те же данные `totals/subaccountsCount`, но остаются визуально ослабленными через `Opacity(0.64)`.
+
 ### 2026-04-17 19:46 +04 - BUG-PRO-001 - Done
 - Commit: `HEAD`
 - Changed files:

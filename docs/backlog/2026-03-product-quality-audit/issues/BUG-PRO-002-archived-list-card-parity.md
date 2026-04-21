@@ -4,7 +4,7 @@
 - ID: `BUG-PRO-002`
 - Тип: `Bug`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-004`, `SCR-007`, `SCR-009`
 
 ## Экран/модуль/слой
@@ -47,3 +47,11 @@ Archived список использует упрощенные карточки
 
 ## Ссылки на текущую реализацию
 - [archived_accounts_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/profile/page/archived_accounts_page.dart)
+
+## Implementation note
+- В [archived_accounts_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/profile/page/archived_accounts_page.dart) удалены заглушки `total=0` и `subaccountsCount=0`: archived-карточки теперь используют реальные `account.totals` и `account.subaccountsCount`.
+- Архивные карточки продолжают использовать `OverviewAccountCard` и получают пониженную прозрачность через `Opacity(opacity: 0.64)`, что добавляет archived-state без расхождения структуры полей с main-card.
+- Обновлён widget-тест [archived_accounts_page_test.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/test/presentation/profile/page/archived_accounts_page_test.dart): проверяются заполненные данные карточки (`total`, `subaccountsCount`) и наличие opacity.
+- Проверки:
+  - `cd client && flutter analyze` (pass)
+  - `cd client && flutter test test/presentation/profile/page/archived_accounts_page_test.dart` (pass)
