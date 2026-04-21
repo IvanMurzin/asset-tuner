@@ -218,6 +218,39 @@ Errors:
 - `validation` (invalid name/type)
 - `forbidden` with `details.reason = "accounts_limit"` when free-tier cap exceeded
 
+### `POST /contact_developer`
+Creates a support message from the authenticated user.
+
+Request:
+```json
+{
+  "name": "John",
+  "email": "john@example.com",
+  "description": "Message body",
+  "subject": "Optional subject",
+  "meta": {}
+}
+```
+
+Notes:
+- `name` is required (`1..120` chars).
+- `description` is required (`1..5000` chars).
+- `email`, `subject`, and `meta` are optional.
+- If `subject` is omitted, server uses a default subject.
+
+Response:
+```json
+{
+  "id": "uuid",
+  "accepted": true,
+  "created_at": "timestamptz"
+}
+```
+
+Errors:
+- `validation` (missing/invalid fields)
+- `rate_limited` (hourly per-user support message limit exceeded)
+
 ### `DELETE /account`
 Cascades delete: account + subaccounts + balance history.
 

@@ -164,6 +164,15 @@ class _FakeProfileRepository implements IProfileRepository {
     updatedPlan = plan;
     return updatePlanResult;
   }
+
+  @override
+  Future<Result<void>> sendContactDeveloperMessage({
+    required String name,
+    required String email,
+    required String description,
+  }) async {
+    return const Success(null);
+  }
 }
 
 ProfileEntity _profile({required String? baseAssetId, String plan = 'free'}) {

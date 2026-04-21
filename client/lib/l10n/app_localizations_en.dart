@@ -1142,6 +1142,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileThemeDark => 'Dark';
 
   @override
+  String get profileSectionSupport => 'Support';
+
+  @override
+  String get profileContactDeveloperAction => 'Contact developer';
+
+  @override
+  String get profileContactDeveloperTitle => 'Contact developer';
+
+  @override
+  String get profileContactDeveloperDescription =>
+      'Share a bug report or idea. We will get back to you by email.';
+
+  @override
+  String get profileContactDeveloperEmailLabel => 'Your email';
+
+  @override
+  String get profileContactDeveloperMessageLabel => 'Message';
+
+  @override
+  String get profileContactDeveloperMessageHint => 'Describe your issue or suggestion';
+
+  @override
+  String get profileContactDeveloperMessageRequired => 'Enter a message';
+
+  @override
+  String get profileContactDeveloperSubmitCta => 'Send';
+
+  @override
+  String get profileContactDeveloperSuccess => 'Thanks for sharing.';
+
+  @override
   String get profileSectionAccount => 'Account';
 
   @override

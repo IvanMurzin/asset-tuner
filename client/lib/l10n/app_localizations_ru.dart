@@ -1146,6 +1146,37 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileThemeDark => 'Темная';
 
   @override
+  String get profileSectionSupport => 'Поддержка';
+
+  @override
+  String get profileContactDeveloperAction => 'Связаться с разработчиком';
+
+  @override
+  String get profileContactDeveloperTitle => 'Связаться с разработчиком';
+
+  @override
+  String get profileContactDeveloperDescription =>
+      'Опишите баг или идею. Мы ответим на вашу почту.';
+
+  @override
+  String get profileContactDeveloperEmailLabel => 'Ваш email';
+
+  @override
+  String get profileContactDeveloperMessageLabel => 'Сообщение';
+
+  @override
+  String get profileContactDeveloperMessageHint => 'Опишите проблему или предложение';
+
+  @override
+  String get profileContactDeveloperMessageRequired => 'Введите сообщение';
+
+  @override
+  String get profileContactDeveloperSubmitCta => 'Отправить';
+
+  @override
+  String get profileContactDeveloperSuccess => 'Спасибо, что поделились';
+
+  @override
   String get profileSectionAccount => 'Аккаунт';
 
   @override

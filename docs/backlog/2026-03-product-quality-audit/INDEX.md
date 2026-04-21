@@ -57,7 +57,7 @@
 3. [BUG-ANA-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-ANA-003-analytics-refresh-triggers.md) `P1` `Done`
 
 ### SUP
-1. [BUG-SUP-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-SUP-001-contact-developer-screen-and-submit-flow.md) `P1`
+1. [BUG-SUP-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-SUP-001-contact-developer-screen-and-submit-flow.md) `P1` `Done`
 
 ### CONF
 1. [BUG-CONF-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-CONF-001-app-config-auth-flags-and-oauth-placeholders.md) `P0` `Done`

@@ -2277,6 +2277,66 @@ abstract class AppLocalizations {
   /// **'Dark'**
   String get profileThemeDark;
 
+  /// No description provided for @profileSectionSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get profileSectionSupport;
+
+  /// No description provided for @profileContactDeveloperAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact developer'**
+  String get profileContactDeveloperAction;
+
+  /// No description provided for @profileContactDeveloperTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact developer'**
+  String get profileContactDeveloperTitle;
+
+  /// No description provided for @profileContactDeveloperDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a bug report or idea. We will get back to you by email.'**
+  String get profileContactDeveloperDescription;
+
+  /// No description provided for @profileContactDeveloperEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email'**
+  String get profileContactDeveloperEmailLabel;
+
+  /// No description provided for @profileContactDeveloperMessageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get profileContactDeveloperMessageLabel;
+
+  /// No description provided for @profileContactDeveloperMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue or suggestion'**
+  String get profileContactDeveloperMessageHint;
+
+  /// No description provided for @profileContactDeveloperMessageRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a message'**
+  String get profileContactDeveloperMessageRequired;
+
+  /// No description provided for @profileContactDeveloperSubmitCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get profileContactDeveloperSubmitCta;
+
+  /// No description provided for @profileContactDeveloperSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for sharing.'**
+  String get profileContactDeveloperSuccess;
+
   /// No description provided for @profileSectionAccount.
   ///
   /// In en, this message translates to:

@@ -24,6 +24,7 @@ abstract final class AppRoutes {
   static const String baseCurrencySettings = '/profile/base-currency';
   static const String manageSubscription = '/profile/subscription';
   static const String archivedAccounts = '/profile/archived-accounts';
+  static const String contactDeveloper = '/profile/contact-developer';
 
   static const String accountsNewPath = 'accounts/new';
   static const String accountIdPath = 'accounts/:accountId';

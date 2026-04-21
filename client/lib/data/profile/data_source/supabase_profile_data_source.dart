@@ -33,6 +33,23 @@ class SupabaseProfileDataSource {
     return fetchProfile();
   }
 
+  Future<void> sendContactDeveloperMessage({
+    required String name,
+    required String email,
+    required String description,
+  }) async {
+    final normalizedEmail = email.trim();
+    await _edgeFunctions.invokeVoid(
+      SupabaseApiRoutes.contactDeveloper,
+      body: {
+        'name': name.trim(),
+        if (normalizedEmail.isNotEmpty) 'email': normalizedEmail,
+        'description': description.trim(),
+      },
+      method: HttpMethod.post,
+    );
+  }
+
   static final _uuidRegExp = RegExp(
     r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
   );
