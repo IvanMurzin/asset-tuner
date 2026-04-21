@@ -1,11 +1,6 @@
-import 'package:decimal/decimal.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
-import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_balance_input.dart';
@@ -23,6 +18,11 @@ import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_create_cubit.dart';
+import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
+import 'package:decimal/decimal.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class AddSubaccountPage extends StatefulWidget {
   const AddSubaccountPage({super.key, required this.accountId});
@@ -159,13 +159,6 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                       enabled: createState.status != SubaccountCreateStatus.loading,
                       onChanged: (_) => context.read<SubaccountCreateCubit>().clearNameError(),
                     ),
-                    SizedBox(height: spacing.s4),
-                    Text(
-                      _nameHelper(l10n, formContext.copyProfile),
-                      style: context.dsTypography.caption.copyWith(
-                        color: context.dsColors.textSecondary,
-                      ),
-                    ),
                     SizedBox(height: spacing.s12),
                     DSBalanceInput(
                       label: l10n.addBalanceAmountLabel,
@@ -286,15 +279,6 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
       AddSubaccountCopyProfile.walletExchange => l10n.subaccountNameHintWalletExchange,
       AddSubaccountCopyProfile.cash => l10n.subaccountNameHintCash,
       AddSubaccountCopyProfile.other => l10n.subaccountNameHintOther,
-    };
-  }
-
-  String _nameHelper(AppLocalizations l10n, AddSubaccountCopyProfile profile) {
-    return switch (profile) {
-      AddSubaccountCopyProfile.bank => l10n.subaccountNameHelperBank,
-      AddSubaccountCopyProfile.walletExchange => l10n.subaccountNameHelperWalletExchange,
-      AddSubaccountCopyProfile.cash => l10n.subaccountNameHelperCash,
-      AddSubaccountCopyProfile.other => l10n.subaccountNameHelperOther,
     };
   }
 

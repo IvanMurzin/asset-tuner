@@ -18,8 +18,6 @@ void main() {
             pricedTotalLabel: null,
             pricedTotalValue: null,
             ratesText: 'Rates updated at 12:10',
-            contextHint:
-                'Total is based on priced balances and refreshes after you pull to update data.',
           ),
         ),
       ),
@@ -28,9 +26,5 @@ void main() {
     expect(find.text('Total'), findsOneWidget);
     expect(find.text('\$1,240'), findsOneWidget);
     expect(find.text('Rates updated at 12:10'), findsOneWidget);
-    expect(
-      find.text('Total is based on priced balances and refreshes after you pull to update data.'),
-      findsOneWidget,
-    );
   });
 }

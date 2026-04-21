@@ -266,7 +266,7 @@
   "paywallTitle": "Открыть Pro",
   "paywallHeaderTitle": "Открыть Pro",
   "paywallReasonAccounts": "Вы достигли бесплатного лимита: 5 счетов.",
-  "paywallReasonSubaccounts": "Вы достигли бесплатного лимита: 20 счётов.",
+  "paywallReasonSubaccounts": "Вы достигли бесплатного лимита: 15 счётов.",
   "paywallReasonBaseCurrency": "Откройте любую базовую валюту.",
   "paywallEntitlementsError": "Не удалось проверить подписку. Попробуйте снова.",
   "paywallRestore": "Восстановить",

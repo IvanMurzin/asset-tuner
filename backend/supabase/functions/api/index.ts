@@ -445,10 +445,17 @@ async function handleRevenuecatRefresh(userId: string): Promise<Response> {
 
   const payload = (await response.json()) as Record<string, unknown>;
   const subscriber = payload.subscriber as Record<string, unknown> | undefined;
-  const entitlements = (subscriber?.entitlements ?? {}) as Record<string, { expires_date?: string | null }>;
+  const entitlements = (subscriber?.entitlements ?? {}) as Record<
+    string,
+    { expires_date?: string | null } | undefined
+  >;
 
   const now = Date.now();
-  const isPro = Object.values(entitlements).some((entitlement) => {
+  const proEntitlementId = 'pro';
+  const isPro = Object.entries(entitlements).some(([entitlementId, entitlement]) => {
+    if (entitlementId.toLowerCase() !== proEntitlementId) {
+      return false;
+    }
     if (!entitlement) {
       return false;
     }

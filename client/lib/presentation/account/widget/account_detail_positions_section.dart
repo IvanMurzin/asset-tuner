@@ -16,12 +16,14 @@ class AccountDetailPositionsSection extends StatelessWidget {
     required this.baseCurrency,
     required this.onOpenSubaccount,
     required this.onAddSubaccount,
+    this.readOnly = false,
   });
 
   final List<SubaccountViewItem> items;
   final String baseCurrency;
   final Future<void> Function(SubaccountViewItem item) onOpenSubaccount;
   final VoidCallback onAddSubaccount;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -47,19 +49,23 @@ class AccountDetailPositionsSection extends StatelessWidget {
             message: l10n.subaccountEmptyBody,
             icon: Icons.add_circle_outline,
           ),
-          SizedBox(height: spacing.s16),
-          DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
+          if (!readOnly) ...[
+            SizedBox(height: spacing.s16),
+            DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
+          ],
         ] else ...[
           for (var i = 0; i < sortedItems.length; i++) ...[
             _PositionCard(
               item: sortedItems[i],
               baseCurrency: baseCurrency,
-              onTap: () => onOpenSubaccount(sortedItems[i]),
+              onTap: readOnly ? null : () => onOpenSubaccount(sortedItems[i]),
             ),
             if (i != sortedItems.length - 1) const SizedBox(height: 10),
           ],
-          SizedBox(height: spacing.s24),
-          DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
+          if (!readOnly) ...[
+            SizedBox(height: spacing.s24),
+            DSButton(label: l10n.subaccountCreateCta, fullWidth: true, onPressed: onAddSubaccount),
+          ],
         ],
       ],
     );
@@ -85,7 +91,7 @@ class _PositionCard extends StatelessWidget {
 
   final SubaccountViewItem item;
   final String baseCurrency;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

@@ -721,7 +721,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallReasonAccounts => 'Вы достигли бесплатного лимита: 5 счетов.';
 
   @override
-  String get paywallReasonSubaccounts => 'Вы достигли бесплатного лимита: 20 счётов.';
+  String get paywallReasonSubaccounts => 'Вы достигли бесплатного лимита: 15 счётов.';
 
   @override
   String get paywallReasonBaseCurrency => 'Откройте любую базовую валюту.';

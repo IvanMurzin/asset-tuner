@@ -265,6 +265,36 @@ final appRouter = GoRouter(
                       slideTransition(context, state, const ArchivedAccountsPage()),
                 ),
                 GoRoute(
+                  path: 'archived-accounts/:accountId',
+                  pageBuilder: (context, state) {
+                    final accountId = state.pathParameters['accountId']!;
+                    final account = context.read<AccountsCubit>().findById(accountId);
+                    final extra = state.extra is AccountDetailExtra
+                        ? state.extra as AccountDetailExtra
+                        : null;
+                    return slideTransition(
+                      context,
+                      state,
+                      MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (_) =>
+                                getIt<AccountInfoCubit>()
+                                  ..load(accountId: accountId, account: account),
+                          ),
+                          BlocProvider(create: (_) => getIt<AccountArchiveCubit>()),
+                          BlocProvider(create: (_) => getIt<AccountDeleteCubit>()),
+                        ],
+                        child: AccountDetailPage(
+                          accountId: accountId,
+                          initialTitle: extra?.initialTitle,
+                          initialAccountType: extra?.initialAccountType,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                GoRoute(
                   path: 'contact-developer',
                   pageBuilder: (context, state) =>
                       slideTransition(context, state, const ContactDeveloperPage()),

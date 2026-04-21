@@ -1,6 +1,6 @@
 # Asset Tuner — Dependencies
 
-**Last updated:** 2026-02-10
+**Last updated:** 2026-04-21
 
 ## Policy
 - Prefer the existing template stack first (see `client/AGENTS.md`).
@@ -16,11 +16,13 @@
 - `logger`
 - `shared_preferences`
 - `decimal` (high-precision numeric arithmetic for money/crypto)
+- `purchases_flutter`
+- `purchases_ui_flutter`
 
-## Client (accepted decisions; may be added when implemented)
+## Client (accepted decisions)
 - Supabase client: `supabase_flutter` (Auth, DB reads, Edge Function calls)
 - Localization runtime: `flutter_localizations` (+ `intl` for formatting and generated l10n as needed)
-- Payments: TBD (likely `in_app_purchase`; ADR required before adding)
+- Payments: RevenueCat (`purchases_flutter`, `purchases_ui_flutter`) over App Store / Google Play
 - Crash reporting + analytics: **not in MVP** (next iteration)
 
 ## Backend (Supabase)

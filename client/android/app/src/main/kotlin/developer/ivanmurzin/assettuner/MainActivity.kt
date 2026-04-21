@@ -1,4 +1,4 @@
-package com.example.template
+package developer.ivanmurzin.assettuner
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

@@ -55,7 +55,7 @@ void main() {
             ),
           ),
           GoRoute(
-            path: AppRoutes.accountDetail,
+            path: AppRoutes.archivedAccountDetail,
             builder: (context, state) {
               detailExtra = state.extra as AccountDetailExtra?;
               return Scaffold(
