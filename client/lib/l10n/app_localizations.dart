@@ -279,6 +279,24 @@ abstract class AppLocalizations {
   /// **'Already have an account? Sign in'**
   String get switchToSignIn;
 
+  /// No description provided for @signUpLegalPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'By creating an account, you agree to our'**
+  String get signUpLegalPrefix;
+
+  /// No description provided for @signUpLegalTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms'**
+  String get signUpLegalTerms;
+
+  /// No description provided for @signUpLegalPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get signUpLegalPrivacy;
+
   /// No description provided for @validationInvalidEmail.
   ///
   /// In en, this message translates to:
@@ -2384,6 +2402,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Thanks for sharing.'**
   String get profileContactDeveloperSuccess;
+
+  /// No description provided for @profileSectionLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get profileSectionLegal;
+
+  /// No description provided for @profileLegalTermsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get profileLegalTermsOfUse;
+
+  /// No description provided for @profileLegalPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get profileLegalPrivacyPolicy;
 
   /// No description provided for @profileSectionAccount.
   ///

@@ -172,7 +172,7 @@ class _PlanItem extends StatelessWidget {
         if (hasBadge)
           Positioned(
             right: spacing.s12,
-            bottom: -(spacing.s4 + 2),
+            bottom: -(spacing.s12),
             child: Container(
               key: const Key('paywall_plan_badge'),
               padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s4),

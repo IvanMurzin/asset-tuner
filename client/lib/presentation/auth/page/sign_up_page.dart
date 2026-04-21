@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core/utils/external_url_launcher.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
@@ -12,6 +14,7 @@ import 'package:asset_tuner/presentation/auth/bloc/sign_up_cubit.dart';
 import 'package:asset_tuner/presentation/auth/widget/auth_hero.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_confirm_password_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_email_field.dart';
+import 'package:asset_tuner/presentation/auth/widget/sign_up_legal_text.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_password_field.dart';
 
 class SignUpPage extends StatelessWidget {
@@ -111,6 +114,26 @@ class SignUpPage extends StatelessWidget {
                         l10n.switchToSignIn,
                         style: typography.body.copyWith(color: context.dsColors.primary),
                       ),
+                    ),
+                    SizedBox(height: spacing.s12),
+                    SignUpLegalText(
+                      prefix: l10n.signUpLegalPrefix,
+                      termsLabel: l10n.signUpLegalTerms,
+                      privacyLabel: l10n.signUpLegalPrivacy,
+                      onTermsTap: isLoading
+                          ? null
+                          : () => launchExternalUrl(
+                              context,
+                              url: AppConfig.instance.termsOfUseUrl,
+                              errorMessage: l10n.errorGeneric,
+                            ),
+                      onPrivacyTap: isLoading
+                          ? null
+                          : () => launchExternalUrl(
+                              context,
+                              url: AppConfig.instance.privacyPolicyUrl,
+                              errorMessage: l10n.errorGeneric,
+                            ),
                     ),
                   ],
                 ),
