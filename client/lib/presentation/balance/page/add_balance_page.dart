@@ -14,6 +14,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
+import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_balance_cubit.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_info_cubit.dart';
@@ -80,6 +81,7 @@ class _AddBalancePageState extends State<AddBalancePage> {
                 amountAtomic: entry.amountAtomic,
                 amountDecimals: entry.amountDecimals,
               );
+              context.read<AnalyticsCubit>().invalidateCache();
               accountsCubit.refresh(silent: true);
               subaccountInfoCubit.refreshHistory(showLoading: true);
 
@@ -117,22 +119,22 @@ class _AddBalancePageState extends State<AddBalancePage> {
                     children: [
                       Expanded(
                         child: SingleChildScrollView(
-                              child: DSCard(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      l10n.addBalanceHelperSnapshot,
-                                      style: context.dsTypography.body.copyWith(
-                                        color: context.dsColors.textSecondary,
-                                      ),
-                                    ),
-                                    SizedBox(height: spacing.s16),
-                                    DSDatePickerField(
-                                      label: l10n.addBalanceDateLabel,
-                                      value: _date,
-                                      enabled: !isLoading,
-                                      onChanged: (value) => setState(() => _date = value),
+                          child: DSCard(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.addBalanceHelperSnapshot,
+                                  style: context.dsTypography.body.copyWith(
+                                    color: context.dsColors.textSecondary,
+                                  ),
+                                ),
+                                SizedBox(height: spacing.s16),
+                                DSDatePickerField(
+                                  label: l10n.addBalanceDateLabel,
+                                  value: _date,
+                                  enabled: !isLoading,
+                                  onChanged: (value) => setState(() => _date = value),
                                 ),
                                 SizedBox(height: spacing.s16),
                                 DSBalanceInput(

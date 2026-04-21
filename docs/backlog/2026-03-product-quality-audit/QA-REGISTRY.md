@@ -382,3 +382,18 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Удалён nested scroll на detail-экране; скролл и refresh перенесены на единый root list.
   - Пагинация history (`onLoadMore`) сохранена без изменения контракта cubit.
+
+## BUG-ANA-003 — Done — 2026-04-21 00:00
+
+- **Issue:** Уточнить и стабилизировать refresh-триггеры аналитики
+- **Commit:** pending
+- **Auto checks:** `flutter analyze` — No issues found; `flutter test test/presentation/analytics/bloc/analytics_cubit_test.dart` — 2/2 passed
+- **Final state:** Done
+
+### Manual QA
+- [ ] Установить баланс субсчёта → перейти на экран аналитики → убедиться, что данные обновились
+- [ ] Создать субсчёт → перейти на аналитику → убедиться, что данные обновились
+- [ ] Удалить субсчёт → перейти на аналитику → убедиться, что данные обновились
+- [ ] Переименовать субсчёт → перейти на аналитику → убедиться, что данные обновились
+- [ ] Переименовать счёт → перейти на аналитику → убедиться, что данные обновились
+- [ ] Открыть аналитику без предшествующих изменений → не должно быть лишнего network-запроса
