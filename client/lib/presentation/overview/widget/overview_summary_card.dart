@@ -9,7 +9,6 @@ class OverviewSummaryCard extends StatelessWidget {
     required this.pricedTotalLabel,
     required this.pricedTotalValue,
     required this.ratesText,
-    this.contextHint,
   });
 
   final String totalLabel;
@@ -17,7 +16,6 @@ class OverviewSummaryCard extends StatelessWidget {
   final String? pricedTotalLabel;
   final String? pricedTotalValue;
   final String ratesText;
-  final String? contextHint;
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +49,6 @@ class OverviewSummaryCard extends StatelessWidget {
           ],
           SizedBox(height: spacing.s12),
           Text(ratesText, style: typography.caption.copyWith(color: colors.textSecondary)),
-          if (contextHint != null) ...[
-            SizedBox(height: spacing.s8),
-            Text(contextHint!, style: typography.caption.copyWith(color: colors.textSecondary)),
-          ],
         ],
       ),
     );

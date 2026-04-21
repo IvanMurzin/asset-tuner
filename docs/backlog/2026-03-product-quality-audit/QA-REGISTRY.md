@@ -27,7 +27,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 
 ## Entries
 
-### 2026-04-21 18:49 +04 - BUG-SUP-001 - Done
+### 2026-04-21 18:49 +04 - BUG-SUP-001 - Done - OK
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/core/routing/app_router.dart`
@@ -62,7 +62,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Payload клиента синхронизирован с backend validation (`name`, `email?`, `description`); контракт `POST /contact_developer` добавлен в `docs/contracts/api_surface.md`.
 
-### 2026-04-21 18:31 +04 - BUG-ANA-002 - Done
+### 2026-04-21 18:31 +04 - BUG-ANA-002 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/presentation/analytics/page/analytics_page.dart`
@@ -85,7 +85,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Time-series построен из доступных backend данных (`breakdown + updates`) без изменения API-контракта.
 
-### 2026-04-21 18:23 +04 - BUG-ANA-001 - Done
+### 2026-04-21 18:23 +04 - BUG-ANA-001 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `backend/supabase/functions/api/index.ts`
@@ -116,7 +116,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Клиентский fan-out удалён из `AnalyticsCubit`; агрегация перенесена в backend RPC `api_analytics_summary`.
 
-### 2026-04-21 18:11 +04 - IMP-PRO-006 - Done
+### 2026-04-21 18:11 +04 - IMP-PRO-006 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/presentation/overview/page/overview_page.dart`
@@ -143,7 +143,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Добавлены только high-impact подсказки; поэлементные tooltips внутри breakdown/updates не добавлялись, чтобы избежать визуальной перегрузки.
 
-### 2026-04-21 18:00 +04 - BUG-PRO-005 - Done
+### 2026-04-21 18:00 +04 - BUG-PRO-005 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/presentation/paywall/page/paywall_page.dart`
@@ -163,7 +163,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Изменения ограничены `presentation/paywall` и widget-тестами; purchase/restore логика не изменялась.
 
-### 2026-04-21 17:53 +04 - BUG-PRO-004 - Done
+### 2026-04-21 17:53 +04 - BUG-PRO-004 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/l10n/app_en.arb`
@@ -186,7 +186,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Изменения ограничены archived-экраном и l10n; бизнес-логика расчета totals не затронута.
 
-### 2026-04-21 17:19 +04 - BUG-PRO-002 - Done
+### 2026-04-21 17:19 +04 - BUG-PRO-002 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/presentation/profile/page/archived_accounts_page.dart`
@@ -204,7 +204,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Archived-карточки используют те же данные `totals/subaccountsCount`, но остаются визуально ослабленными через `Opacity(0.64)`.
 
-### 2026-04-17 19:46 +04 - BUG-PRO-001 - Done
+### 2026-04-17 19:46 +04 - BUG-PRO-001 - Done - ok 
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/presentation/profile/page/profile_page.dart`
@@ -225,7 +225,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Удалён nested route `/profile/account`; account actions теперь встроены в `ProfilePage`.
 
-### 2026-04-17 19:35 +04 - BUG-PRO-003 - Done
+### 2026-04-17 19:35 +04 - BUG-PRO-003 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/presentation/profile/page/archived_accounts_page.dart`
@@ -243,7 +243,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Изменение локализовано в archived-flow (замена `go` на `push`), остальные точки входа в `AccountDetailPage` не затронуты.
 
-### 2026-04-17 19:28 +04 - BUG-SUB-007 - Done
+### 2026-04-17 19:28 +04 - BUG-SUB-007 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/presentation/balance/widget/subaccount_history_section.dart`
@@ -266,7 +266,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Ключи `positionHistoryTitle` и `positionHistoryDescription` обновлены/добавлены без переименования существующих l10n-идентификаторов.
 
-### 2026-04-17 19:20 +04 - BUG-SUB-005 - Done
+### 2026-04-17 19:20 +04 - BUG-SUB-005 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/presentation/account/widget/account_detail_positions_section.dart`
@@ -289,7 +289,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Перегенерация `app_localizations_*` синхронизировала существующие ARB-правки терминологии по счетам, добавленные в предыдущих итерациях.
 
-### 2026-04-17 19:12 +04 - BUG-SUB-008 - Done
+### 2026-04-17 19:12 +04 - BUG-SUB-008 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/presentation/balance/page/add_balance_page.dart`
@@ -314,7 +314,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Route-имя `update-balance` не менялось (технический identifier сохранен).
 
-### 2026-04-17 19:06 +04 - IMP-SUB-004 - Done
+### 2026-04-17 19:06 +04 - IMP-SUB-004 - Done - ok
 - Commit: `HEAD`
 - Changed files:
   - `client/lib/l10n/app_ru.arb`
@@ -331,7 +331,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Изменения ограничены ARB copy и backlog-документацией; ключи локализации не переименовывались.
 
-### 2026-04-17 19:01 +04 - IMP-SUB-003 - Done
+### 2026-04-17 19:01 +04 - IMP-SUB-003 - Done - ok
 - Commit: `199f508`
 - Changed files:
   - `client/lib/presentation/account/page/add_subaccount_context.dart`
@@ -356,7 +356,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Поведение prefill amount не изменено: поле суммы стартует пустым, значение `0` остаётся валидным для сабмита.
 
-### 2026-04-17 17:58 +04 - BUG-SUB-010 - Done
+### 2026-04-17 17:58 +04 - BUG-SUB-010 - Done - ok
 - Commit: `e11eaab`
 - Changed files:
   - `backend/supabase/migrations/20260417173000_api_set_subaccount_balance_reject_unchanged.sql`
@@ -384,7 +384,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Скрипт backend quality-check при вызове с `--help` фактически выполнил deploy/migration на remote Supabase проект.
 
-### 2026-04-17 17:02 +04 - BUG-SUB-009 - Done
+### 2026-04-17 17:02 +04 - BUG-SUB-009 - Done - ok
 - Commit: `748ee1c`
 - Changed files:
   - `client/lib/presentation/balance/page/add_balance_page.dart`
@@ -400,7 +400,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
 - Notes:
   - Значение amount берётся из актуального текущего баланса (`entries.first.snapshotAmount` или fallback на `subaccount.currentAmount`).
 
-### 2026-04-17 16:41 +04 - BUG-SUB-006 - Done
+### 2026-04-17 16:41 +04 - BUG-SUB-006 - Done - ok
 - Commit: `ae20815`
 - Changed files:
   - `client/lib/presentation/balance/page/subaccount_detail_page.dart`
@@ -418,7 +418,7 @@ For blocked tasks, replace manual QA checklist with unblock steps:
   - Удалён nested scroll на detail-экране; скролл и refresh перенесены на единый root list.
   - Пагинация history (`onLoadMore`) сохранена без изменения контракта cubit.
 
-## BUG-ANA-003 — Done — 2026-04-21 00:00
+## BUG-ANA-003 — Done — 2026-04-21 00:00 - ok
 
 - **Issue:** Уточнить и стабилизировать refresh-триггеры аналитики
 - **Commit:** pending

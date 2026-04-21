@@ -12,6 +12,7 @@ class DSHistoryEntryCard extends StatelessWidget {
     this.trailingTitle,
     this.trailingPrimaryText,
     this.trailingSecondaryText,
+    this.showDeltaOnTrailing = false,
   });
 
   final String dateText;
@@ -22,6 +23,7 @@ class DSHistoryEntryCard extends StatelessWidget {
   final String? trailingTitle;
   final String? trailingPrimaryText;
   final String? trailingSecondaryText;
+  final bool showDeltaOnTrailing;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class DSHistoryEntryCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(spacing.s12),
+      padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s8),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(context.dsRadius.r12),
@@ -51,35 +53,49 @@ class DSHistoryEntryCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (subtitleText != null && subtitleText!.isNotEmpty) ...[
-                  SizedBox(height: spacing.s8),
+                  SizedBox(height: spacing.s4),
                   Text(
                     subtitleText!,
                     style: typography.caption.copyWith(color: colors.textSecondary),
                   ),
                 ],
-                SizedBox(height: spacing.s4),
-                Text(
-                  deltaText,
-                  style: typography.body.copyWith(color: deltaColor, fontWeight: FontWeight.w700),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  baseLineText,
-                  style: typography.caption.copyWith(color: deltaColor),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                if (!showDeltaOnTrailing) ...[
+                  SizedBox(height: spacing.s4),
+                  Text(
+                    deltaText,
+                    style: typography.body.copyWith(color: deltaColor, fontWeight: FontWeight.w700),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    baseLineText,
+                    style: typography.caption.copyWith(color: deltaColor),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ],
             ),
           ),
-          if (trailingTitle != null || trailingPrimaryText != null) ...[
+          if (showDeltaOnTrailing || trailingTitle != null || trailingPrimaryText != null) ...[
             SizedBox(width: spacing.s12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                if (trailingTitle != null) ...[
+                if (showDeltaOnTrailing) ...[
+                  Text(
+                    deltaText,
+                    textAlign: TextAlign.right,
+                    style: typography.body.copyWith(color: deltaColor, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    baseLineText,
+                    textAlign: TextAlign.right,
+                    style: typography.caption.copyWith(color: deltaColor),
+                  ),
+                ] else if (trailingTitle != null) ...[
                   Text(
                     trailingTitle!,
                     style: typography.caption.copyWith(color: colors.textSecondary),

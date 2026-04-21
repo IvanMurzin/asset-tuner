@@ -13,6 +13,7 @@ import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart'
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
+import 'package:asset_tuner/presentation/settings/widget/base_currency_how_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -144,6 +145,8 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                                 },
                               ),
                             ),
+                            SizedBox(height: spacing.s24),
+                            const BaseCurrencyHowSection(),
                             SizedBox(height: spacing.s24),
                             if (!(profile.entitlements.anyBaseCurrency) &&
                                 profile.plan != 'pro') ...[

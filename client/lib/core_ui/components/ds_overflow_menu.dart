@@ -16,11 +16,10 @@ class DSOverflowMenuItem {
 }
 
 class DSOverflowMenu extends StatelessWidget {
-  const DSOverflowMenu({super.key, required this.items, this.enabled = true, this.tooltip});
+  const DSOverflowMenu({super.key, required this.items, this.enabled = true});
 
   final List<DSOverflowMenuItem> items;
   final bool enabled;
-  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +28,6 @@ class DSOverflowMenu extends StatelessWidget {
 
     return PopupMenuButton<int>(
       enabled: enabled,
-      tooltip: tooltip,
       icon: Icon(Icons.more_vert, color: enabled ? colors.textTertiary : colors.textTertiary),
       onSelected: (index) => items[index].onTap(),
       itemBuilder: (context) {
