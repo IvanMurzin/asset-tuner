@@ -13,6 +13,9 @@ class AccountDetailActionsRow extends StatelessWidget {
     required this.archiveLabel,
     required this.unarchiveLabel,
     required this.deleteLabel,
+    this.showEdit = true,
+    this.showDelete = true,
+    this.forceUnarchiveAction = false,
   });
 
   final bool isEnabled;
@@ -24,14 +27,17 @@ class AccountDetailActionsRow extends StatelessWidget {
   final String archiveLabel;
   final String unarchiveLabel;
   final String deleteLabel;
+  final bool showEdit;
+  final bool showDelete;
+  final bool forceUnarchiveAction;
 
   @override
   Widget build(BuildContext context) {
     final spacing = context.dsSpacing;
+    final items = <Widget>[];
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+    if (showEdit) {
+      items.add(
         Expanded(
           child: _ActionItem(
             icon: Icons.edit_outlined,
@@ -39,15 +45,30 @@ class AccountDetailActionsRow extends StatelessWidget {
             onTap: isEnabled ? onEdit : null,
           ),
         ),
-        SizedBox(width: spacing.s8),
-        Expanded(
-          child: _ActionItem(
-            icon: isArchived ? Icons.unarchive_outlined : Icons.archive_outlined,
-            label: isArchived ? unarchiveLabel : archiveLabel,
-            onTap: isEnabled ? onArchiveToggle : null,
-          ),
+      );
+    }
+
+    if (items.isNotEmpty) {
+      items.add(SizedBox(width: spacing.s8));
+    }
+
+    items.add(
+      Expanded(
+        child: _ActionItem(
+          icon: forceUnarchiveAction
+              ? Icons.unarchive_outlined
+              : (isArchived ? Icons.unarchive_outlined : Icons.archive_outlined),
+          label: forceUnarchiveAction
+              ? unarchiveLabel
+              : (isArchived ? unarchiveLabel : archiveLabel),
+          onTap: isEnabled ? onArchiveToggle : null,
         ),
-        SizedBox(width: spacing.s8),
+      ),
+    );
+
+    if (showDelete) {
+      items.add(SizedBox(width: spacing.s8));
+      items.add(
         Expanded(
           child: _ActionItem(
             icon: Icons.delete_outline,
@@ -56,8 +77,10 @@ class AccountDetailActionsRow extends StatelessWidget {
             isDestructive: true,
           ),
         ),
-      ],
-    );
+      );
+    }
+
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: items);
   }
 }
 

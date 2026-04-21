@@ -266,7 +266,7 @@
   "paywallTitle": "Unlock Pro",
   "paywallHeaderTitle": "Unlock Pro",
   "paywallReasonAccounts": "You’ve reached the free limit of 5 accounts.",
-  "paywallReasonSubaccounts": "You’ve reached the free limit of 20 subaccounts.",
+  "paywallReasonSubaccounts": "You’ve reached the free limit of 15 subaccounts.",
   "paywallReasonBaseCurrency": "Unlock any base currency.",
   "paywallEntitlementsError": "Couldn't verify subscription; try again.",
   "paywallRestore": "Restore",

@@ -195,20 +195,20 @@ class _Body extends StatelessWidget {
           style: context.dsTypography.caption.copyWith(color: context.dsColors.textSecondary),
         ),
         SizedBox(height: spacing.s12),
-        if (totalTrendPoints.length >= 2)
-          Padding(
-            padding: EdgeInsets.only(bottom: spacing.s12),
-            child: AnalyticsTotalTrendChart(points: totalTrendPoints, currency: currency),
-          )
-        else
-          Padding(
-            padding: EdgeInsets.only(bottom: spacing.s12),
-            child: _AnalyticsSnapshotsEmptyCard(
-              title: l10n.analyticsEmptyTitle,
-              message: l10n.analyticsEmptyBody,
-            ),
-          ),
-        ...state.updates.take(40).map((item) {
+        // if (totalTrendPoints.length >= 2)
+        // Padding(
+        // padding: EdgeInsets.only(bottom: spacing.s12),
+        // child: AnalyticsTotalTrendChart(points: totalTrendPoints, currency: currency),
+        // )
+        // else
+        // Padding(
+        // padding: EdgeInsets.only(bottom: spacing.s12),
+        // child: _AnalyticsSnapshotsEmptyCard(
+        // title: l10n.analyticsEmptyTitle,
+        // message: l10n.analyticsEmptyBody,
+        // ),
+        // ),
+        ...state.updates.map((item) {
           final diffStr = context.dsFormatters.formatDecimalFromDecimal(
             item.diffAmount,
             maximumFractionDigits: 8,
@@ -234,35 +234,35 @@ class _Body extends StatelessWidget {
   }
 }
 
-class _AnalyticsSnapshotsEmptyCard extends StatelessWidget {
-  const _AnalyticsSnapshotsEmptyCard({required this.title, required this.message});
+// class _AnalyticsSnapshotsEmptyCard extends StatelessWidget {
+//   const _AnalyticsSnapshotsEmptyCard({required this.title, required this.message});
 
-  final String title;
-  final String message;
+//   final String title;
+//   final String message;
 
-  @override
-  Widget build(BuildContext context) {
-    final spacing = context.dsSpacing;
-    final typography = context.dsTypography;
-    final colors = context.dsColors;
+//   @override
+//   Widget build(BuildContext context) {
+//     final spacing = context.dsSpacing;
+//     final typography = context.dsTypography;
+//     final colors = context.dsColors;
 
-    return DSCard(
-      child: Padding(
-        padding: EdgeInsets.all(spacing.s16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(Icons.show_chart_rounded, size: spacing.s24, color: colors.textSecondary),
-            SizedBox(height: spacing.s8),
-            Text(title, style: typography.h3.copyWith(color: colors.textPrimary)),
-            SizedBox(height: spacing.s4),
-            Text(message, style: typography.body.copyWith(color: colors.textSecondary)),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//     return DSCard(
+//       child: Padding(
+//         padding: EdgeInsets.all(spacing.s16),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Icon(Icons.show_chart_rounded, size: spacing.s24, color: colors.textSecondary),
+//             SizedBox(height: spacing.s8),
+//             Text(title, style: typography.h3.copyWith(color: colors.textPrimary)),
+//             SizedBox(height: spacing.s4),
+//             Text(message, style: typography.body.copyWith(color: colors.textSecondary)),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class _BreakdownCard extends StatelessWidget {
   const _BreakdownCard({

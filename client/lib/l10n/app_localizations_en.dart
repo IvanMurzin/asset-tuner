@@ -716,7 +716,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallReasonAccounts => 'You’ve reached the free limit of 5 accounts.';
 
   @override
-  String get paywallReasonSubaccounts => 'You’ve reached the free limit of 20 subaccounts.';
+  String get paywallReasonSubaccounts => 'You’ve reached the free limit of 15 subaccounts.';
 
   @override
   String get paywallReasonBaseCurrency => 'Unlock any base currency.';

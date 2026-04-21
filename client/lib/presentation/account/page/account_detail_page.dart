@@ -80,7 +80,11 @@ class AccountDetailPage extends StatelessWidget {
             if (!context.mounted) {
               return;
             }
+            final shouldPopAfterUnarchive = !state.account!.archived;
             archiveCubit.reset();
+            if (shouldPopAfterUnarchive && GoRouter.of(context).canPop()) {
+              context.pop(true);
+            }
           },
         ),
         BlocListener<AccountDeleteCubit, AccountDeleteState>(
@@ -237,23 +241,27 @@ class AccountDetailPage extends StatelessWidget {
                             archiveLabel: l10n.accountsArchive,
                             unarchiveLabel: l10n.accountsUnarchive,
                             deleteLabel: l10n.accountsDelete,
+                            showEdit: !account.archived,
+                            showDelete: !account.archived,
+                            forceUnarchiveAction: account.archived,
                             onEdit: () async {
                               await context.push<String>(
                                 AppRoutes.accountEdit.replaceFirst(':accountId', account.id),
                               );
                             },
                             onArchiveToggle: () async {
+                              final shouldArchive = !account.archived;
                               final confirmed = await _confirmArchive(
                                 context,
                                 l10n,
-                                archive: !account.archived,
+                                archive: shouldArchive,
                               );
                               if (!confirmed || !context.mounted) {
                                 return;
                               }
                               await context.read<AccountArchiveCubit>().submit(
                                 accountId: account.id,
-                                archived: !account.archived,
+                                archived: shouldArchive,
                               );
                             },
                             onDelete: () async {
@@ -271,6 +279,7 @@ class AccountDetailPage extends StatelessWidget {
                             AccountDetailPositionsSection(
                               items: items,
                               baseCurrency: baseCurrency,
+                              readOnly: account.archived,
                               onAddSubaccount: () async {
                                 await context.push<bool>(
                                   AppRoutes.accountAddSubaccount.replaceFirst(

@@ -1464,7 +1464,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallReasonSubaccounts.
   ///
   /// In en, this message translates to:
-  /// **'You’ve reached the free limit of 20 subaccounts.'**
+  /// **'You’ve reached the free limit of 15 subaccounts.'**
   String get paywallReasonSubaccounts;
 
   /// No description provided for @paywallReasonBaseCurrency.

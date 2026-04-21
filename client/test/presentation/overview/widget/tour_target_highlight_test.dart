@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   const overlayKey = ValueKey<String>('tour_target_highlight_overlay');
 
-  Widget _testApp({required Widget child}) {
+  Widget testApp({required Widget child}) {
     return MaterialApp(
       theme: lightTheme,
       home: Scaffold(body: Center(child: child)),
@@ -17,7 +17,7 @@ void main() {
     var isActive = false;
 
     await tester.pumpWidget(
-      _testApp(
+      testApp(
         child: StatefulBuilder(
           builder: (context, setState) {
             return Column(
@@ -56,7 +56,7 @@ void main() {
     var taps = 0;
 
     await tester.pumpWidget(
-      _testApp(
+      testApp(
         child: TourTargetHighlight(
           isActive: true,
           child: GestureDetector(
@@ -78,7 +78,7 @@ void main() {
     var isActive = false;
 
     await tester.pumpWidget(
-      _testApp(
+      testApp(
         child: StatefulBuilder(
           builder: (context, setState) {
             return Column(
