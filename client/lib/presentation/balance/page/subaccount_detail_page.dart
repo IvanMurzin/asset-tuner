@@ -6,6 +6,7 @@ import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/utils/decimal_math.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
+import 'package:asset_tuner/core_ui/components/ds_button.dart';
 import 'package:asset_tuner/core_ui/components/ds_dialog.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
@@ -271,7 +272,7 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
                                 }
                               },
                               onRename: () async {
-                                final name = await _showRenameDialog(
+                                final name = await _showRenameBottomSheet(
                                   context,
                                   initial: subaccount.name,
                                 );
@@ -360,11 +361,13 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
     return result ?? false;
   }
 
-  Future<String?> _showRenameDialog(BuildContext context, {required String initial}) async {
+  Future<String?> _showRenameBottomSheet(BuildContext context, {required String initial}) async {
     final l10n = AppLocalizations.of(context)!;
-    final value = await showDialog<String?>(
+    final value = await showModalBottomSheet<String?>(
       context: context,
-      builder: (_) => _RenameSubaccountDialog(l10n: l10n, initial: initial),
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => _RenameSubaccountBottomSheet(l10n: l10n, initial: initial),
     );
     if (value == null || value.trim().isEmpty) {
       return null;
@@ -373,17 +376,17 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
   }
 }
 
-class _RenameSubaccountDialog extends StatefulWidget {
-  const _RenameSubaccountDialog({required this.l10n, required this.initial});
+class _RenameSubaccountBottomSheet extends StatefulWidget {
+  const _RenameSubaccountBottomSheet({required this.l10n, required this.initial});
 
   final AppLocalizations l10n;
   final String initial;
 
   @override
-  State<_RenameSubaccountDialog> createState() => _RenameSubaccountDialogState();
+  State<_RenameSubaccountBottomSheet> createState() => _RenameSubaccountBottomSheetState();
 }
 
-class _RenameSubaccountDialogState extends State<_RenameSubaccountDialog> {
+class _RenameSubaccountBottomSheetState extends State<_RenameSubaccountBottomSheet> {
   late final TextEditingController _controller;
 
   @override
@@ -400,13 +403,45 @@ class _RenameSubaccountDialogState extends State<_RenameSubaccountDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return DSDialog(
-      title: widget.l10n.subaccountRenameCta,
-      content: DSTextField(label: widget.l10n.accountsNameLabel, controller: _controller),
-      primaryLabel: widget.l10n.save,
-      secondaryLabel: widget.l10n.cancel,
-      onSecondary: () => Navigator.of(context).pop(),
-      onPrimary: () => Navigator.of(context).pop(_controller.text.trim()),
+    final spacing = context.dsSpacing;
+    final typography = context.dsTypography;
+    final insets = MediaQuery.viewInsetsOf(context);
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        spacing.s16,
+        spacing.s16,
+        spacing.s16,
+        spacing.s16 + insets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(widget.l10n.subaccountRenameCta, style: typography.h3),
+          SizedBox(height: spacing.s12),
+          DSTextField(label: widget.l10n.accountsNameLabel, controller: _controller),
+          SizedBox(height: spacing.s16),
+          Row(
+            children: [
+              Expanded(
+                child: DSButton(
+                  label: widget.l10n.cancel,
+                  variant: DSButtonVariant.secondary,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+              SizedBox(width: spacing.s8),
+              Expanded(
+                child: DSButton(
+                  label: widget.l10n.save,
+                  onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

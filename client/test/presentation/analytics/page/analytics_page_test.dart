@@ -88,6 +88,55 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets('hides pie labels for slices under six percent', (tester) async {
+      final tinySliceCubit = _TestAnalyticsCubit(
+        AnalyticsState(
+          status: AnalyticsStatus.ready,
+          baseCurrency: 'USD',
+          breakdown: [
+            AnalyticsBreakdownItem(
+              assetCode: 'BTC',
+              value: Decimal.parse('95'),
+              percent: Decimal.parse('95'),
+              originalAmount: Decimal.parse('0.2'),
+            ),
+            AnalyticsBreakdownItem(
+              assetCode: 'DOGE',
+              value: Decimal.parse('5'),
+              percent: Decimal.parse('5'),
+              originalAmount: Decimal.parse('100'),
+            ),
+          ],
+          updates: [
+            AnalyticsUpdateItem(
+              accountName: 'Main wallet',
+              subaccountName: 'BTC',
+              assetCode: 'BTC',
+              diffAmount: Decimal.parse('0.01'),
+              diffBaseAmount: Decimal.fromInt(10),
+              entryDate: DateTime(2026, 4, 20, 12, 0),
+            ),
+            AnalyticsUpdateItem(
+              accountName: 'Main wallet',
+              subaccountName: 'DOGE',
+              assetCode: 'DOGE',
+              diffAmount: Decimal.parse('0.01'),
+              diffBaseAmount: Decimal.fromInt(10),
+              entryDate: DateTime(2026, 4, 18, 9, 0),
+            ),
+          ],
+        ),
+      );
+      addTearDown(() => tinySliceCubit.close());
+
+      await _pumpPage(tester, analyticsCubit: tinySliceCubit);
+
+      final pieChart = tester.widget<PieChart>(find.byType(PieChart).first);
+      expect(pieChart.data.sections, hasLength(2));
+      expect(pieChart.data.sections[0].showTitle, isTrue);
+      expect(pieChart.data.sections[1].showTitle, isFalse);
+    });
   });
 }
 

@@ -32,6 +32,7 @@ class PaywallPlanToggle extends StatelessWidget {
     return Column(
       children: [
         _PlanItem(
+          itemKey: const Key('paywall_plan_item_monthly'),
           label: monthlyLabel,
           price: monthlyPrice,
           selected: selectedOption == PaywallPlanOption.monthly,
@@ -40,6 +41,7 @@ class PaywallPlanToggle extends StatelessWidget {
         ),
         SizedBox(height: spacing.s8),
         _PlanItem(
+          itemKey: const Key('paywall_plan_item_annual'),
           label: yearlyLabel,
           badgeText: annualBadgeText,
           price: yearlyPrice,
@@ -91,6 +93,7 @@ class _SelectionDot extends StatelessWidget {
 
 class _PlanItem extends StatelessWidget {
   const _PlanItem({
+    this.itemKey,
     required this.label,
     this.badgeText,
     required this.price,
@@ -99,6 +102,7 @@ class _PlanItem extends StatelessWidget {
     required this.onTap,
   });
 
+  final Key? itemKey;
   final String label;
   final String? badgeText;
   final String price;
@@ -114,35 +118,36 @@ class _PlanItem extends StatelessWidget {
     final typography = context.dsTypography;
     final hasBadge = badgeText != null && badgeText!.isNotEmpty;
 
-    final content = AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOutCubic,
-      padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
-      decoration: BoxDecoration(
-        color: selected ? colors.surface : colors.surfaceAlt.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(radius.r12),
-        border: Border.all(
-          color: selected ? colors.primary.withValues(alpha: 0.75) : colors.border,
-        ),
-        boxShadow: selected
-            ? [
-                BoxShadow(
-                  color: colors.neutral950.withValues(alpha: 0.08),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ]
-            : const [],
-      ),
-      child: Row(
-        children: [
-          _SelectionDot(selected: selected, enabled: enabled),
-          SizedBox(width: spacing.s12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+    final content = Stack(
+      key: itemKey,
+      clipBehavior: Clip.none,
+      children: [
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: EdgeInsets.symmetric(horizontal: spacing.s12, vertical: spacing.s12),
+          decoration: BoxDecoration(
+            color: selected ? colors.surface : colors.surfaceAlt.withValues(alpha: 0.55),
+            borderRadius: BorderRadius.circular(radius.r12),
+            border: Border.all(
+              color: selected ? colors.primary.withValues(alpha: 0.75) : colors.border,
+            ),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: colors.neutral950.withValues(alpha: 0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                : const [],
+          ),
+          child: Row(
+            children: [
+              _SelectionDot(selected: selected, enabled: enabled),
+              SizedBox(width: spacing.s12),
+              Expanded(
+                child: Text(
                   label,
                   style: typography.body.copyWith(
                     color: enabled
@@ -151,37 +156,40 @@ class _PlanItem extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                if (hasBadge) ...[
-                  SizedBox(height: spacing.s4),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s4),
-                    decoration: BoxDecoration(
-                      color: colors.primary,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      badgeText!,
-                      style: typography.caption.copyWith(
-                        color: colors.onPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
+              ),
+              SizedBox(width: spacing.s12),
+              Text(
+                price,
+                textAlign: TextAlign.right,
+                style: typography.body.copyWith(
+                  color: enabled ? colors.textPrimary : colors.textTertiary.withValues(alpha: 0.7),
+                  fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (hasBadge)
+          Positioned(
+            right: spacing.s12,
+            bottom: -(spacing.s4 + 2),
+            child: Container(
+              key: const Key('paywall_plan_badge'),
+              padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s4),
+              decoration: BoxDecoration(
+                color: colors.primary,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                badgeText!,
+                style: typography.caption.copyWith(
+                  color: colors.onPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ),
-          SizedBox(width: spacing.s12),
-          Text(
-            price,
-            textAlign: TextAlign.right,
-            style: typography.body.copyWith(
-              color: enabled ? colors.textPrimary : colors.textTertiary.withValues(alpha: 0.7),
-              fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
+      ],
     );
 
     if (!enabled) {

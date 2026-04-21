@@ -163,7 +163,7 @@ void main() {
 
       expect(find.text('Your balance history'), findsOneWidget);
       expect(
-        find.text('See how this subaccount balance changed with each snapshot update.'),
+        find.text('See how this subaccount balance changed with each update.'),
         findsOneWidget,
       );
 
@@ -181,9 +181,34 @@ void main() {
 
       expect(find.text('История баланса счёта'), findsOneWidget);
       expect(
-        find.text('Показывает, как баланс этого счёта менялся после каждого обновления снимка.'),
+        find.text('Показывает, как баланс этого счёта менялся после каждого обновления.'),
         findsOneWidget,
       );
+    });
+
+    testWidgets('rename action opens bottom sheet and submits new name', (tester) async {
+      await _pumpPage(
+        tester,
+        subaccountInfoCubit: subaccountInfoCubit,
+        accountInfoCubit: accountInfoCubit,
+        accountsCubit: accountsCubit,
+        profileCubit: profileCubit,
+        assetsCubit: assetsCubit,
+        updateCubit: updateCubit,
+        deleteCubit: deleteCubit,
+      );
+
+      await tester.tap(find.text('Rename'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Save'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'Emergency');
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      expect(updateCubit.submitCalls, 1);
+      expect(updateCubit.submittedSubaccountId, 'subaccount-1');
+      expect(updateCubit.submittedName, 'Emergency');
     });
   });
 }
@@ -382,8 +407,16 @@ class _TestSubaccountUpdateCubit extends Cubit<SubaccountUpdateState>
     implements SubaccountUpdateCubit {
   _TestSubaccountUpdateCubit() : super(const SubaccountUpdateState());
 
+  int submitCalls = 0;
+  String? submittedSubaccountId;
+  String? submittedName;
+
   @override
-  Future<void> submit({required String subaccountId, required String name}) async {}
+  Future<void> submit({required String subaccountId, required String name}) async {
+    submitCalls += 1;
+    submittedSubaccountId = subaccountId;
+    submittedName = name;
+  }
 
   @override
   void reset() {}

@@ -76,7 +76,7 @@ void main() {
       expect(find.text('Delete account'), findsOneWidget);
     });
 
-    testWidgets('sign out action signs out and navigates to sign in', (tester) async {
+    testWidgets('sign out action asks confirmation before signing out', (tester) async {
       await _pumpPage(
         tester,
         sessionCubit: sessionCubit,
@@ -94,6 +94,19 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Sign out'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sign out?'), findsOneWidget);
+      expect(find.text("You'll need to sign in again to access your account."), findsOneWidget);
+      expect(sessionCubit.signOutCalls, 0);
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(sessionCubit.signOutCalls, 0);
+
+      await tester.tap(find.text('Sign out'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Sign out').last);
       await tester.pumpAndSettle();
 
       expect(sessionCubit.signOutCalls, 1);

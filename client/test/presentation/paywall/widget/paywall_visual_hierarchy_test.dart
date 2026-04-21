@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Paywall visual hierarchy', () {
-    testWidgets('shows most popular badge on annual plan option', (tester) async {
+    testWidgets('shows most popular badge on annual plan option with bottom-right overlap', (
+      tester,
+    ) async {
       await _pumpWidget(
         tester,
         PaywallPlanToggle(
@@ -25,6 +27,13 @@ void main() {
       );
 
       expect(find.text('Most Popular'), findsOneWidget);
+      final annualRect = tester.getRect(find.byKey(const Key('paywall_plan_item_annual')));
+      final badgeRect = tester.getRect(find.byKey(const Key('paywall_plan_badge')));
+
+      expect(badgeRect.center.dx, greaterThan(annualRect.center.dx));
+      expect((annualRect.right - badgeRect.right).abs(), lessThanOrEqualTo(20));
+      expect(badgeRect.top, lessThan(annualRect.bottom));
+      expect(badgeRect.bottom, greaterThan(annualRect.bottom));
     });
 
     testWidgets('does not render annual badge when badge text is not provided', (tester) async {

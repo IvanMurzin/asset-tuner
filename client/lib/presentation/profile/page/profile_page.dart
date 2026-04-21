@@ -216,7 +216,7 @@ class ProfilePage extends StatelessWidget {
                             variant: DSButtonVariant.secondary,
                             fullWidth: true,
                             isLoading: sessionState.isSigningOut,
-                            onPressed: isBusy ? null : context.read<SessionCubit>().signOut,
+                            onPressed: isBusy ? null : () => _confirmSignOut(context, l10n),
                           ),
                           SizedBox(height: spacing.s16),
                           DSButton(
@@ -244,6 +244,24 @@ class ProfilePage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _confirmSignOut(BuildContext context, AppLocalizations l10n) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => DSDialog(
+        title: l10n.profileSignOutConfirmTitle,
+        content: Text(l10n.profileSignOutConfirmBody),
+        primaryLabel: l10n.profileSignOutConfirmCta,
+        secondaryLabel: l10n.cancel,
+        onSecondary: () => Navigator.of(dialogContext).pop(false),
+        onPrimary: () => Navigator.of(dialogContext).pop(true),
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      await context.read<SessionCubit>().signOut();
+    }
   }
 
   Future<void> _confirmDelete(BuildContext context, AppLocalizations l10n) async {
