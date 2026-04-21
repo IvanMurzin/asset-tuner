@@ -14,6 +14,7 @@ import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_update_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
+import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/account/widget/account_type_card.dart';
 
 class AccountUpdatePage extends StatefulWidget {
@@ -75,6 +76,7 @@ class _AccountUpdatePageState extends State<AccountUpdatePage> {
               }
 
               final account = state.account!;
+              context.read<AnalyticsCubit>().invalidateCache();
               context.read<AccountsCubit>().update(account);
 
               if (context.mounted) {

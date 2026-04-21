@@ -19,6 +19,7 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/account/page/add_subaccount_context.dart';
+import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_create_cubit.dart';
@@ -100,6 +101,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
               final accountsCubit = context.read<AccountsCubit>();
               final created = state.subaccount!;
               accountInfoCubit.applyCreatedSubaccount(created);
+              context.read<AnalyticsCubit>().invalidateCache();
               accountsCubit.refresh(silent: true);
 
               if (!context.mounted) {

@@ -4,7 +4,7 @@
 - ID: `BUG-ANA-003`
 - Тип: `Bug`
 - Приоритет: `P1`
-- Статус: `Draft`
+- Статус: `Done`
 - Связанные FR/FTR/SCR: `FTR-010`, `SCR-017`
 
 ## Экран/модуль/слой
@@ -51,3 +51,19 @@ Refresh аналитики завязан на несколько источни
 ## Ссылки на текущую реализацию
 - [analytics_cubit.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/analytics/bloc/analytics_cubit.dart)
 - [main_shell_page.dart](/Users/ivanmurzin/Projects/pets/asset_tuner/client/lib/presentation/home/page/main_shell_page.dart)
+
+## Implementation note
+
+### Root cause
+`_sourceFingerprint` учитывает только accountIds/assetIds/profile/rates. Мутации subaccount и balance не меняют fingerprint → analytics не обновлялась.
+
+### Changed files
+- `client/lib/presentation/balance/page/add_balance_page.dart` — добавлен `invalidateCache()` после set balance success
+- `client/lib/presentation/account/page/add_subaccount_page.dart` — добавлен `invalidateCache()` после subaccount create success
+- `client/lib/presentation/balance/page/subaccount_detail_page.dart` — добавлен `invalidateCache()` после subaccount rename и delete success
+- `client/lib/presentation/account/page/account_update_page.dart` — добавлен `invalidateCache()` после account update success
+- `client/test/presentation/analytics/bloc/analytics_cubit_test.dart` — unit-тест на invalidateCache fingerprint bypass
+
+### Checks
+- `flutter analyze`: No issues found
+- `flutter test test/presentation/analytics/bloc/analytics_cubit_test.dart`: 2/2 passed

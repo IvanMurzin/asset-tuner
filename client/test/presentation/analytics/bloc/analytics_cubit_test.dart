@@ -13,6 +13,48 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('AnalyticsCubit', () {
+    test('invalidateCache forces re-fetch even when fingerprint is unchanged', () async {
+      var callCount = 0;
+      final repository = _CountingAnalyticsRepository(
+        summary: AnalyticsSummaryEntity(
+          baseCurrency: 'USD',
+          asOf: DateTime.utc(2026, 4, 21),
+          breakdown: [],
+          updates: [],
+        ),
+        onFetch: () => callCount++,
+      );
+
+      final cubit = AnalyticsCubit(GetAnalyticsSummaryUseCase(repository));
+      final profile = ProfileEntity(
+        plan: 'free',
+        entitlements: const EntitlementsEntity(plan: 'free'),
+      );
+      final rates = RatesSnapshotEntity(usdPriceByAssetId: {}, asOf: DateTime.utc(2026, 4, 21));
+      final accounts = [
+        AccountEntity(
+          id: 'acc-1',
+          name: 'Wallet',
+          type: AccountType.wallet,
+          archived: false,
+          createdAt: DateTime.utc(2026, 1, 1),
+          updatedAt: DateTime.utc(2026, 1, 1),
+        ),
+      ];
+
+      await cubit.onSourceDataReady(profile, rates, const [], accounts);
+      expect(callCount, 1);
+
+      await cubit.onSourceDataReady(profile, rates, const [], accounts);
+      expect(callCount, 1, reason: 'same fingerprint: no extra fetch');
+
+      cubit.invalidateCache();
+      await cubit.onSourceDataReady(profile, rates, const [], accounts);
+      expect(callCount, 2, reason: 'after invalidateCache: re-fetched');
+
+      await cubit.close();
+    });
+
     test('excludes zero-delta updates from analytics feed', () async {
       final repository = _FakeAnalyticsRepository(
         summary: AnalyticsSummaryEntity(
@@ -96,6 +138,19 @@ class _FakeAnalyticsRepository implements IAnalyticsRepository {
 
   @override
   Future<Result<AnalyticsSummaryEntity>> fetchSummary({int updatesLimit = 200}) async {
+    return Success(summary);
+  }
+}
+
+class _CountingAnalyticsRepository implements IAnalyticsRepository {
+  _CountingAnalyticsRepository({required this.summary, required this.onFetch});
+
+  final AnalyticsSummaryEntity summary;
+  final void Function() onFetch;
+
+  @override
+  Future<Result<AnalyticsSummaryEntity>> fetchSummary({int updatesLimit = 200}) async {
+    onFetch();
     return Success(summary);
   }
 }

@@ -15,6 +15,7 @@ import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/account_info_cubit.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
+import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_delete_cubit.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_info_cubit.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_update_cubit.dart';
@@ -101,6 +102,7 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
             final updated = state.subaccount!;
             accountInfoCubit.applyUpdatedSubaccount(updated);
             subaccountInfoCubit.updateSubaccount(updated);
+            context.read<AnalyticsCubit>().invalidateCache();
             accountsCubit.refresh(silent: true);
             if (!mounted) {
               return;
@@ -121,6 +123,7 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
             final subaccountInfoCubit = context.read<SubaccountInfoCubit>();
             final deleteCubit = context.read<SubaccountDeleteCubit>();
             accountInfoCubit.applyDeletedSubaccount(state.deletedSubaccountId!);
+            context.read<AnalyticsCubit>().invalidateCache();
             accountsCubit.refresh(silent: true);
             subaccountInfoCubit.onDeleted();
             deleteCubit.reset();

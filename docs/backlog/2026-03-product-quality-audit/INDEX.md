@@ -54,7 +54,7 @@
 ### ANA
 1. [BUG-ANA-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-ANA-001-backend-analytics-endpoint.md) `P0` `Done`
 2. [BUG-ANA-002](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-ANA-002-analytics-screen-updates-and-charts.md) `P1` `Done`
-3. [BUG-ANA-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-ANA-003-analytics-refresh-triggers.md) `P1`
+3. [BUG-ANA-003](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-ANA-003-analytics-refresh-triggers.md) `P1` `Done`
 
 ### SUP
 1. [BUG-SUP-001](/Users/ivanmurzin/Projects/pets/asset_tuner/docs/backlog/2026-03-product-quality-audit/issues/BUG-SUP-001-contact-developer-screen-and-submit-flow.md) `P1`
