@@ -61,3 +61,26 @@ Deno.test('inferIsProFromSubscriberEntitlements: missing pro entitlement resolve
   };
   assertEquals(inferIsProFromSubscriberEntitlements(entitlements, nowMs), false);
 });
+
+Deno.test('inferIsPro: supports configurable entitlement identifiers', () => {
+  const nowMs = 1_800_000_000_000;
+  const event: RevenueCatEvent = {
+    type: 'RENEWAL',
+    entitlement_ids: ['Asset Tuner Pro'],
+    expiration_at_ms: nowMs + 60_000,
+  };
+
+  assertEquals(inferIsPro(event, nowMs, new Set(['asset tuner pro'])), true);
+});
+
+Deno.test('inferIsProFromSubscriberEntitlements: supports configurable entitlement identifiers', () => {
+  const nowMs = 1_800_000_000_000;
+  const entitlements = {
+    'Asset Tuner Pro': { expires_date: '2030-01-01T00:00:00Z' },
+  };
+
+  assertEquals(
+    inferIsProFromSubscriberEntitlements(entitlements, nowMs, new Set(['asset tuner pro'])),
+    true,
+  );
+});

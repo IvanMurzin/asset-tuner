@@ -48,10 +48,12 @@
 - `OPENEXCHANGERATES_APP_ID`
 - `SCHEDULER_SECRET`
 - `REVENUECAT_WEBHOOK_SECRET`
+- `REVENUECAT_API_KEY` (RevenueCat **secret/server** API key, не public SDK `test_/goog_`)
 
 Опционально:
 - `COINGECKO_API_KEY`
-- `REVENUECAT_API_KEY`
+- `REVENUECAT_PRO_ENTITLEMENT` (single entitlement id; default `pro`)
+- `REVENUECAT_PRO_ENTITLEMENTS` (comma-separated ids; overrides/extends single value)
 - `SUPABASE_SERVICE_ROLE_KEY` (обычно автоматически доступен внутри Supabase Edge Runtime; нужен для локального запуска `functions serve`)
 
 ## Деплой через CLI (рекомендуемый скрипт)

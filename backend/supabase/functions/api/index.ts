@@ -3,6 +3,10 @@ import { requireUser } from '../_shared/auth.ts';
 import { getAdminClient } from '../_shared/db.ts';
 import { requiredEnv } from '../_shared/env.ts';
 import {
+  isProEntitlementId,
+  resolveProEntitlementIdsFromEnv,
+} from '../_shared/revenuecat_entitlements.ts';
+import {
   ApiHttpError,
   fromError,
   ok,
@@ -94,6 +98,8 @@ type AnalyticsSummaryPayload = {
     created_at: string;
   }>;
 };
+
+const PRO_ENTITLEMENT_IDS = resolveProEntitlementIdsFromEnv();
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -451,9 +457,8 @@ async function handleRevenuecatRefresh(userId: string): Promise<Response> {
   >;
 
   const now = Date.now();
-  const proEntitlementId = 'pro';
   const isPro = Object.entries(entitlements).some(([entitlementId, entitlement]) => {
-    if (entitlementId.toLowerCase() !== proEntitlementId) {
+    if (!isProEntitlementId(entitlementId, PRO_ENTITLEMENT_IDS)) {
       return false;
     }
     if (!entitlement) {

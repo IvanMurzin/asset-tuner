@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 final class AppConfig {
   AppConfig._({
     required this.env,
@@ -17,7 +19,6 @@ final class AppConfig {
     'SUPABASE_URL',
     'SUPABASE_ANON_KEY',
     'OAUTH_REDIRECT_URI',
-    'REVENUECAT_API_KEY',
     'TERMS_OF_USE_URL',
     'PRIVACY_POLICY_URL',
   ];
@@ -51,6 +52,10 @@ final class AppConfig {
     if (_missingRequiredStringKeys(stringValues).isNotEmpty) {
       return null;
     }
+    final revenueCatApiKey = _resolveRevenueCatApiKey(stringValues);
+    if (revenueCatApiKey == null) {
+      return null;
+    }
     final logApiResponses = const bool.fromEnvironment('LOG_API_RESPONSES', defaultValue: false);
     final isOtpEnabled = const bool.fromEnvironment('IS_OTP_ENABLED', defaultValue: false);
     return AppConfig._(
@@ -59,7 +64,7 @@ final class AppConfig {
       supabaseAnonKey: stringValues['SUPABASE_ANON_KEY']!,
       oauthRedirectUri: stringValues['OAUTH_REDIRECT_URI']!,
       isOtpEnabled: isOtpEnabled,
-      revenueCatApiKey: stringValues['REVENUECAT_API_KEY']!,
+      revenueCatApiKey: revenueCatApiKey,
       termsOfUseUrl: stringValues['TERMS_OF_USE_URL']!,
       privacyPolicyUrl: stringValues['PRIVACY_POLICY_URL']!,
       logApiResponses: logApiResponses,
@@ -70,8 +75,15 @@ final class AppConfig {
     final config = tryFromEnvironment();
     if (config == null) {
       final missingKeys = _missingRequiredStringKeys(_readStringEnvironment());
+      final hasRevenueCatKey = _resolveRevenueCatApiKey(_readStringEnvironment()) != null;
+      final missingKeySuffix = hasRevenueCatKey
+          ? missingKeys.join(', ')
+          : [
+              ...missingKeys,
+              'REVENUECAT_API_KEY (or REVENUECAT_API_KEY_ANDROID/REVENUECAT_API_KEY_IOS)',
+            ].join(', ');
       throw StateError(
-        'Missing app config keys: ${missingKeys.join(', ')}. '
+        'Missing app config keys: $missingKeySuffix. '
         'Provide required keys via --dart-define-from-file.',
       );
     }
@@ -85,14 +97,59 @@ final class AppConfig {
       'SUPABASE_ANON_KEY': const String.fromEnvironment('SUPABASE_ANON_KEY'),
       'OAUTH_REDIRECT_URI': const String.fromEnvironment('OAUTH_REDIRECT_URI'),
       'REVENUECAT_API_KEY': const String.fromEnvironment('REVENUECAT_API_KEY'),
+      'REVENUECAT_API_KEY_ANDROID': const String.fromEnvironment('REVENUECAT_API_KEY_ANDROID'),
+      'REVENUECAT_API_KEY_IOS': const String.fromEnvironment('REVENUECAT_API_KEY_IOS'),
+      'REVENUECAT_API_KEY_TEST': const String.fromEnvironment('REVENUECAT_API_KEY_TEST'),
       'TERMS_OF_USE_URL': const String.fromEnvironment('TERMS_OF_USE_URL'),
       'PRIVACY_POLICY_URL': const String.fromEnvironment('PRIVACY_POLICY_URL'),
     };
   }
 
+  static String? _resolveRevenueCatApiKey(Map<String, String> stringValues) {
+    final genericKey = stringValues['REVENUECAT_API_KEY']?.trim() ?? '';
+    if (!_isMissingValue(genericKey)) {
+      return genericKey;
+    }
+
+    final androidKey = stringValues['REVENUECAT_API_KEY_ANDROID']?.trim() ?? '';
+    final iosKey = stringValues['REVENUECAT_API_KEY_IOS']?.trim() ?? '';
+    final testKey = stringValues['REVENUECAT_API_KEY_TEST']?.trim() ?? '';
+
+    final platformKey = switch (defaultTargetPlatform) {
+      TargetPlatform.android => androidKey,
+      TargetPlatform.iOS => iosKey,
+      _ => '',
+    };
+    if (!_isMissingValue(platformKey)) {
+      return platformKey;
+    }
+
+    if (!_isMissingValue(androidKey)) {
+      return androidKey;
+    }
+    if (!_isMissingValue(iosKey)) {
+      return iosKey;
+    }
+    if (!_isMissingValue(testKey)) {
+      return testKey;
+    }
+    return null;
+  }
+
   static List<String> _missingRequiredStringKeys(Map<String, String> stringValues) {
     return _requiredStringKeys
-        .where((key) => stringValues[key]?.trim().isEmpty ?? true)
+        .where((key) => _isMissingValue(stringValues[key]))
         .toList(growable: false);
+  }
+
+  static bool _isMissingValue(String? value) {
+    final normalized = value?.trim() ?? '';
+    if (normalized.isEmpty) {
+      return true;
+    }
+    if (normalized == 'replace_me') {
+      return true;
+    }
+    return normalized.toUpperCase().contains('YOUR_');
   }
 }

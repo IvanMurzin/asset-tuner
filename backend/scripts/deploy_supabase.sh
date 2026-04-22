@@ -26,6 +26,18 @@ if [[ -z "${SUPABASE_PROJECT_REF:-}" || "${SUPABASE_PROJECT_REF}" == "replace_me
   exit 1
 fi
 
+if [[ -z "${REVENUECAT_API_KEY:-}" || "${REVENUECAT_API_KEY}" == "replace_me" ]]; then
+  echo "Set REVENUECAT_API_KEY in ${ENV_FILE}" >&2
+  echo "Expected RevenueCat secret/server key (prefix: sk_)." >&2
+  exit 1
+fi
+
+if [[ "${REVENUECAT_API_KEY}" != sk_* ]]; then
+  echo "REVENUECAT_API_KEY looks invalid for backend: expected secret key prefix sk_, got ${REVENUECAT_API_KEY:0:8}..." >&2
+  echo "Do not use public SDK keys (test_/goog_/appl_) for backend refresh/webhook sync." >&2
+  exit 1
+fi
+
 echo "[1/6] Linking project ${SUPABASE_PROJECT_REF}"
 supabase --workdir "${BACKEND_DIR}" link --project-ref "${SUPABASE_PROJECT_REF}"
 
@@ -49,7 +61,9 @@ supabase --workdir "${BACKEND_DIR}" secrets set \
   OPENEXCHANGERATES_APP_ID="${OPENEXCHANGERATES_APP_ID:-}" \
   SCHEDULER_SECRET="${SCHEDULER_SECRET:-}" \
   REVENUECAT_WEBHOOK_SECRET="${REVENUECAT_WEBHOOK_SECRET:-}" \
-  REVENUECAT_API_KEY="${REVENUECAT_API_KEY:-}"
+  REVENUECAT_API_KEY="${REVENUECAT_API_KEY:-}" \
+  REVENUECAT_PRO_ENTITLEMENT="${REVENUECAT_PRO_ENTITLEMENT:-}" \
+  REVENUECAT_PRO_ENTITLEMENTS="${REVENUECAT_PRO_ENTITLEMENTS:-}"
 
 echo "[5/6] Deploying edge functions"
 supabase --workdir "${BACKEND_DIR}" functions deploy api
