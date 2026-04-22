@@ -1,6 +1,10 @@
 import { handleCors } from '../_shared/cors.ts';
 import { getAdminClient } from '../_shared/db.ts';
 import { requiredEnv } from '../_shared/env.ts';
+import {
+  isProEntitlementId,
+  resolveProEntitlementIdsFromEnv,
+} from '../_shared/revenuecat_entitlements.ts';
 import { ApiHttpError, fromError, ok } from '../_shared/responses.ts';
 
 export type RevenueCatEvent = {
@@ -15,6 +19,8 @@ export type RevenueCatEvent = {
 type RevenueCatEntitlement = {
   expires_date?: string | null;
 };
+
+const PRO_ENTITLEMENT_IDS = resolveProEntitlementIdsFromEnv();
 
 function requireWebhookSecret(req: Request): void {
   const expected = requiredEnv('REVENUECAT_WEBHOOK_SECRET');
@@ -44,9 +50,13 @@ function parsePayload(raw: unknown): { event: RevenueCatEvent; payload: Record<s
   };
 }
 
-export function inferIsPro(event: RevenueCatEvent, nowMs: number = Date.now()): boolean {
+export function inferIsPro(
+  event: RevenueCatEvent,
+  nowMs: number = Date.now(),
+  proEntitlementIds: ReadonlySet<string> = PRO_ENTITLEMENT_IDS,
+): boolean {
   const entitlementIds = event.entitlement_ids ?? [];
-  const hasProEntitlement = entitlementIds.some((id) => id.trim().toLowerCase() === 'pro');
+  const hasProEntitlement = entitlementIds.some((id) => isProEntitlementId(id, proEntitlementIds));
 
   if (!hasProEntitlement) {
     return false;
@@ -62,9 +72,10 @@ export function inferIsPro(event: RevenueCatEvent, nowMs: number = Date.now()): 
 export function inferIsProFromSubscriberEntitlements(
   entitlements: Record<string, RevenueCatEntitlement | undefined>,
   nowMs: number = Date.now(),
+  proEntitlementIds: ReadonlySet<string> = PRO_ENTITLEMENT_IDS,
 ): boolean {
   return Object.entries(entitlements).some(([entitlementId, entitlement]) => {
-    if (entitlementId.trim().toLowerCase() !== 'pro') {
+    if (!isProEntitlementId(entitlementId, proEntitlementIds)) {
       return false;
     }
     if (!entitlement) {
@@ -79,7 +90,10 @@ export function inferIsProFromSubscriberEntitlements(
   });
 }
 
-async function fetchIsProFromSubscriberApi(appUserId: string): Promise<boolean> {
+async function fetchIsProFromSubscriberApi(
+  appUserId: string,
+  proEntitlementIds: ReadonlySet<string> = PRO_ENTITLEMENT_IDS,
+): Promise<boolean> {
   const apiKey = requiredEnv('REVENUECAT_API_KEY');
   const response = await fetch(
     `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(appUserId)}`,
@@ -109,7 +123,7 @@ async function fetchIsProFromSubscriberApi(appUserId: string): Promise<boolean> 
     string,
     RevenueCatEntitlement | undefined
   >;
-  return inferIsProFromSubscriberEntitlements(entitlements);
+  return inferIsProFromSubscriberEntitlements(entitlements, Date.now(), proEntitlementIds);
 }
 
 function extractExternalId(event: RevenueCatEvent, appUserId: string): string {
@@ -151,8 +165,8 @@ if (import.meta.main) {
       }
 
       const externalId = extractExternalId(event, appUserId);
-      const isProFromEventPayload = inferIsPro(event);
-      const isPro = await fetchIsProFromSubscriberApi(appUserId);
+      const isProFromEventPayload = inferIsPro(event, Date.now(), PRO_ENTITLEMENT_IDS);
+      const isPro = await fetchIsProFromSubscriberApi(appUserId, PRO_ENTITLEMENT_IDS);
 
       const db = getAdminClient();
       const { data, error } = await db.rpc('api_apply_revenuecat_event', {
