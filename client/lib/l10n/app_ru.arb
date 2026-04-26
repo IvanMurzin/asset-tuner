@@ -426,6 +426,8 @@
   "subscriptionUpgrade": "Оформить подписку",
   "subscriptionFreeBody": "У вас бесплатный план. Оформите подписку, чтобы открыть все базовые валюты.",
   "subscriptionPaidBody": "У вас платный план. Спасибо за поддержку Asset Tuner.",
+  "subscriptionFeaturesTitle": "Что включено",
+  "subscriptionStatusActive": "Активна",
   "subscriptionPlaceholderBody": "Управление подпиской появится в будущих обновлениях.",
   "profileTitle": "Профиль",
   "profileSectionPreferences": "Предпочтения",

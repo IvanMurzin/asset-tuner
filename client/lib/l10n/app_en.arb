@@ -426,6 +426,8 @@
   "subscriptionUpgrade": "Upgrade to pro",
   "subscriptionFreeBody": "You're on the free plan. Upgrade to unlock all base currencies.",
   "subscriptionPaidBody": "You're on the pro plan. Thanks for supporting Asset Tuner.",
+  "subscriptionFeaturesTitle": "What's included",
+  "subscriptionStatusActive": "Active",
   "subscriptionPlaceholderBody": "Subscription management will be available in a future update.",
   "profileTitle": "Profile",
   "profileSectionPreferences": "Preferences",
