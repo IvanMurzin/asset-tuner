@@ -8,7 +8,7 @@ Mobile app (Flutter) + Backend (Supabase).
 - `docs/` — product documentation
 
 ## Client: full rules
-@client/CLAUDE.md
+@client/AGENTS.md
 
 ## Client: key commands
 ```bash
@@ -31,5 +31,4 @@ flutter run
 - Backlog: `docs/backlog/2026-03-product-quality-audit/`
 - Index: `docs/backlog/2026-03-product-quality-audit/INDEX.md`
 - QA Registry: `docs/backlog/2026-03-product-quality-audit/QA-REGISTRY.md`
-- Command: `/iterate-backlog` — pick one task and deliver end-to-end
 - Commit format: `backlog(<ISSUE-ID>): <short-summary>`
