@@ -15,8 +15,8 @@ class AuthHero extends StatelessWidget {
 
     return Center(
       child: Container(
-        width: 140,
-        height: 140,
+        width: 88,
+        height: 88,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(radius.r16),
           boxShadow: elevation.e2,
