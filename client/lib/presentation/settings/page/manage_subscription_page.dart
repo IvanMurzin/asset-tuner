@@ -2,10 +2,7 @@ import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
-import 'package:asset_tuner/core_ui/components/ds_button.dart';
-import 'package:asset_tuner/core_ui/components/ds_card.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
-import 'package:asset_tuner/core_ui/components/ds_section_title.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
@@ -13,6 +10,9 @@ import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
+import 'package:asset_tuner/presentation/settings/widget/manage_subscription_actions_card.dart';
+import 'package:asset_tuner/presentation/settings/widget/manage_subscription_features_card.dart';
+import 'package:asset_tuner/presentation/settings/widget/manage_subscription_plan_hero_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -70,115 +70,18 @@ class ManageSubscriptionPage extends StatelessWidget {
                     padding: EdgeInsets.all(context.dsSpacing.s24),
                     child: ListView(
                       children: [
-                        DSSectionTitle(title: l10n.subscriptionStatusTitle),
-                        SizedBox(height: context.dsSpacing.s12),
-                        DSCard(
-                          child: Text(
-                            isPaid ? l10n.settingsPlanPaid : l10n.settingsPlanFree,
-                            style: context.dsTypography.h2,
-                          ),
-                        ),
+                        ManageSubscriptionPlanHeroCard(isPaid: isPaid),
                         SizedBox(height: context.dsSpacing.s24),
-                        DSSectionTitle(title: l10n.subscriptionTitle),
-                        SizedBox(height: context.dsSpacing.s12),
-                        DSCard(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              DSButton(
-                                label: isPaid ? l10n.subscriptionManage : l10n.subscriptionUpgrade,
-                                fullWidth: true,
-                                isLoading: profileState.isSyncingSubscription,
-                                onPressed: profileState.isSyncingSubscription
-                                    ? null
-                                    : () async {
-                                        if (isPaid) {
-                                          await RevenueCatUI.presentCustomerCenter();
-                                          if (!context.mounted) {
-                                            return;
-                                          }
-                                          await context.read<ProfileCubit>().syncSubscription(
-                                            silent: false,
-                                            force: true,
-                                          );
-                                          if (!context.mounted) {
-                                            return;
-                                          }
-                                          await context.read<AssetsCubit>().refresh(
-                                            silent: true,
-                                            forceRefresh: true,
-                                          );
-                                          return;
-                                        }
-                                        await context.push<bool>(
-                                          AppRoutes.paywall,
-                                          extra: const PaywallArgs(
-                                            reason: PaywallReason.baseCurrency,
-                                          ),
-                                        );
-                                      },
-                              ),
-                              SizedBox(height: context.dsSpacing.s12),
-                              DSButton(
-                                label: l10n.subscriptionRestore,
-                                variant: DSButtonVariant.secondary,
-                                fullWidth: true,
-                                isLoading: profileState.isSyncingSubscription,
-                                onPressed: profileState.isSyncingSubscription
-                                    ? null
-                                    : () async {
-                                        try {
-                                          await getIt<RevenueCatService>().restorePurchases();
-                                          if (!context.mounted) {
-                                            return;
-                                          }
-                                          final profileCubit = context.read<ProfileCubit>();
-                                          await profileCubit.syncSubscription(
-                                            silent: false,
-                                            force: true,
-                                          );
-                                          if (!context.mounted) {
-                                            return;
-                                          }
-                                          final syncedState = profileCubit.state;
-                                          final isPro =
-                                              syncedState.isReady &&
-                                              syncedState.profile?.plan == 'pro';
-                                          if (!isPro) {
-                                            showDSSnackBar(
-                                              context,
-                                              variant: DSSnackBarVariant.error,
-                                              message: l10n.settingsEntitlementsError,
-                                            );
-                                            return;
-                                          }
-                                          await context.read<AssetsCubit>().refresh(
-                                            silent: true,
-                                            forceRefresh: true,
-                                          );
-                                          if (!context.mounted) {
-                                            return;
-                                          }
-                                          showDSSnackBar(
-                                            context,
-                                            variant: DSSnackBarVariant.success,
-                                            message: l10n.subscriptionRestoreSuccess,
-                                          );
-                                        } catch (_) {
-                                          if (!context.mounted) {
-                                            return;
-                                          }
-                                          showDSSnackBar(
-                                            context,
-                                            variant: DSSnackBarVariant.error,
-                                            message: l10n.errorGeneric,
-                                          );
-                                        }
-                                      },
-                              ),
-                            ],
-                          ),
+                        ManageSubscriptionFeaturesCard(isPaid: isPaid),
+                        SizedBox(height: context.dsSpacing.s24),
+                        ManageSubscriptionActionsCard(
+                          isPaid: isPaid,
+                          isSyncing: profileState.isSyncingSubscription,
+                          onManagePressed: () => _onManagePressed(context),
+                          onUpgradePressed: () => _onUpgradePressed(context),
+                          onRestorePressed: () => _onRestorePressed(context, l10n),
                         ),
+                        SizedBox(height: context.dsSpacing.s16),
                       ],
                     ),
                   ),
@@ -189,5 +92,56 @@ class ManageSubscriptionPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _onManagePressed(BuildContext context) async {
+    await RevenueCatUI.presentCustomerCenter();
+    if (!context.mounted) return;
+    await _syncSubscriptionAndAssets(context);
+  }
+
+  Future<void> _onUpgradePressed(BuildContext context) async {
+    await context.push<bool>(
+      AppRoutes.paywall,
+      extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
+    );
+  }
+
+  Future<void> _onRestorePressed(BuildContext context, AppLocalizations l10n) async {
+    try {
+      await getIt<RevenueCatService>().restorePurchases();
+      if (!context.mounted) return;
+      final profileCubit = context.read<ProfileCubit>();
+      await profileCubit.syncSubscription(silent: false, force: true);
+      if (!context.mounted) return;
+      if (!_isProProfile(profileCubit.state)) {
+        showDSSnackBar(
+          context,
+          variant: DSSnackBarVariant.error,
+          message: l10n.settingsEntitlementsError,
+        );
+        return;
+      }
+      await context.read<AssetsCubit>().refresh(silent: true, forceRefresh: true);
+      if (!context.mounted) return;
+      showDSSnackBar(
+        context,
+        variant: DSSnackBarVariant.success,
+        message: l10n.subscriptionRestoreSuccess,
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      showDSSnackBar(context, variant: DSSnackBarVariant.error, message: l10n.errorGeneric);
+    }
+  }
+
+  Future<void> _syncSubscriptionAndAssets(BuildContext context) async {
+    await context.read<ProfileCubit>().syncSubscription(silent: false, force: true);
+    if (!context.mounted) return;
+    await context.read<AssetsCubit>().refresh(silent: true, forceRefresh: true);
+  }
+
+  bool _isProProfile(ProfileState state) {
+    return state.isReady && state.profile?.plan == 'pro';
   }
 }

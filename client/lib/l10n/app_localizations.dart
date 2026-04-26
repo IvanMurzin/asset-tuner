@@ -2241,6 +2241,18 @@ abstract class AppLocalizations {
   /// **'You\'re on the pro plan. Thanks for supporting Asset Tuner.'**
   String get subscriptionPaidBody;
 
+  /// No description provided for @subscriptionFeaturesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s included'**
+  String get subscriptionFeaturesTitle;
+
+  /// No description provided for @subscriptionStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get subscriptionStatusActive;
+
   /// No description provided for @subscriptionPlaceholderBody.
   ///
   /// In en, this message translates to:

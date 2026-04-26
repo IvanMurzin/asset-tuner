@@ -1126,6 +1126,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subscriptionPaidBody => 'У вас платный план. Спасибо за поддержку Asset Tuner.';
 
   @override
+  String get subscriptionFeaturesTitle => 'Что включено';
+
+  @override
+  String get subscriptionStatusActive => 'Активна';
+
+  @override
   String get subscriptionPlaceholderBody => 'Управление подпиской появится в будущих обновлениях.';
 
   @override

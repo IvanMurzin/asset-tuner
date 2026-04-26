@@ -1118,6 +1118,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionPaidBody => 'You\'re on the pro plan. Thanks for supporting Asset Tuner.';
 
   @override
+  String get subscriptionFeaturesTitle => 'What\'s included';
+
+  @override
+  String get subscriptionStatusActive => 'Active';
+
+  @override
   String get subscriptionPlaceholderBody =>
       'Subscription management will be available in a future update.';
 
