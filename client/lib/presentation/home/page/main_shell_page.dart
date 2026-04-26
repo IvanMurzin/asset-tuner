@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -69,8 +71,17 @@ class MainShellPage extends StatelessWidget {
             },
           ),
           BlocListener<ProfileCubit, ProfileState>(
-            listenWhen: (prev, curr) => prev.profile != curr.profile || prev.status != curr.status,
-            listener: (context, state) => _maybeFeedAnalytics(context),
+            listenWhen: (prev, curr) =>
+                prev.profile != curr.profile ||
+                prev.status != curr.status ||
+                prev.profile?.plan != curr.profile?.plan ||
+                prev.profile?.entitlements != curr.profile?.entitlements,
+            listener: (context, state) {
+              _maybeFeedAnalytics(context);
+              if (state.isReady) {
+                unawaited(context.read<AssetsCubit>().refresh(silent: true, forceRefresh: true));
+              }
+            },
           ),
           BlocListener<AccountsCubit, AccountsState>(
             listenWhen: (prev, curr) =>

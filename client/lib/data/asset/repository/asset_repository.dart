@@ -14,9 +14,9 @@ class AssetRepository implements IAssetRepository {
   final SupabaseAssetDataSource _dataSource;
 
   @override
-  Future<Result<List<AssetEntity>>> fetchAssets() async {
+  Future<Result<List<AssetEntity>>> fetchAssets({bool forceRefresh = false}) async {
     try {
-      final dtos = await _dataSource.fetchAssets();
+      final dtos = await _dataSource.fetchAssets(forceRefresh: forceRefresh);
       final entities = dtos.map(AssetMapper.toEntity).toList();
       logger.i('AssetRepository.fetchAssets success: ${entities.length}');
       return Success(entities);

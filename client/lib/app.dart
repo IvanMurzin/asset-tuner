@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/localization/locale_cubit.dart';
 import 'package:asset_tuner/core/routing/app_router.dart';
+import 'package:asset_tuner/core/utils/app_lifecycle_observer.dart';
 import 'package:asset_tuner/core_ui/theme/app_theme.dart';
 import 'package:asset_tuner/core_ui/theme/theme_mode_cubit.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
@@ -26,20 +27,23 @@ class App extends StatelessWidget {
         builder: (context, themeMode) {
           return BlocBuilder<LocaleCubit, LocaleState>(
             builder: (context, localeState) {
-              return MaterialApp.router(
-                theme: lightTheme,
-                darkTheme: darkTheme,
-                themeMode: themeMode,
-                routerConfig: appRouter,
-                locale: context.read<LocaleCubit>().locale,
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: AppLocalizations.supportedLocales,
-                debugShowCheckedModeBanner: false,
+              return AppLifecycleObserver(
+                onResumed: () => context.read<ProfileCubit>().syncSubscription(silent: true),
+                child: MaterialApp.router(
+                  theme: lightTheme,
+                  darkTheme: darkTheme,
+                  themeMode: themeMode,
+                  routerConfig: appRouter,
+                  locale: context.read<LocaleCubit>().locale,
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  debugShowCheckedModeBanner: false,
+                ),
               );
             },
           );

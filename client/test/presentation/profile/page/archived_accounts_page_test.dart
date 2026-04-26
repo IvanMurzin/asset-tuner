@@ -152,7 +152,7 @@ class _TestAccountsCubit extends Cubit<AccountsState> implements AccountsCubit {
   Future<void> load() async {}
 
   @override
-  Future<void> refresh({bool silent = false}) async {}
+  Future<void> refresh({bool silent = false, bool forceRefresh = false}) async {}
 
   @override
   Future<void> create(AccountEntity account) async {}

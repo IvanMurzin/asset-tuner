@@ -97,11 +97,17 @@ class ManageSubscriptionPage extends StatelessWidget {
                                           if (!context.mounted) {
                                             return;
                                           }
-                                          await context.read<ProfileCubit>().syncSubscription();
+                                          await context.read<ProfileCubit>().syncSubscription(
+                                            silent: false,
+                                            force: true,
+                                          );
                                           if (!context.mounted) {
                                             return;
                                           }
-                                          await context.read<AssetsCubit>().refresh(silent: true);
+                                          await context.read<AssetsCubit>().refresh(
+                                            silent: true,
+                                            forceRefresh: true,
+                                          );
                                           return;
                                         }
                                         await context.push<bool>(
@@ -127,7 +133,10 @@ class ManageSubscriptionPage extends StatelessWidget {
                                             return;
                                           }
                                           final profileCubit = context.read<ProfileCubit>();
-                                          await profileCubit.syncSubscription();
+                                          await profileCubit.syncSubscription(
+                                            silent: false,
+                                            force: true,
+                                          );
                                           if (!context.mounted) {
                                             return;
                                           }
@@ -143,7 +152,10 @@ class ManageSubscriptionPage extends StatelessWidget {
                                             );
                                             return;
                                           }
-                                          await context.read<AssetsCubit>().refresh(silent: true);
+                                          await context.read<AssetsCubit>().refresh(
+                                            silent: true,
+                                            forceRefresh: true,
+                                          );
                                           if (!context.mounted) {
                                             return;
                                           }

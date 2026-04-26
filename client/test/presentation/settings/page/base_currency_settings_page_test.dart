@@ -184,13 +184,13 @@ class _TestProfileCubit extends Cubit<ProfileState> implements ProfileCubit {
   Future<void> bootstrap() async {}
 
   @override
-  Future<void> refresh({bool silent = false}) async {}
+  Future<void> refresh({bool silent = false, bool forceRefresh = false}) async {}
 
   @override
   Future<void> updateBaseCurrency(String code) async {}
 
   @override
-  Future<void> syncSubscription() async {}
+  Future<void> syncSubscription({bool silent = true, bool force = false}) async {}
 }
 
 class _TestAssetsCubit extends Cubit<AssetsState> implements AssetsCubit {
@@ -200,7 +200,7 @@ class _TestAssetsCubit extends Cubit<AssetsState> implements AssetsCubit {
   Future<void> load() async {}
 
   @override
-  Future<void> refresh({bool silent = false}) async {}
+  Future<void> refresh({bool silent = false, bool forceRefresh = false}) async {}
 }
 
 ProfileEntity _profile({required String baseCode, String plan = 'pro', int? fiatLimit}) {

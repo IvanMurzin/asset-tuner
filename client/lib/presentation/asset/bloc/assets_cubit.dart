@@ -24,18 +24,21 @@ class AssetsCubit extends Cubit<AssetsState> {
 
   Timer? _timer;
   bool _isFetching = false;
+  bool _queuedFetch = false;
+  bool _queuedSilent = true;
+  bool _queuedForceRefresh = false;
 
   Future<void> load() async {
     if (_timer != null) {
       return;
     }
     emit(state.copyWith(status: AssetsStatus.loading, failureCode: null, failureMessage: null));
-    await _fetch(silent: false);
+    await _fetch(silent: false, forceRefresh: false);
     _timer ??= Timer.periodic(const Duration(minutes: 1), (_) => refresh());
   }
 
-  Future<void> refresh({bool silent = false}) async {
-    await _fetch(silent: silent);
+  Future<void> refresh({bool silent = false, bool forceRefresh = false}) async {
+    await _fetch(silent: silent, forceRefresh: forceRefresh);
   }
 
   @override
@@ -45,114 +48,122 @@ class AssetsCubit extends Cubit<AssetsState> {
     return super.close();
   }
 
-  Future<void> _fetch({required bool silent}) async {
+  Future<void> _fetch({required bool silent, required bool forceRefresh}) async {
     if (_isFetching) {
+      _queuedFetch = true;
+      _queuedSilent = _queuedSilent && silent;
+      _queuedForceRefresh = _queuedForceRefresh || forceRefresh;
       return;
     }
     _isFetching = true;
 
-    final session = await _getCachedSession();
-    if (isClosed) {
-      _isFetching = false;
-      return;
-    }
-    if (session == null) {
-      emit(
-        state.copyWith(
-          status: AssetsStatus.error,
-          assets: const <AssetEntity>[],
-          failureCode: 'unauthorized',
-          failureMessage: null,
-        ),
-      );
-      _isFetching = false;
-      return;
-    }
-
-    final assetsResult = await _getAssets();
-    if (isClosed) {
-      _isFetching = false;
-      return;
-    }
-
-    List<AssetEntity> sortedAssets;
-    switch (assetsResult) {
-      case FailureResult<List<AssetEntity>>(failure: final failure):
-        if (!silent || state.status != AssetsStatus.ready) {
-          emit(
-            state.copyWith(
-              status: AssetsStatus.error,
-              failureCode: failure.code,
-              failureMessage: failure.message,
-            ),
-          );
-        } else {
-          emit(state.copyWith(failureCode: failure.code, failureMessage: failure.message));
-        }
-        _isFetching = false;
+    try {
+      final session = await _getCachedSession();
+      if (isClosed) {
         return;
-      case Success<List<AssetEntity>>(value: final assets):
-        sortedAssets = [...assets]
-          ..sort((a, b) {
-            final rankA = a.rank ?? 999999;
-            final rankB = b.rank ?? 999999;
-            if (rankA != rankB) return rankA.compareTo(rankB);
-            return a.code.compareTo(b.code);
-          });
-        break;
-    }
-
-    final ratesResult = await _getLatestUsdRates();
-    if (isClosed) {
-      _isFetching = false;
-      return;
-    }
-
-    final now = DateTime.now();
-
-    switch (ratesResult) {
-      case Success<RatesSnapshotEntity?>(value: final snapshot):
+      }
+      if (session == null) {
         emit(
           state.copyWith(
-            status: AssetsStatus.ready,
-            assets: sortedAssets,
-            snapshot: snapshot ?? state.snapshot,
-            lastRatesRefreshAt: now,
-            failureCode: null,
+            status: AssetsStatus.error,
+            assets: const <AssetEntity>[],
+            failureCode: 'unauthorized',
             failureMessage: null,
           ),
         );
-      case FailureResult<RatesSnapshotEntity?>(failure: final failure):
-        if (state.snapshot != null) {
+        return;
+      }
+
+      final assetsResult = await _getAssets(forceRefresh: forceRefresh);
+      if (isClosed) {
+        return;
+      }
+
+      List<AssetEntity> sortedAssets;
+      switch (assetsResult) {
+        case FailureResult<List<AssetEntity>>(failure: final failure):
+          if (!silent || state.status != AssetsStatus.ready) {
+            emit(
+              state.copyWith(
+                status: AssetsStatus.error,
+                failureCode: failure.code,
+                failureMessage: failure.message,
+              ),
+            );
+          } else {
+            emit(state.copyWith(failureCode: failure.code, failureMessage: failure.message));
+          }
+          return;
+        case Success<List<AssetEntity>>(value: final assets):
+          sortedAssets = [...assets]
+            ..sort((a, b) {
+              final rankA = a.rank ?? 999999;
+              final rankB = b.rank ?? 999999;
+              if (rankA != rankB) return rankA.compareTo(rankB);
+              return a.code.compareTo(b.code);
+            });
+          break;
+      }
+
+      final ratesResult = await _getLatestUsdRates();
+      if (isClosed) {
+        return;
+      }
+
+      final now = DateTime.now();
+
+      switch (ratesResult) {
+        case Success<RatesSnapshotEntity?>(value: final snapshot):
           emit(
             state.copyWith(
               status: AssetsStatus.ready,
               assets: sortedAssets,
+              snapshot: snapshot ?? state.snapshot,
               lastRatesRefreshAt: now,
-              failureCode: failure.code,
-              failureMessage: failure.message,
+              failureCode: null,
+              failureMessage: null,
             ),
           );
-        } else if (!silent || state.status != AssetsStatus.ready) {
-          emit(
-            state.copyWith(
-              status: AssetsStatus.error,
-              assets: sortedAssets,
-              failureCode: failure.code,
-              failureMessage: failure.message,
-            ),
-          );
-        } else {
-          emit(
-            state.copyWith(
-              assets: sortedAssets,
-              failureCode: failure.code,
-              failureMessage: failure.message,
-            ),
-          );
-        }
+        case FailureResult<RatesSnapshotEntity?>(failure: final failure):
+          if (state.snapshot != null) {
+            emit(
+              state.copyWith(
+                status: AssetsStatus.ready,
+                assets: sortedAssets,
+                lastRatesRefreshAt: now,
+                failureCode: failure.code,
+                failureMessage: failure.message,
+              ),
+            );
+          } else if (!silent || state.status != AssetsStatus.ready) {
+            emit(
+              state.copyWith(
+                status: AssetsStatus.error,
+                assets: sortedAssets,
+                failureCode: failure.code,
+                failureMessage: failure.message,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                assets: sortedAssets,
+                failureCode: failure.code,
+                failureMessage: failure.message,
+              ),
+            );
+          }
+      }
+    } finally {
+      _isFetching = false;
+      if (_queuedFetch && !isClosed) {
+        final nextSilent = _queuedSilent;
+        final nextForceRefresh = _queuedForceRefresh;
+        _queuedFetch = false;
+        _queuedSilent = true;
+        _queuedForceRefresh = false;
+        unawaited(_fetch(silent: nextSilent, forceRefresh: nextForceRefresh));
+      }
     }
-
-    _isFetching = false;
   }
 }

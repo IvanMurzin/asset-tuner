@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:asset_tuner/core/logger/logger.dart';
+import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
@@ -12,6 +13,7 @@ import 'package:asset_tuner/domain/profile/usecase/update_plan_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 part 'profile_cubit.freezed.dart';
 part 'profile_state.dart';
@@ -23,22 +25,33 @@ class ProfileCubit extends Cubit<ProfileState> {
     this._ensureProfileReady,
     this._updateBaseCurrency,
     this._updatePlan,
+    this._revenueCatService,
   ) : super(const ProfileState());
+
+  static const Duration _subscriptionSyncCooldown = Duration(minutes: 5);
+  static const Duration _subscriptionSyncTimeout = Duration(seconds: 30);
 
   final WatchSessionUseCase _watchSession;
   final EnsureProfileReadyUseCase _ensureProfileReady;
   final UpdateBaseCurrencyUseCase _updateBaseCurrency;
   final UpdatePlanUseCase _updatePlan;
+  final RevenueCatService _revenueCatService;
 
   StreamSubscription<AuthSessionEntity?>? _sessionSubscription;
   AuthSessionEntity? _session;
   bool _isLoading = false;
   bool _queuedReload = false;
   bool _queuedSilent = true;
+  bool _isSubscriptionSyncing = false;
+  bool _queuedSubscriptionSync = false;
+  bool _queuedSubscriptionForce = false;
+  DateTime? _lastSubscriptionSyncAt;
+  CustomerInfoUpdateListener? _customerInfoUpdateListener;
 
   Future<void> bootstrap() async {
     await _sessionSubscription?.cancel();
     _session = null;
+    _installCustomerInfoUpdateListener();
     emit(const ProfileState());
     _sessionSubscription = _watchSession().listen(
       (session) => unawaited(_handleSessionChanged(session)),
@@ -66,6 +79,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       return;
     }
     await _loadProfile(silent: false);
+    await syncSubscription(silent: true);
   }
 
   Future<void> refresh({bool silent = false}) async {
@@ -166,16 +180,43 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<void> syncSubscription() async {
-    if (!state.isReady || state.isSyncingSubscription) {
+  Future<void> syncSubscription({bool silent = true, bool force = false}) async {
+    if (!state.isReady) {
       return;
     }
 
-    emit(state.copyWith(isSyncingSubscription: true, failureCode: null, failureMessage: null));
+    final now = DateTime.now();
+    final lastSync = _lastSubscriptionSyncAt;
+    if (!force && lastSync != null && now.difference(lastSync) < _subscriptionSyncCooldown) {
+      return;
+    }
+
+    if (_isSubscriptionSyncing) {
+      _queuedSubscriptionSync = true;
+      _queuedSubscriptionForce = _queuedSubscriptionForce || force;
+      return;
+    }
+
+    _isSubscriptionSyncing = true;
+    final exposeSyncing = !silent || force;
+    emit(
+      state.copyWith(isSyncingSubscription: exposeSyncing, failureCode: null, failureMessage: null),
+    );
 
     try {
+      if (force) {
+        try {
+          await _revenueCatService.invalidateCustomerInfoCache();
+        } catch (error, stackTrace) {
+          logger.e(
+            'RevenueCat customer info cache invalidation failed',
+            error: error,
+            stackTrace: stackTrace,
+          );
+        }
+      }
       final result = await _updatePlan('pro').timeout(
-        const Duration(seconds: 30),
+        _subscriptionSyncTimeout,
         onTimeout: () =>
             const FailureResult(Failure(code: 'TIMEOUT', message: 'Subscription sync timed out')),
       );
@@ -194,6 +235,7 @@ class ProfileCubit extends Cubit<ProfileState> {
               failureMessage: null,
             ),
           );
+          _lastSubscriptionSyncAt = DateTime.now();
         case FailureResult(failure: final failure):
           emit(
             state.copyWith(
@@ -214,12 +256,36 @@ class ProfileCubit extends Cubit<ProfileState> {
           ),
         );
       }
+    } finally {
+      _isSubscriptionSyncing = false;
+      if (_queuedSubscriptionSync && !isClosed) {
+        final nextForce = _queuedSubscriptionForce;
+        _queuedSubscriptionSync = false;
+        _queuedSubscriptionForce = false;
+        unawaited(syncSubscription(silent: true, force: nextForce));
+      }
     }
+  }
+
+  void _installCustomerInfoUpdateListener() {
+    if (_customerInfoUpdateListener != null) {
+      return;
+    }
+    _customerInfoUpdateListener = (_) {
+      if (_session != null) {
+        unawaited(syncSubscription(silent: true));
+      }
+    };
+    _revenueCatService.addCustomerInfoUpdateListener(_customerInfoUpdateListener!);
   }
 
   @override
   Future<void> close() async {
     await _sessionSubscription?.cancel();
+    final listener = _customerInfoUpdateListener;
+    if (listener != null) {
+      _revenueCatService.removeCustomerInfoUpdateListener(listener);
+    }
     return super.close();
   }
 }

@@ -9,7 +9,7 @@ class GetAssetsUseCase {
 
   final IAssetRepository _repository;
 
-  Future<Result<List<AssetEntity>>> call() {
-    return _repository.fetchAssets();
+  Future<Result<List<AssetEntity>>> call({bool forceRefresh = false}) {
+    return _repository.fetchAssets(forceRefresh: forceRefresh);
   }
 }
