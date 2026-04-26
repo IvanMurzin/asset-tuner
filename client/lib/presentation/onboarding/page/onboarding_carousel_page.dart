@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/local_storage/onboarding_carousel_storage.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
@@ -20,12 +21,26 @@ class OnboardingCarouselPage extends StatefulWidget {
 
 class _OnboardingCarouselPageState extends State<OnboardingCarouselPage> {
   static const _pageCount = 3;
+  static const _version = 'subscription_v1';
 
   late final PageController _pageController = PageController();
   int _currentPage = 0;
   bool _isCompleting = false;
 
   bool get _isLastPage => _currentPage == _pageCount - 1;
+
+  @override
+  void initState() {
+    super.initState();
+    getIt<AppAnalytics>().log(
+      AnalyticsEventName.onboardingStarted,
+      parameters: const {'version': _version},
+    );
+    getIt<AppAnalytics>().log(
+      AnalyticsEventName.onboardingSlideViewed,
+      parameters: const {'version': _version, 'slide_index': 0},
+    );
+  }
 
   @override
   void dispose() {
@@ -42,8 +57,12 @@ class _OnboardingCarouselPageState extends State<OnboardingCarouselPage> {
     setState(() => _isCompleting = true);
 
     final persistFuture = _setCompleted();
+    getIt<AppAnalytics>().log(
+      AnalyticsEventName.onboardingCompleted,
+      parameters: const {'version': _version},
+    );
     if (mounted) {
-      context.go(AppRoutes.home);
+      context.go(AppRoutes.signUp);
     }
     unawaited(persistFuture);
   }
@@ -89,7 +108,13 @@ class _OnboardingCarouselPageState extends State<OnboardingCarouselPage> {
                 controller: _pageController,
                 physics: const BouncingScrollPhysics(),
                 itemCount: _pageCount,
-                onPageChanged: (index) => setState(() => _currentPage = index),
+                onPageChanged: (index) {
+                  setState(() => _currentPage = index);
+                  getIt<AppAnalytics>().log(
+                    AnalyticsEventName.onboardingSlideViewed,
+                    parameters: {'version': _version, 'slide_index': index},
+                  );
+                },
                 itemBuilder: (context, index) {
                   final slide = slides[index];
                   return _OnboardingSlideContent(

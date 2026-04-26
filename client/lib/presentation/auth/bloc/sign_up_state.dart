@@ -8,7 +8,7 @@ enum SignUpBannerType { success, failure }
 
 @freezed
 abstract class SignUpNavigation with _$SignUpNavigation {
-  const factory SignUpNavigation({required String email}) = _SignUpNavigation;
+  const factory SignUpNavigation({String? email}) = _SignUpNavigation;
 }
 
 @freezed
@@ -24,6 +24,7 @@ abstract class SignUpState with _$SignUpState {
     String? bannerFailureCode,
     String? bannerFailureMessage,
     String? bannerEmail,
+    @Default([]) List<AuthProvider> availableProviders,
     @Default(SignUpStatus.idle) SignUpStatus status,
     SignUpNavigation? navigation,
   }) = _SignUpState;

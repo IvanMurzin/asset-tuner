@@ -44,12 +44,10 @@ class ManageSubscriptionFeaturesCard extends StatelessWidget {
     }
 
     return [
-      _FeatureItem(l10n.paywallFreeFeatureAccounts, enabled: true),
-      _FeatureItem(l10n.paywallFreeFeatureSubaccounts, enabled: true),
-      _FeatureItem(l10n.paywallFreeFeatureFiat, enabled: true),
-      _FeatureItem(l10n.paywallFreeFeatureCrypto, enabled: true),
       _FeatureItem(l10n.paywallProFeatureAccounts, enabled: false),
+      _FeatureItem(l10n.paywallProFeatureSubaccounts, enabled: false),
       _FeatureItem(l10n.paywallProFeatureFiat, enabled: false),
+      _FeatureItem(l10n.paywallProFeatureFreshRates, enabled: false),
     ];
   }
 }

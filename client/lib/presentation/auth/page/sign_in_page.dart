@@ -89,6 +89,7 @@ class SignInPage extends StatelessWidget {
                         providers: providers,
                         googleLabel: l10n.continueWithGoogle,
                         appleLabel: l10n.continueWithApple,
+                        onProviderPressed: context.read<SignInCubit>().signInWithProvider,
                       ),
                     ],
                     SizedBox(height: spacing.s24),

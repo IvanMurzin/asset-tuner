@@ -4,6 +4,8 @@ import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
+import 'package:asset_tuner/domain/auth/usecase/get_auth_providers_usecase.dart';
+import 'package:asset_tuner/domain/auth/usecase/oauth_sign_in_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_up_with_password_usecase.dart';
 import 'package:asset_tuner/presentation/auth/bloc/sign_up_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,15 +13,24 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('SignUpCubit.submit routing', () {
     late _FakeAuthRepository repository;
-    late SignUpWithPasswordUseCase useCase;
+    late SignUpWithPasswordUseCase signUpUseCase;
+    late OAuthSignInUseCase oAuthUseCase;
+    late GetAuthProvidersUseCase providersUseCase;
 
     setUp(() {
       repository = _FakeAuthRepository();
-      useCase = SignUpWithPasswordUseCase(repository);
+      signUpUseCase = SignUpWithPasswordUseCase(repository);
+      oAuthUseCase = OAuthSignInUseCase(repository);
+      providersUseCase = GetAuthProvidersUseCase(repository);
     });
 
     test('emits OTP navigation when OTP is enabled', () async {
-      final cubit = SignUpCubit(useCase);
+      final cubit = SignUpCubit.testing(
+        signUpUseCase,
+        oAuthUseCase,
+        providersUseCase,
+        isOtpEnabled: true,
+      );
       cubit.updateEmail('user@example.com');
       cubit.updatePassword('Password123!');
       cubit.updateConfirmPassword('Password123!');
@@ -33,7 +44,12 @@ void main() {
     });
 
     test('skips OTP navigation when OTP is disabled', () async {
-      final cubit = SignUpCubit(useCase);
+      final cubit = SignUpCubit.testing(
+        signUpUseCase,
+        oAuthUseCase,
+        providersUseCase,
+        isOtpEnabled: false,
+      );
       cubit.updateEmail('user@example.com');
       cubit.updatePassword('Password123!');
       cubit.updateConfirmPassword('Password123!');

@@ -1,3 +1,4 @@
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
@@ -18,8 +19,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
-class ManageSubscriptionPage extends StatelessWidget {
+class ManageSubscriptionPage extends StatefulWidget {
   const ManageSubscriptionPage({super.key});
+
+  @override
+  State<ManageSubscriptionPage> createState() => _ManageSubscriptionPageState();
+}
+
+class _ManageSubscriptionPageState extends State<ManageSubscriptionPage> {
+  bool _didLogOpen = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +70,13 @@ class ManageSubscriptionPage extends StatelessWidget {
 
               final profile = profileState.profile!;
               final isPaid = profile.plan == 'pro';
+              if (!_didLogOpen) {
+                _didLogOpen = true;
+                getIt<AppAnalytics>().log(
+                  AnalyticsEventName.manageSubscriptionOpened,
+                  parameters: {'plan': profile.plan},
+                );
+              }
 
               return Scaffold(
                 appBar: DSAppBar(title: l10n.subscriptionTitle),
@@ -95,15 +110,18 @@ class ManageSubscriptionPage extends StatelessWidget {
   }
 
   Future<void> _onManagePressed(BuildContext context) async {
+    final plan = context.read<ProfileCubit>().state.profile?.plan ?? 'unknown';
+    getIt<AppAnalytics>().log(AnalyticsEventName.customerCenterOpened, parameters: {'plan': plan});
     await RevenueCatUI.presentCustomerCenter();
     if (!context.mounted) return;
+    getIt<AppAnalytics>().log(AnalyticsEventName.customerCenterClosed, parameters: {'plan': plan});
     await _syncSubscriptionAndAssets(context);
   }
 
   Future<void> _onUpgradePressed(BuildContext context) async {
     await context.push<bool>(
       AppRoutes.paywall,
-      extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
+      extra: const PaywallArgs(reason: PaywallReason.manageSubscription),
     );
   }
 
