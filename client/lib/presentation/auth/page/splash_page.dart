@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/local_storage/onboarding_paywall_storage.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
-import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/components/ds_splash_layout.dart';
-import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
 
-class SplashPage extends StatelessWidget {
+class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
+
+  @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+  final OnboardingPaywallStorage _onboardingPaywallStorage = OnboardingPaywallStorage();
+  bool _isOpeningOnboardingPaywall = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +31,7 @@ class SplashPage extends StatelessWidget {
         BlocListener<SessionCubit, SessionState>(
           listenWhen: (prev, curr) => prev.status != curr.status,
           listener: (context, state) {
-            _handleNavigation(context);
+            _handleNavigation();
             if (state.status == SessionStatus.error && context.mounted) {
               showDSSnackBar(
                 context,
@@ -35,7 +44,7 @@ class SplashPage extends StatelessWidget {
         BlocListener<ProfileCubit, ProfileState>(
           listenWhen: (prev, curr) => prev.status != curr.status,
           listener: (context, state) {
-            _handleNavigation(context);
+            _handleNavigation();
             if (state.status == ProfileStatus.error && context.mounted) {
               showDSSnackBar(
                 context,
@@ -54,9 +63,11 @@ class SplashPage extends StatelessWidget {
                   sessionState.status == SessionStatus.initial ||
                   (sessionState.isAuthenticated &&
                       (profileState.status == ProfileStatus.initial ||
-                          profileState.status == ProfileStatus.loading));
+                          profileState.status == ProfileStatus.loading ||
+                          sessionState.revenueCatStatus == RevenueCatIdentityStatus.syncing));
               final hasBlockingError =
                   sessionState.status == SessionStatus.error ||
+                  sessionState.revenueCatStatus == RevenueCatIdentityStatus.error ||
                   (sessionState.isAuthenticated &&
                       profileState.status == ProfileStatus.error &&
                       profileState.profile == null);
@@ -65,14 +76,11 @@ class SplashPage extends StatelessWidget {
                 body: isLoading
                     ? DSSplashLayout(title: l10n.appTitle, status: l10n.splashPreparingProfile)
                     : hasBlockingError
-                    ? Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(context.dsSpacing.s24),
-                          child: DSButton(
-                            label: l10n.splashRetry,
-                            onPressed: () => _retry(context),
-                          ),
-                        ),
+                    ? DSInlineError(
+                        title: l10n.splashErrorTitle,
+                        message: sessionState.revenueCatFailureMessage ?? l10n.errorGeneric,
+                        actionLabel: l10n.splashRetry,
+                        onAction: () => _retry(context),
                       )
                     : DSSplashLayout(title: l10n.appTitle, status: l10n.splashPreparingProfile),
               );
@@ -83,7 +91,7 @@ class SplashPage extends StatelessWidget {
     );
   }
 
-  void _handleNavigation(BuildContext context) {
+  Future<void> _handleNavigation() async {
     final sessionState = context.read<SessionCubit>().state;
     final profileState = context.read<ProfileCubit>().state;
 
@@ -92,13 +100,43 @@ class SplashPage extends StatelessWidget {
       return;
     }
 
-    if (sessionState.isAuthenticated && profileState.isReady) {
+    if (sessionState.isAuthenticated && profileState.isReady && sessionState.isRevenueCatReady) {
+      final profile = profileState.profile;
+      if (profile?.plan != 'pro' && await _shouldShowOnboardingPaywall()) {
+        if (!mounted || _isOpeningOnboardingPaywall) {
+          return;
+        }
+        _isOpeningOnboardingPaywall = true;
+        await _onboardingPaywallStorage.setSeen();
+        if (!mounted) {
+          return;
+        }
+        await context.push(
+          AppRoutes.paywall,
+          extra: const PaywallArgs(reason: PaywallReason.onboarding),
+        );
+        if (!mounted) {
+          return;
+        }
+        _isOpeningOnboardingPaywall = false;
+      }
+      if (!mounted) {
+        return;
+      }
       context.go(AppRoutes.main);
     }
+  }
+
+  Future<bool> _shouldShowOnboardingPaywall() async {
+    if (_isOpeningOnboardingPaywall) {
+      return false;
+    }
+    return !await _onboardingPaywallStorage.getSeen();
   }
 
   void _retry(BuildContext context) {
     context.read<SessionCubit>().bootstrap();
     context.read<ProfileCubit>().bootstrap();
+    context.read<SessionCubit>().syncRevenueCat();
   }
 }

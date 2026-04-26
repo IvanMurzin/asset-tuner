@@ -120,7 +120,7 @@ abstract class AppLocalizations {
   /// No description provided for @signInBody.
   ///
   /// In en, this message translates to:
-  /// **'Track your assets across devices.'**
+  /// **'Sign in to keep your subscription and portfolio synced.'**
   String get signInBody;
 
   /// No description provided for @signUpTitle.
@@ -132,7 +132,7 @@ abstract class AppLocalizations {
   /// No description provided for @signUpBody.
   ///
   /// In en, this message translates to:
-  /// **'Join Asset Tuner to sync your portfolio.'**
+  /// **'Create an account to keep your subscription and portfolio synced.'**
   String get signUpBody;
 
   /// No description provided for @emailLabel.
@@ -266,6 +266,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue with Apple'**
   String get continueWithApple;
+
+  /// No description provided for @authEmailFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Or create an account with email'**
+  String get authEmailFallback;
 
   /// No description provided for @switchToSignUp.
   ///
@@ -1473,6 +1479,18 @@ abstract class AppLocalizations {
   /// **'Unlock any base currency.'**
   String get paywallReasonBaseCurrency;
 
+  /// No description provided for @paywallReasonOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with the full version built for serious portfolio tracking.'**
+  String get paywallReasonOnboarding;
+
+  /// No description provided for @paywallReasonManageSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade from settings and unlock the complete app.'**
+  String get paywallReasonManageSubscription;
+
   /// No description provided for @paywallEntitlementsError.
   ///
   /// In en, this message translates to:
@@ -1485,6 +1503,12 @@ abstract class AppLocalizations {
   /// **'Restore'**
   String get paywallRestore;
 
+  /// No description provided for @paywallIdentityPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing secure subscription purchases...'**
+  String get paywallIdentityPending;
+
   /// No description provided for @paywallUnlockTitle.
   ///
   /// In en, this message translates to:
@@ -1496,6 +1520,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go unlimited with accounts, assets, and currencies.'**
   String get paywallSubtitle;
+
+  /// No description provided for @paywallValueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your whole net worth without limits'**
+  String get paywallValueTitle;
+
+  /// No description provided for @paywallValueSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro unlocks the complete portfolio workflow across accounts, assets, currencies, and fresh rates.'**
+  String get paywallValueSubtitle;
 
   /// No description provided for @paywallLoadingOfferings.
   ///
@@ -1520,6 +1556,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get paywallContinue;
+
+  /// No description provided for @paywallContinueFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Free'**
+  String get paywallContinueFree;
+
+  /// No description provided for @paywallStartPro.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Pro'**
+  String get paywallStartPro;
 
   /// No description provided for @paywallMostPopular.
   ///
@@ -1587,11 +1635,35 @@ abstract class AppLocalizations {
   /// **'100+ crypto currencies'**
   String get paywallProFeatureCrypto;
 
+  /// No description provided for @paywallProFeatureFreshRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Fresh rates for every total'**
+  String get paywallProFeatureFreshRates;
+
   /// No description provided for @paywallLegalPrefix.
   ///
   /// In en, this message translates to:
   /// **'Cancel anytime. Payment will be charged to your store account.'**
   String get paywallLegalPrefix;
+
+  /// No description provided for @paywallLegalPrefixWithPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} / {period}. Auto-renews unless canceled in your store account.'**
+  String paywallLegalPrefixWithPrice(String price, String period);
+
+  /// No description provided for @paywallBillingPeriodMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'month'**
+  String get paywallBillingPeriodMonthly;
+
+  /// No description provided for @paywallBillingPeriodAnnual.
+  ///
+  /// In en, this message translates to:
+  /// **'year'**
+  String get paywallBillingPeriodAnnual;
 
   /// No description provided for @paywallLegalTerms.
   ///
@@ -2226,8 +2298,20 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionUpgrade.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade to pro'**
+  /// **'Unlock annual Pro'**
   String get subscriptionUpgrade;
+
+  /// No description provided for @subscriptionFreeHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock full portfolio tracking'**
+  String get subscriptionFreeHeroTitle;
+
+  /// No description provided for @subscriptionFreeHeroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Pro to remove limits across accounts, assets, base currencies, and rate-backed totals.'**
+  String get subscriptionFreeHeroBody;
 
   /// No description provided for @subscriptionFreeBody.
   ///

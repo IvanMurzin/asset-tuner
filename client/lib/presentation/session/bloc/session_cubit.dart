@@ -35,6 +35,10 @@ class SessionCubit extends Cubit<SessionState> {
         session: null,
         isSigningOut: false,
         isDeletingAccount: false,
+        revenueCatStatus: RevenueCatIdentityStatus.idle,
+        revenueCatUserId: null,
+        revenueCatFailureCode: null,
+        revenueCatFailureMessage: null,
         failureCode: null,
         failureMessage: null,
       ),
@@ -70,6 +74,10 @@ class SessionCubit extends Cubit<SessionState> {
           session: null,
           isSigningOut: false,
           isDeletingAccount: false,
+          revenueCatStatus: RevenueCatIdentityStatus.idle,
+          revenueCatUserId: null,
+          revenueCatFailureCode: null,
+          revenueCatFailureMessage: null,
           failureCode: null,
           failureMessage: null,
         ),
@@ -84,6 +92,10 @@ class SessionCubit extends Cubit<SessionState> {
         session: session,
         isSigningOut: false,
         isDeletingAccount: false,
+        revenueCatStatus: RevenueCatIdentityStatus.syncing,
+        revenueCatUserId: _revenueCatUserId,
+        revenueCatFailureCode: null,
+        revenueCatFailureMessage: null,
         failureCode: null,
         failureMessage: null,
       ),
@@ -114,6 +126,21 @@ class SessionCubit extends Cubit<SessionState> {
     }
   }
 
+  Future<void> syncRevenueCat() async {
+    final session = state.session;
+    if (session == null || state.revenueCatStatus == RevenueCatIdentityStatus.syncing) {
+      return;
+    }
+    emit(
+      state.copyWith(
+        revenueCatStatus: RevenueCatIdentityStatus.syncing,
+        revenueCatFailureCode: null,
+        revenueCatFailureMessage: null,
+      ),
+    );
+    await _syncRevenueCatLoggedIn(session.userId);
+  }
+
   Future<void> deleteAccount() async {
     if (state.status == SessionStatus.unauthenticated || state.isBusy) {
       return;
@@ -139,13 +166,44 @@ class SessionCubit extends Cubit<SessionState> {
 
   Future<void> _syncRevenueCatLoggedIn(String userId) async {
     if (_revenueCatUserId == userId) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            revenueCatStatus: RevenueCatIdentityStatus.synced,
+            revenueCatUserId: userId,
+            revenueCatFailureCode: null,
+            revenueCatFailureMessage: null,
+          ),
+        );
+      }
       return;
     }
     try {
       await _revenueCatService.logIn(userId);
+      if (isClosed || state.session?.userId != userId) {
+        return;
+      }
       _revenueCatUserId = userId;
+      emit(
+        state.copyWith(
+          revenueCatStatus: RevenueCatIdentityStatus.synced,
+          revenueCatUserId: userId,
+          revenueCatFailureCode: null,
+          revenueCatFailureMessage: null,
+        ),
+      );
     } catch (error, stackTrace) {
       logger.e('RevenueCat logIn failed', error: error, stackTrace: stackTrace);
+      if (!isClosed && state.session?.userId == userId) {
+        emit(
+          state.copyWith(
+            revenueCatStatus: RevenueCatIdentityStatus.error,
+            revenueCatUserId: null,
+            revenueCatFailureCode: 'revenuecat_login_failed',
+            revenueCatFailureMessage: 'Unable to prepare subscription purchases',
+          ),
+        );
+      }
     }
   }
 

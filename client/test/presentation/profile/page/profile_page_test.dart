@@ -259,6 +259,9 @@ class _TestSessionCubit extends Cubit<SessionState> implements SessionCubit {
   Future<void> deleteAccount() async {
     deleteAccountCalls += 1;
   }
+
+  @override
+  Future<void> syncRevenueCat() async {}
 }
 
 class _TestProfileCubit extends Cubit<ProfileState> implements ProfileCubit {

@@ -21,13 +21,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get signInTitle => 'Вход';
 
   @override
-  String get signInBody => 'Отслеживайте активы на всех устройствах.';
+  String get signInBody => 'Войдите, чтобы сохранить подписку и портфель на всех устройствах.';
 
   @override
   String get signUpTitle => 'Создать аккаунт';
 
   @override
-  String get signUpBody => 'Присоединяйтесь к Asset Tuner для синхронизации портфеля.';
+  String get signUpBody =>
+      'Создайте аккаунт, чтобы подписка и портфель синхронизировались между устройствами.';
 
   @override
   String get emailLabel => 'Электронная почта';
@@ -98,6 +99,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get continueWithApple => 'Продолжить с Apple';
+
+  @override
+  String get authEmailFallback => 'Или создайте аккаунт по email';
 
   @override
   String get switchToSignUp => 'Нет аккаунта? Создать';
@@ -727,16 +731,33 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallReasonBaseCurrency => 'Откройте любую базовую валюту.';
 
   @override
+  String get paywallReasonOnboarding => 'Начните с полной версии для серьёзного учёта капитала.';
+
+  @override
+  String get paywallReasonManageSubscription =>
+      'Оформите Pro из настроек и откройте всё приложение.';
+
+  @override
   String get paywallEntitlementsError => 'Не удалось проверить подписку. Попробуйте снова.';
 
   @override
   String get paywallRestore => 'Восстановить';
 
   @override
+  String get paywallIdentityPending => 'Готовим безопасную покупку подписки...';
+
+  @override
   String get paywallUnlockTitle => 'Открыть Pro';
 
   @override
   String get paywallSubtitle => 'Безлимит по аккаунтам, активам и валютам.';
+
+  @override
+  String get paywallValueTitle => 'Весь капитал без ограничений';
+
+  @override
+  String get paywallValueSubtitle =>
+      'Pro открывает полный сценарий учёта: аккаунты, активы, валюты и свежие курсы.';
 
   @override
   String get paywallLoadingOfferings => 'Загружаем варианты подписки...';
@@ -749,6 +770,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get paywallContinue => 'Продолжить';
+
+  @override
+  String get paywallContinueFree => 'Продолжить бесплатно';
+
+  @override
+  String get paywallStartPro => 'Начать Pro';
 
   @override
   String get paywallMostPopular => 'Самый популярный';
@@ -784,8 +811,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallProFeatureCrypto => '100+ криптовалют';
 
   @override
+  String get paywallProFeatureFreshRates => 'Свежие курсы для каждого итога';
+
+  @override
   String get paywallLegalPrefix =>
       'Отменить можно в любой момент. Оплата будет списана через магазин приложений.';
+
+  @override
+  String paywallLegalPrefixWithPrice(String price, String period) {
+    return '$price / $period. Продлевается автоматически, если не отменить в аккаунте магазина.';
+  }
+
+  @override
+  String get paywallBillingPeriodMonthly => 'месяц';
+
+  @override
+  String get paywallBillingPeriodAnnual => 'год';
 
   @override
   String get paywallLegalTerms => 'Условия';
@@ -1116,7 +1157,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subscriptionCancel => 'Отменить подписку';
 
   @override
-  String get subscriptionUpgrade => 'Оформить подписку';
+  String get subscriptionUpgrade => 'Открыть годовой Pro';
+
+  @override
+  String get subscriptionFreeHeroTitle => 'Откройте полный учёт портфеля';
+
+  @override
+  String get subscriptionFreeHeroBody =>
+      'Pro снимает лимиты по аккаунтам, активам, базовым валютам и итогам со свежими курсами.';
 
   @override
   String get subscriptionFreeBody =>

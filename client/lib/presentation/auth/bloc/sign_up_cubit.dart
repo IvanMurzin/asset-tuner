@@ -3,6 +3,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/types/result.dart';
+import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
+import 'package:asset_tuner/domain/auth/usecase/get_auth_providers_usecase.dart';
+import 'package:asset_tuner/domain/auth/usecase/oauth_sign_in_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_up_with_password_usecase.dart';
 import 'package:asset_tuner/presentation/auth/bloc/auth_form_validators.dart';
 
@@ -11,9 +14,31 @@ part 'sign_up_cubit.freezed.dart';
 
 @injectable
 class SignUpCubit extends Cubit<SignUpState> {
-  SignUpCubit(this._signUpWithPasswordUseCase) : super(const SignUpState());
+  SignUpCubit(
+    this._signUpWithPasswordUseCase,
+    this._oAuthSignInUseCase,
+    this._getAuthProvidersUseCase,
+  ) : _isOtpEnabledOverride = null,
+      super(const SignUpState()) {
+    _loadProviders();
+  }
+
+  SignUpCubit.testing(
+    this._signUpWithPasswordUseCase,
+    this._oAuthSignInUseCase,
+    this._getAuthProvidersUseCase, {
+    required bool isOtpEnabled,
+  }) : _isOtpEnabledOverride = isOtpEnabled,
+       super(const SignUpState()) {
+    _loadProviders();
+  }
 
   final SignUpWithPasswordUseCase _signUpWithPasswordUseCase;
+  final OAuthSignInUseCase _oAuthSignInUseCase;
+  final GetAuthProvidersUseCase _getAuthProvidersUseCase;
+  final bool? _isOtpEnabledOverride;
+
+  bool get _isOtpEnabled => _isOtpEnabledOverride ?? AppConfig.instance.isOtpEnabled;
 
   void updateEmail(String value) {
     emit(state.copyWith(email: value, emailError: null, bannerFailureCode: null, bannerType: null));
@@ -64,7 +89,7 @@ class SignUpCubit extends Cubit<SignUpState> {
           ),
         );
       case Success(:final value):
-        if (AppConfig.instance.isOtpEnabled) {
+        if (_isOtpEnabled) {
           emit(
             state.copyWith(
               status: SignUpStatus.otpSent,
@@ -83,6 +108,28 @@ class SignUpCubit extends Cubit<SignUpState> {
             bannerType: null,
           ),
         );
+    }
+  }
+
+  Future<void> signUpWithProvider(AuthProvider provider) async {
+    if (state.status == SignUpStatus.loading) {
+      return;
+    }
+    emit(state.copyWith(status: SignUpStatus.loading, bannerFailureCode: null, bannerType: null));
+    final result = await _oAuthSignInUseCase(provider);
+    if (isClosed) return;
+    switch (result) {
+      case FailureResult(:final failure):
+        emit(
+          state.copyWith(
+            status: SignUpStatus.idle,
+            bannerFailureCode: failure.code,
+            bannerFailureMessage: failure.message,
+            bannerType: SignUpBannerType.failure,
+          ),
+        );
+      case Success():
+        emit(state.copyWith(status: SignUpStatus.idle, navigation: const SignUpNavigation()));
     }
   }
 
@@ -107,5 +154,15 @@ class SignUpCubit extends Cubit<SignUpState> {
       return false;
     }
     return true;
+  }
+
+  Future<void> _loadProviders() async {
+    final providers = await _getAuthProvidersUseCase();
+    if (isClosed) return;
+    emit(
+      state.copyWith(
+        availableProviders: providers.where((provider) => provider != AuthProvider.email).toList(),
+      ),
+    );
   }
 }

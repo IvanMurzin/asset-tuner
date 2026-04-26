@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:asset_tuner/core_ui/components/ds_oauth_button.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
-import 'package:asset_tuner/presentation/auth/bloc/sign_in_cubit.dart';
 
 class OAuthSection extends StatelessWidget {
   const OAuthSection({
@@ -12,12 +10,14 @@ class OAuthSection extends StatelessWidget {
     required this.providers,
     required this.googleLabel,
     required this.appleLabel,
+    required this.onProviderPressed,
   });
 
   final bool isLoading;
   final List<AuthProvider> providers;
   final String googleLabel;
   final String appleLabel;
+  final ValueChanged<AuthProvider> onProviderPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +31,7 @@ class OAuthSection extends StatelessWidget {
         DSOAuthButton(
           provider: _mapProvider(provider),
           label: _labelFor(provider),
-          onPressed: isLoading
-              ? null
-              : () => context.read<SignInCubit>().signInWithProvider(provider),
+          onPressed: isLoading ? null : () => onProviderPressed(provider),
         ),
       );
     }

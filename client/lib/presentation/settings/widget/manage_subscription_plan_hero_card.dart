@@ -131,10 +131,10 @@ class ManageSubscriptionPlanHeroCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.settingsPlanFree, style: typography.h2),
+                Text(l10n.subscriptionFreeHeroTitle, style: typography.h2),
                 SizedBox(height: spacing.s8),
                 Text(
-                  l10n.subscriptionFreeBody,
+                  l10n.subscriptionFreeHeroBody,
                   style: typography.caption.copyWith(color: colors.textSecondary),
                 ),
               ],

@@ -21,13 +21,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInTitle => 'Sign in';
 
   @override
-  String get signInBody => 'Track your assets across devices.';
+  String get signInBody => 'Sign in to keep your subscription and portfolio synced.';
 
   @override
   String get signUpTitle => 'Create account';
 
   @override
-  String get signUpBody => 'Join Asset Tuner to sync your portfolio.';
+  String get signUpBody => 'Create an account to keep your subscription and portfolio synced.';
 
   @override
   String get emailLabel => 'Email';
@@ -98,6 +98,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get continueWithApple => 'Continue with Apple';
+
+  @override
+  String get authEmailFallback => 'Or create an account with email';
 
   @override
   String get switchToSignUp => 'New here? Create account';
@@ -722,16 +725,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallReasonBaseCurrency => 'Unlock any base currency.';
 
   @override
+  String get paywallReasonOnboarding =>
+      'Start with the full version built for serious portfolio tracking.';
+
+  @override
+  String get paywallReasonManageSubscription =>
+      'Upgrade from settings and unlock the complete app.';
+
+  @override
   String get paywallEntitlementsError => 'Couldn\'t verify subscription; try again.';
 
   @override
   String get paywallRestore => 'Restore';
 
   @override
+  String get paywallIdentityPending => 'Preparing secure subscription purchases...';
+
+  @override
   String get paywallUnlockTitle => 'Unlock Pro';
 
   @override
   String get paywallSubtitle => 'Go unlimited with accounts, assets, and currencies.';
+
+  @override
+  String get paywallValueTitle => 'Track your whole net worth without limits';
+
+  @override
+  String get paywallValueSubtitle =>
+      'Pro unlocks the complete portfolio workflow across accounts, assets, currencies, and fresh rates.';
 
   @override
   String get paywallLoadingOfferings => 'Loading subscription options...';
@@ -744,6 +765,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paywallContinue => 'Continue';
+
+  @override
+  String get paywallContinueFree => 'Continue with Free';
+
+  @override
+  String get paywallStartPro => 'Start Pro';
 
   @override
   String get paywallMostPopular => 'Most Popular';
@@ -779,7 +806,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallProFeatureCrypto => '100+ crypto currencies';
 
   @override
+  String get paywallProFeatureFreshRates => 'Fresh rates for every total';
+
+  @override
   String get paywallLegalPrefix => 'Cancel anytime. Payment will be charged to your store account.';
+
+  @override
+  String paywallLegalPrefixWithPrice(String price, String period) {
+    return '$price / $period. Auto-renews unless canceled in your store account.';
+  }
+
+  @override
+  String get paywallBillingPeriodMonthly => 'month';
+
+  @override
+  String get paywallBillingPeriodAnnual => 'year';
 
   @override
   String get paywallLegalTerms => 'Terms';
@@ -1108,7 +1149,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionCancel => 'Cancel subscription';
 
   @override
-  String get subscriptionUpgrade => 'Upgrade to pro';
+  String get subscriptionUpgrade => 'Unlock annual Pro';
+
+  @override
+  String get subscriptionFreeHeroTitle => 'Unlock full portfolio tracking';
+
+  @override
+  String get subscriptionFreeHeroBody =>
+      'Go Pro to remove limits across accounts, assets, base currencies, and rate-backed totals.';
 
   @override
   String get subscriptionFreeBody =>
