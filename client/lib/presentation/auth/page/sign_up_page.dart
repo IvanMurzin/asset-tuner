@@ -12,6 +12,7 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/auth/bloc/sign_up_cubit.dart';
 import 'package:asset_tuner/presentation/auth/widget/auth_hero.dart';
+import 'package:asset_tuner/presentation/auth/widget/oauth_section.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_confirm_password_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_email_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_legal_text.dart';
@@ -64,6 +65,7 @@ class SignUpPage extends StatelessWidget {
           final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
           final typography = context.dsTypography;
           final isLoading = state.status == SignUpStatus.loading;
+          final providers = state.availableProviders;
 
           return Scaffold(
             resizeToAvoidBottomInset: false,
@@ -100,6 +102,21 @@ class SignUpPage extends StatelessWidget {
                       hint: l10n.confirmPasswordHint,
                       errorText: _confirmErrorText(l10n, state.confirmPasswordError),
                     ),
+                    if (providers.isNotEmpty) ...[
+                      SizedBox(height: spacing.s24),
+                      Text(
+                        l10n.signInWith,
+                        style: typography.caption.copyWith(color: context.dsColors.textSecondary),
+                      ),
+                      SizedBox(height: spacing.s12),
+                      OAuthSection(
+                        isLoading: isLoading,
+                        providers: providers,
+                        googleLabel: l10n.continueWithGoogle,
+                        appleLabel: l10n.continueWithApple,
+                        onProviderPressed: context.read<SignUpCubit>().signUpWithProvider,
+                      ),
+                    ],
                     SizedBox(height: spacing.s24),
                     DSButton(
                       label: l10n.signUpPrimary,
