@@ -8,7 +8,7 @@ Mobile app (Flutter) + Backend (Supabase).
 - `docs/` — product documentation
 
 ## Client: full rules
-@client/AGENTS.md
+@client/CLAUDE.md
 
 ## Client: key commands
 ```bash
