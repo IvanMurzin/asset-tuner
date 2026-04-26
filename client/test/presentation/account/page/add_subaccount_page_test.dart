@@ -203,7 +203,7 @@ class _TestAssetsCubit extends Cubit<AssetsState> implements AssetsCubit {
   Future<void> load() async {}
 
   @override
-  Future<void> refresh({bool silent = false}) async {}
+  Future<void> refresh({bool silent = false, bool forceRefresh = false}) async {}
 }
 
 class _TestSubaccountCreateCubit extends Cubit<SubaccountCreateState>

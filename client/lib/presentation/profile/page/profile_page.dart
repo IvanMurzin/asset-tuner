@@ -120,7 +120,14 @@ class ProfilePage extends StatelessWidget {
                         if (!context.mounted) {
                           return;
                         }
-                        await context.read<AssetsCubit>().refresh(silent: true);
+                        await context.read<ProfileCubit>().syncSubscription(
+                          silent: true,
+                          force: true,
+                        );
+                        if (!context.mounted) {
+                          return;
+                        }
+                        await context.read<AssetsCubit>().refresh(silent: true, forceRefresh: true);
                       },
                       child: ListView(
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -139,7 +146,10 @@ class ProfilePage extends StatelessWidget {
                                 await context.push(AppRoutes.paywall);
                               }
                               if (context.mounted) {
-                                await context.read<ProfileCubit>().refresh(silent: true);
+                                await context.read<ProfileCubit>().syncSubscription(
+                                  silent: true,
+                                  force: true,
+                                );
                               }
                             },
                             planActionLabel: profile.plan == 'pro'

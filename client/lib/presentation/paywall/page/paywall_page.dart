@@ -227,7 +227,7 @@ class _PaywallPageState extends State<PaywallPage> {
       return;
     }
     try {
-      await context.read<AssetsCubit>().refresh(silent: true);
+      await context.read<AssetsCubit>().refresh(silent: true, forceRefresh: true);
     } catch (_) {}
     if (!mounted) {
       return;
@@ -237,7 +237,7 @@ class _PaywallPageState extends State<PaywallPage> {
 
   Future<bool> _syncSubscriptionAndConfirmPro() async {
     final profileCubit = context.read<ProfileCubit>();
-    await profileCubit.syncSubscription();
+    await profileCubit.syncSubscription(silent: false, force: true);
     if (!mounted) {
       return false;
     }

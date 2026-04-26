@@ -26,4 +26,16 @@ class RevenueCatService {
   Future<CustomerInfo> getCustomerInfo() {
     return Purchases.getCustomerInfo();
   }
+
+  Future<void> invalidateCustomerInfoCache() {
+    return Purchases.invalidateCustomerInfoCache();
+  }
+
+  void addCustomerInfoUpdateListener(CustomerInfoUpdateListener listener) {
+    Purchases.addCustomerInfoUpdateListener(listener);
+  }
+
+  void removeCustomerInfoUpdateListener(CustomerInfoUpdateListener listener) {
+    Purchases.removeCustomerInfoUpdateListener(listener);
+  }
 }

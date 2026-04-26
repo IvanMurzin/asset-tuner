@@ -16,7 +16,6 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/widget/analytics_loading_skeleton.dart';
-import 'package:asset_tuner/presentation/analytics/widget/analytics_total_trend_chart.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 
@@ -69,38 +68,6 @@ class _Body extends StatelessWidget {
   const _Body({required this.state});
 
   final AnalyticsState state;
-
-  List<AnalyticsTotalTrendPoint> _totalTrendPoints() {
-    if (state.breakdown.isEmpty || state.updates.length < 2) {
-      return const [];
-    }
-
-    final currentTotal = state.breakdown.fold<Decimal>(
-      Decimal.zero,
-      (sum, item) => sum + item.value,
-    );
-    final cumulativeDiff = state.updates.fold<Decimal>(
-      Decimal.zero,
-      (sum, item) => sum + item.diffBaseAmount,
-    );
-
-    final diffByDate = <DateTime, Decimal>{};
-    for (final item in state.updates) {
-      final date = DateTime(item.entryDate.year, item.entryDate.month, item.entryDate.day);
-      diffByDate[date] = (diffByDate[date] ?? Decimal.zero) + item.diffBaseAmount;
-    }
-    final sortedDates = diffByDate.keys.toList()..sort();
-
-    if (sortedDates.length < 2) {
-      return const [];
-    }
-
-    var runningTotal = currentTotal - cumulativeDiff;
-    return [
-      for (final date in sortedDates)
-        AnalyticsTotalTrendPoint(date: date, total: runningTotal += diffByDate[date]!),
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +125,6 @@ class _Body extends StatelessWidget {
     }
 
     final currency = state.baseCurrency ?? 'USD';
-    final totalTrendPoints = _totalTrendPoints();
 
     return ListView(
       children: [
