@@ -26,7 +26,6 @@ final class AppConfig {
     required this.privacyPolicyUrl,
     required this.logApiResponses,
     required this.analyticsEnabled,
-    required this.analyticsApiKey,
   });
 
   static AppConfig? _instance;
@@ -61,11 +60,12 @@ final class AppConfig {
   final String privacyPolicyUrl;
   final bool logApiResponses;
   final bool analyticsEnabled;
-  final String analyticsApiKey;
 
   bool get isProdRelease => flavor == AppFlavor.prod && kReleaseMode;
 
-  bool get analyticsActive => analyticsEnabled && kReleaseMode && analyticsApiKey.isNotEmpty;
+  bool get firebaseEnabled => flavor == AppFlavor.prod;
+
+  bool get analyticsActive => firebaseEnabled && analyticsEnabled && kReleaseMode;
 
   static void init() {
     _instance = requireFromEnvironment();
@@ -83,7 +83,6 @@ final class AppConfig {
     final logApiResponses = const bool.fromEnvironment('LOG_API_RESPONSES', defaultValue: false);
     final isOtpEnabled = const bool.fromEnvironment('IS_OTP_ENABLED', defaultValue: false);
     final analyticsEnabled = const bool.fromEnvironment('ANALYTICS_ENABLED', defaultValue: false);
-    final analyticsApiKey = const String.fromEnvironment('ANALYTICS_API_KEY').trim();
     return AppConfig._(
       env: stringValues['ENV']!,
       flavor: AppFlavor.fromString(stringValues['FLAVOR']!),
@@ -96,7 +95,6 @@ final class AppConfig {
       privacyPolicyUrl: stringValues['PRIVACY_POLICY_URL']!,
       logApiResponses: logApiResponses,
       analyticsEnabled: analyticsEnabled,
-      analyticsApiKey: analyticsApiKey,
     );
   }
 

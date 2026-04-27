@@ -103,3 +103,50 @@
 | `RELEASE_STORE_PASSWORD` | пароль keystore |
 
 iOS-сборка в CI **не выполняется** (нет macOS runner на free plan + provisioning сложно).
+
+---
+
+## Firebase (Analytics + Crashlytics)
+
+Firebase подключён **только для prod-флавора** на обеих платформах. Dev-сборки идут без Firebase — `FirebaseInitializer` (`client/lib/core/firebase/firebase_initializer.dart`) проверяет `AppConfig.firebaseEnabled` и пропускает init для dev.
+
+**Где лежат конфиги (gitignored):**
+
+| Платформа | Путь | Bundle / package |
+|---|---|---|
+| Android prod | `client/android/app/src/prod/google-services.json` | `developer.ivanmurzin.assettuner` |
+| iOS prod | `client/ios/Runner/GoogleService-Info.plist` | `developer.ivanmurzin.assettuner` |
+
+Firebase project: `assettuner-8dc26`.
+
+**Android:** Gradle-плагины `com.google.gms.google-services` + `com.google.firebase.crashlytics` применяются динамически только для prod-задач (`isProdTaskRequested` в `client/android/app/build.gradle.kts`). Dev-сборки не требуют json и не падают, если он отсутствует.
+
+**iOS:** `GoogleService-Info.plist` зарегистрирован в Resources таргета Runner и попадает в bundle всех конфигураций. Init Firebase в Dart всё равно вызывается только для prod-флавора, поэтому в dev-сборках plist не читается.
+
+**Crashlytics активируется только в `kReleaseMode`** — в debug никаких отчётов не уходит. Хуки: `FlutterError.onError`, `PlatformDispatcher.instance.onError`, `runZonedGuarded`.
+
+**Аналитика** (`AppAnalytics`, `lib/core/analytics/app_analytics.dart`) пишется в Firebase Analytics, гейт `AppConfig.analyticsActive = firebaseEnabled && analyticsEnabled && kReleaseMode`. В debug события только логируются в консоль.
+
+**`setUserId`** вызывается из `SessionCubit` после логина и при logout — связывает события и crash-репорты с Supabase user id.
+
+### Локальное тестирование Analytics (DebugView)
+
+```bash
+adb shell setprop debug.firebase.analytics.app developer.ivanmurzin.assettuner
+flutter run --flavor prod --release --dart-define-from-file=../.config.prod.json
+```
+События появятся в Firebase Console → Analytics → DebugView в реальном времени. Сбросить: `adb shell setprop debug.firebase.analytics.app .none.`
+
+### Crashlytics smoke-test
+
+В release-сборке временно бросьте необработанное исключение после загрузки приложения, перезапустите — отчёт появится в Firebase Console → Crashlytics через 5–10 минут.
+
+### Если потребуется Firebase для dev
+
+1. В Firebase Console → проект `assettuner-8dc26` добавить Android-app `developer.ivanmurzin.assettuner.dev` и iOS-app `developer.ivanmurzin.assettuner.dev`.
+2. Скачать новые `google-services.json` и `GoogleService-Info.plist`.
+3. Положить:
+   - `client/android/app/src/dev/google-services.json`
+   - заменить iOS plist на скрипт-копирование per-flavor (через Build Phase, см. flutterfire docs).
+4. В `app_config.dart` снять ограничение `firebaseEnabled = flavor == AppFlavor.prod` (например, `firebaseEnabled = true`).
+5. Снять флавор-гейт с Gradle-плагинов в `android/app/build.gradle.kts`.

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/types/result.dart';
@@ -16,13 +17,19 @@ part 'session_state.dart';
 
 @injectable
 class SessionCubit extends Cubit<SessionState> {
-  SessionCubit(this._watchSession, this._signOut, this._deleteAccount, this._revenueCatService)
-    : super(const SessionState());
+  SessionCubit(
+    this._watchSession,
+    this._signOut,
+    this._deleteAccount,
+    this._revenueCatService,
+    this._analytics,
+  ) : super(const SessionState());
 
   final WatchSessionUseCase _watchSession;
   final SignOutUseCase _signOut;
   final DeleteAccountUseCase _deleteAccount;
   final RevenueCatService _revenueCatService;
+  final AppAnalytics _analytics;
 
   StreamSubscription<AuthSessionEntity?>? _sessionSubscription;
   String? _revenueCatUserId;
@@ -83,6 +90,7 @@ class SessionCubit extends Cubit<SessionState> {
         ),
       );
       await _syncRevenueCatLoggedOut();
+      await _analytics.setUserId(null);
       return;
     }
 
@@ -101,6 +109,7 @@ class SessionCubit extends Cubit<SessionState> {
       ),
     );
     await _syncRevenueCatLoggedIn(session.userId);
+    await _analytics.setUserId(session.userId);
   }
 
   Future<void> signOut() async {

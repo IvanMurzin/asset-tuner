@@ -9,6 +9,5 @@
   "TERMS_OF_USE_URL": "https://assettuner.app/terms",
   "PRIVACY_POLICY_URL": "https://assettuner.app/privacy",
   "LOG_API_RESPONSES": true,
-  "ANALYTICS_ENABLED": false,
-  "ANALYTICS_API_KEY": ""
+  "ANALYTICS_ENABLED": false
 }
