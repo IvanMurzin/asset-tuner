@@ -116,8 +116,7 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                           left: spacing.s24,
                           right: spacing.s24,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                        child: ListView(
                           children: [
                             DSBaseCurrencyValueCard(
                               title: l10n.baseCurrencySettingsCurrentTitle,
@@ -161,7 +160,6 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                               ),
                               SizedBox(height: spacing.s16),
                             ],
-                            const Spacer(),
                             DSButton(
                               label: l10n.baseCurrencySettingsSave,
                               fullWidth: true,

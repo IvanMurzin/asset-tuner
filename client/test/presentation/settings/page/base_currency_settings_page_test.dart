@@ -89,6 +89,9 @@ void main() {
     });
 
     testWidgets('shows unlock card for free plan and opens paywall by action tap', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1200, 1600));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
       profileCubit = _TestProfileCubit(
         ProfileState(
           status: ProfileStatus.ready,
