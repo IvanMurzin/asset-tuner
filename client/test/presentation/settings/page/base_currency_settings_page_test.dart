@@ -81,7 +81,7 @@ void main() {
       await tester.tap(find.byType(AssetCurrencyBadge));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('EUR • Euro'));
+      await tester.tap(find.text('Euro'));
       await tester.pumpAndSettle();
 
       expect(find.text('EUR'), findsOneWidget);
@@ -113,7 +113,9 @@ void main() {
       expect(find.text(l10n.baseCurrencySettingsPaywallHint), findsOneWidget);
       expect(find.text(l10n.paywallUpgrade), findsOneWidget);
 
-      await tester.tap(find.text(l10n.paywallUpgrade));
+      final unlockCardFinder = find.byType(DSUnlockCurrenciesCard);
+      await tester.ensureVisible(unlockCardFinder);
+      await tester.tap(unlockCardFinder);
       await tester.pumpAndSettle();
 
       expect(openedArgs?.reason, PaywallReason.baseCurrency);
