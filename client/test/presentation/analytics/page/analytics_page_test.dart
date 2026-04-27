@@ -1,4 +1,5 @@
 import 'package:asset_tuner/core_ui/theme/app_theme.dart';
+import 'package:asset_tuner/core_ui/components/ds_history_entry_card.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
@@ -70,7 +71,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.byType(LineChart), findsOneWidget);
+      expect(find.byType(DSHistoryEntryCard), findsOneWidget);
     });
 
     testWidgets('shows explanatory captions for complex sections in russian', (tester) async {
