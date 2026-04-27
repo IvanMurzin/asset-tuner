@@ -18,8 +18,20 @@ dart run build_runner build --delete-conflicting-outputs
 flutter analyze
 dart format .
 flutter test
-flutter run
+# Run/build всегда через flavor + config:
+flutter run        --flavor dev  --dart-define-from-file=../.config.dev.json
+flutter run        --flavor prod --dart-define-from-file=../.config.prod.json
+flutter build apk        --flavor prod --release --dart-define-from-file=../.config.prod.json
+flutter build appbundle  --flavor prod --release --dart-define-from-file=../.config.prod.json
+flutter build apk        --flavor dev  --release --dart-define-from-file=../.config.dev.json
 ```
+
+## Flavors
+- Два flavor: `dev` и `prod`. Bundle id: `developer.ivanmurzin.assettuner.dev` / `developer.ivanmurzin.assettuner`.
+- Конфиги в корне репозитория: `.config.dev.json`, `.config.prod.json` (gitignored), шаблоны `*.example`.
+- Dev release подписывается debug keystore; prod release требует `client/android/key.properties`.
+- Аналитика реально шлётся только когда `ANALYTICS_ENABLED=true && kReleaseMode && ANALYTICS_API_KEY != ''` — см. `client/lib/core/analytics/app_analytics.dart`.
+- Подробности про аккаунты, иконки, Xcode-схемы и CI: `docs/flavors-and-accounts.md`.
 
 ## Working in this repo
 - All feature work lives in `client/lib/`

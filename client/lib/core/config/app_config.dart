@@ -1,8 +1,22 @@
 import 'package:flutter/foundation.dart';
 
+enum AppFlavor {
+  dev,
+  prod;
+
+  static AppFlavor fromString(String value) {
+    final normalized = value.trim().toLowerCase();
+    return AppFlavor.values.firstWhere(
+      (flavor) => flavor.name == normalized,
+      orElse: () => throw StateError('Unknown FLAVOR value "$value". Expected "dev" or "prod".'),
+    );
+  }
+}
+
 final class AppConfig {
   AppConfig._({
     required this.env,
+    required this.flavor,
     required this.supabaseUrl,
     required this.supabaseAnonKey,
     required this.oauthRedirectUri,
@@ -11,11 +25,14 @@ final class AppConfig {
     required this.termsOfUseUrl,
     required this.privacyPolicyUrl,
     required this.logApiResponses,
+    required this.analyticsEnabled,
+    required this.analyticsApiKey,
   });
 
   static AppConfig? _instance;
   static const _requiredStringKeys = <String>[
     'ENV',
+    'FLAVOR',
     'SUPABASE_URL',
     'SUPABASE_ANON_KEY',
     'OAUTH_REDIRECT_URI',
@@ -34,6 +51,7 @@ final class AppConfig {
   }
 
   final String env;
+  final AppFlavor flavor;
   final String supabaseUrl;
   final String supabaseAnonKey;
   final String oauthRedirectUri;
@@ -42,6 +60,12 @@ final class AppConfig {
   final String termsOfUseUrl;
   final String privacyPolicyUrl;
   final bool logApiResponses;
+  final bool analyticsEnabled;
+  final String analyticsApiKey;
+
+  bool get isProdRelease => flavor == AppFlavor.prod && kReleaseMode;
+
+  bool get analyticsActive => analyticsEnabled && kReleaseMode && analyticsApiKey.isNotEmpty;
 
   static void init() {
     _instance = requireFromEnvironment();
@@ -58,8 +82,11 @@ final class AppConfig {
     }
     final logApiResponses = const bool.fromEnvironment('LOG_API_RESPONSES', defaultValue: false);
     final isOtpEnabled = const bool.fromEnvironment('IS_OTP_ENABLED', defaultValue: false);
+    final analyticsEnabled = const bool.fromEnvironment('ANALYTICS_ENABLED', defaultValue: false);
+    final analyticsApiKey = const String.fromEnvironment('ANALYTICS_API_KEY').trim();
     return AppConfig._(
       env: stringValues['ENV']!,
+      flavor: AppFlavor.fromString(stringValues['FLAVOR']!),
       supabaseUrl: stringValues['SUPABASE_URL']!,
       supabaseAnonKey: stringValues['SUPABASE_ANON_KEY']!,
       oauthRedirectUri: stringValues['OAUTH_REDIRECT_URI']!,
@@ -68,6 +95,8 @@ final class AppConfig {
       termsOfUseUrl: stringValues['TERMS_OF_USE_URL']!,
       privacyPolicyUrl: stringValues['PRIVACY_POLICY_URL']!,
       logApiResponses: logApiResponses,
+      analyticsEnabled: analyticsEnabled,
+      analyticsApiKey: analyticsApiKey,
     );
   }
 
@@ -93,6 +122,7 @@ final class AppConfig {
   static Map<String, String> _readStringEnvironment() {
     return {
       'ENV': const String.fromEnvironment('ENV'),
+      'FLAVOR': const String.fromEnvironment('FLAVOR'),
       'SUPABASE_URL': const String.fromEnvironment('SUPABASE_URL'),
       'SUPABASE_ANON_KEY': const String.fromEnvironment('SUPABASE_ANON_KEY'),
       'OAUTH_REDIRECT_URI': const String.fromEnvironment('OAUTH_REDIRECT_URI'),

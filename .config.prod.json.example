@@ -1,5 +1,6 @@
 {
   "ENV": "prod",
+  "FLAVOR": "prod",
   "SUPABASE_URL": "https://YOUR_PROD_PROJECT.supabase.co",
   "SUPABASE_ANON_KEY": "YOUR_PROD_ANON_KEY",
   "OAUTH_REDIRECT_URI": "assettuner://login-callback/",
@@ -7,5 +8,7 @@
   "REVENUECAT_API_KEY": "YOUR_PROD_REVENUECAT_PUBLIC_SDK_KEY",
   "TERMS_OF_USE_URL": "https://assettuner.app/terms",
   "PRIVACY_POLICY_URL": "https://assettuner.app/privacy",
-  "LOG_API_RESPONSES": false
+  "LOG_API_RESPONSES": false,
+  "ANALYTICS_ENABLED": true,
+  "ANALYTICS_API_KEY": "YOUR_PROD_ANALYTICS_KEY"
 }

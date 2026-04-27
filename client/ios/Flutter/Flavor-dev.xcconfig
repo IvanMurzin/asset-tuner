@@ -1,0 +1,5 @@
+// Dev flavor overrides — included by Debug-dev / Release-dev / Profile-dev configs.
+PRODUCT_BUNDLE_IDENTIFIER = developer.ivanmurzin.assettuner.dev
+DISPLAY_NAME = Asset Tuner (dev)
+DEEP_LINK_SCHEME = assettunerdev
+ASSET_CATALOG_APP_ICON_NAME = AppIcon-dev
