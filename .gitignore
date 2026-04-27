@@ -15,3 +15,9 @@ client/android/keystores/
 **/*.p12
 **/*.pem
 
+# Firebase configs (per-flavor, contain API keys)
+client/android/app/google-services.json
+client/android/app/src/*/google-services.json
+client/ios/Runner/GoogleService-Info.plist
+client/ios/Runner/Firebase/GoogleService-Info-*.plist
+

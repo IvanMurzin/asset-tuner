@@ -83,10 +83,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Установить баланс'), findsOneWidget);
-      expect(
-        find.text('Вы задаете новое текущее значение баланса этого счёта.'),
-        findsOneWidget,
-      );
+      expect(find.text('Вы задаете новое текущее значение баланса этого счёта.'), findsOneWidget);
     });
   });
 }
