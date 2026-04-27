@@ -29,16 +29,16 @@ val hasValidReleaseSigning = keystorePropertiesFile.exists() &&
         releaseStoreFile != null &&
         releaseStoreFile.exists()
 
-val isReleaseTaskRequested = gradle.startParameter.taskNames.any {
-    it.contains("release", ignoreCase = true)
+val isProdReleaseTaskRequested = gradle.startParameter.taskNames.any {
+    it.contains("Prod", ignoreCase = false) && it.contains("release", ignoreCase = true)
 }
 
-if (isReleaseTaskRequested && !hasValidReleaseSigning) {
+if (isProdReleaseTaskRequested && !hasValidReleaseSigning) {
     throw GradleException(
         """
-        Release signing is not configured.
+        Prod release signing is not configured.
         Provide a valid client/android/key.properties with keyAlias, keyPassword, storePassword and existing storeFile.
-        Debug keystore fallback for release is disabled by design.
+        Dev release builds use the debug keystore — only prod release requires production signing.
         """.trimIndent()
     )
 }
@@ -87,6 +87,32 @@ android {
         versionName = flutter.versionName
     }
 
+    flavorDimensions += "env"
+
+    productFlavors {
+        create("dev") {
+            dimension = "env"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            resValue("string", "app_name", "Asset Tuner (dev)")
+            manifestPlaceholders["deepLinkScheme"] = "assettunerdev"
+            // Dev release сборки подписываются debug-ключом — production keystore не требуется.
+            signingConfig = if (useProjectDebugKeystore) {
+                signingConfigs.getByName("debugProject")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+        }
+        create("prod") {
+            dimension = "env"
+            resValue("string", "app_name", "Asset Tuner")
+            manifestPlaceholders["deepLinkScheme"] = "assettuner"
+            if (hasValidReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             signingConfig = if (useProjectDebugKeystore) {
@@ -96,7 +122,7 @@ android {
             }
         }
         release {
-            signingConfig = signingConfigs.findByName("release")
+            // Подпись определяется на уровне productFlavors (dev → debug, prod → release).
         }
     }
 }

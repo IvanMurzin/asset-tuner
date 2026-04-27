@@ -1,0 +1,5 @@
+// Prod flavor overrides — included by Debug-prod / Release-prod / Profile-prod configs.
+PRODUCT_BUNDLE_IDENTIFIER = developer.ivanmurzin.assettuner
+DISPLAY_NAME = Asset Tuner
+DEEP_LINK_SCHEME = assettuner
+ASSET_CATALOG_APP_ICON_NAME = AppIcon
