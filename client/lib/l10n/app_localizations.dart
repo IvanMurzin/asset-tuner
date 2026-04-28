@@ -1608,7 +1608,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallFreeFeatureCrypto.
   ///
   /// In en, this message translates to:
-  /// **'5 top crypto currencies'**
+  /// **'5 top cryptocurrencies'**
   String get paywallFreeFeatureCrypto;
 
   /// No description provided for @paywallProFeatureAccounts.
@@ -1632,7 +1632,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallProFeatureCrypto.
   ///
   /// In en, this message translates to:
-  /// **'100+ crypto currencies'**
+  /// **'100+ cryptocurrencies'**
   String get paywallProFeatureCrypto;
 
   /// No description provided for @paywallProFeatureFreshRates.
@@ -1716,7 +1716,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallFeatureUpdates.
   ///
   /// In en, this message translates to:
-  /// **'Subscription status updates'**
+  /// **'Up-to-date subscription status'**
   String get paywallFeatureUpdates;
 
   /// No description provided for @paywallPlansTitle.
@@ -1764,7 +1764,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallAlreadyPaid.
   ///
   /// In en, this message translates to:
-  /// **'You\'re already on the pro plan.'**
+  /// **'You\'re already on the Pro plan.'**
   String get paywallAlreadyPaid;
 
   /// No description provided for @dsPreviewTotalBalanceLabel.
@@ -2322,7 +2322,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionPaidBody.
   ///
   /// In en, this message translates to:
-  /// **'You\'re on the pro plan. Thanks for supporting Asset Tuner.'**
+  /// **'You\'re on the Pro plan. Thanks for supporting Asset Tuner.'**
   String get subscriptionPaidBody;
 
   /// No description provided for @subscriptionFeaturesTitle.

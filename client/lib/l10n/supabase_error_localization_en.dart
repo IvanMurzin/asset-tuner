@@ -1,7 +1,7 @@
 const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'unknown_error': 'An unknown error occurred',
   'limit_accounts_reached': 'Free plan account limit reached',
-  'limit_subaccounts_reached': 'Free plan subaccount limit reached',
+  'limit_subaccounts_reached': 'Free plan position limit reached',
   'amount_unchanged': 'Balance is unchanged. Enter a different amount.',
   'asset_not_allowed_for_plan': 'This asset is locked for your current plan',
   'external_api_error': 'External service request failed',

@@ -8,7 +8,11 @@
       "cwd": "client",
       "flutterMode": "debug",
       "console": "debugConsole",
-      "toolArgs": ["--dart-define-from-file=../.config.dev.json"]
+      "toolArgs": [
+        "--flavor",
+        "dev",
+        "--dart-define-from-file=../.config.dev.json"
+      ]
     },
     {
       "name": "Asset Tuner (prod)",
@@ -17,8 +21,17 @@
       "cwd": "client",
       "flutterMode": "debug",
       "console": "debugConsole",
-      "toolArgs": ["--dart-define-from-file=../.config.prod.json"]
+      "toolArgs": [
+        "--flavor",
+        "prod",
+        "--dart-define-from-file=../.config.prod.json"
+      ]
+    },
+    {
+      "name": "Build prod appbundle -> Downloads",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd client && set -euo pipefail && flutter build appbundle --release --flavor prod --dart-define-from-file=../.config.prod.json && VERSION_LINE=$(grep '^version:' pubspec.yaml | head -n1 | awk '{print $2}') && APP_VERSION=${VERSION_LINE%%+*} && BUILD_NUMBER=${VERSION_LINE##*+} && OUT_NAME=\"asset_tuner-${APP_VERSION}+${BUILD_NUMBER}.aab\" && SRC=\"build/app/outputs/bundle/prodRelease/app-prod-release.aab\" && DEST=\"$HOME/Downloads/$OUT_NAME\" && cp \"$SRC\" \"$DEST\" && echo \"Copied: $DEST\""
     }
   ]
 }
-

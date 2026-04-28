@@ -1,9 +1,9 @@
 const Map<String, dynamic> supabaseErrorLocalizationRu = {
   'unknown_error': 'Произошла неизвестная ошибка',
-  'limit_accounts_reached': 'Достигнут лимит аккаунтов на free плане',
-  'limit_subaccounts_reached': 'Достигнут лимит субаккаунтов на free плане',
+  'limit_accounts_reached': 'Достигнут лимит аккаунтов в Free-плане',
+  'limit_subaccounts_reached': 'Достигнут лимит позиций в Free-плане',
   'amount_unchanged': 'Баланс не изменился. Введите другое значение.',
-  'asset_not_allowed_for_plan': 'Этот актив недоступен на текущем плане',
+  'asset_not_allowed_for_plan': 'Этот актив недоступен на текущем тарифе',
   'external_api_error': 'Ошибка запроса к внешнему сервису',
   'email_not_confirmed': 'Email не подтверждён',
   'invalid_credentials': 'Неверные данные для входа',
