@@ -34,7 +34,7 @@ class AccountDetailPositionsSection extends StatelessWidget {
     final sortedItems = _sortByBalance(items);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DSSectionTitle(title: l10n.subaccountListTitle),
         SizedBox(height: spacing.s12),
