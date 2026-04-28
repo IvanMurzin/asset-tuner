@@ -791,7 +791,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallFreeFeatureFiat => '5 top fiat currencies';
 
   @override
-  String get paywallFreeFeatureCrypto => '5 top crypto currencies';
+  String get paywallFreeFeatureCrypto => '5 top cryptocurrencies';
 
   @override
   String get paywallProFeatureAccounts => 'Unlimited accounts';
@@ -803,7 +803,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallProFeatureFiat => '100+ fiat currencies';
 
   @override
-  String get paywallProFeatureCrypto => '100+ crypto currencies';
+  String get paywallProFeatureCrypto => '100+ cryptocurrencies';
 
   @override
   String get paywallProFeatureFreshRates => 'Fresh rates for every total';
@@ -851,7 +851,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallFeatureCurrencies => 'Any base currency';
 
   @override
-  String get paywallFeatureUpdates => 'Subscription status updates';
+  String get paywallFeatureUpdates => 'Up-to-date subscription status';
 
   @override
   String get paywallPlansTitle => 'Choose a plan';
@@ -875,7 +875,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallUpgrade => 'Upgrade';
 
   @override
-  String get paywallAlreadyPaid => 'You\'re already on the pro plan.';
+  String get paywallAlreadyPaid => 'You\'re already on the Pro plan.';
 
   @override
   String get dsPreviewTotalBalanceLabel => 'Total balance';
@@ -1163,7 +1163,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'You\'re on the free plan. Upgrade to unlock all base currencies.';
 
   @override
-  String get subscriptionPaidBody => 'You\'re on the pro plan. Thanks for supporting Asset Tuner.';
+  String get subscriptionPaidBody => 'You\'re on the Pro plan. Thanks for supporting Asset Tuner.';
 
   @override
   String get subscriptionFeaturesTitle => 'What\'s included';

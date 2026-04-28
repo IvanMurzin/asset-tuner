@@ -122,7 +122,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get validationInvalidEmail => 'Введите корректный email.';
 
   @override
-  String get validationPasswordRule => 'Минимум 6 символов, буквы и цифры.';
+  String get validationPasswordRule => 'Используйте минимум 6 символов, буквы и цифры.';
 
   @override
   String get validationPasswordMismatch => 'Пароли не совпадают.';
@@ -163,7 +163,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get errorNotFound => 'Не удалось найти запрошенные данные.';
 
   @override
-  String get errorValidation => 'Проверьте введенные данные и попробуйте снова.';
+  String get errorValidation => 'Проверьте введённые данные и попробуйте снова.';
 
   @override
   String get errorConflict => 'Этот email уже используется.';
@@ -181,7 +181,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get splashRestoring => 'Восстанавливаем сессию...';
 
   @override
-  String get splashPreparingProfile => 'Готовим профиль...';
+  String get splashPreparingProfile => 'Подготавливаем профиль...';
 
   @override
   String get splashErrorTitle => 'Что-то пошло не так.';
@@ -193,10 +193,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get onboardingBaseCurrencyTitle => 'Выберите базовую валюту';
 
   @override
-  String get onboardingBaseCurrencyBody => 'Итоги будут в этой валюте.';
+  String get onboardingBaseCurrencyBody => 'Все итоги будут пересчитаны в эту валюту.';
 
   @override
-  String get baseCurrencyConversionCaption => 'В эту валюту конвертируются ваши сбережения.';
+  String get baseCurrencyConversionCaption => 'В эту валюту конвертируются ваши активы.';
 
   @override
   String get onboardingSearchHint => 'Поиск валюты';
@@ -214,28 +214,28 @@ class AppLocalizationsRu extends AppLocalizations {
   String get onboardingSelectCurrency => 'Выберите валюту, чтобы продолжить.';
 
   @override
-  String get onboardingUpgradeRequired => 'Нужна подписка для выбора этой валюты.';
+  String get onboardingUpgradeRequired => 'Для выбора этой валюты нужен Pro-план.';
 
   @override
   String get onboardingCarouselTitle1 => 'Весь капитал в одной валюте';
 
   @override
   String get onboardingCarouselBody1 =>
-      'Отслеживайте банковские счета, наличные и криптокошельки — и всегда получайте единый итог в вашей базовой валюте.';
+      'Отслеживайте банковские счета, наличные и криптокошельки, чтобы всегда видеть общий итог в базовой валюте.';
 
   @override
-  String get onboardingCarouselTitle2 => 'Смоделируйте реальную структуру';
+  String get onboardingCarouselTitle2 => 'Повторите реальную структуру активов';
 
   @override
   String get onboardingCarouselBody2 =>
-      'Создавайте аккаунты типа Bank, Wallet, Exchange или Cash. Добавляйте несколько активов в один аккаунт (BTC, ETH, USDT, EUR) — как в реальной жизни.';
+      'Создавайте аккаунты: банк, кошелёк, биржа, наличные или другое. Внутри аккаунта добавляйте отдельные позиции для BTC, ETH, USDT, EUR — как в реальной жизни.';
 
   @override
   String get onboardingCarouselTitle3 => 'Обновляйте балансы за секунды';
 
   @override
   String get onboardingCarouselBody3 =>
-      'Быстро обновляйте баланс. Мы подсвечиваем изменения с прошлого раза и держим итоги консистентными за счёт регулярно обновляемых курсов.';
+      'Быстро обновляйте баланс. Мы показываем, что изменилось с прошлого раза, и пересчитываем итоги по регулярно обновляемым курсам.';
 
   @override
   String get onboardingCarouselBody3Footnote =>
@@ -272,10 +272,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get onboardingCarouselChip2Second => 'Точные курсы';
 
   @override
-  String get onboardingCarouselChip3First => 'Отслеживание изменений';
+  String get onboardingCarouselChip3First => 'История изменений';
 
   @override
-  String get onboardingCarouselChip3Second => 'Простой сценарий';
+  String get onboardingCarouselChip3Second => 'Простой учёт';
 
   @override
   String get overviewTitle => 'Обзор';
@@ -290,7 +290,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get analyticsTitle => 'Аналитика';
 
   @override
-  String get analyticsBreakdownTitle => 'Разбивка';
+  String get analyticsBreakdownTitle => 'Структура';
 
   @override
   String get analyticsBreakdownCaption =>
@@ -301,14 +301,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get analyticsUpdatesCaption =>
-      'Отслеживайте динамику общего баланса по последним обновлениям. Ниже показаны изменения по каждому обновлению.';
+      'Отслеживайте динамику общего баланса по последним обновлениям. Ниже показано изменение в каждой записи.';
 
   @override
   String get analyticsEmptyTitle => 'Пока нет аналитики';
 
   @override
   String get analyticsEmptyBody =>
-      'Добавьте аккаунты и балансы, чтобы увидеть разбивку и обновления.';
+      'Добавьте аккаунты и балансы, чтобы увидеть структуру и обновления.';
 
   @override
   String get actionsTitle => 'Действия';
@@ -320,26 +320,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String get notAvailable => 'Н/Д';
 
   @override
-  String get unpriced => 'Без цены';
+  String get unpriced => 'Без курса';
 
   @override
-  String get overviewEmptyBody => 'Данные появятся после добавления счетов.';
+  String get overviewEmptyBody => 'Данные появятся после добавления аккаунтов.';
 
   @override
-  String get overviewEmptyNoAccountsTitle => 'Создайте первый счет';
+  String get overviewEmptyNoAccountsTitle => 'Создайте первый аккаунт';
 
   @override
   String get overviewEmptyNoAccountsBody =>
-      'Добавьте счет, чтобы начать отслеживать активы и итоги.';
+      'Добавьте аккаунт, чтобы начать отслеживать активы и итоги.';
 
   @override
-  String get overviewEmptyNoAccountsCta => 'Создать счет';
+  String get overviewEmptyNoAccountsCta => 'Создать аккаунт';
 
   @override
   String get overviewEmptyNoAssetsTitle => 'Добавьте первый актив';
 
   @override
-  String get overviewEmptyNoAssetsBody => 'Добавьте валюты или токены в один из счетов.';
+  String get overviewEmptyNoAssetsBody => 'Добавьте валюты или токены в один из аккаунтов.';
 
   @override
   String get overviewEmptyNoAssetsCta => 'Добавить актив';
@@ -354,17 +354,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get overviewEmptyNoBalancesCta => 'Добавить баланс';
 
   @override
-  String get overviewPricedTotalLabel => 'Итого по оцененным';
+  String get overviewPricedTotalLabel => 'Итого с курсами';
 
   @override
   String get overviewMissingRatesTitle => 'Некоторые активы сейчас нельзя оценить.';
 
   @override
   String get overviewMissingRatesBody =>
-      'Итоги не включают активы без цены, пока курсы не обновятся.';
+      'Активы без курса не учитываются в итогах, пока курсы не обновятся.';
 
   @override
-  String get overviewUnpricedHoldingsTitle => 'Активы без цены';
+  String get overviewUnpricedHoldingsTitle => 'Активы без курса';
 
   @override
   String get overviewPartialHint => 'Частично';
@@ -374,7 +374,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String offlineShowingLastSaved(String time) {
-    return 'Показаны последние сохраненные итоги от $time.';
+    return 'Показаны последние сохранённые итоги от $time.';
   }
 
   @override
@@ -389,41 +389,41 @@ class AppLocalizationsRu extends AppLocalizations {
   String get overviewRatesUnavailable => 'Курсы недоступны';
 
   @override
-  String get accountsTitle => 'Счета';
+  String get accountsTitle => 'Аккаунты';
 
   @override
-  String get accountsAddAccount => 'Добавить счет';
+  String get accountsAddAccount => 'Добавить аккаунт';
 
   @override
-  String get accountsActiveSection => 'Счета';
+  String get accountsActiveSection => 'Аккаунты';
 
   @override
   String get accountsArchivedSection => 'Архив';
 
   @override
-  String get accountsOnlyArchivedHint => 'Показаны только архивные счета.';
+  String get accountsOnlyArchivedHint => 'Показаны только архивные аккаунты.';
 
   @override
-  String get accountsEmptyTitle => 'Пока нет счетов';
+  String get accountsEmptyTitle => 'Пока нет аккаунтов';
 
   @override
-  String get accountsEmptyBody => 'Создайте счет, чтобы начать отслеживать активы.';
+  String get accountsEmptyBody => 'Создайте аккаунт, чтобы начать отслеживать активы.';
 
   @override
-  String get accountsCreateAccount => 'Создать счет';
+  String get accountsCreateAccount => 'Создать аккаунт';
 
   @override
-  String get accountsNewTitle => 'Новый счет';
+  String get accountsNewTitle => 'Новый аккаунт';
 
   @override
   String get accountsNewBody =>
-      'Дайте счету название и выберите тип: банк, кошелек, биржа, наличные или другое.';
+      'Дайте аккаунту название и выберите тип: банк, кошелёк, биржа, наличные или другое.';
 
   @override
-  String get accountsEditTitle => 'Редактировать счет';
+  String get accountsEditTitle => 'Редактировать аккаунт';
 
   @override
-  String get accountsNameLabel => 'Название счета';
+  String get accountsNameLabel => 'Название аккаунта';
 
   @override
   String get accountsNameHint => 'например, Cash USD';
@@ -438,7 +438,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountsTypeBank => 'Банк';
 
   @override
-  String get accountsTypeCryptoWallet => 'Криптокошелек';
+  String get accountsTypeCryptoWallet => 'Криптокошелёк';
 
   @override
   String get accountsTypeExchange => 'Биржа';
@@ -450,13 +450,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountsTypeOther => 'Другое';
 
   @override
-  String get accountsTypeBankDescription => 'Банковский счет или сбережения';
+  String get accountsTypeBankDescription => 'Банковский счёт или накопления';
 
   @override
-  String get accountsTypeCryptoWalletDescription => 'Криптокошелек или самостоятельное хранение';
+  String get accountsTypeCryptoWalletDescription => 'Криптокошелёк или самостоятельное хранение';
 
   @override
-  String get accountsTypeExchangeDescription => 'Торговый или биржевой счет';
+  String get accountsTypeExchangeDescription => 'Биржевой или торговый аккаунт';
 
   @override
   String get accountsTypeCashDescription => 'Наличные в наличии';
@@ -477,26 +477,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountsDelete => 'Удалить';
 
   @override
-  String get accountsArchiveConfirmTitle => 'Отправить счет в архив?';
+  String get accountsArchiveConfirmTitle => 'Отправить аккаунт в архив?';
 
   @override
-  String get accountsArchiveConfirmBody => 'Этот счет будет скрыт из итогов.';
+  String get accountsArchiveConfirmBody => 'Этот аккаунт будет скрыт из итогов.';
 
   @override
-  String get accountsUnarchiveConfirmTitle => 'Вернуть счет из архива?';
+  String get accountsUnarchiveConfirmTitle => 'Вернуть аккаунт из архива?';
 
   @override
-  String get accountsDeleteConfirmTitle => 'Удалить счет?';
+  String get accountsDeleteConfirmTitle => 'Удалить аккаунт?';
 
   @override
   String get accountsDeleteConfirmBody =>
-      'Будут удалены все активы и история балансов в этом счете.';
+      'Будут удалены все активы и история балансов в этом аккаунте.';
 
   @override
   String get accountDetailAssetsTitle => 'Активы';
 
   @override
-  String get accountDetailEmptyTitle => 'В этом счете нет активов';
+  String get accountDetailEmptyTitle => 'В этом аккаунте нет активов';
 
   @override
   String get accountDetailEmptyBody => 'Добавьте валюты или токены, которые вы держите здесь.';
@@ -511,7 +511,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountDetailMissingRatesTitle => 'Некоторые активы сейчас нельзя оценить.';
 
   @override
-  String get accountDetailMissingRatesBody => 'Активы без цены не включены в итог по оцененным.';
+  String get accountDetailMissingRatesBody => 'Активы без курса не включены в итог с курсами.';
 
   @override
   String get assetAddTitle => 'Добавить актив';
@@ -523,7 +523,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get assetAddCta => 'Добавить';
 
   @override
-  String get assetDuplicateError => 'Этот актив уже добавлен в счет.';
+  String get assetDuplicateError => 'Этот актив уже добавлен в аккаунт.';
 
   @override
   String get assetNoMatchesTitle => 'Ничего не найдено';
@@ -532,7 +532,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get assetNoMatchesBody => 'Попробуйте изменить запрос.';
 
   @override
-  String get assetPaywallHint => 'Оформите подписку, чтобы отслеживать больше активов.';
+  String get assetPaywallHint => 'Перейдите на Pro, чтобы отслеживать больше активов.';
 
   @override
   String get assetAlreadyAddedLabel => 'Добавлено';
@@ -544,13 +544,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get assetKindCrypto => 'Крипто';
 
   @override
-  String get subaccountsCountLabel => 'счётов';
+  String get subaccountsCountLabel => 'позиций';
 
   @override
-  String get subaccountCreateTitle => 'Добавить счёт';
+  String get subaccountCreateTitle => 'Добавить позицию';
 
   @override
-  String get subaccountCreateCta => 'Добавить счёт';
+  String get subaccountCreateCta => 'Добавить позицию';
 
   @override
   String get subaccountCurrencyLabel => 'Валюта';
@@ -562,7 +562,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subaccountNameHint => 'например, USDT (TRC20)';
 
   @override
-  String get subaccountNameHintBank => 'например, Накопительный USD';
+  String get subaccountNameHintBank => 'например, Накопления USD';
 
   @override
   String get subaccountNameHintWalletExchange => 'например, BTC spot wallet';
@@ -571,25 +571,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subaccountNameHintCash => 'например, Наличные дома';
 
   @override
-  String get subaccountNameHintOther => 'например, Резервный счёт';
+  String get subaccountNameHintOther => 'например, Резерв';
 
   @override
   String get subaccountNameHelperBank => '';
 
   @override
   String get subaccountNameHelperWalletExchange =>
-      'Добавьте сеть или площадку в название, чтобы разделять похожие крипто-счета.';
+      'Добавьте сеть или площадку в название, чтобы различать похожие криптопозиции.';
 
   @override
   String get subaccountNameHelperCash =>
-      'Укажите место или назначение, например кошелек, сейф или наличные в поездке.';
+      'Укажите место или назначение: кошелёк, сейф или наличные в поездке.';
 
   @override
   String get subaccountNameHelperOther =>
-      'Используйте любое название, по которому вы быстро узнаете этот счёт.';
+      'Используйте любое название, по которому вы быстро узнаете эту позицию.';
 
   @override
-  String get subaccountAmountHelperBank => 'Введите текущий баланс этого счёта.';
+  String get subaccountAmountHelperBank => 'Введите текущий баланс этой позиции.';
 
   @override
   String get subaccountAmountHelperWalletExchange => 'Введите текущее количество этого актива.';
@@ -599,20 +599,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get subaccountAmountHelperOther =>
-      'Введите текущую сумму, которую вы ведете в этом счёте.';
+      'Введите текущую сумму, которую вы учитываете в этой позиции.';
 
   @override
-  String get subaccountEmptyTitle => 'Пока нет счётов';
+  String get subaccountEmptyTitle => 'Пока нет позиций';
 
   @override
-  String get subaccountEmptyBody => 'Добавьте активы, которые хранятся на этом счёте.';
+  String get subaccountEmptyBody => 'Добавьте активы, которые хранятся в этом аккаунте.';
 
   @override
-  String get subaccountListTitle => 'Счёта';
+  String get subaccountListTitle => 'Позиции';
 
   @override
   String get subaccountListCaption =>
-      'Используйте отдельные счёта для каждой валюты или токена внутри этого аккаунта.';
+      'Используйте отдельные позиции для каждой валюты или токена внутри этого аккаунта.';
 
   @override
   String get subaccountUpdateBalanceCta => 'Установить баланс';
@@ -621,16 +621,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subaccountRenameCta => 'Переименовать';
 
   @override
-  String get subaccountRenameTitle => 'Переименовать счёт';
+  String get subaccountRenameTitle => 'Переименовать позицию';
 
   @override
   String get subaccountDeleteCta => 'Удалить';
 
   @override
-  String get subaccountDeleteConfirmTitle => 'Удалить счёт?';
+  String get subaccountDeleteConfirmTitle => 'Удалить позицию?';
 
   @override
-  String get subaccountDeleteConfirmBody => 'Это удалит историю балансов счёта.';
+  String get subaccountDeleteConfirmBody => 'История балансов этой позиции будет удалена.';
 
   @override
   String get assetRemove => 'Удалить';
@@ -640,7 +640,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get assetRemoveConfirmBody =>
-      'Актив будет удален из этого счета вместе с историей балансов.';
+      'Актив будет удалён из этого аккаунта вместе с историей балансов.';
 
   @override
   String get positionCurrentBalanceLabel => 'Текущий баланс';
@@ -658,11 +658,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get positionUpdateThisMonth => 'Обновить за этот месяц';
 
   @override
-  String get positionHistoryTitle => 'История баланса счёта';
+  String get positionHistoryTitle => 'История баланса';
 
   @override
   String get positionHistoryDescription =>
-      'Показывает, как баланс этого счёта менялся после каждого обновления.';
+      'Посмотрите, как баланс этой позиции менялся после каждого обновления.';
 
   @override
   String get positionHistoryEmptyTitle => 'Пока нет истории балансов';
@@ -674,7 +674,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get positionHistoryEmptyCta => 'Добавить первый баланс';
 
   @override
-  String get positionLoadMore => 'Загрузить еще';
+  String get positionLoadMore => 'Загрузить ещё';
 
   @override
   String get balanceEntrySnapshot => 'Баланс';
@@ -683,7 +683,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get balanceEntryDelta => 'Изменение';
 
   @override
-  String get balanceEntryImpliedDeltaLabel => 'Расчетное изменение';
+  String get balanceEntryImpliedDeltaLabel => 'Расчётное изменение';
 
   @override
   String get addBalanceTitle => 'Добавить баланс';
@@ -704,7 +704,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addBalanceAmountLabel => 'Сумма';
 
   @override
-  String get addBalanceHelperSnapshot => 'Вы задаете новое текущее значение баланса этого счёта.';
+  String get addBalanceHelperSnapshot => 'Укажите новое текущее значение баланса этой позиции.';
 
   @override
   String get addBalanceHelperDelta => 'Изменение — насколько он вырос или уменьшился.';
@@ -716,26 +716,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addBalanceValidationDate => 'Выберите дату';
 
   @override
-  String get paywallTitle => 'Открыть Pro';
+  String get paywallTitle => 'Перейти на Pro';
 
   @override
-  String get paywallHeaderTitle => 'Открыть Pro';
+  String get paywallHeaderTitle => 'Перейти на Pro';
 
   @override
-  String get paywallReasonAccounts => 'Вы достигли бесплатного лимита: 5 счетов.';
+  String get paywallReasonAccounts => 'Вы достигли лимита Free-плана: 5 аккаунтов.';
 
   @override
-  String get paywallReasonSubaccounts => 'Вы достигли бесплатного лимита: 15 счётов.';
+  String get paywallReasonSubaccounts => 'Вы достигли лимита Free-плана: 15 позиций.';
 
   @override
-  String get paywallReasonBaseCurrency => 'Откройте любую базовую валюту.';
+  String get paywallReasonBaseCurrency => 'Перейдите на Pro, чтобы выбрать любую базовую валюту.';
 
   @override
-  String get paywallReasonOnboarding => 'Начните с полной версии для серьёзного учёта капитала.';
+  String get paywallReasonOnboarding => 'Начните с Pro-плана для полноценного учёта капитала.';
 
   @override
   String get paywallReasonManageSubscription =>
-      'Оформите Pro из настроек и откройте всё приложение.';
+      'Перейдите на Pro в настройках и откройте все возможности приложения.';
 
   @override
   String get paywallEntitlementsError => 'Не удалось проверить подписку. Попробуйте снова.';
@@ -744,20 +744,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallRestore => 'Восстановить';
 
   @override
-  String get paywallIdentityPending => 'Готовим безопасную покупку подписки...';
+  String get paywallIdentityPending => 'Подготавливаем безопасную покупку подписки...';
 
   @override
-  String get paywallUnlockTitle => 'Открыть Pro';
+  String get paywallUnlockTitle => 'Перейти на Pro';
 
   @override
-  String get paywallSubtitle => 'Безлимит по аккаунтам, активам и валютам.';
+  String get paywallSubtitle => 'Без ограничений по аккаунтам, позициям и валютам.';
 
   @override
   String get paywallValueTitle => 'Весь капитал без ограничений';
 
   @override
   String get paywallValueSubtitle =>
-      'Pro открывает полный сценарий учёта: аккаунты, активы, валюты и свежие курсы.';
+      'Pro открывает полный учёт портфеля: аккаунты, позиции, валюты и свежие курсы.';
 
   @override
   String get paywallLoadingOfferings => 'Загружаем варианты подписки...';
@@ -790,7 +790,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallFreeFeatureAccounts => 'До 5 аккаунтов';
 
   @override
-  String get paywallFreeFeatureSubaccounts => 'До 15 счётов';
+  String get paywallFreeFeatureSubaccounts => 'До 15 позиций';
 
   @override
   String get paywallFreeFeatureFiat => '5 популярных фиатных валют';
@@ -799,10 +799,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallFreeFeatureCrypto => '5 популярных криптовалют';
 
   @override
-  String get paywallProFeatureAccounts => 'Безлимитные аккаунты';
+  String get paywallProFeatureAccounts => 'Без ограничений по аккаунтам';
 
   @override
-  String get paywallProFeatureSubaccounts => 'Безлимит по счётам';
+  String get paywallProFeatureSubaccounts => 'Без ограничений по позициям';
 
   @override
   String get paywallProFeatureFiat => '100+ фиатных валют';
@@ -811,7 +811,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallProFeatureCrypto => '100+ криптовалют';
 
   @override
-  String get paywallProFeatureFreshRates => 'Свежие курсы для каждого итога';
+  String get paywallProFeatureFreshRates => 'Свежие курсы для всех итогов';
 
   @override
   String get paywallLegalPrefix =>
@@ -819,7 +819,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String paywallLegalPrefixWithPrice(String price, String period) {
-    return '$price / $period. Продлевается автоматически, если не отменить в аккаунте магазина.';
+    return '$price / $period. Подписка продлевается автоматически, если не отменить её в аккаунте магазина.';
   }
 
   @override
@@ -836,28 +836,28 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String paywallMonthlyPrice(String price) {
-    return 'Месяц: $price / месяц';
+    return 'Ежемесячно: $price / месяц';
   }
 
   @override
   String paywallYearlyPrice(String price) {
-    return 'Год: $price / год';
+    return 'Ежегодно: $price / год';
   }
 
   @override
   String get paywallIncludesTitle => 'Что включено';
 
   @override
-  String get paywallFeatureAccounts => 'Больше счетов';
+  String get paywallFeatureAccounts => 'Больше аккаунтов';
 
   @override
-  String get paywallFeatureSubaccounts => 'Больше счётов';
+  String get paywallFeatureSubaccounts => 'Больше позиций';
 
   @override
   String get paywallFeatureCurrencies => 'Любая базовая валюта';
 
   @override
-  String get paywallFeatureUpdates => 'Обновление статуса подписки';
+  String get paywallFeatureUpdates => 'Актуальный статус подписки';
 
   @override
   String get paywallPlansTitle => 'Выберите план';
@@ -878,10 +878,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallPlanRecommended => 'Рекомендуем';
 
   @override
-  String get paywallUpgrade => 'Оформить подписку';
+  String get paywallUpgrade => 'Перейти на Pro';
 
   @override
-  String get paywallAlreadyPaid => 'У вас уже активен платный план.';
+  String get paywallAlreadyPaid => 'У вас уже активен Pro-план.';
 
   @override
   String get dsPreviewTotalBalanceLabel => 'Общий баланс';
@@ -932,7 +932,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dsPreviewSectionInputs => 'Поля ввода';
 
   @override
-  String get dsPreviewInputAccountNameLabel => 'Название счета';
+  String get dsPreviewInputAccountNameLabel => 'Название аккаунта';
 
   @override
   String get dsPreviewInputAccountNameHint => 'например, Cash USD';
@@ -947,10 +947,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dsPreviewCardPortfolioTitle => 'Снимок портфеля';
 
   @override
-  String get dsPreviewCardPortfolioBody => 'Диверсифицировано по 6 счетам и 19 активам.';
+  String get dsPreviewCardPortfolioBody => 'Диверсифицировано по 6 аккаунтам и 19 активам.';
 
   @override
-  String get dsPreviewCardViewReport => 'Открыть отчет';
+  String get dsPreviewCardViewReport => 'Открыть отчёт';
 
   @override
   String get dsPreviewCardRebalance => 'Ребалансировать';
@@ -959,19 +959,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dsPreviewSectionListItems => 'Список';
 
   @override
-  String get dsPreviewListCheckingTitle => 'Расчетный счет';
+  String get dsPreviewListCheckingTitle => 'Расчётный счёт';
 
   @override
   String get dsPreviewListBankSubtitle => 'Банк';
 
   @override
-  String get dsPreviewListBrokerageTitle => 'Брокерский счет';
+  String get dsPreviewListBrokerageTitle => 'Брокерский счёт';
 
   @override
   String get dsPreviewListInvestmentSubtitle => 'Инвестиции';
 
   @override
-  String get dsPreviewListCashWalletTitle => 'Кошелек';
+  String get dsPreviewListCashWalletTitle => 'Кошелёк';
 
   @override
   String get dsPreviewListCashSubtitle => 'Наличные';
@@ -983,7 +983,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dsPreviewDialogShowButton => 'Показать диалог';
 
   @override
-  String get dsPreviewDialogDeleteAccountTitle => 'Удалить счет';
+  String get dsPreviewDialogDeleteAccountTitle => 'Удалить аккаунт';
 
   @override
   String get dsPreviewDialogDeleteAccountBody => 'Это действие нельзя отменить.';
@@ -1001,13 +1001,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dsPreviewSectionStates => 'Состояния';
 
   @override
-  String get dsPreviewStateEmptyTitle => 'Нет счетов';
+  String get dsPreviewStateEmptyTitle => 'Нет аккаунтов';
 
   @override
-  String get dsPreviewStateEmptyBody => 'Создайте первый счет, чтобы начать.';
+  String get dsPreviewStateEmptyBody => 'Создайте первый аккаунт, чтобы начать.';
 
   @override
-  String get dsPreviewStateEmptyAction => 'Создать счет';
+  String get dsPreviewStateEmptyAction => 'Создать аккаунт';
 
   @override
   String get dsPreviewStateErrorTitle => 'Что-то пошло не так';
@@ -1041,16 +1041,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsPlanStatus => 'Тариф';
 
   @override
-  String get settingsPlanFree => 'Бесплатный план';
+  String get settingsPlanFree => 'Free-план';
 
   @override
-  String get settingsPlanPaid => 'Платный план';
+  String get settingsPlanPaid => 'Pro-план';
 
   @override
-  String get settingsManageSubscription => 'Управление подпиской';
+  String get settingsManageSubscription => 'Управлять подпиской';
 
   @override
-  String get profileUpgradePlan => 'Обновить план';
+  String get profileUpgradePlan => 'Перейти на Pro';
 
   @override
   String get settingsSignOut => 'Выйти';
@@ -1088,7 +1088,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get baseCurrencySettingsPaywallHint =>
-      'Оформите подписку, чтобы открыть больше базовых валют.';
+      'Перейдите на Pro, чтобы открыть больше базовых валют.';
 
   @override
   String get baseCurrencySettingsSearchHint => 'Поиск валюты';
@@ -1111,7 +1111,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get baseCurrencyHowRatesTitle => 'Курсы обновляются каждый час';
 
   @override
-  String get baseCurrencyHowRatesBody => 'Актуальный курс для каждой валюты — всегда свежий.';
+  String get baseCurrencyHowRatesBody => 'Для каждой валюты используются свежие курсы.';
 
   @override
   String get baseCurrencyHowConvertTitle => 'Каждая позиция пересчитывается';
@@ -1148,7 +1148,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subscriptionStatusTitle => 'Статус';
 
   @override
-  String get subscriptionManage => 'Управление подпиской';
+  String get subscriptionManage => 'Управлять подпиской';
 
   @override
   String get subscriptionRestore => 'Восстановить покупки';
@@ -1157,21 +1157,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subscriptionCancel => 'Отменить подписку';
 
   @override
-  String get subscriptionUpgrade => 'Открыть годовой Pro';
+  String get subscriptionUpgrade => 'Перейти на годовой Pro';
 
   @override
   String get subscriptionFreeHeroTitle => 'Откройте полный учёт портфеля';
 
   @override
   String get subscriptionFreeHeroBody =>
-      'Pro снимает лимиты по аккаунтам, активам, базовым валютам и итогам со свежими курсами.';
+      'Pro снимает лимиты по аккаунтам, позициям, базовым валютам и итогам со свежими курсами.';
 
   @override
   String get subscriptionFreeBody =>
-      'У вас бесплатный план. Оформите подписку, чтобы открыть все базовые валюты.';
+      'У вас Free-план. Перейдите на Pro, чтобы открыть все базовые валюты.';
 
   @override
-  String get subscriptionPaidBody => 'У вас платный план. Спасибо за поддержку Asset Tuner.';
+  String get subscriptionPaidBody => 'У вас Pro-план. Спасибо за поддержку Asset Tuner.';
 
   @override
   String get subscriptionFeaturesTitle => 'Что включено';
@@ -1192,19 +1192,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileSectionPortfolio => 'Портфель';
 
   @override
-  String get profileAccounts => 'Счета';
+  String get profileAccounts => 'Аккаунты';
 
   @override
-  String get settingsArchivedAccounts => 'Архивные счета';
+  String get settingsArchivedAccounts => 'Архивные аккаунты';
 
   @override
-  String get archivedAccountsGlobalTotalHint => 'Архивные счета не участвуют в общем балансе.';
+  String get archivedAccountsGlobalTotalHint => 'Архивные аккаунты не участвуют в общем итоге.';
 
   @override
-  String get archivedAccountsEmptyTitle => 'Нет архивных счетов';
+  String get archivedAccountsEmptyTitle => 'Нет архивных аккаунтов';
 
   @override
-  String get archivedAccountsEmptyBody => 'Счета, которые вы архивируете, появятся здесь.';
+  String get archivedAccountsEmptyBody => 'Аккаунты, которые вы архивируете, появятся здесь.';
 
   @override
   String get profileLanguage => 'Язык';
@@ -1228,7 +1228,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileThemeLight => 'Светлая';
 
   @override
-  String get profileThemeDark => 'Темная';
+  String get profileThemeDark => 'Тёмная';
 
   @override
   String get profileSectionSupport => 'Поддержка';
@@ -1312,7 +1312,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get subscriptionManageSuccess => 'Статус подписки обновлен.';
+  String get subscriptionManageSuccess => 'Статус подписки обновлён.';
 
   @override
   String get subscriptionRestoreSuccess => 'Покупки восстановлены.';
@@ -1346,7 +1346,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get guidedTourOverviewStep2Body =>
-      'Нажмите здесь, чтобы добавить банковский, биржевой, кошелёк, наличный или другой тип аккаунта.';
+      'Нажмите здесь, чтобы добавить банковский аккаунт, кошелёк, биржу, наличные или другой тип аккаунта.';
 
   @override
   String get guidedTourOverviewStep3Title => 'Обновляйте данные';
