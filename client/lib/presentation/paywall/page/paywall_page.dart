@@ -364,7 +364,7 @@ class _PaywallPageState extends State<PaywallPage> {
 
   Future<bool> _syncSubscriptionAndConfirmPro() async {
     final profileCubit = context.read<ProfileCubit>();
-    await profileCubit.syncSubscription(silent: false, force: true);
+    await profileCubit.syncSubscription(silent: false, force: true, placement: 'paywall_purchase');
     if (!mounted) {
       return false;
     }

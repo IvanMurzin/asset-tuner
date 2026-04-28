@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/local_storage/onboarding_paywall_storage.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
@@ -111,6 +113,13 @@ class _SplashPageState extends State<SplashPage> {
         if (!mounted) {
           return;
         }
+        getIt<AppAnalytics>().log(
+          AnalyticsEventName.lockedFeatureTapped,
+          parameters: {
+            AnalyticsParams.feature: 'onboarding_paywall',
+            AnalyticsParams.placement: 'splash',
+          },
+        );
         await context.push(
           AppRoutes.paywall,
           extra: const PaywallArgs(reason: PaywallReason.onboarding),

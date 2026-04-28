@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/account/usecase/create_account_usecase.dart';
@@ -11,11 +12,12 @@ part 'account_create_state.dart';
 
 @injectable
 class AccountCreateCubit extends Cubit<AccountCreateState> {
-  AccountCreateCubit(this._getCachedSession, this._createAccount)
+  AccountCreateCubit(this._getCachedSession, this._createAccount, this._analytics)
     : super(const AccountCreateState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final CreateAccountUseCase _createAccount;
+  final AppAnalytics _analytics;
 
   Future<void> submit({required String name, required AccountType type}) async {
     final normalized = name.trim();
@@ -53,8 +55,21 @@ class AccountCreateCubit extends Cubit<AccountCreateState> {
 
     switch (result) {
       case Success<AccountEntity>(value: final account):
+        _analytics.log(
+          AnalyticsEventName.accountCreated,
+          parameters: {AnalyticsParams.accountType: account.type.name},
+        );
         emit(state.copyWith(status: AccountCreateStatus.success, account: account));
       case FailureResult<AccountEntity>(failure: final failure):
+        if (failure.code == 'limit_accounts_reached') {
+          _analytics.log(
+            AnalyticsEventName.limitHit,
+            parameters: {
+              AnalyticsParams.feature: 'accounts',
+              AnalyticsParams.accountType: type.name,
+            },
+          );
+        }
         emit(
           state.copyWith(
             status: AccountCreateStatus.error,

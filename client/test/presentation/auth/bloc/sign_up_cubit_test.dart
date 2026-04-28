@@ -1,3 +1,4 @@
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
@@ -16,12 +17,14 @@ void main() {
     late SignUpWithPasswordUseCase signUpUseCase;
     late OAuthSignInUseCase oAuthUseCase;
     late GetAuthProvidersUseCase providersUseCase;
+    late AppAnalytics analytics;
 
     setUp(() {
       repository = _FakeAuthRepository();
       signUpUseCase = SignUpWithPasswordUseCase(repository);
       oAuthUseCase = OAuthSignInUseCase(repository);
       providersUseCase = GetAuthProvidersUseCase(repository);
+      analytics = AppAnalytics();
     });
 
     test('emits OTP navigation when OTP is enabled', () async {
@@ -29,6 +32,7 @@ void main() {
         signUpUseCase,
         oAuthUseCase,
         providersUseCase,
+        analytics,
         isOtpEnabled: true,
       );
       cubit.updateEmail('user@example.com');
@@ -48,6 +52,7 @@ void main() {
         signUpUseCase,
         oAuthUseCase,
         providersUseCase,
+        analytics,
         isOtpEnabled: false,
       );
       cubit.updateEmail('user@example.com');

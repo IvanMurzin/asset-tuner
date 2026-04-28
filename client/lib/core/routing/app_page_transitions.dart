@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 Page<dynamic> slideTransition(BuildContext context, GoRouterState state, Widget child) {
   return CustomTransitionPage<dynamic>(
     key: state.pageKey,
+    name: state.fullPath ?? state.matchedLocation,
     child: child,
     transitionDuration: const Duration(milliseconds: 280),
     reverseTransitionDuration: const Duration(milliseconds: 220),
@@ -25,6 +26,7 @@ Page<dynamic> slideTransition(BuildContext context, GoRouterState state, Widget 
 Page<dynamic> noTransition(BuildContext context, GoRouterState state, Widget child) {
   return CustomTransitionPage<dynamic>(
     key: state.pageKey,
+    name: state.fullPath ?? state.matchedLocation,
     child: child,
     transitionDuration: Duration.zero,
     reverseTransitionDuration: Duration.zero,

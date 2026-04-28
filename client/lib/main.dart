@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:asset_tuner/app.dart';
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/bloc/bloc_observer.dart';
 import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/di/di.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/firebase/firebase_initializer.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_initializer.dart';
@@ -24,6 +26,16 @@ Future<void> main() async {
 
       final locale = WidgetsBinding.instance.platformDispatcher.locale;
       logger.i('locale_active: ${locale.toLanguageTag()}');
+
+      unawaited(
+        getIt<AppAnalytics>().log(
+          AnalyticsEventName.appOpened,
+          parameters: {
+            AnalyticsParams.flavor: AppConfig.instance.flavor.name,
+            'locale': locale.toLanguageTag(),
+          },
+        ),
+      );
 
       if (!FirebaseInitializer.isInitialized) {
         FlutterError.onError = (details) {

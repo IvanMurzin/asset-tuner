@@ -1,3 +1,4 @@
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
@@ -23,6 +24,7 @@ void main() {
       cubit = SubaccountCreateCubit(
         GetCachedSessionUseCase(_FakeAuthRepository()),
         CreateSubaccountUseCase(subaccountRepository),
+        AppAnalytics(),
       );
     });
 

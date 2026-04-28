@@ -1,3 +1,4 @@
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
@@ -30,7 +31,11 @@ void main() {
     });
 
     test('AccountCreateCubit maps empty name to inline field error', () async {
-      final cubit = AccountCreateCubit(getCachedSessionUseCase, createAccountUseCase);
+      final cubit = AccountCreateCubit(
+        getCachedSessionUseCase,
+        createAccountUseCase,
+        AppAnalytics(),
+      );
 
       await cubit.submit(name: '   ', type: AccountType.bank);
 
@@ -42,7 +47,11 @@ void main() {
     });
 
     test('AccountCreateCubit clears name error on input change', () async {
-      final cubit = AccountCreateCubit(getCachedSessionUseCase, createAccountUseCase);
+      final cubit = AccountCreateCubit(
+        getCachedSessionUseCase,
+        createAccountUseCase,
+        AppAnalytics(),
+      );
 
       await cubit.submit(name: '', type: AccountType.bank);
       expect(cubit.state.nameError, AccountCreateFieldError.required);
@@ -81,7 +90,11 @@ void main() {
       accountRepository.createResult = const FailureResult(
         Failure(code: 'validation', message: 'Backend validation message'),
       );
-      final cubit = AccountCreateCubit(getCachedSessionUseCase, createAccountUseCase);
+      final cubit = AccountCreateCubit(
+        getCachedSessionUseCase,
+        createAccountUseCase,
+        AppAnalytics(),
+      );
 
       await cubit.submit(name: 'Valid name', type: AccountType.bank);
 

@@ -119,6 +119,13 @@ class _ManageSubscriptionPageState extends State<ManageSubscriptionPage> {
   }
 
   Future<void> _onUpgradePressed(BuildContext context) async {
+    getIt<AppAnalytics>().log(
+      AnalyticsEventName.lockedFeatureTapped,
+      parameters: {
+        AnalyticsParams.feature: 'upgrade_plan',
+        AnalyticsParams.placement: 'manage_subscription',
+      },
+    );
     await context.push<bool>(
       AppRoutes.paywall,
       extra: const PaywallArgs(reason: PaywallReason.manageSubscription),
@@ -130,7 +137,11 @@ class _ManageSubscriptionPageState extends State<ManageSubscriptionPage> {
       await getIt<RevenueCatService>().restorePurchases();
       if (!context.mounted) return;
       final profileCubit = context.read<ProfileCubit>();
-      await profileCubit.syncSubscription(silent: false, force: true);
+      await profileCubit.syncSubscription(
+        silent: false,
+        force: true,
+        placement: 'manage_subscription_restore',
+      );
       if (!context.mounted) return;
       if (!_isProProfile(profileCubit.state)) {
         showDSSnackBar(
@@ -154,7 +165,11 @@ class _ManageSubscriptionPageState extends State<ManageSubscriptionPage> {
   }
 
   Future<void> _syncSubscriptionAndAssets(BuildContext context) async {
-    await context.read<ProfileCubit>().syncSubscription(silent: false, force: true);
+    await context.read<ProfileCubit>().syncSubscription(
+      silent: false,
+      force: true,
+      placement: 'customer_center_close',
+    );
     if (!context.mounted) return;
     await context.read<AssetsCubit>().refresh(silent: true, forceRefresh: true);
   }

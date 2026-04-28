@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/types/failure.dart';
@@ -26,6 +27,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     this._updateBaseCurrency,
     this._updatePlan,
     this._revenueCatService,
+    this._analytics,
   ) : super(const ProfileState());
 
   static const Duration _subscriptionSyncCooldown = Duration(minutes: 5);
@@ -36,6 +38,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   final UpdateBaseCurrencyUseCase _updateBaseCurrency;
   final UpdatePlanUseCase _updatePlan;
   final RevenueCatService _revenueCatService;
+  final AppAnalytics _analytics;
 
   StreamSubscription<AuthSessionEntity?>? _sessionSubscription;
   AuthSessionEntity? _session;
@@ -122,6 +125,10 @@ class ProfileCubit extends Cubit<ProfileState> {
               failureMessage: null,
             ),
           );
+          unawaited(_pushSubscriptionUserProperties(profile.plan));
+          unawaited(
+            _analytics.setUserProperty(AnalyticsUserProps.baseCurrency, profile.baseCurrency),
+          );
         case FailureResult(failure: final failure):
           if (silent && state.profile != null) {
             emit(state.copyWith(failureCode: failure.code, failureMessage: failure.message));
@@ -151,6 +158,8 @@ class ProfileCubit extends Cubit<ProfileState> {
       return;
     }
 
+    final previousCurrency = state.profile?.baseCurrency;
+
     emit(state.copyWith(isUpdatingBaseCurrency: true, failureCode: null, failureMessage: null));
 
     final result = await _updateBaseCurrency(code);
@@ -169,6 +178,18 @@ class ProfileCubit extends Cubit<ProfileState> {
             failureMessage: null,
           ),
         );
+        unawaited(
+          _analytics.log(
+            AnalyticsEventName.baseCurrencyChanged,
+            parameters: {
+              AnalyticsParams.fromCurrency: previousCurrency,
+              AnalyticsParams.toCurrency: profile.baseCurrency,
+            },
+          ),
+        );
+        unawaited(
+          _analytics.setUserProperty(AnalyticsUserProps.baseCurrency, profile.baseCurrency),
+        );
       case FailureResult(failure: final failure):
         emit(
           state.copyWith(
@@ -180,7 +201,11 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<void> syncSubscription({bool silent = true, bool force = false}) async {
+  Future<void> syncSubscription({
+    bool silent = true,
+    bool force = false,
+    String placement = 'auto',
+  }) async {
     if (!state.isReady) {
       return;
     }
@@ -201,6 +226,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     final exposeSyncing = !silent || force;
     emit(
       state.copyWith(isSyncingSubscription: exposeSyncing, failureCode: null, failureMessage: null),
+    );
+
+    unawaited(
+      _analytics.log(
+        AnalyticsEventName.subscriptionSyncStarted,
+        parameters: {AnalyticsParams.placement: placement},
+      ),
     );
 
     try {
@@ -236,12 +268,31 @@ class ProfileCubit extends Cubit<ProfileState> {
             ),
           );
           _lastSubscriptionSyncAt = DateTime.now();
+          unawaited(
+            _analytics.log(
+              AnalyticsEventName.subscriptionSyncSucceeded,
+              parameters: {
+                AnalyticsParams.placement: placement,
+                AnalyticsParams.plan: profile.plan,
+              },
+            ),
+          );
+          unawaited(_pushSubscriptionUserProperties(profile.plan));
         case FailureResult(failure: final failure):
           emit(
             state.copyWith(
               isSyncingSubscription: false,
               failureCode: failure.code,
               failureMessage: failure.message,
+            ),
+          );
+          unawaited(
+            _analytics.log(
+              AnalyticsEventName.subscriptionSyncFailed,
+              parameters: {
+                AnalyticsParams.placement: placement,
+                AnalyticsParams.errorCode: failure.code,
+              },
             ),
           );
       }
@@ -256,6 +307,15 @@ class ProfileCubit extends Cubit<ProfileState> {
           ),
         );
       }
+      unawaited(
+        _analytics.log(
+          AnalyticsEventName.subscriptionSyncFailed,
+          parameters: {
+            AnalyticsParams.placement: placement,
+            AnalyticsParams.errorCode: 'SYNC_ERROR',
+          },
+        ),
+      );
     } finally {
       _isSubscriptionSyncing = false;
       if (_queuedSubscriptionSync && !isClosed) {
@@ -265,6 +325,12 @@ class ProfileCubit extends Cubit<ProfileState> {
         unawaited(syncSubscription(silent: true, force: nextForce));
       }
     }
+  }
+
+  Future<void> _pushSubscriptionUserProperties(String? plan) async {
+    final isSubscriber = plan == 'pro';
+    await _analytics.setUserProperty(AnalyticsUserProps.isSubscriber, isSubscriber.toString());
+    await _analytics.setUserProperty(AnalyticsUserProps.subscriptionPlan, plan);
   }
 
   void _installCustomerInfoUpdateListener() {

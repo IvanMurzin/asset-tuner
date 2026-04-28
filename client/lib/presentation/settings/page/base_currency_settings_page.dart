@@ -1,3 +1,5 @@
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
@@ -153,10 +155,19 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                                 title: l10n.paywallFeatureCurrencies,
                                 subtitle: l10n.baseCurrencySettingsPaywallHint,
                                 actionLabel: l10n.paywallUpgrade,
-                                onTap: () => context.push(
-                                  AppRoutes.paywall,
-                                  extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
-                                ),
+                                onTap: () {
+                                  getIt<AppAnalytics>().log(
+                                    AnalyticsEventName.lockedFeatureTapped,
+                                    parameters: {
+                                      AnalyticsParams.feature: 'base_currency',
+                                      AnalyticsParams.placement: 'base_currency_settings',
+                                    },
+                                  );
+                                  context.push(
+                                    AppRoutes.paywall,
+                                    extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
+                                  );
+                                },
                               ),
                               SizedBox(height: spacing.s16),
                             ],
@@ -197,6 +208,14 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
   }
 
   void _openBaseCurrencyPaywall(BuildContext context, String code) {
+    getIt<AppAnalytics>().log(
+      AnalyticsEventName.lockedFeatureTapped,
+      parameters: {
+        AnalyticsParams.feature: 'base_currency',
+        AnalyticsParams.placement: 'currency_picker',
+        AnalyticsParams.currency: code,
+      },
+    );
     context.push(
       AppRoutes.paywall,
       extra: PaywallArgs(reason: PaywallReason.baseCurrency, requestedBaseCurrencyCode: code),

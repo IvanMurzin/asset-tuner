@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
@@ -18,6 +19,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     this._signUpWithPasswordUseCase,
     this._oAuthSignInUseCase,
     this._getAuthProvidersUseCase,
+    this._analytics,
   ) : _isOtpEnabledOverride = null,
       super(const SignUpState()) {
     _loadProviders();
@@ -26,7 +28,8 @@ class SignUpCubit extends Cubit<SignUpState> {
   SignUpCubit.testing(
     this._signUpWithPasswordUseCase,
     this._oAuthSignInUseCase,
-    this._getAuthProvidersUseCase, {
+    this._getAuthProvidersUseCase,
+    this._analytics, {
     required bool isOtpEnabled,
   }) : _isOtpEnabledOverride = isOtpEnabled,
        super(const SignUpState()) {
@@ -36,6 +39,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   final SignUpWithPasswordUseCase _signUpWithPasswordUseCase;
   final OAuthSignInUseCase _oAuthSignInUseCase;
   final GetAuthProvidersUseCase _getAuthProvidersUseCase;
+  final AppAnalytics _analytics;
   final bool? _isOtpEnabledOverride;
 
   bool get _isOtpEnabled => _isOtpEnabledOverride ?? AppConfig.instance.isOtpEnabled;
@@ -76,10 +80,22 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
 
     emit(state.copyWith(status: SignUpStatus.loading, bannerFailureCode: null, bannerType: null));
+    _analytics.log(
+      AnalyticsEventName.authStarted,
+      parameters: {AnalyticsParams.provider: 'email', AnalyticsParams.mode: 'signup'},
+    );
     final result = await _signUpWithPasswordUseCase(state.email.trim(), state.password);
     if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
+        _analytics.log(
+          AnalyticsEventName.authFailed,
+          parameters: {
+            AnalyticsParams.provider: 'email',
+            AnalyticsParams.mode: 'signup',
+            AnalyticsParams.errorCode: failure.code,
+          },
+        );
         emit(
           state.copyWith(
             status: SignUpStatus.idle,
@@ -89,6 +105,14 @@ class SignUpCubit extends Cubit<SignUpState> {
           ),
         );
       case Success(:final value):
+        _analytics.log(
+          AnalyticsEventName.authCompleted,
+          parameters: {
+            AnalyticsParams.provider: 'email',
+            AnalyticsParams.mode: 'signup',
+            'otp_required': _isOtpEnabled,
+          },
+        );
         if (_isOtpEnabled) {
           emit(
             state.copyWith(
@@ -116,10 +140,22 @@ class SignUpCubit extends Cubit<SignUpState> {
       return;
     }
     emit(state.copyWith(status: SignUpStatus.loading, bannerFailureCode: null, bannerType: null));
+    _analytics.log(
+      AnalyticsEventName.authStarted,
+      parameters: {AnalyticsParams.provider: provider.name, AnalyticsParams.mode: 'signup'},
+    );
     final result = await _oAuthSignInUseCase(provider);
     if (isClosed) return;
     switch (result) {
       case FailureResult(:final failure):
+        _analytics.log(
+          AnalyticsEventName.authFailed,
+          parameters: {
+            AnalyticsParams.provider: provider.name,
+            AnalyticsParams.mode: 'signup',
+            AnalyticsParams.errorCode: failure.code,
+          },
+        );
         emit(
           state.copyWith(
             status: SignUpStatus.idle,
@@ -129,6 +165,10 @@ class SignUpCubit extends Cubit<SignUpState> {
           ),
         );
       case Success():
+        _analytics.log(
+          AnalyticsEventName.authCompleted,
+          parameters: {AnalyticsParams.provider: provider.name, AnalyticsParams.mode: 'signup'},
+        );
         emit(state.copyWith(status: SignUpStatus.idle, navigation: const SignUpNavigation()));
     }
   }
