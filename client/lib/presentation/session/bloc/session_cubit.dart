@@ -33,6 +33,7 @@ class SessionCubit extends Cubit<SessionState> {
 
   StreamSubscription<AuthSessionEntity?>? _sessionSubscription;
   String? _revenueCatUserId;
+  String? _lastUserId;
 
   Future<void> bootstrap() async {
     await _sessionSubscription?.cancel();
@@ -90,7 +91,13 @@ class SessionCubit extends Cubit<SessionState> {
         ),
       );
       await _syncRevenueCatLoggedOut();
+      if (_lastUserId != null) {
+        await _analytics.log(AnalyticsEventName.signOutCompleted);
+      }
       await _analytics.setUserId(null);
+      await _analytics.setUserProperty(AnalyticsUserProps.isSubscriber, null);
+      await _analytics.setUserProperty(AnalyticsUserProps.subscriptionPlan, null);
+      _lastUserId = null;
       return;
     }
 
@@ -109,7 +116,10 @@ class SessionCubit extends Cubit<SessionState> {
       ),
     );
     await _syncRevenueCatLoggedIn(session.userId);
-    await _analytics.setUserId(session.userId);
+    if (_lastUserId != session.userId) {
+      await _analytics.setUserId(session.userId);
+      _lastUserId = session.userId;
+    }
   }
 
   Future<void> signOut() async {

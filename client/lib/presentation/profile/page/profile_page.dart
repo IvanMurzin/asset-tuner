@@ -1,4 +1,6 @@
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/config/app_config.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/utils/external_url_launcher.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
@@ -141,14 +143,26 @@ class ProfilePage extends StatelessWidget {
                             isPaid: profile.plan == 'pro',
                             onPlanActionTap: () async {
                               if (profile.plan == 'pro') {
+                                getIt<AppAnalytics>().log(
+                                  AnalyticsEventName.manageSubscriptionOpened,
+                                  parameters: {AnalyticsParams.placement: 'profile_header'},
+                                );
                                 await context.push(AppRoutes.manageSubscription);
                               } else {
+                                getIt<AppAnalytics>().log(
+                                  AnalyticsEventName.lockedFeatureTapped,
+                                  parameters: {
+                                    AnalyticsParams.feature: 'upgrade_plan',
+                                    AnalyticsParams.placement: 'profile_header',
+                                  },
+                                );
                                 await context.push(AppRoutes.paywall);
                               }
                               if (context.mounted) {
                                 await context.read<ProfileCubit>().syncSubscription(
                                   silent: true,
                                   force: true,
+                                  placement: 'profile_return',
                                 );
                               }
                             },

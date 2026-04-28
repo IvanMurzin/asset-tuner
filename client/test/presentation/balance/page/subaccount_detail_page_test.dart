@@ -390,7 +390,11 @@ class _TestProfileCubit extends Cubit<ProfileState> implements ProfileCubit {
   Future<void> updateBaseCurrency(String code) async {}
 
   @override
-  Future<void> syncSubscription({bool silent = true, bool force = false}) async {}
+  Future<void> syncSubscription({
+    bool silent = true,
+    bool force = false,
+    String placement = 'auto',
+  }) async {}
 }
 
 class _TestAssetsCubit extends Cubit<AssetsState> implements AssetsCubit {

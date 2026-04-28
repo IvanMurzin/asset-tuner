@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
@@ -55,6 +56,13 @@ class _AccountCreatePageState extends State<AccountCreatePage> {
               if (state.status == AccountCreateStatus.error &&
                   state.failureCode == 'limit_accounts_reached') {
                 if (!context.mounted) return;
+                getIt<AppAnalytics>().log(
+                  AnalyticsEventName.lockedFeatureTapped,
+                  parameters: {
+                    AnalyticsParams.feature: 'add_account',
+                    AnalyticsParams.placement: 'accounts_limit',
+                  },
+                );
                 await context.push(
                   AppRoutes.paywall,
                   extra: const PaywallArgs(reason: PaywallReason.accountsLimit),

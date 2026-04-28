@@ -1,3 +1,5 @@
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_unlock_currencies_card.dart';
 import 'package:asset_tuner/core_ui/theme/app_theme.dart';
@@ -24,6 +26,9 @@ void main() {
     late _TestAssetsCubit assetsCubit;
 
     setUp(() {
+      if (!getIt.isRegistered<AppAnalytics>()) {
+        getIt.registerLazySingleton<AppAnalytics>(AppAnalytics.new);
+      }
       sessionCubit = _TestSessionCubit(
         SessionState(
           status: SessionStatus.authenticated,
@@ -198,7 +203,11 @@ class _TestProfileCubit extends Cubit<ProfileState> implements ProfileCubit {
   Future<void> updateBaseCurrency(String code) async {}
 
   @override
-  Future<void> syncSubscription({bool silent = true, bool force = false}) async {}
+  Future<void> syncSubscription({
+    bool silent = true,
+    bool force = false,
+    String placement = 'auto',
+  }) async {}
 }
 
 class _TestAssetsCubit extends Cubit<AssetsState> implements AssetsCubit {

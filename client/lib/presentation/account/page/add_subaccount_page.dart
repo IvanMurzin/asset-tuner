@@ -1,3 +1,4 @@
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
@@ -87,6 +88,13 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
               if (state.status == SubaccountCreateStatus.error &&
                   state.failureCode == 'limit_subaccounts_reached') {
                 if (!context.mounted) return;
+                getIt<AppAnalytics>().log(
+                  AnalyticsEventName.lockedFeatureTapped,
+                  parameters: {
+                    AnalyticsParams.feature: 'add_subaccount',
+                    AnalyticsParams.placement: 'subaccounts_limit',
+                  },
+                );
                 await context.push(
                   AppRoutes.paywall,
                   extra: const PaywallArgs(reason: PaywallReason.subaccountsLimit),
@@ -184,6 +192,13 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                           });
                         },
                         onLocked: (_) {
+                          getIt<AppAnalytics>().log(
+                            AnalyticsEventName.lockedFeatureTapped,
+                            parameters: {
+                              AnalyticsParams.feature: 'subaccount_currency',
+                              AnalyticsParams.placement: 'add_subaccount',
+                            },
+                          );
                           context.push(AppRoutes.paywall);
                         },
                       ),

@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
@@ -13,11 +14,12 @@ part 'subaccount_create_state.dart';
 
 @injectable
 class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
-  SubaccountCreateCubit(this._getCachedSession, this._createSubaccount)
+  SubaccountCreateCubit(this._getCachedSession, this._createSubaccount, this._analytics)
     : super(const SubaccountCreateState());
 
   final GetCachedSessionUseCase _getCachedSession;
   final CreateSubaccountUseCase _createSubaccount;
+  final AppAnalytics _analytics;
 
   Future<void> submit({
     required String accountId,
@@ -65,8 +67,21 @@ class SubaccountCreateCubit extends Cubit<SubaccountCreateState> {
 
     switch (result) {
       case Success<SubaccountEntity>(value: final subaccount):
+        _analytics.log(
+          AnalyticsEventName.subaccountCreated,
+          parameters: {
+            AnalyticsParams.subaccountKind: asset.kind.name,
+            AnalyticsParams.currency: asset.code,
+          },
+        );
         emit(state.copyWith(status: SubaccountCreateStatus.success, subaccount: subaccount));
       case FailureResult<SubaccountEntity>(failure: final failure):
+        if (failure.code == 'limit_subaccounts_reached') {
+          _analytics.log(
+            AnalyticsEventName.limitHit,
+            parameters: {AnalyticsParams.feature: 'subaccounts'},
+          );
+        }
         emit(
           state.copyWith(
             status: SubaccountCreateStatus.error,

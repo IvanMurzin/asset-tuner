@@ -1,3 +1,4 @@
+import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_page_transitions.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
@@ -38,6 +39,7 @@ import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
   initialLocation: AppRoutes.home,
+  observers: [AnalyticsRouteObserver(getIt<AppAnalytics>())],
   routes: [
     GoRoute(
       path: AppRoutes.home,
