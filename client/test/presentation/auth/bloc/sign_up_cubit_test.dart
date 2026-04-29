@@ -42,7 +42,7 @@ void main() {
       await cubit.submit();
 
       expect(cubit.state.status, SignUpStatus.otpSent);
-      expect(cubit.state.navigation?.email, 'user@example.com');
+      expect(cubit.state.otpEmail, 'user@example.com');
       expect(cubit.state.bannerType, SignUpBannerType.success);
       await cubit.close();
     });
@@ -62,7 +62,7 @@ void main() {
       await cubit.submit();
 
       expect(cubit.state.status, SignUpStatus.idle);
-      expect(cubit.state.navigation?.email, 'user@example.com');
+      expect(cubit.state.otpEmail, isNull);
       expect(cubit.state.bannerType, isNull);
       await cubit.close();
     });

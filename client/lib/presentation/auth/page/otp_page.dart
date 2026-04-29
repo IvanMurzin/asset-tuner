@@ -43,7 +43,6 @@ class _OtpPageState extends State<OtpPage> {
       create: (_) => getIt<OtpCubit>()..setEmail(email),
       child: BlocConsumer<OtpCubit, OtpState>(
         listenWhen: (prev, curr) =>
-            curr.navigation != null ||
             (curr.bannerFailureCode != null && curr.bannerFailureCode != prev.bannerFailureCode) ||
             curr.resendSuccess,
         listener: (context, state) async {
@@ -56,17 +55,6 @@ class _OtpPageState extends State<OtpPage> {
                 message: l10n.otpResendSuccess,
               );
             }
-            return;
-          }
-          final navigation = state.navigation;
-          if (navigation != null) {
-            switch (navigation.destination) {
-              case OtpDestination.overview:
-                context.go(AppRoutes.home);
-              case OtpDestination.signIn:
-                context.go(AppRoutes.signIn);
-            }
-            context.read<OtpCubit>().consumeNavigation();
             return;
           }
           final message = state.bannerFailureCode != null

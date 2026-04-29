@@ -10,7 +10,7 @@ import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
-import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
+import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,16 +18,16 @@ import 'package:go_router/go_router.dart';
 
 void main() {
   group('ProfilePage account actions', () {
-    late _TestSessionCubit sessionCubit;
+    late _TestAuthCubit sessionCubit;
     late _TestProfileCubit profileCubit;
     late _TestAssetsCubit assetsCubit;
     late _TestLocaleCubit localeCubit;
     late _TestThemeModeCubit themeModeCubit;
 
     setUp(() {
-      sessionCubit = _TestSessionCubit(
-        SessionState(
-          status: SessionStatus.authenticated,
+      sessionCubit = _TestAuthCubit(
+        AuthState(
+          status: AuthStatus.authenticated,
           session: const AuthSessionEntity(userId: 'user-1', email: 'user@example.com'),
         ),
       );
@@ -110,7 +110,6 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(sessionCubit.signOutCalls, 1);
-      expect(find.text('Sign In Stub'), findsOneWidget);
     });
 
     testWidgets('delete action keeps confirmation dialog and runs delete flow', (tester) async {
@@ -186,7 +185,7 @@ void main() {
 
 Future<void> _pumpPage(
   WidgetTester tester, {
-  required SessionCubit sessionCubit,
+  required AuthCubit sessionCubit,
   required ProfileCubit profileCubit,
   required AssetsCubit assetsCubit,
   required LocaleCubit localeCubit,
@@ -199,7 +198,7 @@ Future<void> _pumpPage(
         path: AppRoutes.profile,
         builder: (context, state) => MultiBlocProvider(
           providers: [
-            BlocProvider<SessionCubit>.value(value: sessionCubit),
+            BlocProvider<AuthCubit>.value(value: sessionCubit),
             BlocProvider<ProfileCubit>.value(value: profileCubit),
             BlocProvider<AssetsCubit>.value(value: assetsCubit),
             BlocProvider<LocaleCubit>.value(value: localeCubit),
@@ -240,8 +239,8 @@ Future<void> _pumpPage(
   await tester.pumpAndSettle();
 }
 
-class _TestSessionCubit extends Cubit<SessionState> implements SessionCubit {
-  _TestSessionCubit(super.initialState);
+class _TestAuthCubit extends Cubit<AuthState> implements AuthCubit {
+  _TestAuthCubit(super.initialState);
 
   int signOutCalls = 0;
   int deleteAccountCalls = 0;
@@ -252,7 +251,7 @@ class _TestSessionCubit extends Cubit<SessionState> implements SessionCubit {
   @override
   Future<void> signOut() async {
     signOutCalls += 1;
-    emit(const SessionState(status: SessionStatus.unauthenticated));
+    emit(const AuthState(status: AuthStatus.unauthenticated));
   }
 
   @override

@@ -117,7 +117,7 @@ class SignUpCubit extends Cubit<SignUpState> {
           emit(
             state.copyWith(
               status: SignUpStatus.otpSent,
-              navigation: SignUpNavigation(email: value.email),
+              otpEmail: value.email,
               bannerEmail: value.email,
               bannerType: SignUpBannerType.success,
             ),
@@ -127,7 +127,7 @@ class SignUpCubit extends Cubit<SignUpState> {
         emit(
           state.copyWith(
             status: SignUpStatus.idle,
-            navigation: SignUpNavigation(email: value.email),
+            otpEmail: null,
             bannerEmail: null,
             bannerType: null,
           ),
@@ -169,12 +169,8 @@ class SignUpCubit extends Cubit<SignUpState> {
           AnalyticsEventName.authCompleted,
           parameters: {AnalyticsParams.provider: provider.name, AnalyticsParams.mode: 'signup'},
         );
-        emit(state.copyWith(status: SignUpStatus.idle, navigation: const SignUpNavigation()));
+        emit(state.copyWith(status: SignUpStatus.idle));
     }
-  }
-
-  void consumeNavigation() {
-    emit(state.copyWith(navigation: null));
   }
 
   bool _validate() {

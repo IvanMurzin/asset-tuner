@@ -7,11 +7,6 @@ enum SignUpFieldError { invalidEmail, weakPassword, mismatch }
 enum SignUpBannerType { success, failure }
 
 @freezed
-abstract class SignUpNavigation with _$SignUpNavigation {
-  const factory SignUpNavigation({String? email}) = _SignUpNavigation;
-}
-
-@freezed
 abstract class SignUpState with _$SignUpState {
   const factory SignUpState({
     @Default('') String email,
@@ -24,8 +19,8 @@ abstract class SignUpState with _$SignUpState {
     String? bannerFailureCode,
     String? bannerFailureMessage,
     String? bannerEmail,
+    String? otpEmail,
     @Default([]) List<AuthProvider> availableProviders,
     @Default(SignUpStatus.idle) SignUpStatus status,
-    SignUpNavigation? navigation,
   }) = _SignUpState;
 }

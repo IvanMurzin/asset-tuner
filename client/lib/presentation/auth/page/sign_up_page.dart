@@ -29,11 +29,10 @@ class SignUpPage extends StatelessWidget {
       create: (_) => getIt<SignUpCubit>(),
       child: BlocConsumer<SignUpCubit, SignUpState>(
         listenWhen: (prev, curr) =>
-            curr.navigation != null ||
+            (prev.status != curr.status && curr.status == SignUpStatus.otpSent) ||
             (curr.bannerType != prev.bannerType && curr.bannerType != null),
         listener: (context, state) {
-          final navigation = state.navigation;
-          if (navigation != null) {
+          if (state.status == SignUpStatus.otpSent && state.otpEmail != null) {
             if (state.bannerType == SignUpBannerType.success) {
               final message = _bannerMessage(context, l10n, state);
               if (message != null && context.mounted) {
@@ -46,12 +45,7 @@ class SignUpPage extends StatelessWidget {
               }
             }
             if (context.mounted) {
-              if (state.status == SignUpStatus.otpSent) {
-                context.go(AppRoutes.otp, extra: navigation.email);
-              } else {
-                context.go(AppRoutes.home);
-              }
-              context.read<SignUpCubit>().consumeNavigation();
+              context.go(AppRoutes.otp, extra: state.otpEmail);
             }
             return;
           }

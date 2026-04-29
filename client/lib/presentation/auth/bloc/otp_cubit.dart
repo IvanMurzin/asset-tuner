@@ -48,17 +48,8 @@ class OtpCubit extends Cubit<OtpState> {
           ),
         );
       case Success():
-        emit(
-          state.copyWith(
-            status: OtpStatus.idle,
-            navigation: const OtpNavigation(destination: OtpDestination.overview),
-          ),
-        );
+        emit(state.copyWith(status: OtpStatus.idle));
     }
-  }
-
-  void consumeNavigation() {
-    emit(state.copyWith(navigation: null));
   }
 
   Future<void> resend() async {

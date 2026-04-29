@@ -9,7 +9,7 @@ import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/profile/page/contact_developer_page.dart';
-import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
+import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,13 +17,13 @@ import 'package:go_router/go_router.dart';
 
 void main() {
   group('ContactDeveloperPage', () {
-    late _TestSessionCubit sessionCubit;
+    late _TestAuthCubit sessionCubit;
     late _FakeProfileRepository repository;
 
     setUp(() {
-      sessionCubit = _TestSessionCubit(
-        SessionState(
-          status: SessionStatus.authenticated,
+      sessionCubit = _TestAuthCubit(
+        AuthState(
+          status: AuthStatus.authenticated,
           session: const AuthSessionEntity(userId: 'user-1', email: 'user@example.com'),
         ),
       );
@@ -72,7 +72,7 @@ void main() {
 
 Future<void> _pumpPage(
   WidgetTester tester, {
-  required SessionCubit sessionCubit,
+  required AuthCubit sessionCubit,
   required _FakeProfileRepository repository,
 }) async {
   final router = GoRouter(
@@ -80,7 +80,7 @@ Future<void> _pumpPage(
     routes: [
       GoRoute(
         path: AppRoutes.contactDeveloper,
-        builder: (context, state) => BlocProvider<SessionCubit>.value(
+        builder: (context, state) => BlocProvider<AuthCubit>.value(
           value: sessionCubit,
           child: ContactDeveloperPage(repository: repository),
         ),
@@ -99,8 +99,8 @@ Future<void> _pumpPage(
   );
 }
 
-class _TestSessionCubit extends Cubit<SessionState> implements SessionCubit {
-  _TestSessionCubit(super.initialState);
+class _TestAuthCubit extends Cubit<AuthState> implements AuthCubit {
+  _TestAuthCubit(super.initialState);
 
   @override
   Future<void> bootstrap() async {}

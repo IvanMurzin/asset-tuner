@@ -26,7 +26,6 @@ import 'package:asset_tuner/presentation/overview/widget/tour_target_highlight.d
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/overview/widget/overview_account_item.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
-import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
 
 class OverviewPage extends StatelessWidget {
   const OverviewPage({super.key});
@@ -35,100 +34,92 @@ class OverviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocListener<SessionCubit, SessionState>(
-      listenWhen: (prev, curr) => prev.status != curr.status,
-      listener: (context, state) {
-        if (state.status == SessionStatus.unauthenticated) {
-          context.go(AppRoutes.signIn);
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, profileState) {
+        if ((profileState.status == ProfileStatus.initial ||
+                profileState.status == ProfileStatus.loading) &&
+            profileState.profile == null) {
+          return const Scaffold(body: SafeArea(child: OverviewLoadingSkeleton()));
         }
-      },
-      child: BlocBuilder<ProfileCubit, ProfileState>(
-        builder: (context, profileState) {
-          if ((profileState.status == ProfileStatus.initial ||
-                  profileState.status == ProfileStatus.loading) &&
-              profileState.profile == null) {
-            return const Scaffold(body: SafeArea(child: OverviewLoadingSkeleton()));
-          }
 
-          if (profileState.status == ProfileStatus.error && profileState.profile == null) {
-            return Scaffold(
-              appBar: DSAppBar(title: l10n.mainTitle),
-              body: DSInlineError(
-                title: l10n.splashErrorTitle,
-                message: profileState.failureMessage ?? l10n.errorGeneric,
-                actionLabel: l10n.splashRetry,
-                onAction: () => context.read<ProfileCubit>().refresh(),
-              ),
-            );
-          }
-
-          final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
-
+        if (profileState.status == ProfileStatus.error && profileState.profile == null) {
           return Scaffold(
-            appBar: DSAppBar(
-              title: l10n.mainTitle,
-              actions: [
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: context.dsSpacing.s12),
-                    child: DSChip(
-                      label: baseCurrency,
-                      icon: Icons.currency_exchange,
-                      onTap: () => context.go(AppRoutes.baseCurrencySettings),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            body: SafeArea(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  final accountsCubit = context.read<AccountsCubit>();
-                  final assetsCubit = context.read<AssetsCubit>();
-                  await accountsCubit.refresh();
-                  await assetsCubit.refresh();
-                },
-                child: BlocBuilder<AccountsCubit, AccountsState>(
-                  builder: (context, accountsState) {
-                    if (accountsState.status == AccountsStatus.loading &&
-                        accountsState.accounts.isEmpty) {
-                      return const OverviewLoadingSkeleton();
-                    }
-
-                    if (accountsState.status == AccountsStatus.error &&
-                        accountsState.accounts.isEmpty) {
-                      return ListView(
-                        children: [
-                          SizedBox(height: context.dsSpacing.s24),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: context.dsSpacing.s24),
-                            child: DSInlineError(
-                              title: l10n.splashErrorTitle,
-                              message: accountsState.failureMessage ?? l10n.errorGeneric,
-                              actionLabel: l10n.splashRetry,
-                              onAction: () => context.read<AccountsCubit>().load(),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-
-                    return BlocBuilder<AssetsCubit, AssetsState>(
-                      builder: (context, assetsState) {
-                        return _OverviewReady(
-                          accounts: accountsState.accounts,
-                          profileState: profileState,
-                          assetsState: assetsState,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
+            appBar: DSAppBar(title: l10n.mainTitle),
+            body: DSInlineError(
+              title: l10n.splashErrorTitle,
+              message: profileState.failureMessage ?? l10n.errorGeneric,
+              actionLabel: l10n.splashRetry,
+              onAction: () => context.read<ProfileCubit>().refresh(),
             ),
           );
-        },
-      ),
+        }
+
+        final baseCurrency = profileState.profile?.baseCurrency ?? 'USD';
+
+        return Scaffold(
+          appBar: DSAppBar(
+            title: l10n.mainTitle,
+            actions: [
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.only(right: context.dsSpacing.s12),
+                  child: DSChip(
+                    label: baseCurrency,
+                    icon: Icons.currency_exchange,
+                    onTap: () => context.go(AppRoutes.baseCurrencySettings),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          body: SafeArea(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                final accountsCubit = context.read<AccountsCubit>();
+                final assetsCubit = context.read<AssetsCubit>();
+                await accountsCubit.refresh();
+                await assetsCubit.refresh();
+              },
+              child: BlocBuilder<AccountsCubit, AccountsState>(
+                builder: (context, accountsState) {
+                  if (accountsState.status == AccountsStatus.loading &&
+                      accountsState.accounts.isEmpty) {
+                    return const OverviewLoadingSkeleton();
+                  }
+
+                  if (accountsState.status == AccountsStatus.error &&
+                      accountsState.accounts.isEmpty) {
+                    return ListView(
+                      children: [
+                        SizedBox(height: context.dsSpacing.s24),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: context.dsSpacing.s24),
+                          child: DSInlineError(
+                            title: l10n.splashErrorTitle,
+                            message: accountsState.failureMessage ?? l10n.errorGeneric,
+                            actionLabel: l10n.splashRetry,
+                            onAction: () => context.read<AccountsCubit>().load(),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return BlocBuilder<AssetsCubit, AssetsState>(
+                    builder: (context, assetsState) {
+                      return _OverviewReady(
+                        accounts: accountsState.accounts,
+                        profileState: profileState,
+                        assetsState: assetsState,
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
-import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
@@ -13,7 +12,7 @@ import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
-import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
+import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 
 class MainShellPage extends StatelessWidget {
   const MainShellPage({super.key, required this.navigationShell});
@@ -24,7 +23,7 @@ class MainShellPage extends StatelessWidget {
     if (!forceForAnalyticsTab && navigationShell.currentIndex != 1) {
       return;
     }
-    final sessionState = context.read<SessionCubit>().state;
+    final sessionState = context.read<AuthCubit>().state;
     final profileState = context.read<ProfileCubit>().state;
     final accountsState = context.read<AccountsCubit>().state;
     final assetsState = context.read<AssetsCubit>().state;
@@ -60,15 +59,9 @@ class MainShellPage extends StatelessWidget {
       ],
       child: MultiBlocListener(
         listeners: [
-          BlocListener<SessionCubit, SessionState>(
+          BlocListener<AuthCubit, AuthState>(
             listenWhen: (prev, curr) => prev.status != curr.status,
-            listener: (context, state) {
-              if (state.status == SessionStatus.unauthenticated) {
-                context.go(AppRoutes.signIn);
-                return;
-              }
-              _maybeFeedAnalytics(context);
-            },
+            listener: (context, _) => _maybeFeedAnalytics(context),
           ),
           BlocListener<ProfileCubit, ProfileState>(
             listenWhen: (prev, curr) =>

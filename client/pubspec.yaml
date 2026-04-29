@@ -31,6 +31,14 @@ dependencies:
   firebase_core: ^4.7.0
   firebase_analytics: ^12.3.0
   firebase_crashlytics: ^5.2.0
+  flutter_native_splash: ^2.4.6
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#0F0F0F"
+  android_12:
+    color: "#FFFFFF"
+    color_dark: "#0F0F0F"
 
 flutter:
   uses-material-design: true

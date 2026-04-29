@@ -75,7 +75,7 @@ class SignInCubit extends Cubit<SignInState> {
           AnalyticsEventName.authCompleted,
           parameters: {AnalyticsParams.provider: 'email', AnalyticsParams.mode: 'signin'},
         );
-        _emitSuccessNavigation();
+        emit(state.copyWith(status: SignInStatus.idle));
     }
   }
 
@@ -109,21 +109,8 @@ class SignInCubit extends Cubit<SignInState> {
           AnalyticsEventName.authCompleted,
           parameters: {AnalyticsParams.provider: provider.name, AnalyticsParams.mode: 'signin'},
         );
-        _emitSuccessNavigation();
+        emit(state.copyWith(status: SignInStatus.idle));
     }
-  }
-
-  void consumeNavigation() {
-    emit(state.copyWith(navigation: null));
-  }
-
-  void _emitSuccessNavigation() {
-    emit(
-      state.copyWith(
-        status: SignInStatus.idle,
-        navigation: const SignInNavigation(destination: SignInDestination.overview),
-      ),
-    );
   }
 
   Future<void> _loadProviders() async {

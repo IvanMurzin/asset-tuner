@@ -9,21 +9,22 @@ import 'package:asset_tuner/domain/auth/usecase/delete_account_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_out_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/watch_session_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-part 'session_cubit.freezed.dart';
-part 'session_state.dart';
+part 'auth_cubit.freezed.dart';
+part 'auth_state.dart';
 
 @injectable
-class SessionCubit extends Cubit<SessionState> {
-  SessionCubit(
+class AuthCubit extends Cubit<AuthState> {
+  AuthCubit(
     this._watchSession,
     this._signOut,
     this._deleteAccount,
     this._revenueCatService,
     this._analytics,
-  ) : super(const SessionState());
+  ) : super(const AuthState());
 
   final WatchSessionUseCase _watchSession;
   final SignOutUseCase _signOut;
@@ -34,23 +35,11 @@ class SessionCubit extends Cubit<SessionState> {
   StreamSubscription<AuthSessionEntity?>? _sessionSubscription;
   String? _revenueCatUserId;
   String? _lastUserId;
+  bool _nativeSplashRemoved = false;
 
   Future<void> bootstrap() async {
     await _sessionSubscription?.cancel();
-    emit(
-      state.copyWith(
-        status: SessionStatus.initial,
-        session: null,
-        isSigningOut: false,
-        isDeletingAccount: false,
-        revenueCatStatus: RevenueCatIdentityStatus.idle,
-        revenueCatUserId: null,
-        revenueCatFailureCode: null,
-        revenueCatFailureMessage: null,
-        failureCode: null,
-        failureMessage: null,
-      ),
-    );
+    emit(const AuthState());
     _sessionSubscription = _watchSession().listen(
       (session) => unawaited(_handleSessionChanged(session)),
       onError: (Object error, StackTrace stackTrace) {
@@ -60,12 +49,13 @@ class SessionCubit extends Cubit<SessionState> {
         }
         emit(
           state.copyWith(
-            status: SessionStatus.error,
+            status: AuthStatus.unauthenticated,
             session: null,
             failureCode: 'session_stream_error',
             failureMessage: 'Unable to observe auth session',
           ),
         );
+        _removeNativeSplashOnce();
       },
     );
   }
@@ -78,7 +68,7 @@ class SessionCubit extends Cubit<SessionState> {
     if (session == null) {
       emit(
         state.copyWith(
-          status: SessionStatus.unauthenticated,
+          status: AuthStatus.unauthenticated,
           session: null,
           isSigningOut: false,
           isDeletingAccount: false,
@@ -90,6 +80,7 @@ class SessionCubit extends Cubit<SessionState> {
           failureMessage: null,
         ),
       );
+      _removeNativeSplashOnce();
       await _syncRevenueCatLoggedOut();
       if (_lastUserId != null) {
         await _analytics.log(AnalyticsEventName.signOutCompleted);
@@ -103,7 +94,7 @@ class SessionCubit extends Cubit<SessionState> {
 
     emit(
       state.copyWith(
-        status: SessionStatus.authenticated,
+        status: AuthStatus.authenticated,
         session: session,
         isSigningOut: false,
         isDeletingAccount: false,
@@ -115,6 +106,7 @@ class SessionCubit extends Cubit<SessionState> {
         failureMessage: null,
       ),
     );
+    _removeNativeSplashOnce();
     await _syncRevenueCatLoggedIn(session.userId);
     if (_lastUserId != session.userId) {
       await _analytics.setUserId(session.userId);
@@ -123,7 +115,7 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   Future<void> signOut() async {
-    if (state.status == SessionStatus.unauthenticated || state.isBusy) {
+    if (state.status == AuthStatus.unauthenticated || state.isBusy) {
       return;
     }
 
@@ -131,7 +123,7 @@ class SessionCubit extends Cubit<SessionState> {
 
     final result = await _signOut();
     if (result case FailureResult<void>(failure: final failure)) {
-      logger.e('SessionCubit.signOut failed: ${failure.code}');
+      logger.e('AuthCubit.signOut failed: ${failure.code}');
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -161,7 +153,7 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   Future<void> deleteAccount() async {
-    if (state.status == SessionStatus.unauthenticated || state.isBusy) {
+    if (state.status == AuthStatus.unauthenticated || state.isBusy) {
       return;
     }
 
@@ -169,7 +161,7 @@ class SessionCubit extends Cubit<SessionState> {
 
     final result = await _deleteAccount();
     if (result case FailureResult<void>(failure: final failure)) {
-      logger.e('SessionCubit.deleteAccount failed: ${failure.code}');
+      logger.e('AuthCubit.deleteAccount failed: ${failure.code}');
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -237,6 +229,16 @@ class SessionCubit extends Cubit<SessionState> {
     } finally {
       _revenueCatUserId = null;
     }
+  }
+
+  void _removeNativeSplashOnce() {
+    if (_nativeSplashRemoved) {
+      return;
+    }
+    _nativeSplashRemoved = true;
+    try {
+      FlutterNativeSplash.remove();
+    } catch (_) {}
   }
 
   @override
