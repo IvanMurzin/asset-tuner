@@ -1,15 +1,15 @@
-part of 'session_cubit.dart';
+part of 'auth_cubit.dart';
 
-enum SessionStatus { initial, authenticated, unauthenticated, error }
+enum AuthStatus { initial, authenticated, unauthenticated }
 
 enum RevenueCatIdentityStatus { idle, syncing, synced, error }
 
 @freezed
-abstract class SessionState with _$SessionState {
-  const SessionState._();
+abstract class AuthState with _$AuthState {
+  const AuthState._();
 
-  const factory SessionState({
-    @Default(SessionStatus.initial) SessionStatus status,
+  const factory AuthState({
+    @Default(AuthStatus.initial) AuthStatus status,
     AuthSessionEntity? session,
     @Default(false) bool isSigningOut,
     @Default(false) bool isDeletingAccount,
@@ -19,9 +19,11 @@ abstract class SessionState with _$SessionState {
     String? revenueCatFailureMessage,
     String? failureCode,
     String? failureMessage,
-  }) = _SessionState;
+  }) = _AuthState;
 
-  bool get isAuthenticated => status == SessionStatus.authenticated && session != null;
+  bool get isAuthenticated => status == AuthStatus.authenticated && session != null;
+
+  bool get isResolved => status != AuthStatus.initial;
 
   bool get isRevenueCatReady =>
       isAuthenticated &&

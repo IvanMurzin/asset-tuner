@@ -4,13 +4,6 @@ enum SignInStatus { idle, loading }
 
 enum SignInFieldError { invalidEmail, weakPassword }
 
-enum SignInDestination { overview }
-
-@freezed
-abstract class SignInNavigation with _$SignInNavigation {
-  const factory SignInNavigation({required SignInDestination destination}) = _SignInNavigation;
-}
-
 @freezed
 abstract class SignInState with _$SignInState {
   const factory SignInState({
@@ -22,6 +15,5 @@ abstract class SignInState with _$SignInState {
     String? bannerFailureMessage,
     @Default([]) List<AuthProvider> availableProviders,
     @Default(SignInStatus.idle) SignInStatus status,
-    SignInNavigation? navigation,
   }) = _SignInState;
 }

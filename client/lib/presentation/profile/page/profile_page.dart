@@ -18,8 +18,8 @@ import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:asset_tuner/presentation/profile/widget/profile_header_card.dart';
 import 'package:asset_tuner/presentation/profile/widget/profile_language_selector.dart';
+import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:asset_tuner/presentation/profile/widget/profile_theme_selector.dart';
-import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
 import 'package:asset_tuner/presentation/settings/widget/settings_row_trailing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,15 +32,9 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocListener<SessionCubit, SessionState>(
-      listenWhen: (prev, curr) =>
-          prev.status != curr.status ||
-          (curr.failureCode != null && curr.failureCode != prev.failureCode),
+    return BlocListener<AuthCubit, AuthState>(
+      listenWhen: (prev, curr) => curr.failureCode != null && curr.failureCode != prev.failureCode,
       listener: (context, state) {
-        if (state.status == SessionStatus.unauthenticated) {
-          context.go(AppRoutes.signIn);
-          return;
-        }
         if (state.failureCode != null) {
           showDSSnackBar(
             context,
@@ -49,23 +43,11 @@ class ProfilePage extends StatelessWidget {
           );
         }
       },
-      child: BlocBuilder<SessionCubit, SessionState>(
+      child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, sessionState) {
           return BlocBuilder<ProfileCubit, ProfileState>(
             builder: (context, profileState) {
               final spacing = context.dsSpacing;
-
-              if (!sessionState.isAuthenticated) {
-                return Scaffold(
-                  appBar: DSAppBar(title: l10n.profileTitle),
-                  body: DSInlineError(
-                    title: l10n.splashErrorTitle,
-                    message: l10n.errorGeneric,
-                    actionLabel: l10n.splashRetry,
-                    onAction: () => context.go(AppRoutes.signIn),
-                  ),
-                );
-              }
 
               if ((profileState.status == ProfileStatus.initial ||
                       profileState.status == ProfileStatus.loading) &&
@@ -108,7 +90,13 @@ class ProfilePage extends StatelessWidget {
               }
 
               final profile = profileState.profile!;
-              final session = sessionState.session!;
+              final session = sessionState.session;
+              if (session == null) {
+                return Scaffold(
+                  appBar: DSAppBar(title: l10n.profileTitle),
+                  body: const SizedBox.shrink(),
+                );
+              }
               final isBusy = sessionState.isBusy;
 
               return Scaffold(
@@ -323,7 +311,7 @@ class ProfilePage extends StatelessWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      await context.read<SessionCubit>().signOut();
+      await context.read<AuthCubit>().signOut();
     }
   }
 
@@ -342,7 +330,7 @@ class ProfilePage extends StatelessWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      await context.read<SessionCubit>().deleteAccount();
+      await context.read<AuthCubit>().deleteAccount();
     }
   }
 

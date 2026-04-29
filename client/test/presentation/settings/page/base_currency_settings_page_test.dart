@@ -12,7 +12,7 @@ import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/asset/widget/asset_currency_badge.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
-import 'package:asset_tuner/presentation/session/bloc/session_cubit.dart';
+import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +21,7 @@ import 'package:go_router/go_router.dart';
 
 void main() {
   group('BaseCurrencySettingsPage', () {
-    late _TestSessionCubit sessionCubit;
+    late _TestAuthCubit sessionCubit;
     late _TestProfileCubit profileCubit;
     late _TestAssetsCubit assetsCubit;
 
@@ -29,9 +29,9 @@ void main() {
       if (!getIt.isRegistered<AppAnalytics>()) {
         getIt.registerLazySingleton<AppAnalytics>(AppAnalytics.new);
       }
-      sessionCubit = _TestSessionCubit(
-        SessionState(
-          status: SessionStatus.authenticated,
+      sessionCubit = _TestAuthCubit(
+        AuthState(
+          status: AuthStatus.authenticated,
           session: const AuthSessionEntity(userId: 'user-1', email: 'user@example.com'),
         ),
       );
@@ -133,7 +133,7 @@ void main() {
 
 Future<void> _pumpPage(
   WidgetTester tester, {
-  required SessionCubit sessionCubit,
+  required AuthCubit sessionCubit,
   required ProfileCubit profileCubit,
   required AssetsCubit assetsCubit,
   ValueChanged<PaywallArgs?>? onPaywallOpened,
@@ -145,7 +145,7 @@ Future<void> _pumpPage(
         path: AppRoutes.baseCurrencySettings,
         builder: (context, state) => MultiBlocProvider(
           providers: [
-            BlocProvider<SessionCubit>.value(value: sessionCubit),
+            BlocProvider<AuthCubit>.value(value: sessionCubit),
             BlocProvider<ProfileCubit>.value(value: profileCubit),
             BlocProvider<AssetsCubit>.value(value: assetsCubit),
           ],
@@ -174,8 +174,8 @@ Future<void> _pumpPage(
   await tester.pumpAndSettle();
 }
 
-class _TestSessionCubit extends Cubit<SessionState> implements SessionCubit {
-  _TestSessionCubit(super.initialState);
+class _TestAuthCubit extends Cubit<AuthState> implements AuthCubit {
+  _TestAuthCubit(super.initialState);
 
   @override
   Future<void> bootstrap() async {}

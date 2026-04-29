@@ -25,18 +25,8 @@ class SignInPage extends StatelessWidget {
       create: (_) => getIt<SignInCubit>(),
       child: BlocConsumer<SignInCubit, SignInState>(
         listenWhen: (prev, curr) =>
-            curr.navigation != null ||
-            (curr.bannerFailureCode != null && curr.bannerFailureCode != prev.bannerFailureCode),
+            curr.bannerFailureCode != null && curr.bannerFailureCode != prev.bannerFailureCode,
         listener: (context, state) async {
-          final navigation = state.navigation;
-          if (navigation != null) {
-            switch (navigation.destination) {
-              case SignInDestination.overview:
-                context.go(AppRoutes.home);
-            }
-            context.read<SignInCubit>().consumeNavigation();
-            return;
-          }
           final message = state.bannerFailureCode != null
               ? (state.bannerFailureMessage ?? l10n.errorGeneric)
               : null;

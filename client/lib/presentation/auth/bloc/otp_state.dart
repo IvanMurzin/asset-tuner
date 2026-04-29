@@ -4,13 +4,6 @@ enum OtpStatus { idle, loading }
 
 enum OtpFieldError { invalidLength }
 
-enum OtpDestination { overview, signIn }
-
-@freezed
-abstract class OtpNavigation with _$OtpNavigation {
-  const factory OtpNavigation({required OtpDestination destination}) = _OtpNavigation;
-}
-
 @freezed
 abstract class OtpState with _$OtpState {
   const factory OtpState({
@@ -20,7 +13,6 @@ abstract class OtpState with _$OtpState {
     String? bannerFailureCode,
     String? bannerFailureMessage,
     @Default(OtpStatus.idle) OtpStatus status,
-    OtpNavigation? navigation,
     @Default(false) bool isResendInProgress,
     DateTime? resendCooldownUntil,
     @Default(false) bool resendSuccess,

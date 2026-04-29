@@ -251,7 +251,10 @@ Theme tokens: `context.dsColors`, `context.dsTypography` (never hardcode colors 
 - Invoke methods: `invokeDataList(route, query:, method:)`, `invokeData(...)`
 - Route constants: `SupabaseApiRoutes` class
 - Data sources own caching; repositories own error wrapping + mapping
-- Auth state: via `SessionCubit` — `presentation/session/`
+- Auth state: via `AuthCubit` — `presentation/auth/bloc/auth_cubit.dart` (single source of truth: `authenticated` / `unauthenticated` / `initial`)
+- Auth-driven navigation: handled centrally in `core/routing/app_router.dart` via `redirect` + `refreshListenable` — pages must NEVER manually `context.go(AppRoutes.signIn)` on auth state change
+- Sign in / sign up / OTP success: do NOT navigate manually; `AuthCubit` resolves the new session, router redirect lands user on `/main`
+- Sign out / delete account: just call `AuthCubit.signOut()` / `AuthCubit.deleteAccount()`; router handles the redirect to `/sign-in`
 
 ---
 
