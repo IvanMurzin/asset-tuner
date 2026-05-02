@@ -6,6 +6,8 @@ import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/local_storage/onboarding_carousel_gate.dart';
 import 'package:asset_tuner/core/localization/locale_cubit.dart';
 import 'package:asset_tuner/core/native_splash/native_splash_controller.dart';
+import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
+import 'package:asset_tuner/core/routing/first_auth_paywall_coordinator.dart';
 import 'package:asset_tuner/core/routing/app_router.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/routing/guards/auth_route_guard.dart';
@@ -71,20 +73,25 @@ class _AppState extends State<App> {
             builder: (context, localeState) {
               return AppLifecycleObserver(
                 onResumed: () => context.read<ProfileCubit>().syncSubscription(silent: true),
-                child: MaterialApp.router(
-                  theme: lightTheme,
-                  darkTheme: darkTheme,
-                  themeMode: themeMode,
-                  routerConfig: _router,
-                  locale: context.read<LocaleCubit>().locale,
-                  localizationsDelegates: const [
-                    AppLocalizations.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  debugShowCheckedModeBanner: false,
+                child: FirstAuthPaywallCoordinator(
+                  authCubit: _authCubit,
+                  router: _router,
+                  revenueCatService: getIt<RevenueCatService>(),
+                  child: MaterialApp.router(
+                    theme: lightTheme,
+                    darkTheme: darkTheme,
+                    themeMode: themeMode,
+                    routerConfig: _router,
+                    locale: context.read<LocaleCubit>().locale,
+                    localizationsDelegates: const [
+                      AppLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    supportedLocales: AppLocalizations.supportedLocales,
+                    debugShowCheckedModeBanner: false,
+                  ),
                 ),
               );
             },
