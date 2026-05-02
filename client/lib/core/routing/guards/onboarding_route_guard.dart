@@ -8,8 +8,7 @@ import 'package:asset_tuner/core/routing/guards/route_guard.dart';
 ///
 /// While the user has not finished the carousel, no other route is reachable.
 /// Once the carousel is completed, if the user somehow lands on the carousel
-/// page again, we send them to a neutral auth route; the [AuthRouteGuard]
-/// then decides whether they end up on `/sign-in` or `/main`.
+/// page again, we send them to sign-up as the first auth step.
 class OnboardingRouteGuard implements RouteGuard {
   OnboardingRouteGuard(this._gate);
 
@@ -24,7 +23,7 @@ class OnboardingRouteGuard implements RouteGuard {
       return location == AppRoutes.onboardingCarousel ? null : AppRoutes.onboardingCarousel;
     }
     if (location == AppRoutes.onboardingCarousel) {
-      return AppRoutes.signIn;
+      return AppRoutes.signUp;
     }
     return null;
   }
