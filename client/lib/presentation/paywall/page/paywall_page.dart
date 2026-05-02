@@ -117,13 +117,14 @@ class _PaywallPageState extends State<PaywallPage> {
         _selectedOption = selected;
         _isLoadingOfferings = false;
       });
-    } catch (_) {
+    } catch (e, stackTrace) {
       if (!mounted) {
         return;
       }
       setState(() {
         _isLoadingOfferings = false;
       });
+      logger.e('Paywall error: paywall_load_offerings', error: e, stackTrace: stackTrace);
       _showError(AppLocalizations.of(context)!.paywallNoOfferings, code: 'paywall_load_offerings');
     }
   }

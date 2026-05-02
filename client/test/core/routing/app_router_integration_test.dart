@@ -92,13 +92,13 @@ void main() {
     });
 
     testWidgets(
-      'deep link: /onboarding/carousel after completion → /sign-in (or /main if authed)',
+      'deep link: /onboarding/carousel after completion → /sign-up (or /main if authed)',
       (t) async {
         final ctx = _Ctx(carousel: true, initialLocation: AppRoutes.onboardingCarousel);
         await _pump(t, ctx);
         ctx.auth.resolveUnauthenticated();
         await t.pumpAndSettle();
-        expect(ctx.currentLocation, AppRoutes.signIn);
+        expect(ctx.currentLocation, AppRoutes.signUp);
 
         ctx.auth.resolveAuthenticated();
         await t.pumpAndSettle();
@@ -126,7 +126,7 @@ void main() {
 
       await ctx.gate.markCompleted();
       await t.pumpAndSettle();
-      expect(ctx.currentLocation, AppRoutes.signIn);
+      expect(ctx.currentLocation, AppRoutes.signUp);
     });
 
     testWidgets('while auth.initial — guard does not interfere; user stays on initialLocation', (
