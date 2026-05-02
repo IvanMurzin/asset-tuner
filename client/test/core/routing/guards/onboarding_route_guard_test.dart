@@ -20,12 +20,12 @@ void main() {
     });
 
     test(
-      'carousel completed — on the carousel page redirects to /sign-in (AuthGuard takes over)',
+      'carousel completed — on the carousel page redirects to /sign-up',
       () {
         final gate = _FakeGate(initial: true);
         final guard = OnboardingRouteGuard(gate);
 
-        expect(guard.redirect(AppRoutes.onboardingCarousel), AppRoutes.signIn);
+        expect(guard.redirect(AppRoutes.onboardingCarousel), AppRoutes.signUp);
         expect(guard.redirect(AppRoutes.signIn), isNull);
         expect(guard.redirect(AppRoutes.main), isNull);
       },
