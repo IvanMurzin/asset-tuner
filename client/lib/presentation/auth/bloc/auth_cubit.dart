@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
+import 'package:asset_tuner/core/session/unauthorized_notifier.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/delete_account_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_out_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/watch_session_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
@@ -24,6 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
     this._deleteAccount,
     this._revenueCatService,
     this._analytics,
+    this._unauthorized,
   ) : super(const AuthState());
 
   final WatchSessionUseCase _watchSession;
@@ -31,14 +32,16 @@ class AuthCubit extends Cubit<AuthState> {
   final DeleteAccountUseCase _deleteAccount;
   final RevenueCatService _revenueCatService;
   final AppAnalytics _analytics;
+  final UnauthorizedNotifier _unauthorized;
 
   StreamSubscription<AuthSessionEntity?>? _sessionSubscription;
+  StreamSubscription<void>? _unauthorizedSubscription;
   String? _revenueCatUserId;
   String? _lastUserId;
-  bool _nativeSplashRemoved = false;
 
   Future<void> bootstrap() async {
     await _sessionSubscription?.cancel();
+    await _unauthorizedSubscription?.cancel();
     emit(const AuthState());
     _sessionSubscription = _watchSession().listen(
       (session) => unawaited(_handleSessionChanged(session)),
@@ -55,9 +58,11 @@ class AuthCubit extends Cubit<AuthState> {
             failureMessage: 'Unable to observe auth session',
           ),
         );
-        _removeNativeSplashOnce();
       },
     );
+    // Global 401: the backend reported our token is invalid. Drop the
+    // session locally; the router takes care of the redirect.
+    _unauthorizedSubscription = _unauthorized.stream.listen((_) => unawaited(forceLocalSignOut()));
   }
 
   Future<void> _handleSessionChanged(AuthSessionEntity? session) async {
@@ -80,7 +85,6 @@ class AuthCubit extends Cubit<AuthState> {
           failureMessage: null,
         ),
       );
-      _removeNativeSplashOnce();
       await _syncRevenueCatLoggedOut();
       if (_lastUserId != null) {
         await _analytics.log(AnalyticsEventName.signOutCompleted);
@@ -106,7 +110,6 @@ class AuthCubit extends Cubit<AuthState> {
         failureMessage: null,
       ),
     );
-    _removeNativeSplashOnce();
     await _syncRevenueCatLoggedIn(session.userId);
     if (_lastUserId != session.userId) {
       await _analytics.setUserId(session.userId);
@@ -150,6 +153,46 @@ class AuthCubit extends Cubit<AuthState> {
       ),
     );
     await _syncRevenueCatLoggedIn(session.userId);
+  }
+
+  /// Local sign-out that does NOT call Supabase signOut.
+  ///
+  /// Used when the backend has already rejected our current token (401):
+  /// calling `signOut` is pointless — the server-side token is already
+  /// invalid. We just flip the local state to [AuthStatus.unauthenticated],
+  /// log out the RevenueCat identity and let the router perform the redirect.
+  ///
+  /// On initial/unauthenticated this is a no-op, so repeated 401 signals
+  /// from concurrent in-flight requests do not thrash state.
+  Future<void> forceLocalSignOut() async {
+    if (isClosed || state.status != AuthStatus.authenticated) {
+      return;
+    }
+    emit(
+      state.copyWith(
+        status: AuthStatus.unauthenticated,
+        session: null,
+        isSigningOut: false,
+        isDeletingAccount: false,
+        revenueCatStatus: RevenueCatIdentityStatus.idle,
+        revenueCatUserId: null,
+        revenueCatFailureCode: null,
+        revenueCatFailureMessage: null,
+        failureCode: 'unauthorized',
+        failureMessage: null,
+      ),
+    );
+    await _syncRevenueCatLoggedOut();
+    if (_lastUserId != null) {
+      await _analytics.log(
+        AnalyticsEventName.signOutCompleted,
+        parameters: const {'reason': 'unauthorized'},
+      );
+    }
+    await _analytics.setUserId(null);
+    await _analytics.setUserProperty(AnalyticsUserProps.isSubscriber, null);
+    await _analytics.setUserProperty(AnalyticsUserProps.subscriptionPlan, null);
+    _lastUserId = null;
   }
 
   Future<void> deleteAccount() async {
@@ -231,19 +274,10 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void _removeNativeSplashOnce() {
-    if (_nativeSplashRemoved) {
-      return;
-    }
-    _nativeSplashRemoved = true;
-    try {
-      FlutterNativeSplash.remove();
-    } catch (_) {}
-  }
-
   @override
   Future<void> close() async {
     await _sessionSubscription?.cancel();
+    await _unauthorizedSubscription?.cancel();
     return super.close();
   }
 }

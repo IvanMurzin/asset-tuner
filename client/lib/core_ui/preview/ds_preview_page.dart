@@ -301,7 +301,7 @@ class DSPreviewPage extends StatelessWidget {
                     DSErrorState(
                       title: l10n.dsPreviewStateErrorTitle,
                       message: l10n.dsPreviewStateErrorBody,
-                      actionLabel: l10n.splashRetry,
+                      actionLabel: l10n.retryAction,
                       onAction: () {},
                     ),
                   ],

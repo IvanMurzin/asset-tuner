@@ -277,6 +277,11 @@ Theme tokens: `context.dsColors`, `context.dsTypography` (never hardcode colors 
 - **Null safety**: no `!` on non-obvious nulls — use `?.`, `??`, or explicit checks
 - Interface prefix: `I` — `IAssetRepository`, not `AssetRepositoryInterface`
 - Abstract finals for namespace-only classes: `abstract final class AppRoutes { ... }`
+- **English-only in code** — identifiers, comments, dartdoc, log messages, test/group descriptions, commit messages. The only places where non-English text is allowed:
+  - `lib/l10n/app_*.arb` and the auto-generated `lib/l10n/app_localizations*.dart`
+  - Localization helpers that match real-world copy (e.g. `lib/l10n/supabase_error_localization_ru.dart`, runtime detection in `lib/core/supabase/supabase_error_message.dart`)
+  - Tests that intentionally assert localized strings (e.g. `test/.../*_test.dart` checking RU/EN copy)
+  Never put Russian (or any other natural language) in `// comments`, `/// dartdoc`, `description` arguments, or string literals used outside of localization.
 
 ---
 

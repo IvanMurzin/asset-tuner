@@ -1,5 +1,5 @@
-// Одноразовый скрипт: читает assets/icon/icon.png, переводит в grayscale
-// и пишет рядом assets/icon/icon-dev.png. Запуск из client/:
+// One-off helper: reads assets/icon/icon.png, converts it to grayscale and
+// writes assets/icon/icon-dev.png next to it. Run from client/:
 //   dart run tool/generate_dev_icon.dart
 import 'dart:io';
 

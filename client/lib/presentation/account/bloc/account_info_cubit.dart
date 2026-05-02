@@ -8,16 +8,14 @@ import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
 import 'package:asset_tuner/domain/subaccount/usecase/get_subaccounts_usecase.dart';
-import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 
 part 'account_info_cubit.freezed.dart';
 part 'account_info_state.dart';
 
 @injectable
 class AccountInfoCubit extends Cubit<AccountInfoState> {
-  AccountInfoCubit(this._getCachedSession, this._getSubaccounts) : super(const AccountInfoState());
+  AccountInfoCubit(this._getSubaccounts) : super(const AccountInfoState());
 
-  final GetCachedSessionUseCase _getCachedSession;
   final GetSubaccountsUseCase _getSubaccounts;
 
   bool _isFetching = false;
@@ -44,7 +42,6 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
         isSubaccountsLoading: true,
         failureCode: null,
         failureMessage: null,
-        navigation: null,
       ),
     );
     await _fetchSubaccounts(accountId: accountId, silent: false);
@@ -111,22 +108,6 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
 
     _isFetching = true;
     try {
-      final session = await _getCachedSession();
-      if (isClosed) {
-        return;
-      }
-      if (session == null) {
-        emit(
-          state.copyWith(
-            status: AccountInfoStatus.error,
-            failureCode: 'unauthorized',
-            failureMessage: null,
-            navigation: const AccountInfoNavigation(AccountInfoDestination.signIn),
-          ),
-        );
-        return;
-      }
-
       if (!silent) {
         emit(state.copyWith(isSubaccountsLoading: true, failureCode: null, failureMessage: null));
       }
@@ -211,10 +192,6 @@ class AccountInfoCubit extends Cubit<AccountInfoState> {
 
   void createSubaccount(SubaccountEntity created) {
     emit(state.copyWith(subaccounts: _sort([...state.subaccounts, created])));
-  }
-
-  void consumeNavigation() {
-    emit(state.copyWith(navigation: null));
   }
 
   List<SubaccountEntity> _sort(List<SubaccountEntity> items) {

@@ -81,9 +81,9 @@ class ProfilePage extends StatelessWidget {
                 return Scaffold(
                   appBar: DSAppBar(title: l10n.profileTitle),
                   body: DSInlineError(
-                    title: l10n.splashErrorTitle,
+                    title: l10n.genericErrorTitle,
                     message: profileState.failureMessage ?? l10n.errorGeneric,
-                    actionLabel: l10n.splashRetry,
+                    actionLabel: l10n.retryAction,
                     onAction: () => context.read<ProfileCubit>().refresh(),
                   ),
                 );

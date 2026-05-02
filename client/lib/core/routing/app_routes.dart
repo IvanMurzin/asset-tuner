@@ -5,7 +5,15 @@ abstract final class AppRoutes {
   static const String otp = '/otp';
   static const String onboardingCarousel = '/onboarding/carousel';
 
+  /// Routes an authenticated user must never see — anyone landing on them is
+  /// automatically redirected to [main].
   static const Set<String> authFlowLocations = {signIn, signUp, otp};
+
+  /// Routes reachable without an active session (auth flow + onboarding
+  /// carousel). For anything outside this set, an unauthenticated user is
+  /// redirected to [signIn]. Superset of [authFlowLocations] because the
+  /// carousel must also be reachable before sign-in.
+  static const Set<String> publicLocations = {signIn, signUp, otp, onboardingCarousel};
 
   static const String main = '/main';
   static const String analytics = '/analytics';
