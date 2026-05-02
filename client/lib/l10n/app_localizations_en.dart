@@ -180,13 +180,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get splashRestoring => 'Restoring session...';
 
   @override
-  String get splashPreparingProfile => 'Preparing your profile...';
+  String get genericErrorTitle => 'Something went wrong.';
 
   @override
-  String get splashErrorTitle => 'Something went wrong.';
-
-  @override
-  String get splashRetry => 'Try again';
+  String get retryAction => 'Try again';
 
   @override
   String get onboardingBaseCurrencyTitle => 'Choose your base currency';

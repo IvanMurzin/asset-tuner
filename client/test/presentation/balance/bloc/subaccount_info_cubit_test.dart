@@ -1,11 +1,6 @@
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
-import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
-import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
-import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
-import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
-import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.dart';
 import 'package:asset_tuner/domain/balance/repository/i_balance_repository.dart';
@@ -40,10 +35,7 @@ void main() {
         ],
       );
 
-      cubit = SubaccountInfoCubit(
-        GetCachedSessionUseCase(_FakeAuthRepository()),
-        GetBalanceHistoryUseCase(balanceRepository),
-      );
+      cubit = SubaccountInfoCubit(GetBalanceHistoryUseCase(balanceRepository));
     });
 
     tearDown(() async {
@@ -109,47 +101,6 @@ SubaccountEntity _subaccount() {
     createdAt: DateTime.utc(2026, 1, 1),
     updatedAt: DateTime.utc(2026, 1, 1),
   );
-}
-
-class _FakeAuthRepository implements IAuthRepository {
-  @override
-  Stream<AuthSessionEntity?> watchSession() => const Stream.empty();
-
-  @override
-  Future<AuthSessionEntity?> getCachedSession() async {
-    return const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev');
-  }
-
-  @override
-  Future<Result<void>> resendSignUpOtp(String email) async => const Success(null);
-
-  @override
-  Future<Result<void>> signInWithPassword(String email, String password) async =>
-      const Success(null);
-
-  @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<AuthProvider>> getAvailableProviders() async => const [];
-
-  @override
-  Future<Result<void>> signOut() async => const Success(null);
-
-  @override
-  Future<Result<void>> deleteAccount() async => const Success(null);
 }
 
 class _FakeBalanceRepository implements IBalanceRepository {

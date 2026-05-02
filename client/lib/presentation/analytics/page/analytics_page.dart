@@ -35,17 +35,7 @@ class AnalyticsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocConsumer<AnalyticsCubit, AnalyticsState>(
-      listener: (context, state) {
-        final navigation = state.navigation;
-        if (navigation == null) {
-          return;
-        }
-        context.read<AnalyticsCubit>().consumeNavigation();
-        if (navigation.destination == AnalyticsDestination.signIn) {
-          context.go(AppRoutes.signIn);
-        }
-      },
+    return BlocBuilder<AnalyticsCubit, AnalyticsState>(
       builder: (context, state) {
         return Scaffold(
           appBar: DSAppBar(title: l10n.analyticsTitle),
@@ -80,9 +70,9 @@ class _Body extends StatelessWidget {
 
     if (state.status == AnalyticsStatus.error) {
       return DSInlineError(
-        title: l10n.splashErrorTitle,
+        title: l10n.genericErrorTitle,
         message: state.failureMessage ?? l10n.errorGeneric,
-        actionLabel: l10n.splashRetry,
+        actionLabel: l10n.retryAction,
         onAction: () => _refreshAnalyticsSources(context),
       );
     }

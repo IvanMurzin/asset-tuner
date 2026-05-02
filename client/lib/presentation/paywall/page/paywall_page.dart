@@ -402,9 +402,9 @@ class _PaywallPageState extends State<PaywallPage> {
             if (!sessionState.isRevenueCatReady) {
               return Scaffold(
                 body: DSInlineError(
-                  title: l10n.splashErrorTitle,
+                  title: l10n.genericErrorTitle,
                   message: sessionState.revenueCatFailureMessage ?? l10n.paywallIdentityPending,
-                  actionLabel: l10n.splashRetry,
+                  actionLabel: l10n.retryAction,
                   onAction: () => context.read<AuthCubit>().syncRevenueCat(),
                 ),
               );
@@ -413,9 +413,9 @@ class _PaywallPageState extends State<PaywallPage> {
             if (!profileState.isReady) {
               return Scaffold(
                 body: DSInlineError(
-                  title: l10n.splashErrorTitle,
+                  title: l10n.genericErrorTitle,
                   message: profileState.failureMessage ?? l10n.errorGeneric,
-                  actionLabel: l10n.splashRetry,
+                  actionLabel: l10n.retryAction,
                   onAction: () => context.read<ProfileCubit>().refresh(),
                 ),
               );

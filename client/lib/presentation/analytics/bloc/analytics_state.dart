@@ -3,12 +3,6 @@ part of 'analytics_cubit.dart';
 enum AnalyticsStatus { loading, ready, error }
 
 @freezed
-abstract class AnalyticsNavigation with _$AnalyticsNavigation {
-  const factory AnalyticsNavigation({required AnalyticsDestination destination}) =
-      _AnalyticsNavigation;
-}
-
-@freezed
 abstract class AnalyticsBreakdownItem with _$AnalyticsBreakdownItem {
   const factory AnalyticsBreakdownItem({
     required String assetCode,
@@ -40,6 +34,5 @@ abstract class AnalyticsState with _$AnalyticsState {
     @Default([]) List<AnalyticsUpdateItem> updates,
     String? failureCode,
     String? failureMessage,
-    AnalyticsNavigation? navigation,
   }) = _AnalyticsState;
 }

@@ -56,7 +56,7 @@ class _AccountUpdatePageState extends State<AccountUpdatePage> {
       return Scaffold(
         appBar: DSAppBar(title: l10n.accountsEditTitle),
         body: DSInlineError(
-          title: l10n.splashErrorTitle,
+          title: l10n.genericErrorTitle,
           message: l10n.errorGeneric,
           actionLabel: l10n.cancel,
           onAction: () => context.pop(),

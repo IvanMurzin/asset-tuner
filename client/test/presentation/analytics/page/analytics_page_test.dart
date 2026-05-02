@@ -171,10 +171,6 @@ Future<void> _pumpPage(
 
 class _TestAnalyticsCubit extends Cubit<AnalyticsState> implements AnalyticsCubit {
   _TestAnalyticsCubit(super.initialState);
-
-  @override
-  void consumeNavigation() {}
-
   @override
   void invalidateCache() {}
 

@@ -2,7 +2,7 @@ part of 'subaccount_info_cubit.dart';
 
 enum SubaccountInfoStatus { loading, ready, error }
 
-enum SubaccountInfoDestination { signIn, backDeleted }
+enum SubaccountInfoDestination { backDeleted }
 
 @freezed
 abstract class SubaccountInfoNavigation with _$SubaccountInfoNavigation {

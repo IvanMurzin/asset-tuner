@@ -82,9 +82,6 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
               return;
             }
             context.read<SubaccountInfoCubit>().consumeNavigation();
-            if (navigation.destination == SubaccountInfoDestination.signIn) {
-              context.go(AppRoutes.signIn);
-            }
             if (navigation.destination == SubaccountInfoDestination.backDeleted) {
               context.pop(true);
             }
@@ -184,9 +181,9 @@ class _SubaccountDetailBodyState extends State<_SubaccountDetailBody> {
             return Scaffold(
               appBar: DSAppBar(title: title),
               body: DSInlineError(
-                title: l10n.splashErrorTitle,
+                title: l10n.genericErrorTitle,
                 message: state.failureMessage ?? l10n.errorGeneric,
-                actionLabel: l10n.splashRetry,
+                actionLabel: l10n.retryAction,
                 onAction: () => context.pop(),
               ),
             );

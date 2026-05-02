@@ -254,9 +254,6 @@ class _TestAccountInfoCubit extends Cubit<AccountInfoState> implements AccountIn
 
   @override
   void createSubaccount(SubaccountEntity created) {}
-
-  @override
-  void consumeNavigation() {}
 }
 
 AssetEntity _asset({

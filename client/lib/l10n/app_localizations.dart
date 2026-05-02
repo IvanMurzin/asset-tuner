@@ -423,23 +423,17 @@ abstract class AppLocalizations {
   /// **'Restoring session...'**
   String get splashRestoring;
 
-  /// No description provided for @splashPreparingProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Preparing your profile...'**
-  String get splashPreparingProfile;
-
-  /// No description provided for @splashErrorTitle.
+  /// No description provided for @genericErrorTitle.
   ///
   /// In en, this message translates to:
   /// **'Something went wrong.'**
-  String get splashErrorTitle;
+  String get genericErrorTitle;
 
-  /// No description provided for @splashRetry.
+  /// No description provided for @retryAction.
   ///
   /// In en, this message translates to:
   /// **'Try again'**
-  String get splashRetry;
+  String get retryAction;
 
   /// No description provided for @onboardingBaseCurrencyTitle.
   ///

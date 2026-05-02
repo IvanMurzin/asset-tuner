@@ -50,9 +50,9 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
             return Scaffold(
               appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
               body: DSInlineError(
-                title: l10n.splashErrorTitle,
+                title: l10n.genericErrorTitle,
                 message: profileState.failureMessage ?? l10n.errorGeneric,
-                actionLabel: l10n.splashRetry,
+                actionLabel: l10n.retryAction,
                 onAction: () => context.read<ProfileCubit>().refresh(),
               ),
             );
@@ -73,9 +73,9 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                 return Scaffold(
                   appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
                   body: DSInlineError(
-                    title: l10n.splashErrorTitle,
+                    title: l10n.genericErrorTitle,
                     message: assetsState.failureMessage ?? l10n.errorGeneric,
-                    actionLabel: l10n.splashRetry,
+                    actionLabel: l10n.retryAction,
                     onAction: () => context.read<AssetsCubit>().load(),
                   ),
                 );

@@ -1,9 +1,8 @@
 import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
-import 'package:asset_tuner/core/local_storage/onboarding_carousel_gate.dart';
 import 'package:asset_tuner/core/routing/app_page_transitions.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
-import 'package:asset_tuner/core/routing/go_router_refresh_stream.dart';
+import 'package:asset_tuner/core/routing/guards/route_guard.dart';
 import 'package:asset_tuner/core/routing/route_extra_args.dart';
 import 'package:asset_tuner/core_ui/preview/ds_preview_page.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
@@ -16,7 +15,6 @@ import 'package:asset_tuner/presentation/account/page/account_detail_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_update_page.dart';
 import 'package:asset_tuner/presentation/account/page/add_subaccount_page.dart';
 import 'package:asset_tuner/presentation/analytics/page/analytics_page.dart';
-import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:asset_tuner/presentation/auth/page/otp_page.dart';
 import 'package:asset_tuner/presentation/auth/page/sign_in_page.dart';
 import 'package:asset_tuner/presentation/auth/page/sign_up_page.dart';
@@ -39,44 +37,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+/// Builds a [GoRouter] from a list of atomic [RouteGuard]-s.
+///
+/// Each guard is an independent slice of navigation logic (auth, onboarding,
+/// later — paywall, etc.). Guards are evaluated in order; the first non-null
+/// path wins. go_router then re-runs the whole chain after the redirect, so
+/// guards compose without needing to know about each other.
 GoRouter buildAppRouter({
-  required AuthCubit authCubit,
-  required OnboardingCarouselGate carouselGate,
+  required String initialLocation,
+  required List<RouteGuard> guards,
+  List<NavigatorObserver>? observers,
 }) {
-  final initialLocation = carouselGate.isCompleted
-      ? AppRoutes.signIn
-      : AppRoutes.onboardingCarousel;
+  final listenables = guards
+      .map((g) => g.listenable)
+      .whereType<Listenable>()
+      .toList(growable: false);
+
   return GoRouter(
     initialLocation: initialLocation,
-    observers: [AnalyticsRouteObserver(getIt<AppAnalytics>())],
-    refreshListenable: Listenable.merge([
-      GoRouterRefreshStream(authCubit.stream),
-      carouselGate.listenable,
-    ]),
+    observers: observers ?? [AnalyticsRouteObserver(getIt<AppAnalytics>())],
+    refreshListenable: listenables.isEmpty ? null : Listenable.merge(listenables),
     redirect: (context, state) {
-      final auth = authCubit.state;
       final loc = state.matchedLocation;
-
-      if (!auth.isResolved) {
-        return null;
-      }
-
-      if (!carouselGate.isCompleted) {
-        return loc == AppRoutes.onboardingCarousel ? null : AppRoutes.onboardingCarousel;
-      }
-
-      if (loc == AppRoutes.onboardingCarousel) {
-        return auth.isAuthenticated ? AppRoutes.main : AppRoutes.signIn;
-      }
-
-      final inAuthFlow = AppRoutes.authFlowLocations.contains(loc);
-
-      if (!auth.isAuthenticated) {
-        return inAuthFlow ? null : AppRoutes.signIn;
-      }
-
-      if (inAuthFlow) {
-        return AppRoutes.main;
+      for (final guard in guards) {
+        final next = guard.redirect(loc);
+        if (next != null && next != loc) {
+          return next;
+        }
       }
       return null;
     },

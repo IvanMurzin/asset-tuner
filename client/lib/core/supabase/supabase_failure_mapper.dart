@@ -1,8 +1,10 @@
 import 'dart:io';
 
-import 'package:asset_tuner/core/types/failure.dart';
+import 'package:asset_tuner/core/di/get_it.dart';
+import 'package:asset_tuner/core/session/unauthorized_notifier.dart';
 import 'package:asset_tuner/core/supabase/supabase_edge_functions.dart';
 import 'package:asset_tuner/core/supabase/supabase_error_message.dart';
+import 'package:asset_tuner/core/types/failure.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract final class SupabaseFailureMapper {
@@ -75,8 +77,19 @@ abstract final class SupabaseFailureMapper {
   }
 
   static Failure _createLocalizedFailure({required String code, required String rawMessage}) {
+    if (code == 'unauthorized') {
+      _notifyUnauthorized();
+    }
     final localizedMessage = resolveFailureMessage(code: code, rawMessage: rawMessage);
     return Failure(code: code, message: localizedMessage);
+  }
+
+  /// Signals the global channel that the current token is no longer valid.
+  /// The [getIt] lookup is guarded by `isRegistered` so tests that set up DI
+  /// partially (or not at all) keep working.
+  static void _notifyUnauthorized() {
+    if (!getIt.isRegistered<UnauthorizedNotifier>()) return;
+    getIt<UnauthorizedNotifier>().notifyUnauthorized();
   }
 
   static String _mapPostgresCode(String? postgresCode) {

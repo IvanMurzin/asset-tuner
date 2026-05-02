@@ -5,7 +5,6 @@ import 'package:decimal/decimal.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
-import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_entry_entity.dart';
 import 'package:asset_tuner/domain/balance/entity/balance_history_page_entity.dart';
 import 'package:asset_tuner/domain/balance/usecase/get_balance_history_usecase.dart';
@@ -15,10 +14,8 @@ part 'subaccount_info_state.dart';
 
 @injectable
 class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
-  SubaccountInfoCubit(this._getCachedSession, this._getHistory)
-    : super(const SubaccountInfoState());
+  SubaccountInfoCubit(this._getHistory) : super(const SubaccountInfoState());
 
-  final GetCachedSessionUseCase _getCachedSession;
   final GetBalanceHistoryUseCase _getHistory;
 
   Future<void> load({required AccountEntity account, required SubaccountEntity subaccount}) async {
@@ -44,22 +41,6 @@ class SubaccountInfoCubit extends Cubit<SubaccountInfoState> {
           status: SubaccountInfoStatus.error,
           failureCode: 'not_found',
           failureMessage: null,
-        ),
-      );
-      return;
-    }
-
-    final session = await _getCachedSession();
-    if (isClosed) {
-      return;
-    }
-    if (session == null) {
-      emit(
-        state.copyWith(
-          status: SubaccountInfoStatus.error,
-          failureCode: 'unauthorized',
-          failureMessage: null,
-          navigation: const SubaccountInfoNavigation(SubaccountInfoDestination.signIn),
         ),
       );
       return;

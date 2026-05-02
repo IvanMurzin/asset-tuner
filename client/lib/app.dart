@@ -5,7 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/local_storage/onboarding_carousel_gate.dart';
 import 'package:asset_tuner/core/localization/locale_cubit.dart';
+import 'package:asset_tuner/core/native_splash/native_splash_controller.dart';
 import 'package:asset_tuner/core/routing/app_router.dart';
+import 'package:asset_tuner/core/routing/app_routes.dart';
+import 'package:asset_tuner/core/routing/guards/auth_route_guard.dart';
+import 'package:asset_tuner/core/routing/guards/onboarding_route_guard.dart';
 import 'package:asset_tuner/core/utils/app_lifecycle_observer.dart';
 import 'package:asset_tuner/core_ui/theme/app_theme.dart';
 import 'package:asset_tuner/core_ui/theme/theme_mode_cubit.dart';
@@ -23,6 +27,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   late final AuthCubit _authCubit;
   late final ProfileCubit _profileCubit;
+  late final NativeSplashController _splashController;
   late final GoRouter _router;
 
   @override
@@ -30,11 +35,22 @@ class _AppState extends State<App> {
     super.initState();
     _authCubit = getIt<AuthCubit>()..bootstrap();
     _profileCubit = getIt<ProfileCubit>()..bootstrap();
-    _router = buildAppRouter(authCubit: _authCubit, carouselGate: getIt<OnboardingCarouselGate>());
+    _splashController = NativeSplashController()..attach(_authCubit);
+
+    final carouselGate = getIt<OnboardingCarouselGate>();
+    final initialLocation = carouselGate.isCompleted
+        ? AppRoutes.signIn
+        : AppRoutes.onboardingCarousel;
+
+    _router = buildAppRouter(
+      initialLocation: initialLocation,
+      guards: [OnboardingRouteGuard(carouselGate), AuthRouteGuard(_authCubit)],
+    );
   }
 
   @override
   void dispose() {
+    _splashController.dispose();
     _authCubit.close();
     _profileCubit.close();
     super.dispose();

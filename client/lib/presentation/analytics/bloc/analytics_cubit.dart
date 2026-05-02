@@ -14,8 +14,6 @@ import 'package:injectable/injectable.dart';
 part 'analytics_cubit.freezed.dart';
 part 'analytics_state.dart';
 
-enum AnalyticsDestination { signIn }
-
 @injectable
 class AnalyticsCubit extends Cubit<AnalyticsState> {
   AnalyticsCubit(this._getAnalyticsSummary) : super(const AnalyticsState());
@@ -59,10 +57,6 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       silent: state.status == AnalyticsStatus.ready,
       fingerprint: fingerprint,
     );
-  }
-
-  void consumeNavigation() {
-    emit(state.copyWith(navigation: null));
   }
 
   void invalidateCache() {

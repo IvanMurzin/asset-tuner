@@ -181,13 +181,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get splashRestoring => 'Восстанавливаем сессию...';
 
   @override
-  String get splashPreparingProfile => 'Подготавливаем профиль...';
+  String get genericErrorTitle => 'Что-то пошло не так.';
 
   @override
-  String get splashErrorTitle => 'Что-то пошло не так.';
-
-  @override
-  String get splashRetry => 'Попробовать снова';
+  String get retryAction => 'Попробовать снова';
 
   @override
   String get onboardingBaseCurrencyTitle => 'Выберите базовую валюту';

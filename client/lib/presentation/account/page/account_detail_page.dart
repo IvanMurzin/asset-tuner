@@ -46,19 +46,6 @@ class AccountDetailPage extends StatelessWidget {
 
     return MultiBlocListener(
       listeners: [
-        BlocListener<AccountInfoCubit, AccountInfoState>(
-          listenWhen: (prev, curr) => curr.navigation != null,
-          listener: (context, state) {
-            final navigation = state.navigation;
-            if (navigation == null) {
-              return;
-            }
-            context.read<AccountInfoCubit>().consumeNavigation();
-            if (navigation.destination == AccountInfoDestination.signIn) {
-              context.go(AppRoutes.signIn);
-            }
-          },
-        ),
         BlocListener<AccountsCubit, AccountsState>(
           listenWhen: (prev, curr) =>
               prev.accounts.length != curr.accounts.length || prev.accounts != curr.accounts,
@@ -155,9 +142,9 @@ class AccountDetailPage extends StatelessWidget {
             return Scaffold(
               appBar: DSAppBar(title: initialTitle ?? l10n.accountsTitle),
               body: DSInlineError(
-                title: l10n.splashErrorTitle,
+                title: l10n.genericErrorTitle,
                 message: infoState.failureMessage ?? l10n.errorGeneric,
-                actionLabel: l10n.splashRetry,
+                actionLabel: l10n.retryAction,
                 onAction: () => context.read<AccountsCubit>().refresh(),
               ),
             );

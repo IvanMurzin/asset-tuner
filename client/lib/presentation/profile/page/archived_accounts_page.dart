@@ -39,9 +39,9 @@ class ArchivedAccountsPage extends StatelessWidget {
           return Scaffold(
             appBar: DSAppBar(title: l10n.settingsArchivedAccounts),
             body: DSInlineError(
-              title: l10n.splashErrorTitle,
+              title: l10n.genericErrorTitle,
               message: state.failureMessage ?? l10n.errorGeneric,
-              actionLabel: l10n.splashRetry,
+              actionLabel: l10n.retryAction,
               onAction: () => context.read<AccountsCubit>().refresh(),
             ),
           );

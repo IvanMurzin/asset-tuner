@@ -46,9 +46,9 @@ class OverviewPage extends StatelessWidget {
           return Scaffold(
             appBar: DSAppBar(title: l10n.mainTitle),
             body: DSInlineError(
-              title: l10n.splashErrorTitle,
+              title: l10n.genericErrorTitle,
               message: profileState.failureMessage ?? l10n.errorGeneric,
-              actionLabel: l10n.splashRetry,
+              actionLabel: l10n.retryAction,
               onAction: () => context.read<ProfileCubit>().refresh(),
             ),
           );
@@ -95,9 +95,9 @@ class OverviewPage extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: context.dsSpacing.s24),
                           child: DSInlineError(
-                            title: l10n.splashErrorTitle,
+                            title: l10n.genericErrorTitle,
                             message: accountsState.failureMessage ?? l10n.errorGeneric,
-                            actionLabel: l10n.splashRetry,
+                            actionLabel: l10n.retryAction,
                             onAction: () => context.read<AccountsCubit>().load(),
                           ),
                         ),
