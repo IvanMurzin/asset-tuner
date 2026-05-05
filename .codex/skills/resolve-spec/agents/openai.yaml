@@ -1,0 +1,3 @@
+display_name: Resolve Spec
+short_description: Implement and close one Asset Tuner spec end-to-end with verification and a spec commit.
+default_prompt: Use $resolve-spec with a SPEC ID to implement, verify, update docs, move the spec to resolved, and commit.

@@ -1,32 +1,29 @@
-# Asset Tuner — Dependencies
+# Dependencies
 
-**Last updated:** 2026-04-21
+## Client
+The current client stack is defined in `client/pubspec.yaml`.
 
-## Policy
-- Prefer the existing template stack first (see `client/AGENTS.md`).
-- Any new dependency or key decision requires an ADR in `docs/adr/`.
+Core dependencies:
+- Flutter SDK and Dart SDK.
+- `go_router` for routing.
+- `flutter_bloc` for Cubit/Bloc state.
+- `get_it` and `injectable` for DI.
+- `freezed`, `json_serializable`, and `build_runner` for generated models and DI output.
+- `supabase_flutter` for Auth and Edge Function calls.
+- `decimal` for decimal-safe arithmetic.
+- `purchases_flutter` and `purchases_ui_flutter` for RevenueCat.
+- `firebase_core`, `firebase_analytics`, and `firebase_crashlytics` for prod observability.
+- `shared_preferences` for local settings/cache.
 
-## Client (current, from `client/pubspec.yaml`)
-- Flutter SDK
-- `flutter_bloc` (Cubit preferred)
-- `go_router`
-- `get_it` + `injectable`
-- `freezed_annotation` + codegen (`freezed`, `build_runner`)
-- `json_annotation` + codegen (`json_serializable`)
-- `logger`
-- `shared_preferences`
-- `decimal` (high-precision numeric arithmetic for money/crypto)
-- `purchases_flutter`
-- `purchases_ui_flutter`
+## Backend
+- Supabase CLI.
+- Supabase Edge Runtime.
+- Postgres SQL migrations.
+- OpenExchangeRates.
+- CoinGecko.
+- RevenueCat REST API and webhooks.
 
-## Client (accepted decisions)
-- Supabase client: `supabase_flutter` (Auth, DB reads, Edge Function calls)
-- Localization runtime: `flutter_localizations` (+ `intl` for formatting and generated l10n as needed)
-- Payments: RevenueCat (`purchases_flutter`, `purchases_ui_flutter`) over App Store / Google Play
-- Crash reporting + analytics: **not in MVP** (next iteration)
-
-## Backend (Supabase)
-- Supabase Auth
-- Supabase Postgres + RLS
-- Supabase Edge Functions (Deno)
-- Supabase cron/scheduled triggers
+## Dependency Policy
+- Prefer existing dependencies.
+- Add a dependency only when a spec requires it and the standard library/local stack is insufficient.
+- Document new runtime dependencies in this file and update setup instructions when needed.

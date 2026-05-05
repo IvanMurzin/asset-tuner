@@ -1,7 +1,0 @@
-interface:
-  display_name: "Iterate Backlog"
-  short_description: "One issue loop: solve, review, QA registry, commit"
-  default_prompt: "Use $iterate-backlog to complete exactly one backlog issue end-to-end: implement or mark Blocked, update INDEX/issues, append QA registry entry, and commit."
-
-policy:
-  allow_implicit_invocation: true
