@@ -1,6 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:asset_tuner/data/_shared/money_atomic.dart';
+import 'package:asset_tuner/core/utils/money_atomic.dart';
 
 part 'account_entity.freezed.dart';
 

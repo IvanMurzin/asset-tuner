@@ -1,6 +1,6 @@
 import 'package:asset_tuner/core/supabase/supabase_constants.dart';
 import 'package:asset_tuner/core/supabase/supabase_edge_functions.dart';
-import 'package:asset_tuner/data/_shared/money_atomic.dart';
+import 'package:asset_tuner/core/utils/money_atomic.dart';
 import 'package:asset_tuner/data/subaccount/dto/subaccount_dto.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:decimal/decimal.dart';
