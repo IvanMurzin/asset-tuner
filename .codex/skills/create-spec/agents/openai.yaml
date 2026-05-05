@@ -1,0 +1,3 @@
+display_name: Create Spec
+short_description: Create a decision-complete Asset Tuner spec from a bug, improvement, feature, docs, or tooling request.
+default_prompt: Use $create-spec to inspect the repository, create an active spec, and update the specs index.

@@ -43,7 +43,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude Code ждёт ввода\" with title \"Asset Tuner\"' 2>/dev/null || true"
+            "command": "osascript -e 'display notification \"Claude Code is waiting for input\" with title \"Asset Tuner\"' 2>/dev/null || true"
           }
         ]
       }
