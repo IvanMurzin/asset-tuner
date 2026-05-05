@@ -179,9 +179,9 @@ void main() {
         locale: const Locale('ru'),
       );
 
-      expect(find.text('История баланса счёта'), findsOneWidget);
+      expect(find.text('История баланса'), findsOneWidget);
       expect(
-        find.text('Показывает, как баланс этого счёта менялся после каждого обновления.'),
+        find.text('Посмотрите, как баланс этой позиции менялся после каждого обновления.'),
         findsOneWidget,
       );
     });

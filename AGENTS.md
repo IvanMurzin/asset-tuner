@@ -29,6 +29,8 @@ dart format .
 flutter test
 flutter run --flavor dev --dart-define-from-file=../.config.dev.json
 flutter run --flavor prod --dart-define-from-file=../.config.prod.json
+flutter build apk --flavor prod --release --dart-define-from-file=../.config.prod.json
+flutter build appbundle --flavor prod --release --dart-define-from-file=../.config.prod.json
 ```
 
 ## Hard Rules

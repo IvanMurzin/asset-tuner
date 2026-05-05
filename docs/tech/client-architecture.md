@@ -37,7 +37,11 @@ data/<feature>/{dto,mapper,repository,data_source}
 presentation/<feature>/{page,widget,bloc}
 ```
 
-Current major features include `account`, `asset`, `auth`, `balance`, `analytics`, `profile`, `rate`, `settings`, `subaccount`, `overview`, `paywall`, and `onboarding`.
+Full-stack features (have `domain/`, `data/`, and `presentation/` folders): `account`, `analytics`, `asset`, `auth`, `balance`, `profile`, `rate`, `subaccount`.
+
+Presentation-only areas (UI-only, no `domain/` or `data/` layer; they compose other features' use cases): `home`, `onboarding`, `overview`, `paywall`, `settings`, `user`. Do not introduce a synthetic domain layer for these.
+
+Shared cross-feature data helpers (for example `data/account_asset/`) are allowed when they only compose existing feature data sources; they must not introduce a new domain layer.
 
 ## Code Generation
 Run codegen after changing Freezed models, JSON DTOs, injectable annotations, or localization:

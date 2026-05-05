@@ -1,4 +1,4 @@
-import 'package:asset_tuner/data/_shared/money_atomic.dart';
+import 'package:asset_tuner/core/utils/money_atomic.dart';
 import 'package:asset_tuner/data/analytics/dto/analytics_summary_dto.dart';
 import 'package:asset_tuner/domain/analytics/entity/analytics_summary_entity.dart';
 

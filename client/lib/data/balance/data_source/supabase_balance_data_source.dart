@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asset_tuner/core/supabase/supabase_constants.dart';
 import 'package:asset_tuner/core/supabase/supabase_edge_functions.dart';
-import 'package:asset_tuner/data/_shared/money_atomic.dart';
+import 'package:asset_tuner/core/utils/money_atomic.dart';
 import 'package:asset_tuner/data/balance/dto/balance_entry_dto.dart';
 import 'package:asset_tuner/data/balance/dto/balance_history_response_dto.dart';
 
