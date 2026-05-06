@@ -8,14 +8,15 @@ import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 
 void main() {
   group('AuthRouteGuard', () {
-    test('initial status — never redirects (native splash still on top)', () {
+    test('initial status — holds on internal splash', () {
       final cubit = _StubAuthCubit(const AuthState());
       addTearDown(cubit.close);
       final guard = AuthRouteGuard(cubit);
 
+      expect(guard.redirect(AppRoutes.splash), isNull);
       expect(guard.redirect(AppRoutes.signIn), isNull);
-      expect(guard.redirect(AppRoutes.main), isNull);
-      expect(guard.redirect('/some/deep/link'), isNull);
+      expect(guard.redirect(AppRoutes.main), AppRoutes.splash);
+      expect(guard.redirect('/some/deep/link'), AppRoutes.splash);
     });
 
     test('unauthenticated — redirects from private routes to sign-in', () {
@@ -26,6 +27,7 @@ void main() {
       expect(guard.redirect(AppRoutes.main), AppRoutes.signIn);
       expect(guard.redirect(AppRoutes.profile), AppRoutes.signIn);
       expect(guard.redirect(AppRoutes.paywall), AppRoutes.signIn);
+      expect(guard.redirect(AppRoutes.splash), AppRoutes.signIn);
       expect(guard.redirect('/main/accounts/abc'), AppRoutes.signIn);
     });
 
@@ -66,6 +68,7 @@ void main() {
       expect(guard.redirect(AppRoutes.signIn), AppRoutes.main);
       expect(guard.redirect(AppRoutes.signUp), AppRoutes.main);
       expect(guard.redirect(AppRoutes.otp), AppRoutes.main);
+      expect(guard.redirect(AppRoutes.splash), AppRoutes.main);
     });
 
     test('authenticated on private routes — passes through', () {

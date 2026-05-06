@@ -394,7 +394,6 @@ class _PaywallPageState extends State<PaywallPage> {
     final spacing = context.dsSpacing;
     final colors = context.dsColors;
     final typography = context.dsTypography;
-    final config = AppConfig.instance;
 
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, sessionState) {
@@ -412,6 +411,22 @@ class _PaywallPageState extends State<PaywallPage> {
             }
 
             if (!profileState.isReady) {
+              if (profileState.status == ProfileStatus.initial ||
+                  profileState.status == ProfileStatus.loading) {
+                return Scaffold(
+                  body: SafeArea(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        spacing.s16,
+                        spacing.s16,
+                        spacing.s16,
+                        spacing.s8,
+                      ),
+                      child: const PaywallLoadingSkeleton(),
+                    ),
+                  ),
+                );
+              }
               return Scaffold(
                 body: DSInlineError(
                   title: l10n.genericErrorTitle,
@@ -432,6 +447,7 @@ class _PaywallPageState extends State<PaywallPage> {
             }
 
             _logViewIfNeeded();
+            final config = AppConfig.instance;
 
             final proCompactFeatures = [
               l10n.paywallProFeatureAccounts,
