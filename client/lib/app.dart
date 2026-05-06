@@ -41,7 +41,7 @@ class _AppState extends State<App> {
 
     final carouselGate = getIt<OnboardingCarouselGate>();
     final initialLocation = carouselGate.isCompleted
-        ? AppRoutes.signIn
+        ? AppRoutes.splash
         : AppRoutes.onboardingCarousel;
 
     _router = buildAppRouter(
@@ -75,6 +75,7 @@ class _AppState extends State<App> {
                 onResumed: () => context.read<ProfileCubit>().syncSubscription(silent: true),
                 child: FirstAuthPaywallCoordinator(
                   authCubit: _authCubit,
+                  profileCubit: _profileCubit,
                   router: _router,
                   revenueCatService: getIt<RevenueCatService>(),
                   child: MaterialApp.router(

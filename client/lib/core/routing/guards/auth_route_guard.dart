@@ -31,10 +31,13 @@ class AuthRouteGuard implements RouteGuard {
   String? redirect(String location) {
     final state = _auth.state;
     if (!state.isResolved) {
-      return null;
+      return AppRoutes.publicLocations.contains(location) ? null : AppRoutes.splash;
     }
 
     if (!state.isAuthenticated) {
+      if (location == AppRoutes.splash) {
+        return AppRoutes.signIn;
+      }
       // Public routes only (auth flow + onboarding carousel). Carousel is
       // owned by [OnboardingRouteGuard]; we deliberately do not interfere.
       return AppRoutes.publicLocations.contains(location) ? null : AppRoutes.signIn;
@@ -42,7 +45,7 @@ class AuthRouteGuard implements RouteGuard {
 
     // Kick authenticated users out of auth-only screens. Other public paths
     // (onboarding) are handled by their own guard.
-    if (AppRoutes.authFlowLocations.contains(location)) {
+    if (location == AppRoutes.splash || AppRoutes.authFlowLocations.contains(location)) {
       return AppRoutes.main;
     }
     return null;

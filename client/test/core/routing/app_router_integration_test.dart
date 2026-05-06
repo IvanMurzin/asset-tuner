@@ -29,7 +29,7 @@ void main() {
     });
 
     testWidgets('cold start: carousel completed + unauthenticated → /sign-in', (t) async {
-      final ctx = _Ctx(carousel: true, initialLocation: AppRoutes.signIn);
+      final ctx = _Ctx(carousel: true, initialLocation: AppRoutes.splash);
       await _pump(t, ctx);
 
       ctx.auth.resolveUnauthenticated();
@@ -39,7 +39,7 @@ void main() {
     });
 
     testWidgets('cold start: carousel completed + already authenticated → /main', (t) async {
-      final ctx = _Ctx(carousel: true, initialLocation: AppRoutes.signIn);
+      final ctx = _Ctx(carousel: true, initialLocation: AppRoutes.splash);
       await _pump(t, ctx);
 
       ctx.auth.resolveAuthenticated();
@@ -129,14 +129,12 @@ void main() {
       expect(ctx.currentLocation, AppRoutes.signUp);
     });
 
-    testWidgets('while auth.initial — guard does not interfere; user stays on initialLocation', (
-      t,
-    ) async {
+    testWidgets('while auth.initial — private initial route is held on /splash', (t) async {
       final ctx = _Ctx(carousel: true, initialLocation: AppRoutes.main);
       await _pump(t, ctx);
       // No resolve — auth stays in the initial state.
 
-      expect(ctx.currentLocation, AppRoutes.main);
+      expect(ctx.currentLocation, AppRoutes.splash);
     });
   });
 }
@@ -146,7 +144,7 @@ class _Ctx {
     : gate = _FakeGate(initial: carousel),
       auth = _FakeAuthCubit(),
       _initialLocation =
-          initialLocation ?? (carousel ? AppRoutes.signIn : AppRoutes.onboardingCarousel);
+          initialLocation ?? (carousel ? AppRoutes.splash : AppRoutes.onboardingCarousel);
 
   final _FakeGate gate;
   final _FakeAuthCubit auth;
@@ -178,6 +176,7 @@ class _Ctx {
         _StubRoute(AppRoutes.signUp, 'SIGN_UP'),
         _StubRoute(AppRoutes.otp, 'OTP'),
         _StubRoute(AppRoutes.onboardingCarousel, 'CAROUSEL'),
+        _StubRoute(AppRoutes.splash, 'SPLASH'),
         _StubRoute(AppRoutes.main, 'MAIN'),
         _StubRoute(AppRoutes.profile, 'PROFILE'),
         _StubRoute(AppRoutes.paywall, 'PAYWALL'),

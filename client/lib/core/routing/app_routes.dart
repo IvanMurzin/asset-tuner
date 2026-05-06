@@ -4,6 +4,7 @@ abstract final class AppRoutes {
   static const String signUp = '/sign-up';
   static const String otp = '/otp';
   static const String onboardingCarousel = '/onboarding/carousel';
+  static const String splash = '/splash';
 
   /// Routes an authenticated user must never see — anyone landing on them is
   /// automatically redirected to [main].
@@ -13,7 +14,7 @@ abstract final class AppRoutes {
   /// carousel). For anything outside this set, an unauthenticated user is
   /// redirected to [signIn]. Superset of [authFlowLocations] because the
   /// carousel must also be reachable before sign-in.
-  static const Set<String> publicLocations = {signIn, signUp, otp, onboardingCarousel};
+  static const Set<String> publicLocations = {signIn, signUp, otp, onboardingCarousel, splash};
 
   static const String main = '/main';
   static const String analytics = '/analytics';
@@ -30,6 +31,7 @@ abstract final class AppRoutes {
       '/main/accounts/:accountId/subaccounts/:subaccountId/update-balance';
 
   static const String paywall = '/paywall';
+  static const String baseCurrencySettingsPush = '/base-currency';
   static const String baseCurrencySettings = '/profile/base-currency';
   static const String manageSubscription = '/profile/subscription';
   static const String archivedAccounts = '/profile/archived-accounts';

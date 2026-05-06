@@ -15,6 +15,7 @@ import 'package:asset_tuner/presentation/account/page/account_detail_page.dart';
 import 'package:asset_tuner/presentation/account/page/account_update_page.dart';
 import 'package:asset_tuner/presentation/account/page/add_subaccount_page.dart';
 import 'package:asset_tuner/presentation/analytics/page/analytics_page.dart';
+import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/auth/page/otp_page.dart';
 import 'package:asset_tuner/presentation/auth/page/sign_in_page.dart';
 import 'package:asset_tuner/presentation/auth/page/sign_up_page.dart';
@@ -36,6 +37,15 @@ import 'package:asset_tuner/presentation/settings/page/manage_subscription_page.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+class _SplashRoutePage extends StatelessWidget {
+  const _SplashRoutePage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: SizedBox.shrink());
+  }
+}
 
 /// Builds a [GoRouter] from a list of atomic [RouteGuard]-s.
 ///
@@ -88,6 +98,10 @@ GoRouter buildAppRouter({
         path: AppRoutes.onboardingCarousel,
         pageBuilder: (context, state) =>
             slideTransition(context, state, const OnboardingCarouselPage()),
+      ),
+      GoRoute(
+        path: AppRoutes.splash,
+        pageBuilder: (context, state) => noTransition(context, state, const _SplashRoutePage()),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -340,6 +354,17 @@ GoRouter buildAppRouter({
               : const PaywallArgs(reason: PaywallReason.baseCurrency);
           return slideTransition(context, state, PaywallPage(args: args));
         },
+      ),
+      GoRoute(
+        path: AppRoutes.baseCurrencySettingsPush,
+        pageBuilder: (context, state) => slideTransition(
+          context,
+          state,
+          BlocProvider<AssetsCubit>(
+            create: (_) => getIt<AssetsCubit>()..load(),
+            child: const BaseCurrencySettingsPage(),
+          ),
+        ),
       ),
     ],
   );

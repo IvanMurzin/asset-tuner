@@ -64,9 +64,10 @@ class OverviewPage extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(right: context.dsSpacing.s12),
                   child: DSChip(
+                    key: const Key('overview_base_currency_chip'),
                     label: baseCurrency,
                     icon: Icons.currency_exchange,
-                    onTap: () => context.go(AppRoutes.baseCurrencySettings),
+                    onTap: () => context.push(AppRoutes.baseCurrencySettingsPush),
                   ),
                 ),
               ),

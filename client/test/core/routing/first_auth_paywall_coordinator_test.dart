@@ -2,7 +2,10 @@ import 'package:asset_tuner/core/local_storage/onboarding_paywall_storage.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/routing/first_auth_paywall_coordinator.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
+import 'package:asset_tuner/domain/profile/entity/entitlements_entity.dart';
+import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
+import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,18 +16,21 @@ void main() {
   group('FirstAuthPaywallCoordinator', () {
     testWidgets('seen=false + revenuecat ready -> opens paywall once and sets seen', (t) async {
       final authCubit = _FakeAuthCubit();
+      final profileCubit = _FakeProfileCubit();
       final storage = _FakeOnboardingPaywallStorage(seen: false);
       var opens = 0;
 
       await _pumpCoordinator(
         t: t,
         authCubit: authCubit,
+        profileCubit: profileCubit,
         storage: storage,
         revenueCatService: _FakeRevenueCatService.available(),
         onOpenPaywall: () async => opens += 1,
       );
 
       authCubit.setState(_readyState);
+      profileCubit.setState(_profileReadyState);
       await t.pumpAndSettle();
 
       expect(opens, 1);
@@ -33,20 +39,24 @@ void main() {
 
     testWidgets('repeated ready emissions do not open paywall twice', (t) async {
       final authCubit = _FakeAuthCubit();
+      final profileCubit = _FakeProfileCubit();
       final storage = _FakeOnboardingPaywallStorage(seen: false);
       var opens = 0;
 
       await _pumpCoordinator(
         t: t,
         authCubit: authCubit,
+        profileCubit: profileCubit,
         storage: storage,
         revenueCatService: _FakeRevenueCatService.available(),
         onOpenPaywall: () async => opens += 1,
       );
 
       authCubit.setState(_readyState);
+      profileCubit.setState(_profileReadyState);
       await t.pumpAndSettle();
       authCubit.setState(_readyState);
+      profileCubit.setState(_profileReadyState);
       await t.pumpAndSettle();
 
       expect(opens, 1);
@@ -55,18 +65,21 @@ void main() {
 
     testWidgets('seen=true does not open paywall', (t) async {
       final authCubit = _FakeAuthCubit();
+      final profileCubit = _FakeProfileCubit();
       final storage = _FakeOnboardingPaywallStorage(seen: true);
       var opens = 0;
 
       await _pumpCoordinator(
         t: t,
         authCubit: authCubit,
+        profileCubit: profileCubit,
         storage: storage,
         revenueCatService: _FakeRevenueCatService.available(),
         onOpenPaywall: () async => opens += 1,
       );
 
       authCubit.setState(_readyState);
+      profileCubit.setState(_profileReadyState);
       await t.pumpAndSettle();
 
       expect(opens, 0);
@@ -75,12 +88,14 @@ void main() {
 
     testWidgets('not ready state does not open paywall', (t) async {
       final authCubit = _FakeAuthCubit();
+      final profileCubit = _FakeProfileCubit();
       final storage = _FakeOnboardingPaywallStorage(seen: false);
       var opens = 0;
 
       await _pumpCoordinator(
         t: t,
         authCubit: authCubit,
+        profileCubit: profileCubit,
         storage: storage,
         revenueCatService: _FakeRevenueCatService.available(),
         onOpenPaywall: () async => opens += 1,
@@ -94,6 +109,7 @@ void main() {
           revenueCatUserId: null,
         ),
       );
+      profileCubit.setState(_profileReadyState);
       await t.pumpAndSettle();
 
       expect(opens, 0);
@@ -102,19 +118,75 @@ void main() {
 
     testWidgets('store unavailable does not open paywall and does not set seen', (t) async {
       final authCubit = _FakeAuthCubit();
+      final profileCubit = _FakeProfileCubit();
       final storage = _FakeOnboardingPaywallStorage(seen: false);
       var opens = 0;
 
       await _pumpCoordinator(
         t: t,
         authCubit: authCubit,
+        profileCubit: profileCubit,
         storage: storage,
         revenueCatService: _FakeRevenueCatService.unavailable(),
         onOpenPaywall: () async => opens += 1,
       );
 
       authCubit.setState(_readyState);
+      profileCubit.setState(_profileReadyState);
       await t.pumpAndSettle(const Duration(seconds: 2));
+
+      expect(opens, 0);
+      expect(storage.setSeenCalls, 0);
+    });
+
+    testWidgets('revenuecat ready waits for profile readiness before opening', (t) async {
+      final authCubit = _FakeAuthCubit();
+      final profileCubit = _FakeProfileCubit();
+      final storage = _FakeOnboardingPaywallStorage(seen: false);
+      var opens = 0;
+
+      await _pumpCoordinator(
+        t: t,
+        authCubit: authCubit,
+        profileCubit: profileCubit,
+        storage: storage,
+        revenueCatService: _FakeRevenueCatService.available(),
+        onOpenPaywall: () async => opens += 1,
+      );
+
+      authCubit.setState(_readyState);
+      await t.pumpAndSettle();
+
+      expect(opens, 0);
+      expect(storage.setSeenCalls, 0);
+
+      profileCubit.setState(_profileReadyState);
+      await t.pumpAndSettle();
+
+      expect(opens, 1);
+      expect(storage.setSeenCalls, 1);
+    });
+
+    testWidgets('profile error does not open paywall or set seen', (t) async {
+      final authCubit = _FakeAuthCubit();
+      final profileCubit = _FakeProfileCubit();
+      final storage = _FakeOnboardingPaywallStorage(seen: false);
+      var opens = 0;
+
+      await _pumpCoordinator(
+        t: t,
+        authCubit: authCubit,
+        profileCubit: profileCubit,
+        storage: storage,
+        revenueCatService: _FakeRevenueCatService.available(),
+        onOpenPaywall: () async => opens += 1,
+      );
+
+      authCubit.setState(_readyState);
+      profileCubit.setState(
+        const ProfileState(status: ProfileStatus.error, failureCode: 'profile_error'),
+      );
+      await t.pumpAndSettle();
 
       expect(opens, 0);
       expect(storage.setSeenCalls, 0);
@@ -125,16 +197,21 @@ void main() {
 Future<void> _pumpCoordinator({
   required WidgetTester t,
   required _FakeAuthCubit authCubit,
+  required _FakeProfileCubit profileCubit,
   required _FakeOnboardingPaywallStorage storage,
   required _FakeRevenueCatService revenueCatService,
   required Future<void> Function() onOpenPaywall,
 }) {
   return t.pumpWidget(
     MaterialApp(
-      home: BlocProvider<AuthCubit>.value(
-        value: authCubit,
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthCubit>.value(value: authCubit),
+          BlocProvider<ProfileCubit>.value(value: profileCubit),
+        ],
         child: FirstAuthPaywallCoordinator(
           authCubit: authCubit,
+          profileCubit: profileCubit,
           router: _router,
           revenueCatService: revenueCatService,
           storage: storage,
@@ -156,6 +233,11 @@ const _readyState = AuthState(
   session: AuthSessionEntity(userId: 'u-1', email: 'u-1@example.com'),
   revenueCatStatus: RevenueCatIdentityStatus.synced,
   revenueCatUserId: 'u-1',
+);
+
+final _profileReadyState = ProfileState(
+  status: ProfileStatus.ready,
+  profile: ProfileEntity(userId: 'u-1', plan: 'free', entitlements: const EntitlementsEntity()),
 );
 
 class _FakeOnboardingPaywallStorage extends OnboardingPaywallStorage {
@@ -195,6 +277,28 @@ class _FakeAuthCubit extends Cubit<AuthState> implements AuthCubit {
   Future<void> syncRevenueCat() async {}
 }
 
+class _FakeProfileCubit extends Cubit<ProfileState> implements ProfileCubit {
+  _FakeProfileCubit() : super(const ProfileState());
+
+  void setState(ProfileState state) => emit(state);
+
+  @override
+  Future<void> bootstrap() async {}
+
+  @override
+  Future<void> refresh({bool silent = false}) async {}
+
+  @override
+  Future<void> updateBaseCurrency(String code) async {}
+
+  @override
+  Future<void> syncSubscription({
+    bool silent = true,
+    bool force = false,
+    String placement = 'auto',
+  }) async {}
+}
+
 class _FakeRevenueCatService extends RevenueCatService {
   _FakeRevenueCatService._(this._available);
 
@@ -208,14 +312,6 @@ class _FakeRevenueCatService extends RevenueCatService {
     if (!_available) {
       throw Exception('store unavailable');
     }
-    return Offerings(
-      const {},
-      current: Offering(
-        'default',
-        'default',
-        const {},
-        const [],
-      ),
-    );
+    return Offerings(const {}, current: Offering('default', 'default', const {}, const []));
   }
 }

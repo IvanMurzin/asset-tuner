@@ -3,6 +3,7 @@ import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
+import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ class FirstAuthPaywallCoordinator extends StatefulWidget {
     super.key,
     required this.child,
     required this.authCubit,
+    required this.profileCubit,
     required this.router,
     required this.revenueCatService,
     this.storage,
@@ -20,6 +22,7 @@ class FirstAuthPaywallCoordinator extends StatefulWidget {
 
   final Widget child;
   final AuthCubit authCubit;
+  final ProfileCubit profileCubit;
   final GoRouter router;
   final RevenueCatService revenueCatService;
   final OnboardingPaywallStorage? storage;
@@ -35,19 +38,43 @@ class _FirstAuthPaywallCoordinatorState extends State<FirstAuthPaywallCoordinato
   bool _isOpening = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _handleReadyChanged();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
-      bloc: widget.authCubit,
-      listenWhen: (previous, current) {
-        return !previous.isRevenueCatReady && current.isRevenueCatReady;
-      },
-      listener: (context, state) => _handleRevenueCatReady(),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AuthCubit, AuthState>(
+          bloc: widget.authCubit,
+          listenWhen: (previous, current) {
+            return previous.isRevenueCatReady != current.isRevenueCatReady;
+          },
+          listener: (context, state) => _handleReadyChanged(),
+        ),
+        BlocListener<ProfileCubit, ProfileState>(
+          bloc: widget.profileCubit,
+          listenWhen: (previous, current) {
+            return previous.isReady != current.isReady || previous.status != current.status;
+          },
+          listener: (context, state) => _handleReadyChanged(),
+        ),
+      ],
       child: widget.child,
     );
   }
 
-  Future<void> _handleRevenueCatReady() async {
+  Future<void> _handleReadyChanged() async {
     if (_didAttemptInSession || _isOpening) {
+      return;
+    }
+    if (!widget.authCubit.state.isRevenueCatReady || !widget.profileCubit.state.isReady) {
       return;
     }
     _didAttemptInSession = true;
@@ -62,11 +89,12 @@ class _FirstAuthPaywallCoordinatorState extends State<FirstAuthPaywallCoordinato
         _didAttemptInSession = false;
         return;
       }
-      await _storage.setSeen();
       if (widget.onOpenPaywall != null) {
+        await _storage.setSeen();
         await widget.onOpenPaywall!.call();
         return;
       }
+      await _storage.setSeen();
       await widget.router.push(
         AppRoutes.paywall,
         extra: const PaywallArgs(reason: PaywallReason.onboarding),
