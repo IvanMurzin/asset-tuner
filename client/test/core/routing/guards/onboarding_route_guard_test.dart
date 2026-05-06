@@ -19,17 +19,14 @@ void main() {
       expect(guard.redirect(AppRoutes.onboardingCarousel), isNull);
     });
 
-    test(
-      'carousel completed — on the carousel page redirects to /sign-up',
-      () {
-        final gate = _FakeGate(initial: true);
-        final guard = OnboardingRouteGuard(gate);
+    test('carousel completed — on the carousel page redirects to /sign-up', () {
+      final gate = _FakeGate(initial: true);
+      final guard = OnboardingRouteGuard(gate);
 
-        expect(guard.redirect(AppRoutes.onboardingCarousel), AppRoutes.signUp);
-        expect(guard.redirect(AppRoutes.signIn), isNull);
-        expect(guard.redirect(AppRoutes.main), isNull);
-      },
-    );
+      expect(guard.redirect(AppRoutes.onboardingCarousel), AppRoutes.signUp);
+      expect(guard.redirect(AppRoutes.signIn), isNull);
+      expect(guard.redirect(AppRoutes.main), isNull);
+    });
 
     test('listenable fires when the flag flips', () async {
       final gate = _FakeGate(initial: false);
