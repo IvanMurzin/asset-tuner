@@ -28,6 +28,17 @@
       ]
     },
     {
+      "name": "Asset Tuner (no flavor)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "client",
+      "flutterMode": "debug",
+      "console": "debugConsole",
+      "toolArgs": [
+        "--dart-define-from-file=../.config.prod.json"
+      ]
+    },
+    {
       "name": "Build prod appbundle -> Downloads",
       "type": "node-terminal",
       "request": "launch",
