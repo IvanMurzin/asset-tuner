@@ -9,9 +9,9 @@ export function getAdminClient(): SupabaseClient {
   }
 
   const url = requiredEnv('SUPABASE_URL');
-  const serviceRoleKey = requiredEnv('SUPABASE_SERVICE_ROLE_KEY');
+  const secretKey = requiredEnv('SUPABASE_SECRET_KEY');
 
-  adminClient = createClient(url, serviceRoleKey, {
+  adminClient = createClient(url, secretKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
