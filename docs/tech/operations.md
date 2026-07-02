@@ -22,6 +22,7 @@ flutter build appbundle --flavor prod --release --dart-define-from-file=../.conf
 Production backend requires:
 
 - `SUPABASE_URL`
+- `SUPABASE_SECRET_KEY`
 - `OPENEXCHANGERATES_APP_ID`
 - `SCHEDULER_SECRET`
 - `REVENUECAT_WEBHOOK_SECRET`
@@ -32,7 +33,9 @@ Optional:
 - `COINGECKO_API_KEY`
 - `REVENUECAT_PRO_ENTITLEMENT`
 - `REVENUECAT_PRO_ENTITLEMENTS`
-- `SUPABASE_SERVICE_ROLE_KEY` for local function serving.
+
+Use a new Supabase Secret key (`sb_secret_...`) for `SUPABASE_SECRET_KEY`; do not use the
+legacy `service_role` JWT key for new backend deployments.
 
 ## Backend Deploy
 Run from repository root:

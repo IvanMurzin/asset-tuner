@@ -4,7 +4,7 @@ The backend is a clean Supabase API layer:
 
 - The Flutter client does not call product tables through direct PostgREST.
 - The app API is exposed through Edge Functions.
-- API handlers call SQL RPC functions with a service role client.
+- API handlers call SQL RPC functions with an elevated Supabase Secret key client.
 - Monetary values use `*_atomic TEXT` plus `*_decimals SMALLINT`.
 - RLS is enabled on product tables; direct `anon` and `authenticated` table access is denied.
 
@@ -39,6 +39,7 @@ Important route groups:
 
 ## Required Production Secrets
 - `SUPABASE_URL`
+- `SUPABASE_SECRET_KEY`
 - `OPENEXCHANGERATES_APP_ID`
 - `SCHEDULER_SECRET`
 - `REVENUECAT_WEBHOOK_SECRET`
@@ -48,7 +49,9 @@ Optional:
 - `COINGECKO_API_KEY`
 - `REVENUECAT_PRO_ENTITLEMENT`
 - `REVENUECAT_PRO_ENTITLEMENTS`
-- `SUPABASE_SERVICE_ROLE_KEY` for local function serving.
+
+Use a new Supabase Secret key (`sb_secret_...`) for `SUPABASE_SECRET_KEY`; do not use the
+legacy `service_role` JWT key for new backend deployments.
 
 ## Deploy
 Recommended script:
@@ -63,7 +66,7 @@ Manual outline:
 cd backend
 supabase link --project-ref <project-ref>
 supabase db push
-supabase secrets set SUPABASE_URL=... OPENEXCHANGERATES_APP_ID=... SCHEDULER_SECRET=...
+supabase secrets set SUPABASE_URL=... SUPABASE_SECRET_KEY=... OPENEXCHANGERATES_APP_ID=... SCHEDULER_SECRET=...
 supabase functions deploy api
 supabase functions deploy rates_sync --no-verify-jwt
 supabase functions deploy revenuecat_webhook --no-verify-jwt

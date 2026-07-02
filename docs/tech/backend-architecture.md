@@ -7,7 +7,7 @@ The backend is a Supabase project under `backend/supabase`.
 - Postgres stores all product data.
 - The Flutter client calls Supabase Edge Functions, not direct table PostgREST.
 - The main authenticated API is one Edge Function: `backend/supabase/functions/api/index.ts`.
-- API handlers call SQL RPC functions with a service role Supabase client.
+- API handlers call SQL RPC functions with an elevated Supabase Secret key client.
 - RLS is enabled on tables; direct table access by `anon` and `authenticated` is denied.
 - Scheduled/server-only functions handle rates sync and RevenueCat webhooks.
 
