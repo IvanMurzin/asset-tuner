@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import sys,json,subprocess; d=json.load(sys.stdin); f=d.get('tool_input',{}).get('file_path',''); subprocess.run(['dart','format','--line-length=100',f],capture_output=True) if f.endswith('.dart') and not f.endswith(('.freezed.dart','.g.dart')) else None\" 2>/dev/null; true"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -18,7 +18,7 @@ final class AppConfig {
     required this.env,
     required this.flavor,
     required this.supabaseUrl,
-    required this.supabaseAnonKey,
+    required this.supabasePublishableKey,
     required this.oauthRedirectUri,
     required this.isOtpEnabled,
     required this.revenueCatApiKey,
@@ -33,7 +33,7 @@ final class AppConfig {
     'ENV',
     'FLAVOR',
     'SUPABASE_URL',
-    'SUPABASE_ANON_KEY',
+    'SUPABASE_PUBLISHABLE_KEY',
     'OAUTH_REDIRECT_URI',
     'TERMS_OF_USE_URL',
     'PRIVACY_POLICY_URL',
@@ -52,7 +52,7 @@ final class AppConfig {
   final String env;
   final AppFlavor flavor;
   final String supabaseUrl;
-  final String supabaseAnonKey;
+  final String supabasePublishableKey;
   final String oauthRedirectUri;
   final bool isOtpEnabled;
   final String revenueCatApiKey;
@@ -76,7 +76,12 @@ final class AppConfig {
     if (_missingRequiredStringKeys(stringValues).isNotEmpty) {
       return null;
     }
-    final revenueCatApiKey = _resolveRevenueCatApiKey(stringValues);
+    final flavor = AppFlavor.fromString(stringValues['FLAVOR']!);
+    final revenueCatApiKey = resolveRevenueCatApiKeyFor(
+      stringValues: stringValues,
+      flavor: flavor,
+      targetPlatform: defaultTargetPlatform,
+    );
     if (revenueCatApiKey == null) {
       return null;
     }
@@ -85,9 +90,9 @@ final class AppConfig {
     final analyticsEnabled = const bool.fromEnvironment('ANALYTICS_ENABLED', defaultValue: false);
     return AppConfig._(
       env: stringValues['ENV']!,
-      flavor: AppFlavor.fromString(stringValues['FLAVOR']!),
+      flavor: flavor,
       supabaseUrl: stringValues['SUPABASE_URL']!,
-      supabaseAnonKey: stringValues['SUPABASE_ANON_KEY']!,
+      supabasePublishableKey: stringValues['SUPABASE_PUBLISHABLE_KEY']!,
       oauthRedirectUri: stringValues['OAUTH_REDIRECT_URI']!,
       isOtpEnabled: isOtpEnabled,
       revenueCatApiKey: revenueCatApiKey,
@@ -101,13 +106,22 @@ final class AppConfig {
   static AppConfig requireFromEnvironment() {
     final config = tryFromEnvironment();
     if (config == null) {
-      final missingKeys = _missingRequiredStringKeys(_readStringEnvironment());
-      final hasRevenueCatKey = _resolveRevenueCatApiKey(_readStringEnvironment()) != null;
+      final stringValues = _readStringEnvironment();
+      final missingKeys = _missingRequiredStringKeys(stringValues);
+      final flavor = _tryReadFlavor(stringValues);
+      final hasRevenueCatKey =
+          flavor != null &&
+          resolveRevenueCatApiKeyFor(
+                stringValues: stringValues,
+                flavor: flavor,
+                targetPlatform: defaultTargetPlatform,
+              ) !=
+              null;
       final missingKeySuffix = hasRevenueCatKey
           ? missingKeys.join(', ')
           : [
               ...missingKeys,
-              'REVENUECAT_API_KEY (or REVENUECAT_API_KEY_ANDROID/REVENUECAT_API_KEY_IOS)',
+              _revenueCatConfigKeyDescription(flavor, defaultTargetPlatform),
             ].join(', ');
       throw StateError(
         'Missing app config keys: $missingKeySuffix. '
@@ -122,9 +136,8 @@ final class AppConfig {
       'ENV': const String.fromEnvironment('ENV'),
       'FLAVOR': const String.fromEnvironment('FLAVOR'),
       'SUPABASE_URL': const String.fromEnvironment('SUPABASE_URL'),
-      'SUPABASE_ANON_KEY': const String.fromEnvironment('SUPABASE_ANON_KEY'),
+      'SUPABASE_PUBLISHABLE_KEY': const String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY'),
       'OAUTH_REDIRECT_URI': const String.fromEnvironment('OAUTH_REDIRECT_URI'),
-      'REVENUECAT_API_KEY': const String.fromEnvironment('REVENUECAT_API_KEY'),
       'REVENUECAT_API_KEY_ANDROID': const String.fromEnvironment('REVENUECAT_API_KEY_ANDROID'),
       'REVENUECAT_API_KEY_IOS': const String.fromEnvironment('REVENUECAT_API_KEY_IOS'),
       'REVENUECAT_API_KEY_TEST': const String.fromEnvironment('REVENUECAT_API_KEY_TEST'),
@@ -133,35 +146,45 @@ final class AppConfig {
     };
   }
 
-  static String? _resolveRevenueCatApiKey(Map<String, String> stringValues) {
-    final genericKey = stringValues['REVENUECAT_API_KEY']?.trim() ?? '';
-    if (!_isMissingValue(genericKey)) {
-      return genericKey;
-    }
-
+  @visibleForTesting
+  static String? resolveRevenueCatApiKeyFor({
+    required Map<String, String> stringValues,
+    required AppFlavor flavor,
+    required TargetPlatform targetPlatform,
+  }) {
     final androidKey = stringValues['REVENUECAT_API_KEY_ANDROID']?.trim() ?? '';
     final iosKey = stringValues['REVENUECAT_API_KEY_IOS']?.trim() ?? '';
     final testKey = stringValues['REVENUECAT_API_KEY_TEST']?.trim() ?? '';
 
-    final platformKey = switch (defaultTargetPlatform) {
+    if (flavor == AppFlavor.dev) {
+      return _isMissingValue(testKey) ? null : testKey;
+    }
+
+    final platformKey = switch (targetPlatform) {
       TargetPlatform.android => androidKey,
       TargetPlatform.iOS => iosKey,
       _ => '',
     };
-    if (!_isMissingValue(platformKey)) {
-      return platformKey;
-    }
+    return _isMissingValue(platformKey) ? null : platformKey;
+  }
 
-    if (!_isMissingValue(androidKey)) {
-      return androidKey;
+  static AppFlavor? _tryReadFlavor(Map<String, String> stringValues) {
+    final rawFlavor = stringValues['FLAVOR'];
+    if (_isMissingValue(rawFlavor)) {
+      return null;
     }
-    if (!_isMissingValue(iosKey)) {
-      return iosKey;
+    return AppFlavor.fromString(rawFlavor!);
+  }
+
+  static String _revenueCatConfigKeyDescription(AppFlavor? flavor, TargetPlatform targetPlatform) {
+    if (flavor == AppFlavor.dev) {
+      return 'REVENUECAT_API_KEY_TEST';
     }
-    if (!_isMissingValue(testKey)) {
-      return testKey;
-    }
-    return null;
+    return switch (targetPlatform) {
+      TargetPlatform.android => 'REVENUECAT_API_KEY_ANDROID',
+      TargetPlatform.iOS => 'REVENUECAT_API_KEY_IOS',
+      _ => 'REVENUECAT_API_KEY_ANDROID or REVENUECAT_API_KEY_IOS for Android/iOS builds',
+    };
   }
 
   static List<String> _missingRequiredStringKeys(Map<String, String> stringValues) {

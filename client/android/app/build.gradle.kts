@@ -106,7 +106,7 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             resValue("string", "app_name", "Asset Tuner (dev)")
-            manifestPlaceholders["deepLinkScheme"] = "assettunerdev"
+            manifestPlaceholders["deepLinkScheme"] = "assettuner"
             // Dev release сборки подписываются debug-ключом — production keystore не требуется.
             signingConfig = if (useProjectDebugKeystore) {
                 signingConfigs.getByName("debugProject")

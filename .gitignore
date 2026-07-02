@@ -2,6 +2,7 @@
 .config.prod.json
 
 .vscode/.history/
+.idea/
 
 client/lib/l10n/app_localizations.dart
 client/lib/l10n/app_localizations_en.dart
