@@ -38,8 +38,6 @@ Important route groups:
 - `/delete_my_account`
 
 ## Required Production Secrets
-- `SUPABASE_URL`
-- `SUPABASE_SECRET_KEY`
 - `OPENEXCHANGERATES_APP_ID`
 - `SCHEDULER_SECRET`
 - `REVENUECAT_WEBHOOK_SECRET`
@@ -50,8 +48,8 @@ Optional:
 - `REVENUECAT_PRO_ENTITLEMENT`
 - `REVENUECAT_PRO_ENTITLEMENTS`
 
-Use a new Supabase Secret key (`sb_secret_...`) for `SUPABASE_SECRET_KEY`; do not use the
-legacy `service_role` JWT key for new backend deployments.
+Supabase provides platform secrets such as `SUPABASE_URL` and `SUPABASE_SECRET_KEYS`
+automatically in hosted Edge Functions. Do not set or deploy those through project `.env` files.
 
 ## Deploy
 Recommended script:
@@ -66,7 +64,7 @@ Manual outline:
 cd backend
 supabase link --project-ref <project-ref>
 supabase db push
-supabase secrets set SUPABASE_URL=... SUPABASE_SECRET_KEY=... OPENEXCHANGERATES_APP_ID=... SCHEDULER_SECRET=...
+supabase secrets set OPENEXCHANGERATES_APP_ID=... SCHEDULER_SECRET=...
 supabase functions deploy api
 supabase functions deploy rates_sync --no-verify-jwt
 supabase functions deploy revenuecat_webhook --no-verify-jwt

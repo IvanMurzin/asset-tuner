@@ -38,18 +38,6 @@ if [[ "${REVENUECAT_API_KEY}" != sk_* ]]; then
   exit 1
 fi
 
-if [[ -z "${SUPABASE_SECRET_KEY:-}" || "${SUPABASE_SECRET_KEY}" == "replace_me" ]]; then
-  echo "Set SUPABASE_SECRET_KEY in ${ENV_FILE}" >&2
-  echo "Expected a Supabase Secret key (prefix: sb_secret_)." >&2
-  exit 1
-fi
-
-if [[ "${SUPABASE_SECRET_KEY}" != sb_secret_* ]]; then
-  echo "SUPABASE_SECRET_KEY looks invalid: expected secret key prefix sb_secret_, got ${SUPABASE_SECRET_KEY:0:10}..." >&2
-  echo "Do not use legacy service_role JWT keys for new backend deployments." >&2
-  exit 1
-fi
-
 echo "[1/6] Linking project ${SUPABASE_PROJECT_REF}"
 supabase --workdir "${BACKEND_DIR}" link --project-ref "${SUPABASE_PROJECT_REF}"
 
@@ -67,8 +55,6 @@ fi
 
 echo "[4/6] Syncing secrets"
 supabase --workdir "${BACKEND_DIR}" secrets set \
-  SUPABASE_URL="${SUPABASE_URL:-}" \
-  SUPABASE_SECRET_KEY="${SUPABASE_SECRET_KEY:-}" \
   COINGECKO_API_KEY="${COINGECKO_API_KEY:-}" \
   COINGECKO_BASE_URL="${COINGECKO_BASE_URL:-}" \
   OPENEXCHANGERATES_APP_ID="${OPENEXCHANGERATES_APP_ID:-}" \

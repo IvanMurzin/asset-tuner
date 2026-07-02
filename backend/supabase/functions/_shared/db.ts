@@ -9,7 +9,11 @@ export function getAdminClient(): SupabaseClient {
   }
 
   const url = requiredEnv('SUPABASE_URL');
-  const secretKey = requiredEnv('SUPABASE_SECRET_KEY');
+  const secretKeys = JSON.parse(requiredEnv('SUPABASE_SECRET_KEYS')) as Record<string, string>;
+  const secretKey = secretKeys['default'];
+  if (!secretKey || secretKey.trim().length === 0) {
+    throw new Error('Missing default Supabase Secret key');
+  }
 
   adminClient = createClient(url, secretKey, {
     auth: {
