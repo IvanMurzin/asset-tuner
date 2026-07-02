@@ -3,7 +3,7 @@
 ## Bundle IDs
 | Flavor | Android applicationId | iOS bundle identifier | Deep link scheme | Release signing |
 |---|---|---|---|---|
-| `dev` | `developer.ivanmurzin.assettuner.dev` | `developer.ivanmurzin.assettuner.dev` | `assettunerdev` | debug keystore |
+| `dev` | `developer.ivanmurzin.assettuner.dev` | `developer.ivanmurzin.assettuner.dev` | `assettuner` | debug keystore |
 | `prod` | `developer.ivanmurzin.assettuner` | `developer.ivanmurzin.assettuner` | `assettuner` | release keystore from `client/android/key.properties` |
 
 Both app variants can be installed on one device because their bundle IDs differ.
@@ -20,7 +20,7 @@ At the time this document was written, dev and prod config files may still point
 For a fully isolated dev environment:
 
 1. Create a separate Supabase project, for example `asset_tuner_dev`.
-2. Put its URL and anon key into `.config.dev.json`.
+2. Put its URL and publishable key into `.config.dev.json`.
 3. Push migrations and deploy functions to the dev project.
 4. Create separate RevenueCat dev app/project resources for `developer.ivanmurzin.assettuner.dev`.
 5. Keep `ANALYTICS_ENABLED=false` in `.config.dev.json` unless a separate dev analytics stream exists.

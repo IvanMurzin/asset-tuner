@@ -93,7 +93,7 @@ class AnalyticsTotalTrendChart extends StatelessWidget {
                     }
                     final text = context.dsFormatters.formatDate(points[index].date);
                     return SideTitleWidget(
-                      axisSide: meta.axisSide,
+                      meta: meta,
                       child: Text(
                         text,
                         maxLines: 1,

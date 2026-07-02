@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
@@ -17,6 +14,9 @@ import 'package:asset_tuner/presentation/auth/widget/sign_up_confirm_password_fi
 import 'package:asset_tuner/presentation/auth/widget/sign_up_email_field.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_legal_text.dart';
 import 'package:asset_tuner/presentation/auth/widget/sign_up_password_field.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
