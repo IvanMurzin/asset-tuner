@@ -1,6 +1,7 @@
 # Dart / Flutter
 .dart_tool/
 build/
+android/.kotlin/
 .pub/
 .flutter-plugins
 .flutter-plugins-dependencies
