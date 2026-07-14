@@ -143,6 +143,36 @@ void main() {
       expect(cubit.state.profile?.plan, Plan.pro);
       expect(cubit.state.profile?.isPro, isTrue);
     });
+
+    test('forced sync waits for an in-flight sync instead of reading a stale plan', () async {
+      cubit.bootstrap();
+      await _flush();
+      authRepository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'));
+      await _flush();
+
+      final gate = Completer<void>();
+      profileRepository.refreshGate = gate;
+      profileRepository.refreshSubscriptionResult = Success(
+        _profile(baseAssetId: 'base-asset-id', plan: Plan.free),
+      );
+
+      final callsBefore = profileRepository.refreshSubscriptionCalls;
+      final inFlight = cubit.syncSubscription(force: true);
+      await _flush();
+
+      profileRepository.refreshGate = null;
+      profileRepository.refreshSubscriptionResult = Success(
+        _profile(baseAssetId: 'base-asset-id', plan: Plan.pro),
+      );
+
+      final forced = cubit.syncSubscription(force: true, silent: false);
+      gate.complete();
+      await inFlight;
+      await forced;
+
+      expect(profileRepository.refreshSubscriptionCalls, callsBefore + 2);
+      expect(cubit.state.profile?.isPro, isTrue);
+    });
   });
 }
 
@@ -199,6 +229,7 @@ class _FakeProfileRepository implements IProfileRepository {
   Result<ProfileEntity> refreshSubscriptionResult = Success(_profile(baseAssetId: 'base-asset-id'));
   String? updatedBaseCurrency;
   int refreshSubscriptionCalls = 0;
+  Completer<void>? refreshGate;
 
   @override
   Future<Result<ProfileEntity>> getProfile() async => getProfileResult;
@@ -212,7 +243,12 @@ class _FakeProfileRepository implements IProfileRepository {
   @override
   Future<Result<ProfileEntity>> refreshSubscription() async {
     refreshSubscriptionCalls += 1;
-    return refreshSubscriptionResult;
+    final result = refreshSubscriptionResult;
+    final gate = refreshGate;
+    if (gate != null) {
+      await gate.future;
+    }
+    return result;
   }
 
   @override

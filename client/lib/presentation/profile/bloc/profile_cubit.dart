@@ -46,9 +46,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   bool _isLoading = false;
   bool _queuedReload = false;
   bool _queuedSilent = true;
-  bool _isSubscriptionSyncing = false;
-  bool _queuedSubscriptionSync = false;
-  bool _queuedSubscriptionForce = false;
+  Future<void> _syncChain = Future<void>.value();
   DateTime? _lastSubscriptionSyncAt;
   CustomerInfoUpdateListener? _customerInfoUpdateListener;
 
@@ -206,24 +204,38 @@ class ProfileCubit extends Cubit<ProfileState> {
     bool silent = true,
     bool force = false,
     String placement = 'auto',
-  }) async {
+  }) {
     if (!state.isReady) {
-      return;
+      return Future<void>.value();
+    }
+    if (!force && _isWithinSyncCooldown()) {
+      return Future<void>.value();
     }
 
-    final now = DateTime.now();
+    final scheduled = _syncChain.then((_) {
+      if (isClosed || !state.isReady) {
+        return Future<void>.value();
+      }
+      if (!force && _isWithinSyncCooldown()) {
+        return Future<void>.value();
+      }
+      return _runSubscriptionSync(silent: silent, force: force, placement: placement);
+    });
+
+    _syncChain = scheduled.catchError((Object _) {});
+    return scheduled;
+  }
+
+  bool _isWithinSyncCooldown() {
     final lastSync = _lastSubscriptionSyncAt;
-    if (!force && lastSync != null && now.difference(lastSync) < _subscriptionSyncCooldown) {
-      return;
-    }
+    return lastSync != null && DateTime.now().difference(lastSync) < _subscriptionSyncCooldown;
+  }
 
-    if (_isSubscriptionSyncing) {
-      _queuedSubscriptionSync = true;
-      _queuedSubscriptionForce = _queuedSubscriptionForce || force;
-      return;
-    }
-
-    _isSubscriptionSyncing = true;
+  Future<void> _runSubscriptionSync({
+    required bool silent,
+    required bool force,
+    required String placement,
+  }) async {
     final exposeSyncing = !silent || force;
     emit(
       state.copyWith(isSyncingSubscription: exposeSyncing, failureCode: null, failureMessage: null),
@@ -317,14 +329,6 @@ class ProfileCubit extends Cubit<ProfileState> {
           },
         ),
       );
-    } finally {
-      _isSubscriptionSyncing = false;
-      if (_queuedSubscriptionSync && !isClosed) {
-        final nextForce = _queuedSubscriptionForce;
-        _queuedSubscriptionSync = false;
-        _queuedSubscriptionForce = false;
-        unawaited(syncSubscription(silent: true, force: nextForce));
-      }
     }
   }
 
