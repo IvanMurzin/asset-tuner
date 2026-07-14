@@ -38,6 +38,12 @@ if [[ "${REVENUECAT_API_KEY}" != sk_* ]]; then
   exit 1
 fi
 
+if [[ -z "${REVENUECAT_PRO_ENTITLEMENTS:-}" ]]; then
+  echo "Set REVENUECAT_PRO_ENTITLEMENTS in ${ENV_FILE}" >&2
+  echo "Copy it from RevenueCat: Product catalog -> Entitlements -> Identifier (CSV for several)." >&2
+  exit 1
+fi
+
 echo "[1/6] Linking project ${SUPABASE_PROJECT_REF}"
 supabase --workdir "${BACKEND_DIR}" link --project-ref "${SUPABASE_PROJECT_REF}"
 
@@ -54,15 +60,24 @@ else
 fi
 
 echo "[4/6] Syncing secrets"
-supabase --workdir "${BACKEND_DIR}" secrets set \
-  COINGECKO_API_KEY="${COINGECKO_API_KEY:-}" \
-  COINGECKO_BASE_URL="${COINGECKO_BASE_URL:-}" \
-  OPENEXCHANGERATES_APP_ID="${OPENEXCHANGERATES_APP_ID:-}" \
-  SCHEDULER_SECRET="${SCHEDULER_SECRET:-}" \
-  REVENUECAT_WEBHOOK_SECRET="${REVENUECAT_WEBHOOK_SECRET:-}" \
-  REVENUECAT_API_KEY="${REVENUECAT_API_KEY:-}" \
-  REVENUECAT_PRO_ENTITLEMENT="${REVENUECAT_PRO_ENTITLEMENT:-}" \
-  REVENUECAT_PRO_ENTITLEMENTS="${REVENUECAT_PRO_ENTITLEMENTS:-}"
+secret_args=()
+for name in \
+  COINGECKO_API_KEY \
+  COINGECKO_BASE_URL \
+  OPENEXCHANGERATES_APP_ID \
+  SCHEDULER_SECRET \
+  REVENUECAT_WEBHOOK_SECRET \
+  REVENUECAT_API_KEY \
+  REVENUECAT_PRO_ENTITLEMENTS; do
+  value="${!name:-}"
+  if [[ -n "${value}" ]]; then
+    secret_args+=("${name}=${value}")
+  else
+    echo "  skip ${name} (empty in ${ENV_FILE}; leaving deployed value untouched)"
+  fi
+done
+
+supabase --workdir "${BACKEND_DIR}" secrets set "${secret_args[@]}"
 
 echo "[5/6] Deploying edge functions"
 supabase --workdir "${BACKEND_DIR}" functions deploy api

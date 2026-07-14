@@ -25,12 +25,14 @@ Production backend requires:
 - `SCHEDULER_SECRET`
 - `REVENUECAT_WEBHOOK_SECRET`
 - `REVENUECAT_API_KEY`
+- `REVENUECAT_PRO_ENTITLEMENTS` — entitlement identifier(s) that grant the pro plan, copied from
+  RevenueCat: Product catalog -> Entitlements -> **Identifier** (CSV for several). Matched
+  case-insensitively. There is no default: a wrong or missing value silently resolves every
+  paying subscriber to `free`.
 
 Optional:
 
 - `COINGECKO_API_KEY`
-- `REVENUECAT_PRO_ENTITLEMENT`
-- `REVENUECAT_PRO_ENTITLEMENTS`
 
 Supabase provides platform secrets such as `SUPABASE_URL` and `SUPABASE_SECRET_KEYS`
 automatically in hosted Edge Functions. Do not set or deploy those through project `.env` files.

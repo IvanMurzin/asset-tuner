@@ -2,6 +2,7 @@ import { handleCors } from '../_shared/cors.ts';
 import { getAdminClient } from '../_shared/db.ts';
 import { requiredEnv } from '../_shared/env.ts';
 import {
+  fetchSubscriberIsPro,
   isProEntitlementId,
   resolveProEntitlementIdsFromEnv,
 } from '../_shared/revenuecat_entitlements.ts';
@@ -15,12 +16,6 @@ export type RevenueCatEvent = {
   entitlement_ids?: string[];
   expiration_at_ms?: number | null;
 };
-
-type RevenueCatEntitlement = {
-  expires_date?: string | null;
-};
-
-const PRO_ENTITLEMENT_IDS = resolveProEntitlementIdsFromEnv();
 
 function requireWebhookSecret(req: Request): void {
   const expected = requiredEnv('REVENUECAT_WEBHOOK_SECRET');
@@ -53,7 +48,7 @@ function parsePayload(raw: unknown): { event: RevenueCatEvent; payload: Record<s
 export function inferIsPro(
   event: RevenueCatEvent,
   nowMs: number = Date.now(),
-  proEntitlementIds: ReadonlySet<string> = PRO_ENTITLEMENT_IDS,
+  proEntitlementIds: ReadonlySet<string> = resolveProEntitlementIdsFromEnv(),
 ): boolean {
   const entitlementIds = event.entitlement_ids ?? [];
   const hasProEntitlement = entitlementIds.some((id) => isProEntitlementId(id, proEntitlementIds));
@@ -67,63 +62,6 @@ export function inferIsPro(
   }
 
   return Number.isFinite(event.expiration_at_ms) && event.expiration_at_ms > nowMs;
-}
-
-export function inferIsProFromSubscriberEntitlements(
-  entitlements: Record<string, RevenueCatEntitlement | undefined>,
-  nowMs: number = Date.now(),
-  proEntitlementIds: ReadonlySet<string> = PRO_ENTITLEMENT_IDS,
-): boolean {
-  return Object.entries(entitlements).some(([entitlementId, entitlement]) => {
-    if (!isProEntitlementId(entitlementId, proEntitlementIds)) {
-      return false;
-    }
-    if (!entitlement) {
-      return false;
-    }
-    const expiresAt = entitlement.expires_date;
-    if (!expiresAt) {
-      return true;
-    }
-    const expiresMs = new Date(expiresAt).getTime();
-    return Number.isFinite(expiresMs) && expiresMs > nowMs;
-  });
-}
-
-async function fetchIsProFromSubscriberApi(
-  appUserId: string,
-  proEntitlementIds: ReadonlySet<string> = PRO_ENTITLEMENT_IDS,
-): Promise<boolean> {
-  const apiKey = requiredEnv('REVENUECAT_API_KEY');
-  const response = await fetch(
-    `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(appUserId)}`,
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  );
-
-  if (!response.ok) {
-    // Treat unknown subscriber as free; other failures should retry webhook delivery.
-    if (response.status === 404) {
-      return false;
-    }
-    const details = await response.text().catch(() => '');
-    throw new ApiHttpError(502, 'EXTERNAL_API_ERROR', 'RevenueCat subscriber request failed', {
-      status: response.status,
-      details,
-    });
-  }
-
-  const payload = (await response.json()) as Record<string, unknown>;
-  const subscriber = payload.subscriber as Record<string, unknown> | undefined;
-  const entitlements = (subscriber?.entitlements ?? {}) as Record<
-    string,
-    RevenueCatEntitlement | undefined
-  >;
-  return inferIsProFromSubscriberEntitlements(entitlements, Date.now(), proEntitlementIds);
 }
 
 function extractExternalId(event: RevenueCatEvent, appUserId: string): string {
@@ -165,8 +103,8 @@ if (import.meta.main) {
       }
 
       const externalId = extractExternalId(event, appUserId);
-      const isProFromEventPayload = inferIsPro(event, Date.now(), PRO_ENTITLEMENT_IDS);
-      const isPro = await fetchIsProFromSubscriberApi(appUserId, PRO_ENTITLEMENT_IDS);
+      const isProFromEventPayload = inferIsPro(event);
+      const { isPro } = await fetchSubscriberIsPro(appUserId);
 
       const db = getAdminClient();
       const { data, error } = await db.rpc('api_apply_revenuecat_event', {

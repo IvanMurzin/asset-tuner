@@ -124,13 +124,13 @@ class ProfilePage extends StatelessWidget {
                         children: [
                           ProfileHeaderCard(
                             email: session.email,
-                            planLabel: profile.plan == 'pro'
+                            planLabel: profile.isPro
                                 ? l10n.settingsPlanPaid
                                 : l10n.settingsPlanFree,
                             baseCurrency: profile.baseCurrency,
-                            isPaid: profile.plan == 'pro',
+                            isPaid: profile.isPro,
                             onPlanActionTap: () async {
-                              if (profile.plan == 'pro') {
+                              if (profile.isPro) {
                                 getIt<AppAnalytics>().log(
                                   AnalyticsEventName.manageSubscriptionOpened,
                                   parameters: {AnalyticsParams.placement: 'profile_header'},
@@ -154,7 +154,7 @@ class ProfilePage extends StatelessWidget {
                                 );
                               }
                             },
-                            planActionLabel: profile.plan == 'pro'
+                            planActionLabel: profile.isPro
                                 ? l10n.settingsManageSubscription
                                 : l10n.profileUpgradePlan,
                           ),

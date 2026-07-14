@@ -9,6 +9,7 @@ import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/rate/entity/rates_snapshot_entity.dart';
 import 'package:asset_tuner/presentation/analytics/bloc/analytics_cubit.dart';
 import 'package:decimal/decimal.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -27,8 +28,8 @@ void main() {
 
       final cubit = AnalyticsCubit(GetAnalyticsSummaryUseCase(repository));
       final profile = ProfileEntity(
-        plan: 'free',
-        entitlements: const EntitlementsEntity(plan: 'free'),
+        plan: Plan.free,
+        entitlements: const EntitlementsEntity(plan: Plan.free),
       );
       final rates = RatesSnapshotEntity(usdPriceByAssetId: {}, asOf: DateTime.utc(2026, 4, 21));
       final accounts = [
@@ -69,8 +70,8 @@ void main() {
 
       final cubit = AnalyticsCubit(GetAnalyticsSummaryUseCase(repository));
       final profile = ProfileEntity(
-        plan: 'free',
-        entitlements: const EntitlementsEntity(plan: 'free'),
+        plan: Plan.free,
+        entitlements: const EntitlementsEntity(plan: Plan.free),
       );
       final rates = RatesSnapshotEntity(usdPriceByAssetId: {}, asOf: DateTime.utc(2026, 4, 21));
       final accounts = [
@@ -133,8 +134,8 @@ void main() {
 
       await cubit.onSourceDataReady(
         ProfileEntity(
-          plan: 'free',
-          entitlements: const EntitlementsEntity(plan: 'free'),
+          plan: Plan.free,
+          entitlements: const EntitlementsEntity(plan: Plan.free),
         ),
         RatesSnapshotEntity(
           usdPriceByAssetId: {'asset-1': Decimal.one},

@@ -11,7 +11,7 @@ abstract class ProfileDto with _$ProfileDto {
   const factory ProfileDto({
     @JsonName('user_id') String? userId,
     @JsonName('base_asset_id') String? baseAssetId,
-    required String plan,
+    String? plan,
     required EntitlementsDto entitlements,
     @JsonName('revenuecat_app_user_id') String? revenuecatAppUserId,
     @JsonName('created_at') String? createdAtIso,
@@ -31,7 +31,7 @@ abstract class ProfileDto with _$ProfileDto {
     return ProfileDto(
       userId: profile['user_id'] as String?,
       baseAssetId: profile['base_asset_id'] as String?,
-      plan: ((profile['plan'] as String?) ?? 'free').toLowerCase(),
+      plan: profile['plan'] as String?,
       entitlements: EntitlementsDto.fromJson(limits),
       revenuecatAppUserId: profile['revenuecat_app_user_id'] as String?,
       createdAtIso: profile['created_at'] as String?,

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 
 part 'entitlements_entity.freezed.dart';
 
@@ -7,7 +8,7 @@ abstract class EntitlementsEntity with _$EntitlementsEntity {
   const EntitlementsEntity._();
 
   const factory EntitlementsEntity({
-    String? plan,
+    Plan? plan,
     int? maxAccounts,
     int? maxSubaccounts,
     int? fiatLimit,

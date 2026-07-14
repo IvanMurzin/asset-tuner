@@ -1,11 +1,7 @@
 import { handleCors } from '../_shared/cors.ts';
 import { requireUser } from '../_shared/auth.ts';
 import { getAdminClient } from '../_shared/db.ts';
-import { requiredEnv } from '../_shared/env.ts';
-import {
-  isProEntitlementId,
-  resolveProEntitlementIdsFromEnv,
-} from '../_shared/revenuecat_entitlements.ts';
+import { fetchSubscriberIsPro } from '../_shared/revenuecat_entitlements.ts';
 import {
   ApiHttpError,
   fromError,
@@ -98,8 +94,6 @@ type AnalyticsSummaryPayload = {
     created_at: string;
   }>;
 };
-
-const PRO_ENTITLEMENT_IDS = resolveProEntitlementIdsFromEnv();
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -423,61 +417,19 @@ async function handleSubaccountHistory(req: Request, userId: string): Promise<Re
 }
 
 async function handleRevenuecatRefresh(userId: string): Promise<Response> {
-  const apiKey = requiredEnv('REVENUECAT_API_KEY');
-
   const me = await rpc<MePayload>('api_get_me', {
     p_user_id: userId,
   });
 
   const appUserId = me.profile.revenuecat_app_user_id ?? userId;
-
-  const response = await fetch(
-    `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(appUserId)}`,
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  );
-
-  if (!response.ok) {
-    const details = await response.text().catch(() => '');
-    throw new ApiHttpError(502, 'EXTERNAL_API_ERROR', 'RevenueCat refresh request failed', {
-      status: response.status,
-      details,
-    });
-  }
-
-  const payload = (await response.json()) as Record<string, unknown>;
-  const subscriber = payload.subscriber as Record<string, unknown> | undefined;
-  const entitlements = (subscriber?.entitlements ?? {}) as Record<
-    string,
-    { expires_date?: string | null } | undefined
-  >;
-
-  const now = Date.now();
-  const isPro = Object.entries(entitlements).some(([entitlementId, entitlement]) => {
-    if (!isProEntitlementId(entitlementId, PRO_ENTITLEMENT_IDS)) {
-      return false;
-    }
-    if (!entitlement) {
-      return false;
-    }
-    const expiresAt = entitlement.expires_date;
-    if (!expiresAt) {
-      return true;
-    }
-    const expiresMs = new Date(expiresAt).getTime();
-    return Number.isFinite(expiresMs) && expiresMs > now;
-  });
+  const { payload, isPro } = await fetchSubscriberIsPro(appUserId);
 
   const externalId = `refresh:${appUserId}:${new Date().toISOString()}`;
   const sync = await rpc<unknown>('api_apply_revenuecat_event', {
     p_source: 'revenuecat_refresh',
     p_external_id: externalId,
     p_app_user_id: appUserId,
-    p_payload: payload,
+    p_payload: payload ?? {},
     p_is_pro: isPro,
   });
 

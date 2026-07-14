@@ -122,7 +122,7 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                         SizedBox(height: spacing.s24),
                         const BaseCurrencyHowSection(),
                         SizedBox(height: spacing.s24),
-                        if (!(profile.entitlements.anyBaseCurrency) && profile.plan != 'pro') ...[
+                        if (!(profile.entitlements.anyBaseCurrency) && !profile.isPro) ...[
                           DSUnlockCurrenciesCard(
                             title: l10n.paywallFeatureCurrencies,
                             subtitle: l10n.baseCurrencySettingsPaywallHint,
