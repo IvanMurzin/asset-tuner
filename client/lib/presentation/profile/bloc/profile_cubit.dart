@@ -7,10 +7,11 @@ import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/watch_session_usecase.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/usecase/ensure_profile_ready_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
-import 'package:asset_tuner/domain/profile/usecase/update_plan_usecase.dart';
+import 'package:asset_tuner/domain/profile/usecase/refresh_subscription_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -25,7 +26,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     this._watchSession,
     this._ensureProfileReady,
     this._updateBaseCurrency,
-    this._updatePlan,
+    this._refreshSubscription,
     this._revenueCatService,
     this._analytics,
   ) : super(const ProfileState());
@@ -36,7 +37,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   final WatchSessionUseCase _watchSession;
   final EnsureProfileReadyUseCase _ensureProfileReady;
   final UpdateBaseCurrencyUseCase _updateBaseCurrency;
-  final UpdatePlanUseCase _updatePlan;
+  final RefreshSubscriptionUseCase _refreshSubscription;
   final RevenueCatService _revenueCatService;
   final AppAnalytics _analytics;
 
@@ -247,7 +248,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           );
         }
       }
-      final result = await _updatePlan('pro').timeout(
+      final result = await _refreshSubscription().timeout(
         _subscriptionSyncTimeout,
         onTimeout: () =>
             const FailureResult(Failure(code: 'TIMEOUT', message: 'Subscription sync timed out')),
@@ -273,7 +274,7 @@ class ProfileCubit extends Cubit<ProfileState> {
               AnalyticsEventName.subscriptionSyncSucceeded,
               parameters: {
                 AnalyticsParams.placement: placement,
-                AnalyticsParams.plan: profile.plan,
+                AnalyticsParams.plan: profile.plan.code,
               },
             ),
           );
@@ -327,10 +328,9 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<void> _pushSubscriptionUserProperties(String? plan) async {
-    final isSubscriber = plan == 'pro';
-    await _analytics.setUserProperty(AnalyticsUserProps.isSubscriber, isSubscriber.toString());
-    await _analytics.setUserProperty(AnalyticsUserProps.subscriptionPlan, plan);
+  Future<void> _pushSubscriptionUserProperties(Plan plan) async {
+    await _analytics.setUserProperty(AnalyticsUserProps.isSubscriber, plan.isPro.toString());
+    await _analytics.setUserProperty(AnalyticsUserProps.subscriptionPlan, plan.code);
   }
 
   void _installCustomerInfoUpdateListener() {

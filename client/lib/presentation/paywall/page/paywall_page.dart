@@ -369,7 +369,7 @@ class _PaywallPageState extends State<PaywallPage> {
       return false;
     }
     final state = profileCubit.state;
-    return state.isReady && state.profile?.plan == 'pro';
+    return state.isReady && (state.profile?.isPro ?? false);
   }
 
   Future<void> _openUrl(String url) async {
@@ -437,7 +437,7 @@ class _PaywallPageState extends State<PaywallPage> {
               );
             }
 
-            if (profileState.profile?.plan == 'pro') {
+            if (profileState.profile?.isPro ?? false) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) {
                   context.pop(null);

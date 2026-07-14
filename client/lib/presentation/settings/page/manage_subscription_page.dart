@@ -47,12 +47,12 @@ class _ManageSubscriptionPageState extends State<ManageSubscriptionPage> {
         }
 
         final profile = profileState.profile!;
-        final isPaid = profile.plan == 'pro';
+        final isPaid = profile.isPro;
         if (!_didLogOpen) {
           _didLogOpen = true;
           getIt<AppAnalytics>().log(
             AnalyticsEventName.manageSubscriptionOpened,
-            parameters: {'plan': profile.plan},
+            parameters: {'plan': profile.plan.code},
           );
         }
 
@@ -85,7 +85,7 @@ class _ManageSubscriptionPageState extends State<ManageSubscriptionPage> {
   }
 
   Future<void> _onManagePressed(BuildContext context) async {
-    final plan = context.read<ProfileCubit>().state.profile?.plan ?? 'unknown';
+    final plan = context.read<ProfileCubit>().state.profile?.plan.code ?? 'unknown';
     getIt<AppAnalytics>().log(AnalyticsEventName.customerCenterOpened, parameters: {'plan': plan});
     await RevenueCatUI.presentCustomerCenter();
     if (!context.mounted) return;
@@ -150,6 +150,6 @@ class _ManageSubscriptionPageState extends State<ManageSubscriptionPage> {
   }
 
   bool _isProProfile(ProfileState state) {
-    return state.isReady && state.profile?.plan == 'pro';
+    return state.isReady && (state.profile?.isPro ?? false);
   }
 }

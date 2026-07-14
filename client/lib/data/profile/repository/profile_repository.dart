@@ -42,15 +42,15 @@ class ProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Result<ProfileEntity>> updatePlan(String plan) async {
+  Future<Result<ProfileEntity>> refreshSubscription() async {
     try {
-      final dto = await _dataSource.updatePlan(plan);
-      logger.i('ProfileRepository.updatePlan success');
+      final dto = await _dataSource.refreshSubscription();
+      logger.i('ProfileRepository.refreshSubscription success');
       return Success(ProfileMapper.toEntity(dto));
     } catch (error) {
-      logger.e('ProfileRepository.updatePlan failed', error: error);
+      logger.e('ProfileRepository.refreshSubscription failed', error: error);
       return FailureResult(
-        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to update profile'),
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to refresh subscription'),
       );
     }
   }

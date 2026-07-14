@@ -16,6 +16,7 @@ import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:asset_tuner/presentation/settings/page/base_currency_settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -100,7 +101,7 @@ void main() {
       profileCubit = _TestProfileCubit(
         ProfileState(
           status: ProfileStatus.ready,
-          profile: _profile(baseCode: 'USD', plan: 'free', fiatLimit: 5),
+          profile: _profile(baseCode: 'USD', plan: Plan.free, fiatLimit: 5),
         ),
       );
       PaywallArgs? openedArgs;
@@ -223,7 +224,7 @@ class _TestAssetsCubit extends Cubit<AssetsState> implements AssetsCubit {
   Future<void> refresh({bool silent = false, bool forceRefresh = false}) async {}
 }
 
-ProfileEntity _profile({required String baseCode, String plan = 'pro', int? fiatLimit}) {
+ProfileEntity _profile({required String baseCode, Plan plan = Plan.pro, int? fiatLimit}) {
   return ProfileEntity(
     userId: 'user-1',
     baseAssetId: 'asset-$baseCode',

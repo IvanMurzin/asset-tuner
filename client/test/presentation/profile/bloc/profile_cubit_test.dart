@@ -15,8 +15,9 @@ import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart'
 import 'package:asset_tuner/domain/profile/usecase/ensure_profile_ready_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
-import 'package:asset_tuner/domain/profile/usecase/update_plan_usecase.dart';
+import 'package:asset_tuner/domain/profile/usecase/refresh_subscription_usecase.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
@@ -38,7 +39,7 @@ void main() {
           UpdateBaseCurrencyUseCase(profileRepository),
         ),
         UpdateBaseCurrencyUseCase(profileRepository),
-        UpdatePlanUseCase(profileRepository),
+        RefreshSubscriptionUseCase(profileRepository),
         revenueCatService,
         AppAnalytics(),
       );
@@ -60,8 +61,8 @@ void main() {
     });
 
     test('syncs subscription after authenticated profile load', () async {
-      profileRepository.updatePlanResult = Success(
-        _profile(baseAssetId: 'base-asset-id', plan: 'pro'),
+      profileRepository.refreshSubscriptionResult = Success(
+        _profile(baseAssetId: 'base-asset-id', plan: Plan.pro),
       );
 
       cubit.bootstrap();
@@ -69,8 +70,8 @@ void main() {
       authRepository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'));
       await _flush();
 
-      expect(profileRepository.updatePlanCalls, 1);
-      expect(cubit.state.profile?.plan, 'pro');
+      expect(profileRepository.refreshSubscriptionCalls, 1);
+      expect(cubit.state.profile?.plan, Plan.pro);
     });
 
     test('passive sync is throttled after recent successful sync', () async {
@@ -81,7 +82,7 @@ void main() {
 
       await cubit.syncSubscription();
 
-      expect(profileRepository.updatePlanCalls, 1);
+      expect(profileRepository.refreshSubscriptionCalls, 1);
     });
 
     test('failed sync keeps the last known profile', () async {
@@ -89,13 +90,13 @@ void main() {
       await _flush();
       authRepository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'));
       await _flush();
-      profileRepository.updatePlanResult = const FailureResult(
+      profileRepository.refreshSubscriptionResult = const FailureResult(
         Failure(code: 'EXTERNAL_API_ERROR', message: 'RevenueCat unavailable'),
       );
 
       await cubit.syncSubscription(force: true);
 
-      expect(cubit.state.profile?.plan, 'free');
+      expect(cubit.state.profile?.plan, Plan.free);
       expect(cubit.state.failureCode, 'EXTERNAL_API_ERROR');
     });
 
@@ -130,14 +131,17 @@ void main() {
       await _flush();
       authRepository.emitSession(const AuthSessionEntity(userId: 'user-1', email: 'user@test.dev'));
       await _flush();
-      profileRepository.updatePlanResult = Success(
-        _profile(baseAssetId: 'base-asset-id', plan: 'pro'),
+      profileRepository.refreshSubscriptionResult = Success(
+        _profile(baseAssetId: 'base-asset-id', plan: Plan.pro),
       );
+
+      final callsBefore = profileRepository.refreshSubscriptionCalls;
 
       await cubit.syncSubscription(force: true);
 
-      expect(profileRepository.updatedPlan, 'pro');
-      expect(cubit.state.profile?.plan, 'pro');
+      expect(profileRepository.refreshSubscriptionCalls, callsBefore + 1);
+      expect(cubit.state.profile?.plan, Plan.pro);
+      expect(cubit.state.profile?.isPro, isTrue);
     });
   });
 }
@@ -192,10 +196,9 @@ class _FakeAuthRepository implements IAuthRepository {
 class _FakeProfileRepository implements IProfileRepository {
   Result<ProfileEntity> getProfileResult = Success(_profile(baseAssetId: 'base-asset-id'));
   Result<ProfileEntity> updateBaseCurrencyResult = Success(_profile(baseAssetId: 'base-asset-id'));
-  Result<ProfileEntity> updatePlanResult = Success(_profile(baseAssetId: 'base-asset-id'));
+  Result<ProfileEntity> refreshSubscriptionResult = Success(_profile(baseAssetId: 'base-asset-id'));
   String? updatedBaseCurrency;
-  String? updatedPlan;
-  int updatePlanCalls = 0;
+  int refreshSubscriptionCalls = 0;
 
   @override
   Future<Result<ProfileEntity>> getProfile() async => getProfileResult;
@@ -207,10 +210,9 @@ class _FakeProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Result<ProfileEntity>> updatePlan(String plan) async {
-    updatedPlan = plan;
-    updatePlanCalls += 1;
-    return updatePlanResult;
+  Future<Result<ProfileEntity>> refreshSubscription() async {
+    refreshSubscriptionCalls += 1;
+    return refreshSubscriptionResult;
   }
 
   @override
@@ -245,7 +247,7 @@ class _FakeRevenueCatService extends RevenueCatService {
   }
 }
 
-ProfileEntity _profile({required String? baseAssetId, String plan = 'free'}) {
+ProfileEntity _profile({required String? baseAssetId, Plan plan = Plan.free}) {
   return ProfileEntity(
     userId: 'user-1',
     baseAssetId: baseAssetId,

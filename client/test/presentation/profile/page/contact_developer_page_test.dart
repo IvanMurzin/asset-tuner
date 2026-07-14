@@ -12,6 +12,7 @@ import 'package:asset_tuner/presentation/profile/page/contact_developer_page.dar
 import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -144,7 +145,7 @@ class _FakeProfileRepository implements IProfileRepository {
     return Success(
       ProfileEntity(
         userId: 'user-1',
-        plan: 'free',
+        plan: Plan.free,
         entitlements: const EntitlementsEntity(fiatLimit: 5),
         baseAsset: null,
       ),
@@ -157,7 +158,7 @@ class _FakeProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Result<ProfileEntity>> updatePlan(String plan) async {
+  Future<Result<ProfileEntity>> refreshSubscription() async {
     return await getProfile();
   }
 }

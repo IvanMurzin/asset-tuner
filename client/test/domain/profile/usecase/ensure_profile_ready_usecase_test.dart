@@ -6,6 +6,7 @@ import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart'
 import 'package:asset_tuner/domain/profile/usecase/ensure_profile_ready_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -87,7 +88,7 @@ class _FakeProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Result<ProfileEntity>> updatePlan(String plan) {
+  Future<Result<ProfileEntity>> refreshSubscription() {
     throw UnimplementedError();
   }
 
@@ -101,7 +102,7 @@ class _FakeProfileRepository implements IProfileRepository {
   }
 }
 
-ProfileEntity _profile({required String? baseAssetId, String plan = 'free'}) {
+ProfileEntity _profile({required String? baseAssetId, Plan plan = Plan.free}) {
   return ProfileEntity(
     userId: 'user-id',
     baseAssetId: baseAssetId,

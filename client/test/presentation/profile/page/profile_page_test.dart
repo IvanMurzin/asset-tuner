@@ -13,6 +13,7 @@ import 'package:asset_tuner/presentation/profile/page/profile_page.dart';
 import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -36,7 +37,7 @@ void main() {
           status: ProfileStatus.ready,
           profile: ProfileEntity(
             userId: 'user-1',
-            plan: 'free',
+            plan: Plan.free,
             entitlements: const EntitlementsEntity(fiatLimit: 5),
             baseAsset: _asset(id: 'asset-usd', code: 'USD', name: 'US Dollar'),
           ),

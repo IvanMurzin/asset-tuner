@@ -28,7 +28,7 @@ class SupabaseProfileDataSource {
     return fetchProfile();
   }
 
-  Future<ProfileDto> updatePlan(String _) async {
+  Future<ProfileDto> refreshSubscription() async {
     await _edgeFunctions.invokeVoid(SupabaseApiRoutes.revenuecatRefresh, method: HttpMethod.post);
     return fetchProfile();
   }

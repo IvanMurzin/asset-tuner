@@ -17,6 +17,7 @@ import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -56,8 +57,8 @@ void main() {
         ProfileState(
           status: ProfileStatus.ready,
           profile: ProfileEntity(
-            plan: 'free',
-            entitlements: const EntitlementsEntity(plan: 'free', fiatLimit: 100),
+            plan: Plan.free,
+            entitlements: const EntitlementsEntity(plan: Plan.free, fiatLimit: 100),
           ),
         ),
       );

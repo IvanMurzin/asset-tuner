@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/entitlements_entity.dart';
+import 'package:asset_tuner/domain/profile/entity/plan.dart';
 
 part 'profile_entity.freezed.dart';
 
@@ -15,9 +16,11 @@ abstract class ProfileEntity with _$ProfileEntity {
     String? revenuecatAppUserId,
     DateTime? createdAt,
     DateTime? updatedAt,
-    required String plan,
+    required Plan plan,
     required EntitlementsEntity entitlements,
   }) = _ProfileEntity;
 
   String get baseCurrency => baseAsset?.code ?? 'USD';
+
+  bool get isPro => plan.isPro;
 }
