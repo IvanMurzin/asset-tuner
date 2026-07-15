@@ -437,7 +437,11 @@ class _PaywallPageState extends State<PaywallPage> {
               );
             }
 
-            if (profileState.profile?.isPro ?? false) {
+            // Auto-dismiss when the user is already Pro on entry. While a
+            // purchase/restore is in flight, the completion handler owns the
+            // single pop, so we must NOT also pop here or the screen beneath the
+            // paywall gets popped too (double pop).
+            if ((profileState.profile?.isPro ?? false) && !_isProcessingAction) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) {
                   context.pop(null);
