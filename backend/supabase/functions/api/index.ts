@@ -422,15 +422,34 @@ async function handleRevenuecatRefresh(userId: string): Promise<Response> {
   });
 
   const appUserId = me.profile.revenuecat_app_user_id ?? userId;
-  const { payload, isPro } = await fetchSubscriberIsPro(appUserId);
 
-  const externalId = `refresh:${appUserId}:${new Date().toISOString()}`;
+  let payload: Record<string, unknown> | null;
+  let isPro: boolean;
+  try {
+    ({ payload, isPro } = await fetchSubscriberIsPro(appUserId));
+  } catch (error) {
+    // RevenueCat REST rate-limited us (bursty forced refreshes). Do not surface
+    // an error or falsely downgrade: keep the current plan and let a later
+    // sync (webhook, resume, pull-to-refresh) reconcile.
+    if (error instanceof ApiHttpError && error.status === 429) {
+      return ok({
+        appUserId,
+        isPro: me.profile.plan === 'pro',
+        sync: { skipped: 'rate_limited' },
+      });
+    }
+    throw error;
+  }
+
+  // Stable external_id keeps at most one refresh row per user (upsert).
+  const externalId = `refresh:${appUserId}`;
   const sync = await rpc<unknown>('api_apply_revenuecat_event', {
     p_source: 'revenuecat_refresh',
     p_external_id: externalId,
     p_app_user_id: appUserId,
     p_payload: payload ?? {},
     p_is_pro: isPro,
+    p_dedupe: false,
   });
 
   return ok({ appUserId, isPro, sync });

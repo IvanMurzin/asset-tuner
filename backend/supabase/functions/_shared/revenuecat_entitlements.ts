@@ -85,6 +85,10 @@ export async function fetchSubscriber(appUserId: string): Promise<Record<string,
     return null;
   }
 
+  if (response.status === 429) {
+    throw new ApiHttpError(429, 'RATE_LIMITED', 'RevenueCat subscriber request rate limited');
+  }
+
   if (!response.ok) {
     const details = await response.text().catch(() => '');
     throw new ApiHttpError(502, 'EXTERNAL_API_ERROR', 'RevenueCat subscriber request failed', {
