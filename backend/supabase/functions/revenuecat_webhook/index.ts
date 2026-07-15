@@ -6,7 +6,7 @@ import {
   isProEntitlementId,
   resolveProEntitlementIdsFromEnv,
 } from '../_shared/revenuecat_entitlements.ts';
-import { ApiHttpError, fromError, ok } from '../_shared/responses.ts';
+import { ApiHttpError, fail, fromError, ok } from '../_shared/responses.ts';
 
 export type RevenueCatEvent = {
   id?: string;
@@ -121,6 +121,12 @@ if (import.meta.main) {
 
       const result = data as Record<string, unknown> | null;
 
+      // The profile does not exist yet (e.g. webhook raced ahead of profile
+      // creation). The RPC intentionally did NOT consume the idempotency key,
+      // so ask RevenueCat to re-deliver later once the profile exists.
+      const profileNotFound = result?.processed === false &&
+        result?.reason === 'profile_not_found';
+
       console.log(
         JSON.stringify({
           function: 'revenuecat_webhook',
@@ -131,9 +137,19 @@ if (import.meta.main) {
           is_pro_from_event_payload: isProFromEventPayload,
           is_pro_source: 'subscriber_api',
           processed: result?.processed ?? null,
+          reason: result?.reason ?? null,
+          profile_not_found: profileNotFound,
           duration_ms: Date.now() - startedAt,
         }),
       );
+
+      if (profileNotFound) {
+        return fail(
+          503,
+          'INTERNAL_ERROR',
+          'Profile not found yet for app_user_id; retry later',
+        );
+      }
 
       return ok({
         received: true,
