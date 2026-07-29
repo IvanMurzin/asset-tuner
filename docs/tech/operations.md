@@ -37,6 +37,50 @@ Optional:
 Supabase provides platform secrets such as `SUPABASE_URL` and `SUPABASE_SECRET_KEYS`
 automatically in hosted Edge Functions. Do not set or deploy those through project `.env` files.
 
+## Hosted Supabase Database Access
+
+The repository's operator configuration is in the gitignored `backend/.env`. It contains
+`SUPABASE_PROJECT_REF`, `SUPABASE_DB_URL`, and the secrets needed by the deployed functions.
+Never print, commit, or place values from that file in a command, documentation, or issue.
+
+For a hosted-database inspection, load the file into the process environment and pass the
+connection string by variable:
+
+```bash
+set -a
+source backend/.env
+set +a
+psql "$SUPABASE_DB_URL"
+```
+
+Use read-only SQL for diagnostics. Write, DDL, secret, or data-deletion operations require an
+explicit request and a target-specific review. If `SUPABASE_DB_URL` is absent, the scheduler
+setup script documents the supported pooler fallback using `SUPABASE_DB_PASSWORD` and
+`backend/supabase/.temp/pooler-url`.
+
+The Supabase CLI can also use the linked project, but it writes telemetry under the user home
+directory; in a restricted agent sandbox it may need an approved elevated invocation. `psql`
+with the configured URL is the preferred database diagnostic path.
+
+For rate-scheduler health, inspect all of the following:
+
+- `cron.job` for the active hourly `asset_tuner_rates_sync_hourly` schedule;
+- `cron.job_run_details` for whether `pg_cron` enqueued each `pg_net` call;
+- `net._http_response` for the recent HTTP status or timeout; this unlogged table is a short
+  retention aid, not historical monitoring;
+- `assets` joined with `asset_rates_usd` for active fiat/crypto coverage and the newest
+  `asset_rates_usd.as_of` timestamp.
+
+`cron.job_run_details.status = 'succeeded'` confirms that the asynchronous HTTP request was
+queued, not that the Edge Function returned 2xx. A completed rate sync is proven by current
+coverage for active fiat and crypto assets plus a recent shared `asset_rates_usd.as_of`; consult
+Edge Function logs when the HTTP response or freshness check is unhealthy.
+
+For subscription diagnostics, inspect `profiles` (`plan`, unique non-empty
+`revenuecat_app_user_id`) and `webhook_events` (source, event type, duplicate
+`(source, external_id)` pairs, and recent receipt time). Do not export raw webhook payloads,
+user IDs, or customer records unless the request explicitly requires them.
+
 ## Backend Deploy
 Run from repository root:
 
