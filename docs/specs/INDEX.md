@@ -6,3 +6,4 @@
 | SPEC-0002 | bug | Resolved | P1 | iOS Default Prod Identity | codex | 2026-05-11 | 2026-05-11 | [resolved](resolved/SPEC-0002-ios-default-prod-identity.md) |
 | SPEC-0003 | improvement | Resolved | P1 | RevenueCat Client Key Selection | codex | 2026-07-02 | 2026-07-02 | [resolved](resolved/SPEC-0003-revenuecat-client-key-selection.md) |
 | SPEC-0004 | improvement | Resolved | P1 | Supabase Publishable Key Config | codex | 2026-07-02 | 2026-07-02 | [resolved](resolved/SPEC-0004-supabase-publishable-key-config.md) |
+| SPEC-0005 | docs | Resolved | P1 | Document Supabase Operator Access | codex | 2026-07-29 | 2026-07-29 | [resolved](resolved/SPEC-0005-document-supabase-operator-access.md) |
