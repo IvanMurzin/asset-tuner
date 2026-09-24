@@ -8,7 +8,7 @@ regression runs.
 | ID | Severity | Type | Area | Title | Status |
 |---|---|---|---|---|---|
 | QA-001 | blocker | security | backend | Four `api_*` SECURITY DEFINER RPCs are executable by `anon`/`authenticated` | resolved (SPEC-0006, verified 2026-09-24) |
-| QA-002 | blocker | bug | backend | `delete_my_account` soft-deletes the auth user, so user data is never removed | confirmed-runtime |
+| QA-002 | blocker | bug | backend | `delete_my_account` soft-deletes the auth user, so user data is never removed | resolved (SPEC-0007, verified 2026-09-24) |
 | QA-003 | high | bug | billing/client | Paywall can pop twice after a successful purchase or restore | confirmed-runtime |
 | QA-004 | high | bug | billing | Sandbox purchases grant Pro in the shared production database | confirmed-runtime |
 | QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | confirmed-runtime |
@@ -83,7 +83,12 @@ regression runs.
 ## QA-002: `delete_my_account` soft-deletes the auth user, so user data is never removed
 - **Severity:** blocker. Google Play requires in-app account deletion to delete the data.
 - **Type:** bug
-- **Status:** confirmed-runtime (2026-09-24, prod). After `POST /delete_my_account` returned 200:
+- **Status:** Resolved in SPEC-0007 (verified 2026-09-24 on prod). `deleteUser(userId)` now
+  hard-deletes; `qa/api/support_delete.test.ts` passes (no profile/accounts left) and prod has 0
+  soft-deleted auth users and 0 orphaned profiles. Profile copy now says server data is deleted and
+  the confirm dialog warns that a store subscription must be cancelled in the store. Device case R3
+  (delete while subscribed) is still owner-only.
+- **Originally:** confirmed-runtime (2026-09-24, prod). After `POST /delete_my_account` returned 200:
   - the auth user is kept, with `deleted_at` set and the email scrambled;
   - the old token gets 401;
   - `profiles` = 1 row and `accounts` = 1 row still exist for that user id.

@@ -1281,7 +1281,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileDeleteAccountBody =>
-      'Локальные данные будут удалены, а вы выйдете из аккаунта.';
+      'Ваши счета, балансы и история будут безвозвратно удалены с наших серверов, а вы выйдете из аккаунта.';
 
   @override
   String get profileDeleteAccountCta => 'Удалить аккаунт';
@@ -1290,7 +1290,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileDeleteConfirmTitle => 'Удалить аккаунт?';
 
   @override
-  String get profileDeleteConfirmBody => 'Это действие нельзя отменить.';
+  String get profileDeleteConfirmBody =>
+      'Это действие нельзя отменить. Активная подписка в Google Play или App Store не отменяется автоматически — отмените её в магазине.';
 
   @override
   String get profileDeleteConfirmCta => 'Удалить';

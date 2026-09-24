@@ -2538,7 +2538,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileDeleteAccountBody.
   ///
   /// In en, this message translates to:
-  /// **'This will remove your local data and sign you out.'**
+  /// **'Your accounts, balances and history will be permanently deleted from our servers, and you will be signed out.'**
   String get profileDeleteAccountBody;
 
   /// No description provided for @profileDeleteAccountCta.
@@ -2556,7 +2556,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileDeleteConfirmBody.
   ///
   /// In en, this message translates to:
-  /// **'This action cannot be undone.'**
+  /// **'This action cannot be undone. An active Google Play or App Store subscription is not cancelled automatically — cancel it in the store.'**
   String get profileDeleteConfirmBody;
 
   /// No description provided for @profileDeleteConfirmCta.
