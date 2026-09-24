@@ -7,7 +7,7 @@ regression runs.
 ## Summary
 | ID | Severity | Type | Area | Title | Status |
 |---|---|---|---|---|---|
-| QA-001 | blocker | security | backend | Four `api_*` SECURITY DEFINER RPCs are executable by `anon`/`authenticated` | confirmed-runtime |
+| QA-001 | blocker | security | backend | Four `api_*` SECURITY DEFINER RPCs are executable by `anon`/`authenticated` | resolved (SPEC-0006, verified 2026-09-24) |
 | QA-002 | blocker | bug | backend | `delete_my_account` soft-deletes the auth user, so user data is never removed | confirmed-runtime |
 | QA-003 | high | bug | billing/client | Paywall can pop twice after a successful purchase or restore | confirmed-runtime |
 | QA-004 | high | bug | billing | Sandbox purchases grant Pro in the shared production database | confirmed-runtime |
@@ -47,7 +47,13 @@ regression runs.
 ## QA-001: Four `api_*` SECURITY DEFINER RPCs are executable by `anon`/`authenticated`
 - **Severity:** blocker
 - **Type:** security
-- **Status:** confirmed-runtime (2026-09-24). Section 1 of `qa/sql/health.sql` on prod lists all four functions with `anon = t` and `authenticated = t`. `qa/api/billing_security.test.ts` called `POST /rest/v1/rpc/api_create_account` with **only the publishable key** and got **200**: an account was created for the QA user's id.
+- **Status:** Resolved in SPEC-0006 (verified 2026-09-24 on prod). Migration
+  `20260924120000_revoke_public_execute_on_api_rpcs.sql` applied: section 1 of `qa/sql/health.sql`
+  returns 0 rows; the RPC probe in `billing_security.test.ts` (now covering all four functions) is
+  denied with the publishable key; `accounts.test.ts` and `subaccounts_balance.test.ts` pass apart
+  from the known QA-016/QA-020; default ACL for `postgres` no longer grants function `EXECUTE` to
+  `PUBLIC`/`anon`/`authenticated`.
+- **Originally:** confirmed-runtime (2026-09-24). Section 1 of `qa/sql/health.sql` on prod lists all four functions with `anon = t` and `authenticated = t`. `qa/api/billing_security.test.ts` called `POST /rest/v1/rpc/api_create_account` with **only the publishable key** and got **200**: an account was created for the QA user's id.
 - **Area:** `backend/supabase/migrations`
 - **Repro:**
   1. Run section 1 of `qa/sql/health.sql`.
