@@ -1274,7 +1274,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileDeleteAccountTitle => 'Delete account';
 
   @override
-  String get profileDeleteAccountBody => 'This will remove your local data and sign you out.';
+  String get profileDeleteAccountBody =>
+      'Your accounts, balances and history will be permanently deleted from our servers, and you will be signed out.';
 
   @override
   String get profileDeleteAccountCta => 'Delete account';
@@ -1283,7 +1284,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileDeleteConfirmTitle => 'Delete account?';
 
   @override
-  String get profileDeleteConfirmBody => 'This action cannot be undone.';
+  String get profileDeleteConfirmBody =>
+      'This action cannot be undone. An active Google Play or App Store subscription is not cancelled automatically — cancel it in the store.';
 
   @override
   String get profileDeleteConfirmCta => 'Delete';

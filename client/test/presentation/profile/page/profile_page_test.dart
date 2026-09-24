@@ -134,7 +134,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Delete account?'), findsOneWidget);
-      expect(find.text('This action cannot be undone.'), findsOneWidget);
+      expect(find.textContaining('This action cannot be undone.'), findsOneWidget);
 
       await tester.tap(find.text('Delete'));
       await tester.pumpAndSettle();

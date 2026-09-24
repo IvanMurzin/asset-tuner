@@ -189,7 +189,7 @@ async function handleDeleteMyAccount(req: Request, userId: string): Promise<Resp
   await parseJsonBody(req, deleteMyAccountSchema);
 
   const db = getAdminClient();
-  const { error } = await db.auth.admin.deleteUser(userId, true);
+  const { error } = await db.auth.admin.deleteUser(userId);
   if (error) {
     throw new ApiHttpError(500, 'INTERNAL_ERROR', 'Failed to delete auth user', error);
   }
