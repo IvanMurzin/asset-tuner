@@ -1,0 +1,3 @@
+display_name: Regress
+short_description: Run the Asset Tuner regression (API suite + Android emulator), update QA findings, clean up QA data, and write a run report.
+default_prompt: Use $regress to run the full regression following docs/qa/regression-runbook.md.

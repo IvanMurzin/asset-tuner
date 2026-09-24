@@ -13,6 +13,7 @@ The current app and backend are treated as correct unless the user explicitly sa
 - Data contract: `docs/contracts/data-contract.md`
 - API surface: `docs/contracts/api-surface.md`
 - Spec workflow: `docs/specs/README.md`
+- QA and regression: `docs/qa/README.md`
 
 ## Documentation Rules
 - Keep docs in English.
