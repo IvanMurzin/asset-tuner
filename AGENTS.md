@@ -5,6 +5,7 @@ Asset Tuner is a Flutter mobile app backed by Supabase.
 ## Repository Map
 - `client/` - Flutter app. Full client rules: `client/AGENTS.md`.
 - `backend/` - Supabase migrations, seed data, Edge Functions, and deploy scripts.
+- `qa/` - regression tooling: API suite, prod health SQL, emulator driver, cleanup tools.
 - `docs/` - product, technical, contract, UX, and spec workflow documentation.
 - `.codex/skills/` - repo-specific Codex skills.
 - `.claude/commands/` - repo-specific Claude Code slash commands.
@@ -40,6 +41,11 @@ flutter build appbundle --flavor prod --release --dart-define-from-file=../.conf
 - Dart line length is 100.
 - Do not add dependencies unless a spec explicitly requires them.
 - Use the spec workflow for bugs, improvements, and features.
+
+## Regression
+- Run a regression with `$regress` (scope and label optional); procedure: `docs/qa/regression-runbook.md`.
+- Cases live in `docs/qa/cases/`, run reports in `docs/qa/runs/`, and known issues in `docs/qa/findings.md` (`QA-NNN`).
+- Owner-only real-device checks (Google Play Billing) are in `docs/qa/cases/device.md`.
 
 ## Spec Workflow
 - Create a new spec with `$create-spec` or Claude `/create-spec`.
