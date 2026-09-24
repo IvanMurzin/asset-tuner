@@ -106,6 +106,20 @@ Deno.test('security: api_* RPCs are not callable through PostgREST with the publ
         p_type: null,
         p_archived: null,
       }],
+      ['api_create_subaccount', {
+        p_user_id: u.id,
+        p_account_id: crypto.randomUUID(),
+        p_asset_id: crypto.randomUUID(),
+        p_name: 'QA RPC probe',
+        p_initial_amount_atomic: '0',
+        p_initial_amount_decimals: 0,
+      }],
+      ['api_update_subaccount', {
+        p_user_id: u.id,
+        p_subaccount_id: crypto.randomUUID(),
+        p_name: null,
+        p_archived: null,
+      }],
     ];
     const exposed: string[] = [];
     for (const [fn, args] of probes) {

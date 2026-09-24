@@ -39,6 +39,12 @@ The API function routes product reads/writes through SQL functions such as:
 - `api_create_support_message`
 - `api_apply_revenuecat_event`
 
+Privileges: every `api_*` function is `SECURITY DEFINER` and trusts `p_user_id`, so only
+`service_role` may execute it. Default privileges in `public` (for role `postgres`) do not grant
+`EXECUTE` to `PUBLIC`/`anon`/`authenticated`; a migration that drops and re-creates a function still
+ends with an explicit `revoke all ... from public, anon, authenticated` and
+`grant execute ... to service_role`. Gate: section 1 of `qa/sql/health.sql` must return 0 rows.
+
 ## Money Model
 Money, balances, rates, and analytics values use atomic text fields plus decimal precision:
 
