@@ -12,3 +12,4 @@
 | SPEC-0008 | bug | Resolved | P1 | Keep Test Store Key Out Of Prod | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0008-keep-test-store-key-out-of-prod.md) |
 | SPEC-0009 | bug | Resolved | P1 | Paywall Cubit With Single Dismiss | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0009-paywall-cubit-single-dismiss.md) |
 | SPEC-0010 | bug | Resolved | P1 | Clear Session On Forced Sign-Out | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0010-clear-session-on-forced-sign-out.md) |
+| SPEC-0011 | bug | Resolved | P2 | Canonical Atomic Amounts | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0011-canonical-atomic-amounts.md) |

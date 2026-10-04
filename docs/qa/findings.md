@@ -22,7 +22,7 @@ regression runs.
 | QA-013 | medium | bug | client | Offline and network errors are not recognized; no HTTP timeouts | confirmed-runtime |
 | QA-014 | medium | improvement | client/auth | No "forgot password" flow | confirmed-code |
 | QA-015 | low | bug | client | Negative amounts cannot be typed on most Android keyboards | not-reproduced |
-| QA-016 | low | bug | backend | Unchanged-balance check compares text (`0100` vs `100`) | confirmed-runtime |
+| QA-016 | low | bug | backend | Unchanged-balance check compares text (`0100` vs `100`) | resolved (SPEC-0011, verified 2026-10-04) |
 | QA-017 | low | bug | backend | Plan limits can be exceeded with parallel requests | not-reproduced |
 | QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | confirmed-runtime |
 | QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | confirmed-code |
@@ -332,7 +332,10 @@ regression runs.
 ## QA-016: Unchanged-balance check compares text
 - **Severity:** low
 - **Type:** bug
-- **Status:** confirmed-runtime. `0100` after `100` returns 200 and creates a new entry.
+- **Status:** Resolved in SPEC-0011 (verified 2026-10-04 on prod). Atomic amounts must be canonical
+  (`^(0|-?[1-9][0-9]*)$`) in the API schema and `validate_amount_atomic`; `0100` now gets 400.
+  `subaccounts_balance.test.ts` passes.
+- **Originally:** confirmed-runtime. `0100` after `100` returns 200 and creates a new entry.
 - **Area:** `backend/supabase/migrations/20260417173000_api_set_subaccount_balance_reject_unchanged.sql:43-54`
 - **Actual:** `0100` vs `100` and `-0` vs `0` count as changes and create duplicate history
   entries.

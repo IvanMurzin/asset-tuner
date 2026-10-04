@@ -2,7 +2,7 @@ import { z } from 'https://esm.sh/zod@3.24.2';
 import { ApiHttpError } from './responses.ts';
 
 export const uuidSchema = z.string().uuid();
-export const atomicStringSchema = z.string().regex(/^-?\d+$/);
+export const atomicStringSchema = z.string().regex(/^(0|-?[1-9]\d*)$/);
 export const decimalsSchema = z.number().int().min(0).max(18);
 
 export const profileUpdateSchema = z.object({

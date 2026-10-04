@@ -2,6 +2,10 @@
 
 This contract describes the current Supabase data model. Field names are exact.
 
+Atomic amounts (`*_atomic` text fields and API `*AmountAtomic` inputs) are integer strings in
+canonical form `^(0|-?[1-9][0-9]*)$`: no leading zeros, no `-0`. Equal amounts are equal strings.
+Enforced by `validate_amount_atomic` (CHECK constraints, RPCs) and the API schema.
+
 ## Profiles
 `profiles`
 
