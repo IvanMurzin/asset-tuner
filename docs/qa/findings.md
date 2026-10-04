@@ -9,7 +9,7 @@ regression runs.
 |---|---|---|---|---|---|
 | QA-001 | blocker | security | backend | Four `api_*` SECURITY DEFINER RPCs are executable by `anon`/`authenticated` | resolved (SPEC-0006, verified 2026-09-24) |
 | QA-002 | blocker | bug | backend | `delete_my_account` soft-deletes the auth user, so user data is never removed | resolved (SPEC-0007, verified 2026-09-24) |
-| QA-003 | high | bug | billing/client | Paywall can pop twice after a successful purchase or restore | confirmed-runtime |
+| QA-003 | high | bug | billing/client | Paywall can pop twice after a successful purchase or restore | resolved (SPEC-0009), emulator check pending |
 | QA-004 | high | bug | billing | Sandbox purchases grant Pro in the shared production database | mitigated (SPEC-0008, verified 2026-10-04); rest in BL-0002 |
 | QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | confirmed-runtime |
 | QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | confirmed-code |
@@ -116,7 +116,11 @@ regression runs.
 ## QA-003: Paywall can pop twice after a successful purchase or restore
 - **Severity:** high
 - **Type:** bug
-- **Status:** confirmed-runtime (emulator, Test Store).
+- **Status:** Resolved in SPEC-0009 (2026-10-04), **not yet verified on the emulator** — re-check at
+  the next regression (Add subaccount at the limit → buy → lands on the form). Paywall logic moved to
+  `PaywallCubit`; the page pops only on the single transition into `done`. Covered by
+  `paywall_page_test.dart` (Home → Form → Paywall, restore → Form) and `paywall_cubit_test.dart`.
+- **Originally:** confirmed-runtime (emulator, Test Store).
   1. Account → Add subaccount at the 15/15 limit → the paywall opens.
   2. "Test valid purchase".
   3. The app lands on the **account detail** screen, not the Add subaccount form. The form was popped together with the paywall.
