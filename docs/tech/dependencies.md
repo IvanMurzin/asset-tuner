@@ -10,6 +10,8 @@ Core dependencies:
 - `get_it` and `injectable` for DI.
 - `freezed`, `json_serializable`, and `build_runner` for generated models and DI output.
 - `supabase_flutter` for Auth and Edge Function calls.
+- `http` (already resolved through `supabase_flutter`) only to recognize `ClientException` as a
+  network failure.
 - `decimal` for decimal-safe arithmetic.
 - `purchases_flutter` and `purchases_ui_flutter` for RevenueCat.
 - `firebase_core`, `firebase_analytics`, and `firebase_crashlytics` for prod observability.

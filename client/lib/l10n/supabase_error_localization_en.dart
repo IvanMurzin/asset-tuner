@@ -133,6 +133,7 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'bucket_not_empty': 'Bucket is not empty',
   'invalid_bucket_name': 'Invalid bucket name',
   'file_corrupted': 'File is corrupted',
+  'network': 'No internet connection. Check your network and try again.',
   'network_error': 'Network error occurred',
   'service_unavailable': 'Storage service unavailable',
   'NoSuchBucket': 'The specified bucket does not exist',

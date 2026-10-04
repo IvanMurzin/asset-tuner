@@ -7,6 +7,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SupabaseEdgeFunctions {
   SupabaseEdgeFunctions(this._client);
 
+  /// Upper bound for one API call; a stalled network surfaces as a `network` failure.
+  static const requestTimeout = Duration(seconds: 20);
+
   final SupabaseClient _client;
 
   Future<Map<String, dynamic>> invokeApi(
@@ -19,12 +22,9 @@ class SupabaseEdgeFunctions {
     logger.i({'function': '${method.name} $path', 'body': body, 'query': query});
 
     try {
-      final response = await _client.functions.invoke(
-        path,
-        body: body,
-        method: method,
-        queryParameters: query,
-      );
+      final response = await _client.functions
+          .invoke(path, body: body, method: method, queryParameters: query)
+          .timeout(requestTimeout);
 
       final payload = response.data;
       if (AppConfig.instance.logApiResponses) {

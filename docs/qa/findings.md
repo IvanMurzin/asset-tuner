@@ -19,7 +19,7 @@ regression runs.
 | QA-010 | medium | ux | client/paywall | Paywall error and loading states have no close button | resolved (SPEC-0015), emulator check pending |
 | QA-011 | medium | bug | client/auth | Dev and prod flavors share the `assettuner://` OAuth callback scheme | confirmed-code |
 | QA-012 | medium | ux | client/auth | Apple sign-in button is shown on Android | confirmed-code |
-| QA-013 | medium | bug | client | Offline and network errors are not recognized; no HTTP timeouts | confirmed-runtime |
+| QA-013 | medium | bug | client | Offline and network errors are not recognized; no HTTP timeouts | resolved (SPEC-0017), emulator E12 pending |
 | QA-014 | medium | improvement | client/auth | No "forgot password" flow | confirmed-code |
 | QA-015 | low | bug | client | Negative amounts cannot be typed on most Android keyboards | not-reproduced |
 | QA-016 | low | bug | backend | Unchanged-balance check compares text (`0100` vs `100`) | resolved (SPEC-0011, verified 2026-10-04) |
@@ -308,7 +308,11 @@ regression runs.
 ## QA-013: Offline and network errors are not recognized; no HTTP timeouts
 - **Severity:** medium
 - **Type:** bug
-- **Status:** confirmed-runtime (emulator, airplane mode).
+- **Status:** Resolved in SPEC-0017 (2026-10-04), emulator check E12 pending. Transport failures
+  (`SocketException`, `HandshakeException`, `TimeoutException`, `ClientException`, status-less
+  `AuthRetryableFetchException`) map to `network` with a localized "No internet connection"; API
+  calls time out after 20 s. Auto-reload after reconnect is not included.
+- **Originally:** confirmed-runtime (emulator, airplane mode).
   - An offline cold start shows "Что-то пошло не так." plus the **English** "Unable to load profile". Creating an account offline shows the English snackbar "Unable to create account".
   - The UI never says "No connection".
   - After reconnecting, the screen does not reload by itself; each error block needs its own Retry (profile, then accounts).

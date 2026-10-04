@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:asset_tuner/core/di/get_it.dart';
@@ -5,11 +6,12 @@ import 'package:asset_tuner/core/session/unauthorized_notifier.dart';
 import 'package:asset_tuner/core/supabase/supabase_edge_functions.dart';
 import 'package:asset_tuner/core/supabase/supabase_error_message.dart';
 import 'package:asset_tuner/core/types/failure.dart';
+import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract final class SupabaseFailureMapper {
   static Failure toFailure(Object error, {String? fallbackMessage}) {
-    if (error is SocketException) {
+    if (_isTransportFailure(error)) {
       return _createLocalizedFailure(
         code: 'network',
         rawMessage: fallbackMessage ?? 'Network error',
@@ -75,6 +77,14 @@ abstract final class SupabaseFailureMapper {
 
     return _createLocalizedFailure(code: 'unknown', rawMessage: fallbackMessage ?? 'Unknown error');
   }
+
+  /// The request got no HTTP answer: offline, DNS, TLS or timeout. A retryable auth error that
+  /// carries a status code is a server (5xx) error, not a transport one.
+  static bool _isTransportFailure(Object error) => switch (error) {
+    SocketException() || HandshakeException() || TimeoutException() || ClientException() => true,
+    AuthRetryableFetchException(statusCode: null) => true,
+    _ => false,
+  };
 
   static Failure _createLocalizedFailure({required String code, required String rawMessage}) {
     if (code == 'unauthorized') {

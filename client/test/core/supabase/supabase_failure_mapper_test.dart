@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' show ClientException;
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthRetryableFetchException;
 
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/session/unauthorized_notifier.dart';
@@ -19,6 +24,37 @@ void main() {
 
       expect(failure.code, 'amount_unchanged');
       expect(failure.message, 'Balance is unchanged. Enter a different amount.');
+    });
+
+    group('transport failures -> network (QA-013)', () {
+      final transportFailures = <String, Object>{
+        'SocketException': const SocketException('Failed host lookup'),
+        'HandshakeException': const HandshakeException('TLS failed'),
+        'TimeoutException': TimeoutException('timed out'),
+        'ClientException': ClientException('Connection closed'),
+        'AuthRetryableFetchException without status': AuthRetryableFetchException(),
+      };
+
+      for (final MapEntry(key: name, value: error) in transportFailures.entries) {
+        test(name, () {
+          final failure = SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to load');
+          expect(failure.code, 'network');
+          expect(failure.message, 'No internet connection. Check your network and try again.');
+        });
+      }
+
+      test('localized in Russian', () {
+        SupabaseErrorTranslator.setLanguage(SupportedLanguage.ru);
+        final failure = SupabaseFailureMapper.toFailure(ClientException('Connection closed'));
+        expect(failure.message, 'Нет подключения к интернету. Проверьте сеть и попробуйте снова.');
+      });
+
+      test('AuthRetryableFetchException with a 5xx status is a server error', () {
+        final failure = SupabaseFailureMapper.toFailure(
+          AuthRetryableFetchException(statusCode: '503'),
+        );
+        expect(failure.code, isNot('network'));
+      });
     });
 
     group('unauthorized -> notifier', () {
