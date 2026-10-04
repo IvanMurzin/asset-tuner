@@ -14,7 +14,7 @@ regression runs.
 | QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | resolved (SPEC-0010), emulator check pending |
 | QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | confirmed-code |
 | QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | resolved (SPEC-0013, verified 2026-10-04); device R2 pending |
-| QA-008 | medium | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | confirmed-runtime |
+| QA-008 | high | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | confirmed-runtime; deferred (native Google Sign-In) |
 | QA-009 | medium | bug | client | Cold start while offline may crash on `SupabaseErrorTranslator` late init | not-reproduced |
 | QA-010 | medium | ux | client/paywall | Paywall error and loading states have no close button | confirmed-code |
 | QA-011 | medium | bug | client/auth | Dev and prod flavors share the `assettuner://` OAuth callback scheme | confirmed-code |
@@ -233,7 +233,7 @@ regression runs.
   via the REST lookup.
 
 ## QA-008: Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds
-- **Severity:** medium
+- **Severity:** high (raised 2026-10-04)
 - **Type:** ux
 - **Status:** confirmed-runtime (emulator).
   - Google sign-in opens in **full Chrome**, not a Custom Tab, so Android back navigates Chrome history and does not return to the app.
@@ -246,6 +246,12 @@ regression runs.
   buttons stay disabled until then.
 - **Suggested fix:** on `AppLifecycleState.resumed`, if no session arrived within about 1–2
   seconds, cancel the pending OAuth attempt.
+- **Decision (2026-10-04):** root cause is `supabase_flutter` 2.15.3 forcing
+  `LaunchMode.externalApplication` for Google on Android, so the app never learns about a cancel.
+  Fix with native Google Sign-In (`google_sign_in` → `signInWithIdToken`; explicit cancel, no
+  browser, no timeout). Needs the dependency in a spec and owner setup in Google Cloud (Android
+  OAuth clients with prod/dev SHA-1, web client id in Supabase). The resume-timer heuristic is
+  rejected. Deferred, high priority.
 
 ## QA-009: Cold start while offline may crash on `SupabaseErrorTranslator` late init
 - **Severity:** medium
