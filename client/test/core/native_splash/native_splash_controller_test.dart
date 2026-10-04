@@ -94,7 +94,4 @@ class _StubAuth extends Cubit<AuthState> implements AuthCubit {
 
   @override
   Future<void> syncRevenueCat() async {}
-
-  @override
-  Future<void> forceLocalSignOut() async {}
 }

@@ -60,9 +60,10 @@ class AuthCubit extends Cubit<AuthState> {
         );
       },
     );
-    // Global 401: the backend reported our token is invalid. Drop the
-    // session locally; the router takes care of the redirect.
-    _unauthorizedSubscription = _unauthorized.stream.listen((_) => unawaited(forceLocalSignOut()));
+    // Global 401: the backend rejected our token. Sign out like any other sign-out: gotrue's
+    // local-scope signOut drops the persisted session and emits `signedOut` before it calls the
+    // server (a 401 there is ignored), so the session stream drives the transition (QA-005).
+    _unauthorizedSubscription = _unauthorized.stream.listen((_) => unawaited(_signOut()));
   }
 
   Future<void> _handleSessionChanged(AuthSessionEntity? session) async {
@@ -153,46 +154,6 @@ class AuthCubit extends Cubit<AuthState> {
       ),
     );
     await _syncRevenueCatLoggedIn(session.userId);
-  }
-
-  /// Local sign-out that does NOT call Supabase signOut.
-  ///
-  /// Used when the backend has already rejected our current token (401):
-  /// calling `signOut` is pointless — the server-side token is already
-  /// invalid. We just flip the local state to [AuthStatus.unauthenticated],
-  /// log out the RevenueCat identity and let the router perform the redirect.
-  ///
-  /// On initial/unauthenticated this is a no-op, so repeated 401 signals
-  /// from concurrent in-flight requests do not thrash state.
-  Future<void> forceLocalSignOut() async {
-    if (isClosed || state.status != AuthStatus.authenticated) {
-      return;
-    }
-    emit(
-      state.copyWith(
-        status: AuthStatus.unauthenticated,
-        session: null,
-        isSigningOut: false,
-        isDeletingAccount: false,
-        revenueCatStatus: RevenueCatIdentityStatus.idle,
-        revenueCatUserId: null,
-        revenueCatFailureCode: null,
-        revenueCatFailureMessage: null,
-        failureCode: 'unauthorized',
-        failureMessage: null,
-      ),
-    );
-    await _syncRevenueCatLoggedOut();
-    if (_lastUserId != null) {
-      await _analytics.log(
-        AnalyticsEventName.signOutCompleted,
-        parameters: const {'reason': 'unauthorized'},
-      );
-    }
-    await _analytics.setUserId(null);
-    await _analytics.setUserProperty(AnalyticsUserProps.isSubscriber, null);
-    await _analytics.setUserProperty(AnalyticsUserProps.subscriptionPlan, null);
-    _lastUserId = null;
   }
 
   Future<void> deleteAccount() async {

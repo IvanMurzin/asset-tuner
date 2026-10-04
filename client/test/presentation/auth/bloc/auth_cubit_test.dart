@@ -158,59 +158,49 @@ void main() {
       expect(cubit.state.isDeletingAccount, isFalse);
     });
 
-    test(
-      'forceLocalSignOut: authenticated → unauthenticated, RC.logOut, no supabase signOut',
-      () async {
-        cubit.bootstrap();
-        await _flush();
-        repo.emit(_user1);
-        await _flush();
-
-        await cubit.forceLocalSignOut();
-        expect(cubit.state.status, AuthStatus.unauthenticated);
-        expect(cubit.state.session, isNull);
-        expect(cubit.state.failureCode, 'unauthorized');
-        expect(rc.logoutCalls, 1);
-        // key invariant — supabase signOut is NOT called
-        expect(repo.signOutCalls, 0);
-      },
-    );
-
-    test('forceLocalSignOut on initial — no-op', () async {
-      cubit.bootstrap();
-      await _flush();
-      // session has not arrived yet — still initial
-      await cubit.forceLocalSignOut();
-      expect(cubit.state.status, AuthStatus.initial);
-    });
-
-    test('forceLocalSignOut on unauthenticated — no-op (repeated 401s do not duplicate)', () async {
-      cubit.bootstrap();
-      await _flush();
-      repo.emit(null);
-      await _flush();
-
-      await cubit.forceLocalSignOut();
-      await cubit.forceLocalSignOut();
-      // no thrashing / repeated RC.logOut
-      expect(cubit.state.status, AuthStatus.unauthenticated);
-      expect(rc.logoutCalls, 0);
-    });
-
-    test('UnauthorizedNotifier emits → AuthCubit transitions to unauthenticated', () async {
+    test('401 → supabase signOut, unauthenticated, RC.logOut', () async {
       cubit.bootstrap();
       await _flush();
       repo.emit(_user1);
       await _flush();
-      expect(cubit.state.status, AuthStatus.authenticated);
 
       unauthorized.notifyUnauthorized();
       await _flush();
 
       expect(cubit.state.status, AuthStatus.unauthenticated);
-      expect(cubit.state.failureCode, 'unauthorized');
-      // supabase signOut is NOT called — backend already rejected the token
-      expect(repo.signOutCalls, 0);
+      expect(cubit.state.session, isNull);
+      expect(rc.logoutCalls, 1);
+      // QA-005: the persisted session is dropped, not just the cubit state.
+      expect(repo.signOutCalls, 1);
+    });
+
+    test('401 then sign-in as the same user → authenticated (QA-005)', () async {
+      cubit.bootstrap();
+      await _flush();
+      repo.emit(_user1);
+      await _flush();
+
+      unauthorized.notifyUnauthorized();
+      await _flush();
+      repo.emit(_user1);
+      await _flush();
+
+      expect(cubit.state.status, AuthStatus.authenticated);
+      expect(cubit.state.session, _user1);
+    });
+
+    test('repeated 401s while unauthenticated do not thrash state', () async {
+      cubit.bootstrap();
+      await _flush();
+      repo.emit(null);
+      await _flush();
+
+      unauthorized.notifyUnauthorized();
+      unauthorized.notifyUnauthorized();
+      await _flush();
+
+      expect(cubit.state.status, AuthStatus.unauthenticated);
+      expect(rc.logoutCalls, 0);
     });
 
     test('switching to a different user — RC re-logs in', () async {
@@ -268,7 +258,13 @@ class _FakeAuthRepository implements IAuthRepository {
   @override
   Future<Result<void>> signOut() async {
     signOutCalls += 1;
-    return signOutResult?.call() ?? const Success(null);
+    final override = signOutResult;
+    if (override != null) {
+      return override();
+    }
+    // Like gotrue (local scope): the session is removed and `signedOut` is emitted.
+    emit(null);
+    return const Success(null);
   }
 
   @override

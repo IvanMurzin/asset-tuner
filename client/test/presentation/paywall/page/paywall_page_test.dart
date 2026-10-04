@@ -188,9 +188,6 @@ class _TestAuthCubit extends Cubit<AuthState> implements AuthCubit {
   Future<void> deleteAccount() async {}
 
   @override
-  Future<void> forceLocalSignOut() async {}
-
-  @override
   Future<void> signOut() async {}
 
   @override
