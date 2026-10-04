@@ -37,7 +37,7 @@ regression runs.
 | QA-028 | low | docs | docs | UX and architecture docs disagree with the current app | confirmed-code |
 | QA-029 | info | improvement | backend | Free-plan downgrade keeps accounts and subaccounts above free limits | confirmed-code |
 | QA-030 | info | improvement | backend | New profile has a null base asset; the client fills in USD | confirmed-runtime |
-| QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime |
+| QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; deferred (codes → ARB refactor) |
 | QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | confirmed-runtime |
 | QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | confirmed-runtime |
 | QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | confirmed-runtime |
@@ -555,6 +555,12 @@ regression runs.
   - Make the data layer return failure **codes** only.
   - Map `code → l10n` in the presentation layer, with `errorGeneric` as the fallback.
   - Map `network` to a dedicated "No connection" string (together with QA-013).
+- **Decision (2026-10-04):** root cause is that errors are localized in the data layer through a
+  second translation system (`SupabaseErrorTranslator` + two 258-key Dart maps, outside ARB), and
+  `resolveFailureMessage` falls back to raw English (`fallbackMessage`, server/SDK text). Planned
+  fix: `Failure` carries only a code, presentation maps code → ARB string in one place, used keys
+  move to ARB, the translator is removed (also removes the QA-009 late-init risk). Severity stays
+  medium; deferred to its own spec.
 
 ## QA-033: Small UX and accessibility polish from the emulator pass
 - **Severity:** low
