@@ -41,11 +41,11 @@ Deno.test('assets: core currencies have a USD rate', async () => {
   });
 });
 
-Deno.test('assets: list without kind returns both fiat and crypto', async () => {
+Deno.test('assets: kind is required and validated', async () => {
   await withUsers(1, async (u) => {
-    const res = await api<Asset[]>(u.token, 'GET', '/assets/list');
-    assertEquals(res.status, 200);
-    const kinds = new Set(res.data.map((a) => a.kind));
-    assert(kinds.has('fiat') && kinds.has('crypto'), `kinds=${[...kinds].join(',')}`);
+    const missing = await api<Asset[]>(u.token, 'GET', '/assets/list');
+    assertEquals(missing.status, 400);
+    const invalid = await api<Asset[]>(u.token, 'GET', '/assets/list?kind=foo');
+    assertEquals(invalid.status, 400);
   });
 });

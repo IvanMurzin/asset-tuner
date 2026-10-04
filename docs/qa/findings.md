@@ -24,7 +24,7 @@ regression runs.
 | QA-015 | low | bug | client | Negative amounts cannot be typed on most Android keyboards | not-reproduced |
 | QA-016 | low | bug | backend | Unchanged-balance check compares text (`0100` vs `100`) | resolved (SPEC-0011, verified 2026-10-04) |
 | QA-017 | low | bug | backend | Plan limits can be exceeded with parallel requests | not-reproduced |
-| QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | confirmed-runtime |
+| QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | resolved (SPEC-0014, verified 2026-10-04) |
 | QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | confirmed-code |
 | QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | resolved (SPEC-0012, verified 2026-10-04) |
 | QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | confirmed-code |
@@ -359,7 +359,9 @@ regression runs.
 ## QA-018: `/assets/list` without `kind` returns only crypto
 - **Severity:** low
 - **Type:** bug
-- **Status:** confirmed-runtime. Without `kind`, the response contains only `crypto`.
+- **Status:** Resolved in SPEC-0014 (verified 2026-10-04 on prod). `kind` is required and validated
+  in `api_list_assets`; missing or invalid values return 400. Client calls always pass it.
+- **Originally:** confirmed-runtime. Without `kind`, the response contains only `crypto`.
 - **Area:** `api_list_assets`
 - **Actual:** the list is ordered by kind ascending with limit 100, so "crypto" sorts first and
   fills the whole page. The client always passes `kind`, so users are not affected today.

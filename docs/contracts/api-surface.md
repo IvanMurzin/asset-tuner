@@ -44,7 +44,7 @@ All routes below require a user JWT.
 | `POST` | `profileUpdate` | `api/profile/update` | Update `profiles.base_asset_id`. |
 | `POST` | `deleteMyAccount` | `api/delete_my_account` | Delete the current auth user and cascade user data. |
 | `POST` | `contactDeveloper` | `api/contact_developer` | Store a support message. |
-| `GET` | `assetsList` | `api/assets/list` | List catalog assets by optional `kind`, includes lock state. |
+| `GET` | `assetsList` | `api/assets/list` | List catalog assets of one `kind`, includes lock state. |
 | `GET` | `ratesUsd` | `api/rates/usd` | Read latest USD rates for asset ids. |
 | `GET` | `analyticsSummary` | `api/analytics/summary` | Load analytics breakdown and update feed. |
 | `GET` | `accountsList` | `api/accounts/list` | List user accounts. |
@@ -66,7 +66,7 @@ Query:
 
 | Field | Type | Notes |
 |---|---|---|
-| `kind` | `fiat` or `crypto` | Optional. |
+| `kind` | `fiat` or `crypto` | Required; missing or other values return 400. |
 | `limit` | integer | Optional, max 100. |
 
 ### `GET api/rates/usd`

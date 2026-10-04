@@ -218,8 +218,8 @@ async function handleContactDeveloper(req: Request, userId: string): Promise<Res
 
 async function handleAssetsList(req: Request, userId: string): Promise<Response> {
   const url = new URL(req.url);
-  const kindRaw = url.searchParams.get('kind');
-  const kind = kindRaw === 'fiat' || kindRaw === 'crypto' ? kindRaw : null;
+  // Required and validated by api_list_assets (VALIDATION_ERROR -> 400).
+  const kind = url.searchParams.get('kind');
   const limit = parsePositiveInt(url.searchParams.get('limit'), 100, 100);
 
   const data = await rpc<unknown[]>('api_list_assets', {
