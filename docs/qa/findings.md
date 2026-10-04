@@ -26,7 +26,7 @@ regression runs.
 | QA-017 | low | bug | backend | Plan limits can be exceeded with parallel requests | not-reproduced |
 | QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | confirmed-runtime |
 | QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | confirmed-code |
-| QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | confirmed-runtime |
+| QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | resolved (SPEC-0012, verified 2026-10-04) |
 | QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | confirmed-code |
 | QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | confirmed-runtime |
 | QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | confirmed-runtime |
@@ -376,7 +376,10 @@ regression runs.
 ## QA-020: Account cached total includes archived subaccounts; live total does not
 - **Severity:** low
 - **Type:** bug
-- **Status:** confirmed-runtime. One active subaccount of 50 USD and one archived subaccount of 100 USD give live total = 50 and `cached_total_usd` = 150.
+- **Status:** Resolved in SPEC-0012 (verified 2026-10-04 on prod). Rule: archived accounts and
+  subaccounts are excluded from every total (cache recompute and analytics updated, caches rebuilt;
+  0 accounts with a cache mismatch). `subaccounts_balance.test.ts` now also checks analytics.
+- **Originally:** confirmed-runtime. One active subaccount of 50 USD and one archived subaccount of 100 USD give live total = 50 and `cached_total_usd` = 150.
 - **Area:** `20260217200023` (recompute) vs `20260217213012` (list accounts);
   `20260421183000` (analytics includes archived subaccounts)
 - **Expected:** one consistent rule for archived subaccounts across totals, cache and analytics.

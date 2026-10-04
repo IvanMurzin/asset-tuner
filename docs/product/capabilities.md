@@ -37,6 +37,8 @@
 - Totals use decimal-safe atomic amount values.
 - The app displays original asset amounts and converted values when rates are available.
 - Archived accounts are separated from the default active account view.
+- Archived accounts and archived subaccounts are not counted in any total: account totals (live and
+  cached) and analytics (breakdown, rates timestamp, recent updates).
 
 ## Analytics
 - Analytics is served by `api/analytics/summary`.

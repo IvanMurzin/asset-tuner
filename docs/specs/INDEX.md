@@ -13,3 +13,4 @@
 | SPEC-0009 | bug | Resolved | P1 | Paywall Cubit With Single Dismiss | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0009-paywall-cubit-single-dismiss.md) |
 | SPEC-0010 | bug | Resolved | P1 | Clear Session On Forced Sign-Out | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0010-clear-session-on-forced-sign-out.md) |
 | SPEC-0011 | bug | Resolved | P2 | Canonical Atomic Amounts | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0011-canonical-atomic-amounts.md) |
+| SPEC-0012 | bug | Resolved | P2 | Exclude Archived Subaccounts From Totals | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0012-exclude-archived-subaccounts-from-totals.md) |

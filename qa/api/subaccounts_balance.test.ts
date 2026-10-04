@@ -195,5 +195,11 @@ Deno.test('balance: account totals reflect subaccounts (archived excluded)', asy
     assertEquals(live, expected, 'live total must exclude the archived subaccount');
     // Cache and live totals should follow the same archived rule.
     assertEquals(cached, live, `cache=${cached} live=${live}`);
+    // Analytics follows the same rule (USD base: the breakdown sums to the live total).
+    type Breakdown = { breakdown: Array<{ value_atomic: string; value_decimals: number }> };
+    const analytics = await api<Breakdown>(u.token, 'GET', '/analytics/summary');
+    const analyticsTotal = analytics.data.breakdown
+      .reduce((sum, b) => sum + toNumber(b.value_atomic, b.value_decimals), 0);
+    assertEquals(analyticsTotal, live, `analytics=${analyticsTotal} live=${live}`);
   });
 });
