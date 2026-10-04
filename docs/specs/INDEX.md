@@ -9,3 +9,4 @@
 | SPEC-0005 | docs | Resolved | P1 | Document Supabase Operator Access | codex | 2026-07-29 | 2026-07-29 | [resolved](resolved/SPEC-0005-document-supabase-operator-access.md) |
 | SPEC-0006 | bug | Resolved | P0 | Revoke Public Execute On API RPCs | claude | 2026-09-24 | 2026-09-24 | [resolved](resolved/SPEC-0006-revoke-public-execute-on-api-rpcs.md) |
 | SPEC-0007 | bug | Resolved | P0 | Hard Delete My Account | claude | 2026-09-24 | 2026-09-24 | [resolved](resolved/SPEC-0007-hard-delete-my-account.md) |
+| SPEC-0008 | bug | Resolved | P1 | Keep Test Store Key Out Of Prod | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0008-keep-test-store-key-out-of-prod.md) |
