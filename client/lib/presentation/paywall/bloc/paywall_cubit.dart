@@ -110,13 +110,15 @@ class PaywallCubit extends Cubit<PaywallState> {
         AnalyticsEventName.purchaseFailed,
         parameters: {...planParams, 'failure_code': code.name, 'cancelled': cancelled},
       );
-      _emitIfActive(
-        state.copyWith(
+      _emitIfActive(switch (code) {
+        PurchasesErrorCode.paymentPendingError => state.copyWith(status: PaywallStatus.pending),
+        PurchasesErrorCode.purchaseCancelledError => state.copyWith(status: PaywallStatus.ready),
+        _ => state.copyWith(
           status: PaywallStatus.ready,
-          failureCode: cancelled ? null : 'paywall_purchase',
-          failureMessage: cancelled ? null : error.message,
+          failureCode: 'paywall_purchase',
+          failureMessage: error.message,
         ),
-      );
+      });
     } catch (_) {
       _analytics.log(
         AnalyticsEventName.purchaseFailed,
@@ -166,7 +168,7 @@ class PaywallCubit extends Cubit<PaywallState> {
   }
 
   void dismiss({bool logAnalytics = true}) {
-    if (state.status == PaywallStatus.done) {
+    if (state.isTerminal) {
       return;
     }
     if (logAnalytics) {
@@ -179,13 +181,13 @@ class PaywallCubit extends Cubit<PaywallState> {
   }
 
   void _emitIfActive(PaywallState next) {
-    if (!isClosed && state.status != PaywallStatus.done) {
+    if (!isClosed && !state.isTerminal) {
       emit(next);
     }
   }
 
   void _logViewIfNeeded() {
-    if (_didLogView || state.status == PaywallStatus.done) {
+    if (_didLogView || state.isTerminal) {
       return;
     }
     _didLogView = true;

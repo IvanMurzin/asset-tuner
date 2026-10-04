@@ -123,8 +123,15 @@ class _PaywallViewState extends State<_PaywallView> {
             switch (state.status) {
               case PaywallStatus.verifying:
                 _verifyPro(context);
+              // Terminal statuses are the only places that close the paywall; each runs once.
               case PaywallStatus.done:
-                // The only place that closes the paywall; `done` is terminal, so this runs once.
+                context.pop(null);
+              case PaywallStatus.pending:
+                showDSSnackBar(
+                  context,
+                  variant: DSSnackBarVariant.info,
+                  message: l10n.paywallPaymentPending,
+                );
                 context.pop(null);
               case PaywallStatus.ready || PaywallStatus.processing:
                 break;

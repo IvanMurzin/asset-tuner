@@ -17,3 +17,4 @@
 | SPEC-0013 | bug | Resolved | P2 | RevenueCat Transfer Webhook | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0013-revenuecat-transfer-webhook.md) |
 | SPEC-0014 | bug | Resolved | P3 | Assets List Requires Kind | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0014-assets-list-require-kind.md) |
 | SPEC-0015 | bug | Resolved | P2 | Paywall Close In Every State | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0015-paywall-close-in-every-state.md) |
+| SPEC-0016 | bug | Resolved | P2 | Paywall Pending Purchase | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0016-paywall-pending-purchase.md) |

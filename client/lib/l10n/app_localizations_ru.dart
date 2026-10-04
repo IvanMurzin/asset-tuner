@@ -738,6 +738,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallEntitlementsError => 'Не удалось проверить подписку. Попробуйте снова.';
 
   @override
+  String get paywallPaymentPending =>
+      'Платёж обрабатывается. Pro включится автоматически, как только он пройдёт.';
+
+  @override
   String get paywallRestore => 'Восстановить';
 
   @override

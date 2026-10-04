@@ -271,6 +271,7 @@
   "paywallReasonOnboarding": "Start with the full version built for serious portfolio tracking.",
   "paywallReasonManageSubscription": "Upgrade from settings and unlock the complete app.",
   "paywallEntitlementsError": "Couldn't verify subscription; try again.",
+  "paywallPaymentPending": "Payment is processing. Pro will turn on automatically once it completes.",
   "paywallRestore": "Restore",
   "paywallIdentityPending": "Preparing secure subscription purchases...",
   "paywallUnlockTitle": "Unlock Pro",

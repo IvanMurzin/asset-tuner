@@ -733,6 +733,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallEntitlementsError => 'Couldn\'t verify subscription; try again.';
 
   @override
+  String get paywallPaymentPending =>
+      'Payment is processing. Pro will turn on automatically once it completes.';
+
+  @override
   String get paywallRestore => 'Restore';
 
   @override

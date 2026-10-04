@@ -12,7 +12,7 @@ regression runs.
 | QA-003 | high | bug | billing/client | Paywall can pop twice after a successful purchase or restore | resolved (SPEC-0009), emulator check pending |
 | QA-004 | high | bug | billing | Sandbox purchases grant Pro in the shared production database | mitigated (SPEC-0008, verified 2026-10-04); rest in BL-0002 |
 | QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | resolved (SPEC-0010), emulator check pending |
-| QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | confirmed-code |
+| QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | resolved (SPEC-0016), device P3 pending |
 | QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | resolved (SPEC-0013, verified 2026-10-04); device R2 pending |
 | QA-008 | high | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | confirmed-runtime; deferred (native Google Sign-In) |
 | QA-009 | medium | bug | client | Cold start while offline may crash on `SupabaseErrorTranslator` late init | not-reproduced |
@@ -201,7 +201,10 @@ regression runs.
 ## QA-006: Google Play pending purchases are shown as an error
 - **Severity:** medium
 - **Type:** bug
-- **Status:** confirmed-code. The device check is case P3 in `docs/qa/cases/device.md`.
+- **Status:** Resolved in SPEC-0016 (2026-10-04), device check P3 pending. `paymentPendingError` →
+  terminal `PaywallStatus.pending`: info snackbar, paywall closes, Pro arrives via the regular sync.
+  Covered by `paywall_cubit_test.dart` and `paywall_page_test.dart`.
+- **Originally:** confirmed-code. The device check is case P3 in `docs/qa/cases/device.md`.
 - **Area:** `client/lib/presentation/paywall/page/paywall_page.dart:274-292`
 - **Repro:** a license tester buys with the test card "Slow test card, approves after a few
   minutes".

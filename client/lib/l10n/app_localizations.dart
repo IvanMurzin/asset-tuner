@@ -1491,6 +1491,12 @@ abstract class AppLocalizations {
   /// **'Couldn\'t verify subscription; try again.'**
   String get paywallEntitlementsError;
 
+  /// No description provided for @paywallPaymentPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment is processing. Pro will turn on automatically once it completes.'**
+  String get paywallPaymentPending;
+
   /// No description provided for @paywallRestore.
   ///
   /// In en, this message translates to:

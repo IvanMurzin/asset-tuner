@@ -271,6 +271,7 @@
   "paywallReasonOnboarding": "Начните с Pro-плана для полноценного учёта капитала.",
   "paywallReasonManageSubscription": "Перейдите на Pro в настройках и откройте все возможности приложения.",
   "paywallEntitlementsError": "Не удалось проверить подписку. Попробуйте снова.",
+  "paywallPaymentPending": "Платёж обрабатывается. Pro включится автоматически, как только он пройдёт.",
   "paywallRestore": "Восстановить",
   "paywallIdentityPending": "Подготавливаем безопасную покупку подписки...",
   "paywallUnlockTitle": "Перейти на Pro",

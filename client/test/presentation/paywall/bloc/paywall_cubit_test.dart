@@ -4,8 +4,11 @@ import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/revenuecat/revenuecat_service.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_cubit.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+
+import '../paywall_fixtures.dart';
 
 void main() {
   late _FakeRevenueCatService revenueCat;
@@ -55,17 +58,64 @@ void main() {
     cubit.onProfileChanged(isPro: true);
     expect(cubit.state.status, PaywallStatus.done);
   });
+
+  group('purchase outcome by store error code', () {
+    Future<void> purchaseFailingWith(PurchasesErrorCode code) async {
+      revenueCat
+        ..offerings = offeringsWithAnnual()
+        ..purchaseError = PlatformException(code: '${code.index}', message: 'store says no');
+      await cubit.loadOfferings();
+      await cubit.purchase();
+    }
+
+    test('pending payment → pending, terminal, no error (QA-006)', () async {
+      await purchaseFailingWith(PurchasesErrorCode.paymentPendingError);
+
+      expect(cubit.state.status, PaywallStatus.pending);
+      expect(cubit.state.isTerminal, isTrue);
+      expect(cubit.state.failureCode, isNull);
+
+      // Terminal: nothing moves it to `done` or back.
+      cubit.onProfileChanged(isPro: true);
+      cubit.dismiss();
+      await cubit.restore();
+      expect(cubit.state.status, PaywallStatus.pending);
+    });
+
+    test('cancelled → ready without an error', () async {
+      await purchaseFailingWith(PurchasesErrorCode.purchaseCancelledError);
+
+      expect(cubit.state.status, PaywallStatus.ready);
+      expect(cubit.state.failureCode, isNull);
+    });
+
+    test('other store errors → ready with the store message', () async {
+      await purchaseFailingWith(PurchasesErrorCode.storeProblemError);
+
+      expect(cubit.state.status, PaywallStatus.ready);
+      expect(cubit.state.failureCode, 'paywall_purchase');
+      expect(cubit.state.failureMessage, 'store says no');
+    });
+  });
 }
 
 class _FakeRevenueCatService extends RevenueCatService {
-  @override
-  Future<Offerings> getOfferings() => Completer<Offerings>().future;
+  /// Null keeps offerings loading forever.
+  Offerings? offerings;
+  PlatformException? purchaseError;
 
   @override
-  Future<CustomerInfo> restorePurchases() async => _FakeCustomerInfo();
-}
+  Future<Offerings> getOfferings() {
+    final value = offerings;
+    return value == null ? Completer<Offerings>().future : Future.value(value);
+  }
 
-class _FakeCustomerInfo implements CustomerInfo {
   @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+  Future<PurchaseResult> purchasePackage(Package package) {
+    final error = purchaseError;
+    return error == null ? Completer<PurchaseResult>().future : Future.error(error);
+  }
+
+  @override
+  Future<CustomerInfo> restorePurchases() async => FakeCustomerInfo();
 }

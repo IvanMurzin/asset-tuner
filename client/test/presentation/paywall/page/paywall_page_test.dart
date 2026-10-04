@@ -17,10 +17,13 @@ import 'package:asset_tuner/presentation/paywall/page/paywall_page.dart';
 import 'package:asset_tuner/presentation/paywall/widget/paywall_loading_skeleton.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+
+import '../paywall_fixtures.dart';
 
 void main() {
   group('PaywallPage', () {
@@ -178,6 +181,31 @@ void main() {
       expect(find.text('Something went wrong'), findsNothing);
     });
 
+    testWidgets('pending payment shows an info message and closes the paywall (QA-006)', (
+      tester,
+    ) async {
+      getIt.unregister<RevenueCatService>();
+      getIt.registerLazySingleton<RevenueCatService>(_PendingPurchaseRevenueCatService.new);
+      profileCubit.emit(
+        const ProfileState(
+          status: ProfileStatus.ready,
+          profile: ProfileEntity(
+            userId: 'u-1',
+            plan: Plan.free,
+            entitlements: EntitlementsEntity(),
+          ),
+        ),
+      );
+      await pumpPaywallOverForm(tester);
+
+      await tester.tap(find.text('Start Pro'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expectBackOnForm();
+      expect(find.textContaining('Payment is processing'), findsOneWidget);
+    });
+
     testWidgets('successful restore pops only the paywall (QA-003)', (tester) async {
       getIt.unregister<RevenueCatService>();
       getIt.registerLazySingleton<RevenueCatService>(_RestoreSucceedsRevenueCatService.new);
@@ -209,14 +237,18 @@ class _NeverCompletesRevenueCatService extends RevenueCatService {
   Future<Offerings> getOfferings() => Completer<Offerings>().future;
 }
 
-class _RestoreSucceedsRevenueCatService extends _NeverCompletesRevenueCatService {
+class _PendingPurchaseRevenueCatService extends RevenueCatService {
   @override
-  Future<CustomerInfo> restorePurchases() async => _FakeCustomerInfo();
+  Future<Offerings> getOfferings() async => offeringsWithAnnual();
+
+  @override
+  Future<PurchaseResult> purchasePackage(Package package) =>
+      Future.error(PlatformException(code: '${PurchasesErrorCode.paymentPendingError.index}'));
 }
 
-class _FakeCustomerInfo implements CustomerInfo {
+class _RestoreSucceedsRevenueCatService extends _NeverCompletesRevenueCatService {
   @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+  Future<CustomerInfo> restorePurchases() async => FakeCustomerInfo();
 }
 
 class _TestAuthCubit extends Cubit<AuthState> implements AuthCubit {
