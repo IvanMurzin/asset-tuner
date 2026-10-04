@@ -71,41 +71,8 @@ void main() {
       }
     });
 
-    testWidgets('shows loading skeleton while profile is loading', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: lightTheme,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: MultiBlocProvider(
-            providers: [
-              BlocProvider<AuthCubit>.value(value: authCubit),
-              BlocProvider<ProfileCubit>.value(value: profileCubit),
-              BlocProvider<AssetsCubit>.value(value: assetsCubit),
-            ],
-            child: const PaywallPage(args: PaywallArgs(reason: PaywallReason.onboarding)),
-          ),
-        ),
-      );
-
-      expect(find.byType(PaywallLoadingSkeleton), findsOneWidget);
-      expect(find.text('Something went wrong'), findsNothing);
-    });
-
-    testWidgets('successful restore pops only the paywall (QA-003)', (tester) async {
-      getIt.unregister<RevenueCatService>();
-      getIt.registerLazySingleton<RevenueCatService>(_RestoreSucceedsRevenueCatService.new);
-      profileCubit.emit(
-        const ProfileState(
-          status: ProfileStatus.ready,
-          profile: ProfileEntity(
-            userId: 'u-1',
-            plan: Plan.free,
-            entitlements: EntitlementsEntity(),
-          ),
-        ),
-      );
-
+    /// Pumps Home → Form → Paywall so tests can check what remains after the paywall closes.
+    Future<void> pumpPaywallOverForm(WidgetTester tester) async {
       final router = GoRouter(
         initialLocation: '/',
         routes: [
@@ -150,15 +117,89 @@ void main() {
       unawaited(router.push('/form/paywall'));
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
+    }
+
+    void expectBackOnForm() {
+      expect(find.byType(PaywallPage), findsNothing);
+      expect(find.text('form'), findsOneWidget);
+      expect(find.text('home'), findsNothing);
+    }
+
+    testWidgets('profile error state can be closed (QA-010)', (tester) async {
+      profileCubit.emit(
+        const ProfileState(status: ProfileStatus.error, failureMessage: 'profile failed'),
+      );
+      await pumpPaywallOverForm(tester);
+
+      expect(find.text('profile failed'), findsOneWidget);
+      expect(find.text('Restore'), findsNothing);
+      await tester.tap(find.byIcon(Icons.close_rounded));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expectBackOnForm();
+    });
+
+    testWidgets('RevenueCat identity error state can be closed (QA-010)', (tester) async {
+      authCubit.emit(
+        authCubit.state.copyWith(
+          revenueCatStatus: RevenueCatIdentityStatus.error,
+          revenueCatFailureMessage: 'identity failed',
+        ),
+      );
+      await pumpPaywallOverForm(tester);
+
+      expect(find.text('identity failed'), findsOneWidget);
+      await tester.tap(find.byIcon(Icons.close_rounded));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expectBackOnForm();
+    });
+
+    testWidgets('shows loading skeleton while profile is loading', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: lightTheme,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<AuthCubit>.value(value: authCubit),
+              BlocProvider<ProfileCubit>.value(value: profileCubit),
+              BlocProvider<AssetsCubit>.value(value: assetsCubit),
+            ],
+            child: const PaywallPage(args: PaywallArgs(reason: PaywallReason.onboarding)),
+          ),
+        ),
+      );
+
+      expect(find.byType(PaywallLoadingSkeleton), findsOneWidget);
+      expect(find.text('Something went wrong'), findsNothing);
+    });
+
+    testWidgets('successful restore pops only the paywall (QA-003)', (tester) async {
+      getIt.unregister<RevenueCatService>();
+      getIt.registerLazySingleton<RevenueCatService>(_RestoreSucceedsRevenueCatService.new);
+      profileCubit.emit(
+        const ProfileState(
+          status: ProfileStatus.ready,
+          profile: ProfileEntity(
+            userId: 'u-1',
+            plan: Plan.free,
+            entitlements: EntitlementsEntity(),
+          ),
+        ),
+      );
+
+      await pumpPaywallOverForm(tester);
 
       await tester.tap(find.text('Restore'));
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
 
-      expect(find.byType(PaywallPage), findsNothing);
-      expect(find.text('form'), findsOneWidget);
-      expect(find.text('home'), findsNothing);
+      expectBackOnForm();
     });
   });
 }

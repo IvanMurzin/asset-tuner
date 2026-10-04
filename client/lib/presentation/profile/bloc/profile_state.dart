@@ -16,4 +16,6 @@ abstract class ProfileState with _$ProfileState {
   }) = _ProfileState;
 
   bool get isReady => status == ProfileStatus.ready && profile != null;
+
+  bool get isPro => isReady && profile!.isPro;
 }

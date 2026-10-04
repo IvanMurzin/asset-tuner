@@ -12,6 +12,8 @@ class PaywallHeader extends StatelessWidget {
 
   final String restoreLabel;
   final VoidCallback? onClose;
+
+  /// Null hides the restore action.
   final VoidCallback? onRestore;
   final bool isBusy;
 
@@ -25,21 +27,22 @@ class PaywallHeader extends StatelessWidget {
       children: [
         _CloseAction(isBusy: isBusy, onTap: onClose),
         const Spacer(),
-        TextButton(
-          onPressed: isBusy ? null : onRestore,
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s8),
-            minimumSize: const Size(44, 36),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          child: Text(
-            restoreLabel,
-            style: typography.caption.copyWith(
-              color: isBusy ? colors.textTertiary : colors.textSecondary,
-              fontWeight: FontWeight.w700,
+        if (onRestore != null)
+          TextButton(
+            onPressed: isBusy ? null : onRestore,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: spacing.s8, vertical: spacing.s8),
+              minimumSize: const Size(44, 36),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              restoreLabel,
+              style: typography.caption.copyWith(
+                color: isBusy ? colors.textTertiary : colors.textSecondary,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-        ),
       ],
     );
   }

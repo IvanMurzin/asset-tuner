@@ -118,7 +118,7 @@ class _ManageSubscriptionPageState extends State<ManageSubscriptionPage> {
         placement: 'manage_subscription_restore',
       );
       if (!context.mounted) return;
-      if (!_isProProfile(profileCubit.state)) {
+      if (!profileCubit.state.isPro) {
         showDSSnackBar(
           context,
           variant: DSSnackBarVariant.error,
@@ -147,9 +147,5 @@ class _ManageSubscriptionPageState extends State<ManageSubscriptionPage> {
     );
     if (!context.mounted) return;
     await context.read<AssetsCubit>().refresh(silent: true, forceRefresh: true);
-  }
-
-  bool _isProProfile(ProfileState state) {
-    return state.isReady && (state.profile?.isPro ?? false);
   }
 }

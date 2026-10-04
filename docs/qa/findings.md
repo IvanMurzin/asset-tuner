@@ -16,7 +16,7 @@ regression runs.
 | QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | resolved (SPEC-0013, verified 2026-10-04); device R2 pending |
 | QA-008 | high | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | confirmed-runtime; deferred (native Google Sign-In) |
 | QA-009 | medium | bug | client | Cold start while offline may crash on `SupabaseErrorTranslator` late init | not-reproduced |
-| QA-010 | medium | ux | client/paywall | Paywall error and loading states have no close button | confirmed-code |
+| QA-010 | medium | ux | client/paywall | Paywall error and loading states have no close button | resolved (SPEC-0015), emulator check pending |
 | QA-011 | medium | bug | client/auth | Dev and prod flavors share the `assettuner://` OAuth callback scheme | confirmed-code |
 | QA-012 | medium | ux | client/auth | Apple sign-in button is shown on Android | confirmed-code |
 | QA-013 | medium | bug | client | Offline and network errors are not recognized; no HTTP timeouts | confirmed-runtime |
@@ -268,7 +268,10 @@ regression runs.
 ## QA-010: Paywall error and loading states have no close button
 - **Severity:** medium
 - **Type:** ux
-- **Status:** confirmed-code
+- **Status:** Resolved in SPEC-0015 (2026-10-04), emulator check pending (E9). Every state renders
+  through `PaywallScaffold` (header with close); the body is chosen by `resolvePaywallBody`.
+  Covered by `paywall_page_test.dart` and `paywall_body_test.dart`.
+- **Originally:** confirmed-code
 - **Area:** `client/lib/presentation/paywall/page/paywall_page.dart:402-430`
 - **Repro:** open the paywall while RevenueCat identity or the profile failed to load. This
   includes the automatic first-auth paywall.

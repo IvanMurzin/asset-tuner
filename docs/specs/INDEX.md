@@ -16,3 +16,4 @@
 | SPEC-0012 | bug | Resolved | P2 | Exclude Archived Subaccounts From Totals | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0012-exclude-archived-subaccounts-from-totals.md) |
 | SPEC-0013 | bug | Resolved | P2 | RevenueCat Transfer Webhook | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0013-revenuecat-transfer-webhook.md) |
 | SPEC-0014 | bug | Resolved | P3 | Assets List Requires Kind | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0014-assets-list-require-kind.md) |
+| SPEC-0015 | bug | Resolved | P2 | Paywall Close In Every State | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0015-paywall-close-in-every-state.md) |
