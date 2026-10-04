@@ -114,9 +114,6 @@ class _TestAuthCubit extends Cubit<AuthState> implements AuthCubit {
 
   @override
   Future<void> syncRevenueCat() async {}
-
-  @override
-  Future<void> forceLocalSignOut() async {}
 }
 
 class _FakeProfileRepository implements IProfileRepository {

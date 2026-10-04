@@ -11,7 +11,7 @@ regression runs.
 | QA-002 | blocker | bug | backend | `delete_my_account` soft-deletes the auth user, so user data is never removed | resolved (SPEC-0007, verified 2026-09-24) |
 | QA-003 | high | bug | billing/client | Paywall can pop twice after a successful purchase or restore | resolved (SPEC-0009), emulator check pending |
 | QA-004 | high | bug | billing | Sandbox purchases grant Pro in the shared production database | mitigated (SPEC-0008, verified 2026-10-04); rest in BL-0002 |
-| QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | confirmed-runtime |
+| QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | resolved (SPEC-0010), emulator check pending |
 | QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | confirmed-code |
 | QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | confirmed-runtime |
 | QA-008 | medium | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | confirmed-runtime |
@@ -170,7 +170,12 @@ regression runs.
 ## QA-005: Re-login after a forced 401 sign-out can hang on the sign-in screen
 - **Severity:** high
 - **Type:** bug
-- **Status:** confirmed-runtime (emulator).
+- **Status:** Resolved in SPEC-0010 (2026-10-04), **not yet verified on the emulator** — re-run the
+  repro below at the next regression. A 401 now runs the regular Supabase `signOut` (local scope
+  clears the persisted session before the server call) instead of a cubit-only state flip, so the
+  session stream emits `null` and a same-user sign-in is no longer filtered by `.distinct()`.
+  Covered by `auth_cubit_test.dart`.
+- **Originally:** confirmed-runtime (emulator).
   1. Revoke all sessions (`POST /auth/v1/logout?scope=global`).
   2. Pull to refresh. The app goes to Sign in, which is correct.
   3. Sign in with the same user. The logs show `signInWithPassword success` and `authCompleted`, but the app **stays on Sign in**. It was still there 30 seconds later.
