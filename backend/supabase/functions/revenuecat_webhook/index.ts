@@ -6,6 +6,7 @@ import {
   isProEntitlementId,
   resolveProEntitlementIdsFromEnv,
 } from '../_shared/revenuecat_entitlements.ts';
+import { syncSubscriberFromRevenueCat } from '../_shared/revenuecat_sync.ts';
 import { ApiHttpError, fail, fromError, ok } from '../_shared/responses.ts';
 
 export type RevenueCatEvent = {
@@ -15,7 +16,21 @@ export type RevenueCatEvent = {
   app_user_id?: string;
   entitlement_ids?: string[];
   expiration_at_ms?: number | null;
+  transferred_from?: string[];
+  transferred_to?: string[];
 };
+
+/**
+ * App user ids whose plan a TRANSFER may have changed. A TRANSFER has no `app_user_id`; the
+ * purchase moved between `transferred_from` and `transferred_to`. Anonymous RevenueCat ids have
+ * no profile and are skipped.
+ */
+export function transferAppUserIds(event: RevenueCatEvent): string[] {
+  const ids = [...(event.transferred_from ?? []), ...(event.transferred_to ?? [])]
+    .map((id) => id.trim())
+    .filter((id) => id.length > 0 && !id.startsWith('$RCAnonymousID:'));
+  return [...new Set(ids)];
+}
 
 function requireWebhookSecret(req: Request): void {
   const expected = requiredEnv('REVENUECAT_WEBHOOK_SECRET');
@@ -96,6 +111,26 @@ if (import.meta.main) {
       });
 
       const { event, payload } = parsePayload(rawBody);
+
+      if (event.type === 'TRANSFER') {
+        // Same reconciliation as the client refresh, for every user on either side. A user
+        // without a profile (deleted, never signed in) is reported, not retried.
+        const results = [];
+        for (const appUserId of transferAppUserIds(event)) {
+          const { isPro, sync } = await syncSubscriberFromRevenueCat(appUserId);
+          results.push({ app_user_id: appUserId, is_pro: isPro, reason: sync?.reason ?? null });
+        }
+        console.log(
+          JSON.stringify({
+            function: 'revenuecat_webhook',
+            op: 'transfer',
+            event_id: event.id ?? null,
+            results,
+            duration_ms: Date.now() - startedAt,
+          }),
+        );
+        return ok({ received: true, type: 'TRANSFER', results });
+      }
 
       const appUserId = event.app_user_id?.trim();
       if (!appUserId) {

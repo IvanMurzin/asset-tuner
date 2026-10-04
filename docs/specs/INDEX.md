@@ -14,3 +14,4 @@
 | SPEC-0010 | bug | Resolved | P1 | Clear Session On Forced Sign-Out | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0010-clear-session-on-forced-sign-out.md) |
 | SPEC-0011 | bug | Resolved | P2 | Canonical Atomic Amounts | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0011-canonical-atomic-amounts.md) |
 | SPEC-0012 | bug | Resolved | P2 | Exclude Archived Subaccounts From Totals | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0012-exclude-archived-subaccounts-from-totals.md) |
+| SPEC-0013 | bug | Resolved | P2 | RevenueCat Transfer Webhook | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0013-revenuecat-transfer-webhook.md) |

@@ -1,7 +1,7 @@
 import { handleCors } from '../_shared/cors.ts';
 import { requireUser } from '../_shared/auth.ts';
 import { getAdminClient } from '../_shared/db.ts';
-import { fetchSubscriberIsPro } from '../_shared/revenuecat_entitlements.ts';
+import { syncSubscriberFromRevenueCat } from '../_shared/revenuecat_sync.ts';
 import {
   ApiHttpError,
   fromError,
@@ -423,10 +423,9 @@ async function handleRevenuecatRefresh(userId: string): Promise<Response> {
 
   const appUserId = me.profile.revenuecat_app_user_id ?? userId;
 
-  let payload: Record<string, unknown> | null;
-  let isPro: boolean;
   try {
-    ({ payload, isPro } = await fetchSubscriberIsPro(appUserId));
+    const { isPro, sync } = await syncSubscriberFromRevenueCat(appUserId);
+    return ok({ appUserId, isPro, sync });
   } catch (error) {
     // RevenueCat REST rate-limited us (bursty forced refreshes). Do not surface
     // an error or falsely downgrade: keep the current plan and let a later
@@ -438,21 +437,8 @@ async function handleRevenuecatRefresh(userId: string): Promise<Response> {
         sync: { skipped: 'rate_limited' },
       });
     }
-    throw error;
+    throw error instanceof ApiHttpError ? error : parseDbError(error);
   }
-
-  // Stable external_id keeps at most one refresh row per user (upsert).
-  const externalId = `refresh:${appUserId}`;
-  const sync = await rpc<unknown>('api_apply_revenuecat_event', {
-    p_source: 'revenuecat_refresh',
-    p_external_id: externalId,
-    p_app_user_id: appUserId,
-    p_payload: payload ?? {},
-    p_is_pro: isPro,
-    p_dedupe: false,
-  });
-
-  return ok({ appUserId, isPro, sync });
 }
 
 Deno.serve(async (req) => {

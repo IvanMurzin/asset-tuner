@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from 'jsr:@std/assert';
-import { inferIsPro, type RevenueCatEvent } from './index.ts';
+import { inferIsPro, type RevenueCatEvent, transferAppUserIds } from './index.ts';
 import {
   isProFromEntitlements,
   resolveProEntitlementIdsFromEnv,
@@ -90,4 +90,14 @@ Deno.test('isProFromEntitlements: entitlement without expiry is a lifetime grant
 Deno.test('resolveProEntitlementIdsFromEnv: unset config throws instead of defaulting', () => {
   Deno.env.delete('REVENUECAT_PRO_ENTITLEMENTS');
   assertThrows(() => resolveProEntitlementIdsFromEnv());
+});
+
+Deno.test('transferAppUserIds: both sides, deduped, anonymous ids skipped', () => {
+  const event: RevenueCatEvent = {
+    type: 'TRANSFER',
+    transferred_from: ['user-a', '$RCAnonymousID:abc'],
+    transferred_to: [' user-b ', 'user-a'],
+  };
+
+  assertEquals(transferAppUserIds(event), ['user-a', 'user-b']);
 });

@@ -13,7 +13,7 @@ regression runs.
 | QA-004 | high | bug | billing | Sandbox purchases grant Pro in the shared production database | mitigated (SPEC-0008, verified 2026-10-04); rest in BL-0002 |
 | QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | resolved (SPEC-0010), emulator check pending |
 | QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | confirmed-code |
-| QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | confirmed-runtime |
+| QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | resolved (SPEC-0013, verified 2026-10-04); device R2 pending |
 | QA-008 | medium | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | confirmed-runtime |
 | QA-009 | medium | bug | client | Cold start while offline may crash on `SupabaseErrorTranslator` late init | not-reproduced |
 | QA-010 | medium | ux | client/paywall | Paywall error and loading states have no close button | confirmed-code |
@@ -215,7 +215,11 @@ regression runs.
 ## QA-007: `TRANSFER` webhook events are rejected with 400
 - **Severity:** medium
 - **Type:** bug
-- **Status:** confirmed-runtime. A synthetic `TRANSFER` payload without `app_user_id` returns `400 event.app_user_id is required`. The end-to-end effect is to be confirmed on a device, case R2 in `docs/qa/cases/device.md`.
+- **Status:** Resolved in SPEC-0013 (verified 2026-10-04 on prod). `TRANSFER` reconciles every id
+  in `transferred_from` + `transferred_to` through the same REST sync as `/revenuecat/refresh`
+  (`_shared/revenuecat_sync.ts`) and returns 200; the synthetic test passes. The real two-user
+  flow is still device case R2.
+- **Originally:** confirmed-runtime. A synthetic `TRANSFER` payload without `app_user_id` returns `400 event.app_user_id is required`. The end-to-end effect is to be confirmed on a device, case R2 in `docs/qa/cases/device.md`.
 - **Area:** `backend/supabase/functions/revenuecat_webhook/index.ts:100-103`
 - **Repro:** restore purchases while signed in as app user B on a Google account whose
   subscription belongs to app user A.
