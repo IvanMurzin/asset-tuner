@@ -10,7 +10,7 @@ regression runs.
 | QA-001 | blocker | security | backend | Four `api_*` SECURITY DEFINER RPCs are executable by `anon`/`authenticated` | resolved (SPEC-0006, verified 2026-09-24) |
 | QA-002 | blocker | bug | backend | `delete_my_account` soft-deletes the auth user, so user data is never removed | resolved (SPEC-0007, verified 2026-09-24) |
 | QA-003 | high | bug | billing/client | Paywall can pop twice after a successful purchase or restore | confirmed-runtime |
-| QA-004 | high | bug | billing | Sandbox purchases grant Pro in the shared production database | confirmed-runtime |
+| QA-004 | high | bug | billing | Sandbox purchases grant Pro in the shared production database | mitigated (SPEC-0008, verified 2026-10-04); rest in BL-0002 |
 | QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | confirmed-runtime |
 | QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | confirmed-code |
 | QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | confirmed-runtime |
@@ -141,7 +141,12 @@ regression runs.
 ## QA-004: Sandbox purchases grant Pro in the shared production database
 - **Severity:** high
 - **Type:** bug
-- **Status:** confirmed-runtime. A Test Store purchase on the dev flavor produced a ledger row `INITIAL_PURCHASE`, `environment = SANDBOX`, `store = TEST_STORE`, and set `profiles.plan = pro` in the shared prod database.
+- **Status:** Mitigated in SPEC-0008 (verified 2026-10-04). Real risk found on review: the Test
+  Store key was compiled into the prod AAB, so anyone could extract it and get free Pro via a Test
+  Store purchase. The key is now dev-only; a clean prod AAB build contains 0 occurrences (the
+  Android key is still present). Shared dev = prod with Play sandbox is accepted by design and
+  documented in `docs/flavors-and-accounts.md`; the backend guard is backlog BL-0002.
+- **Originally:** confirmed-runtime. A Test Store purchase on the dev flavor produced a ledger row `INITIAL_PURCHASE`, `environment = SANDBOX`, `store = TEST_STORE`, and set `profiles.plan = pro` in the shared prod database.
 - **Area:** `backend/supabase/functions/revenuecat_webhook/index.ts`, `_shared/revenuecat_entitlements.ts`, `docs/flavors-and-accounts.md`
 - **Repro:** a license tester buys Pro from the internal track. The tester's profile becomes `pro`
   in the production database.

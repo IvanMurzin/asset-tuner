@@ -14,7 +14,19 @@ Both app variants can be installed on one device because their bundle IDs differ
 - Apple Developer: `developer.ivanmurzin.assettuner` is production.
 - Google Play Console: `developer.ivanmurzin.assettuner` is production.
 
-At the time this document was written, dev and prod config files may still point to the same Supabase/RevenueCat resources. That is acceptable for local development but not ideal for isolated testing.
+### Shared Environment (Current Decision)
+Dev and prod point to **one** Supabase project and **one** RevenueCat project. This is a deliberate
+choice for now (QA-004); splitting them is the long-term fix (see "Recommended Dev Isolation").
+
+- Google Play sandbox purchases (license testers only) grant Pro in the shared database. This is
+  expected and is how the owner and the regression test billing.
+- The webhook and refresh do not filter by `environment`/`store` yet (backlog BL-0002).
+- `REVENUECAT_API_KEY_TEST` (Test Store) lives **only** in `.config.dev.json`. It must never be
+  added to `.config.prod.json` or `CONFIG_PROD_JSON`: any define in the file is compiled into the
+  prod binary, and a Test Store purchase made with an extracted key would grant free Pro.
+- Do not distribute `dev` builds outside the owner's devices for the same reason.
+- After changing a config file, build releases from a clean tree (`flutter clean`): an incremental
+  Gradle build can package a stale `libapp.so` with the old defines.
 
 ## Recommended Dev Isolation
 For a fully isolated dev environment:
