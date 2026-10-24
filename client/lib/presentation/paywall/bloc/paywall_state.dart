@@ -16,13 +16,25 @@ enum PaywallStatus {
   pending,
 }
 
+/// Where the store offer stands; the paywall can only sell once it is [loaded].
+enum PaywallOfferings {
+  loading,
+  loaded,
+
+  /// The store refused: no store account or billing on the device.
+  storeUnavailable,
+
+  /// Loading failed for another reason, or the offering has no packages.
+  failed,
+}
+
 @freezed
 abstract class PaywallState with _$PaywallState {
   const PaywallState._();
 
   const factory PaywallState({
     @Default(PaywallStatus.ready) PaywallStatus status,
-    @Default(false) bool offeringsLoaded,
+    @Default(PaywallOfferings.loading) PaywallOfferings offerings,
     Package? monthlyPackage,
     Package? annualPackage,
     @Default(PaywallPlanOption.annual) PaywallPlanOption selectedOption,
@@ -39,5 +51,7 @@ abstract class PaywallState with _$PaywallState {
       selectedOption == PaywallPlanOption.monthly ? monthlyPackage : annualPackage;
 
   bool get canContinue =>
-      status == PaywallStatus.ready && offeringsLoaded && selectedPackage != null;
+      status == PaywallStatus.ready &&
+      offerings == PaywallOfferings.loaded &&
+      selectedPackage != null;
 }

@@ -1497,6 +1497,18 @@ abstract class AppLocalizations {
   /// **'Payment is processing. Pro will turn on automatically once it completes.'**
   String get paywallPaymentPending;
 
+  /// No description provided for @paywallStoreUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases unavailable'**
+  String get paywallStoreUnavailableTitle;
+
+  /// No description provided for @paywallStoreUnavailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases aren\'t available on this device. Make sure you\'re signed in to your store account (Google Play or App Store) and try again.'**
+  String get paywallStoreUnavailableBody;
+
   /// No description provided for @paywallRestore.
   ///
   /// In en, this message translates to:

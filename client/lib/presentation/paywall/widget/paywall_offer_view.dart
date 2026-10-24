@@ -41,7 +41,7 @@ class PaywallOfferView extends StatelessWidget {
         _Hero(reasonText: reasonText),
         SizedBox(height: spacing.s8),
         Expanded(
-          child: !state.offeringsLoaded
+          child: state.offerings == PaywallOfferings.loading
               ? const PaywallLoadingSkeleton()
               : SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),

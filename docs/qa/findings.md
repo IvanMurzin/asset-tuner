@@ -39,7 +39,7 @@ regression runs.
 | QA-030 | info | improvement | backend | New profile has a null base asset; the client fills in USD | resolved (SPEC-0021, verified 2026-10-24) |
 | QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; deferred (codes → ARB refactor) |
 | QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | confirmed-runtime |
-| QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | confirmed-runtime |
+| QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | resolved (SPEC-0023), emulator check pending |
 | QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | confirmed-runtime |
 
 ---
@@ -598,7 +598,10 @@ regression runs.
 ## QA-034: Paywall gives no explanation when the store is unavailable
 - **Severity:** low
 - **Type:** ux
-- **Status:** confirmed-runtime (prod release build on an emulator with no Play account: `BILLING_UNAVAILABLE`)
+- **Status:** Resolved in SPEC-0023 (2026-10-24), emulator check pending (no Play account). Explicit
+  `PaywallOfferings` state; store-unavailable and failed offers render an inline explanation with
+  Retry inside the paywall scaffold. Covered by paywall cubit, body and page tests.
+- **Originally:** confirmed-runtime (prod release build on an emulator with no Play account: `BILLING_UNAVAILABLE`)
 - **Area:** `client/lib/presentation/paywall/page/paywall_page.dart`
 - **Actual:**
   - Prices show `--`, Start Pro is disabled, and the legal line reads "-- / year".

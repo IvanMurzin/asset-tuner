@@ -29,6 +29,13 @@ final class PaywallBodyClosing extends PaywallBody {
   const PaywallBodyClosing();
 }
 
+/// The store offer could not be loaded; [storeUnavailable] means the device cannot buy at all.
+final class PaywallBodyOfferingsUnavailable extends PaywallBody {
+  const PaywallBodyOfferingsUnavailable({required this.storeUnavailable});
+
+  final bool storeUnavailable;
+}
+
 final class PaywallBodyOffer extends PaywallBody {
   const PaywallBodyOffer();
 }
@@ -50,5 +57,11 @@ PaywallBody resolvePaywallBody({
   if (profile.isPro && paywall.status == PaywallStatus.ready) {
     return const PaywallBodyClosing();
   }
-  return const PaywallBodyOffer();
+  return switch (paywall.offerings) {
+    PaywallOfferings.loading || PaywallOfferings.loaded => const PaywallBodyOffer(),
+    PaywallOfferings.storeUnavailable => const PaywallBodyOfferingsUnavailable(
+      storeUnavailable: true,
+    ),
+    PaywallOfferings.failed => const PaywallBodyOfferingsUnavailable(storeUnavailable: false),
+  };
 }

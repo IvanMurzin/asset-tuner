@@ -36,6 +36,9 @@ class PaywallCubit extends Cubit<PaywallState> {
   };
 
   Future<void> loadOfferings() async {
+    if (state.offerings != PaywallOfferings.loading) {
+      emit(state.copyWith(offerings: PaywallOfferings.loading));
+    }
     try {
       final offerings = await _revenueCat.getOfferings();
       if (isClosed) {
@@ -56,21 +59,36 @@ class PaywallCubit extends Cubit<PaywallState> {
 
       emit(
         state.copyWith(
-          offeringsLoaded: true,
+          offerings: annual == null && monthly == null
+              ? PaywallOfferings.failed
+              : PaywallOfferings.loaded,
           annualPackage: annual,
           monthlyPackage: monthly,
           selectedOption: annual != null ? PaywallPlanOption.annual : PaywallPlanOption.monthly,
         ),
       );
-      _logViewIfNeeded();
+    } on PlatformException catch (e, stackTrace) {
+      if (isClosed) {
+        return;
+      }
+      logger.e('Paywall error: paywall_load_offerings', error: e, stackTrace: stackTrace);
+      emit(
+        state.copyWith(
+          offerings: switch (PurchasesErrorHelper.getErrorCode(e)) {
+            PurchasesErrorCode.purchaseNotAllowedError ||
+            PurchasesErrorCode.storeProblemError => PaywallOfferings.storeUnavailable,
+            _ => PaywallOfferings.failed,
+          },
+        ),
+      );
     } catch (e, stackTrace) {
       if (isClosed) {
         return;
       }
       logger.e('Paywall error: paywall_load_offerings', error: e, stackTrace: stackTrace);
-      emit(state.copyWith(offeringsLoaded: true, failureCode: 'paywall_load_offerings'));
-      _logViewIfNeeded();
+      emit(state.copyWith(offerings: PaywallOfferings.failed));
     }
+    _logViewIfNeeded();
   }
 
   void selectPlan(PaywallPlanOption option) {

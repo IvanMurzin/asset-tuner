@@ -74,7 +74,6 @@ class _PaywallViewState extends State<_PaywallView> {
   void _showFailure(BuildContext context, PaywallState state) {
     final l10n = AppLocalizations.of(context)!;
     final message = switch (state.failureCode) {
-      'paywall_load_offerings' => l10n.paywallNoOfferings,
       'paywall_sync_not_pro' => l10n.paywallEntitlementsError,
       _ => state.failureMessage ?? l10n.errorGeneric,
     };
@@ -164,6 +163,12 @@ class _PaywallViewState extends State<_PaywallView> {
             onAction: () => context.read<ProfileCubit>().refresh(),
           ),
           PaywallBodyClosing() => const SizedBox.shrink(),
+          PaywallBodyOfferingsUnavailable(:final storeUnavailable) => DSInlineError(
+            title: storeUnavailable ? l10n.paywallStoreUnavailableTitle : l10n.genericErrorTitle,
+            message: storeUnavailable ? l10n.paywallStoreUnavailableBody : l10n.paywallNoOfferings,
+            actionLabel: l10n.retryAction,
+            onAction: cubit.loadOfferings,
+          ),
           PaywallBodyOffer() => PaywallOfferView(
             state: paywall,
             reasonText: _reasonText(l10n),

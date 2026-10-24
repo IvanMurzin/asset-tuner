@@ -55,8 +55,21 @@ void main() {
     expect((body as PaywallBodyProfileError).message, 'boom');
   });
 
-  test('free user → offer', () {
+  test('free user → offer while loading or loaded', () {
     expect(resolve(), isA<PaywallBodyOffer>());
+    expect(
+      resolve(paywall: const PaywallState(offerings: PaywallOfferings.loaded)),
+      isA<PaywallBodyOffer>(),
+    );
+  });
+
+  test('offerings unavailable → explains whether the store is the problem', () {
+    final store = resolve(
+      paywall: const PaywallState(offerings: PaywallOfferings.storeUnavailable),
+    );
+    expect((store as PaywallBodyOfferingsUnavailable).storeUnavailable, isTrue);
+    final failed = resolve(paywall: const PaywallState(offerings: PaywallOfferings.failed));
+    expect((failed as PaywallBodyOfferingsUnavailable).storeUnavailable, isFalse);
   });
 
   test('Pro with nothing in flight → closing; during a purchase → offer', () {

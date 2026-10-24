@@ -128,6 +128,34 @@ void main() {
       expect(find.text('home'), findsNothing);
     }
 
+    testWidgets('store unavailable explains why, can retry and close (QA-034)', (tester) async {
+      final revenueCat = _StoreUnavailableRevenueCatService();
+      getIt.unregister<RevenueCatService>();
+      getIt.registerLazySingleton<RevenueCatService>(() => revenueCat);
+      profileCubit.emit(
+        const ProfileState(
+          status: ProfileStatus.ready,
+          profile: ProfileEntity(
+            userId: 'u-1',
+            plan: Plan.free,
+            entitlements: EntitlementsEntity(),
+          ),
+        ),
+      );
+      await pumpPaywallOverForm(tester);
+
+      expect(find.text('Purchases unavailable'), findsOneWidget);
+      expect(find.text('Restore'), findsNothing);
+      await tester.tap(find.text('Try again'));
+      await tester.pump();
+      expect(revenueCat.offeringsCalls, 2);
+
+      await tester.tap(find.byIcon(Icons.close_rounded));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      expectBackOnForm();
+    });
+
     testWidgets('profile error state can be closed (QA-010)', (tester) async {
       profileCubit.emit(
         const ProfileState(status: ProfileStatus.error, failureMessage: 'profile failed'),
@@ -235,6 +263,18 @@ void main() {
 class _NeverCompletesRevenueCatService extends RevenueCatService {
   @override
   Future<Offerings> getOfferings() => Completer<Offerings>().future;
+}
+
+class _StoreUnavailableRevenueCatService extends RevenueCatService {
+  int offeringsCalls = 0;
+
+  @override
+  Future<Offerings> getOfferings() {
+    offeringsCalls += 1;
+    return Future.error(
+      PlatformException(code: '${PurchasesErrorCode.purchaseNotAllowedError.index}'),
+    );
+  }
 }
 
 class _PendingPurchaseRevenueCatService extends RevenueCatService {

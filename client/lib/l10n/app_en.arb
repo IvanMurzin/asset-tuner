@@ -272,6 +272,8 @@
   "paywallReasonManageSubscription": "Upgrade from settings and unlock the complete app.",
   "paywallEntitlementsError": "Couldn't verify subscription; try again.",
   "paywallPaymentPending": "Payment is processing. Pro will turn on automatically once it completes.",
+  "paywallStoreUnavailableTitle": "Purchases unavailable",
+  "paywallStoreUnavailableBody": "Purchases aren't available on this device. Make sure you're signed in to your store account (Google Play or App Store) and try again.",
   "paywallRestore": "Restore",
   "paywallIdentityPending": "Preparing secure subscription purchases...",
   "paywallUnlockTitle": "Unlock Pro",

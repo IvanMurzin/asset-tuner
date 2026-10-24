@@ -272,6 +272,8 @@
   "paywallReasonManageSubscription": "Перейдите на Pro в настройках и откройте все возможности приложения.",
   "paywallEntitlementsError": "Не удалось проверить подписку. Попробуйте снова.",
   "paywallPaymentPending": "Платёж обрабатывается. Pro включится автоматически, как только он пройдёт.",
+  "paywallStoreUnavailableTitle": "Покупки недоступны",
+  "paywallStoreUnavailableBody": "Покупки на этом устройстве недоступны. Убедитесь, что вы вошли в аккаунт магазина (Google Play или App Store), и попробуйте снова.",
   "paywallRestore": "Восстановить",
   "paywallIdentityPending": "Подготавливаем безопасную покупку подписки...",
   "paywallUnlockTitle": "Перейти на Pro",

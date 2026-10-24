@@ -59,6 +59,38 @@ void main() {
     expect(cubit.state.status, PaywallStatus.done);
   });
 
+  group('offerings loading (QA-034)', () {
+    test('store refuses → storeUnavailable', () async {
+      revenueCat.offeringsError = PlatformException(
+        code: '${PurchasesErrorCode.purchaseNotAllowedError.index}',
+      );
+      await cubit.loadOfferings();
+      expect(cubit.state.offerings, PaywallOfferings.storeUnavailable);
+      expect(cubit.state.canContinue, isFalse);
+    });
+
+    test('other failure → failed', () async {
+      revenueCat.offeringsError = PlatformException(
+        code: '${PurchasesErrorCode.networkError.index}',
+      );
+      await cubit.loadOfferings();
+      expect(cubit.state.offerings, PaywallOfferings.failed);
+    });
+
+    test('retry after a failure loads the offer', () async {
+      revenueCat.offeringsError = PlatformException(
+        code: '${PurchasesErrorCode.storeProblemError.index}',
+      );
+      await cubit.loadOfferings();
+      revenueCat
+        ..offeringsError = null
+        ..offerings = offeringsWithAnnual();
+      await cubit.loadOfferings();
+      expect(cubit.state.offerings, PaywallOfferings.loaded);
+      expect(cubit.state.canContinue, isTrue);
+    });
+  });
+
   group('purchase outcome by store error code', () {
     Future<void> purchaseFailingWith(PurchasesErrorCode code) async {
       revenueCat
@@ -102,10 +134,15 @@ void main() {
 class _FakeRevenueCatService extends RevenueCatService {
   /// Null keeps offerings loading forever.
   Offerings? offerings;
+  PlatformException? offeringsError;
   PlatformException? purchaseError;
 
   @override
   Future<Offerings> getOfferings() {
+    final error = offeringsError;
+    if (error != null) {
+      return Future.error(error);
+    }
     final value = offerings;
     return value == null ? Completer<Offerings>().future : Future.value(value);
   }

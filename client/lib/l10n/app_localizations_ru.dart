@@ -742,6 +742,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Платёж обрабатывается. Pro включится автоматически, как только он пройдёт.';
 
   @override
+  String get paywallStoreUnavailableTitle => 'Покупки недоступны';
+
+  @override
+  String get paywallStoreUnavailableBody =>
+      'Покупки на этом устройстве недоступны. Убедитесь, что вы вошли в аккаунт магазина (Google Play или App Store), и попробуйте снова.';
+
+  @override
   String get paywallRestore => 'Восстановить';
 
   @override

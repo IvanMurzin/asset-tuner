@@ -737,6 +737,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Payment is processing. Pro will turn on automatically once it completes.';
 
   @override
+  String get paywallStoreUnavailableTitle => 'Purchases unavailable';
+
+  @override
+  String get paywallStoreUnavailableBody =>
+      'Purchases aren\'t available on this device. Make sure you\'re signed in to your store account (Google Play or App Store) and try again.';
+
+  @override
   String get paywallRestore => 'Restore';
 
   @override
