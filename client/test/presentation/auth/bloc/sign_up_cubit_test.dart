@@ -78,12 +78,24 @@ void main() {
       expect(cubit.state.confirmPasswordError, SignUpFieldError.mismatch);
       await cubit.close();
     });
+
+    test('a cancelled OAuth sign-up returns to idle without a banner (QA-008)', () async {
+      repository.oAuthFailureCode = oAuthCancelledCode;
+      final cubit = SignUpCubit(signUpUseCase, oAuthUseCase, providersUseCase, analytics);
+
+      await cubit.signUpWithProvider(AuthProvider.google);
+
+      expect(cubit.state.status, SignUpStatus.idle);
+      expect(cubit.state.bannerFailureCode, isNull);
+      await cubit.close();
+    });
   });
 }
 
 class _FakeAuthRepository implements IAuthRepository {
   SignUpResultEntity Function(String email) signUpResult = (email) =>
       SignUpResultEntity.otpRequired(email: email);
+  String oAuthFailureCode = 'not_implemented';
 
   @override
   Future<Result<SignUpResultEntity>> signUpWithPassword(String email, String password) async {
@@ -109,7 +121,7 @@ class _FakeAuthRepository implements IAuthRepository {
 
   @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async =>
-      const FailureResult(Failure(code: 'not_implemented', message: 'not implemented'));
+      FailureResult(Failure(code: oAuthFailureCode, message: 'oauth failed'));
 
   @override
   Future<List<AuthProvider>> getAvailableProviders() async => const [];

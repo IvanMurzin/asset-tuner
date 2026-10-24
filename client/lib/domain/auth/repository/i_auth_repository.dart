@@ -3,6 +3,9 @@ import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/sign_up_result_entity.dart';
 
+/// Failure code for an OAuth sign-in the user abandoned in the browser; not an error to show.
+const oAuthCancelledCode = 'oauth_cancelled';
+
 abstract interface class IAuthRepository {
   Stream<AuthSessionEntity?> watchSession();
   Future<AuthSessionEntity?> getCachedSession();

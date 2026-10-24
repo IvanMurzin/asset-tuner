@@ -5,6 +5,7 @@ import 'package:asset_tuner/core/analytics/app_analytics.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_auth_providers_usecase.dart';
+import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:asset_tuner/domain/auth/usecase/oauth_sign_in_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/sign_in_with_password_usecase.dart';
 import 'package:asset_tuner/presentation/auth/bloc/auth_form_validators.dart';
@@ -88,6 +89,8 @@ class SignInCubit extends Cubit<SignInState> {
     final result = await _oAuthSignInUseCase(provider);
     if (isClosed) return;
     switch (result) {
+      case FailureResult(:final failure) when failure.code == oAuthCancelledCode:
+        emit(state.copyWith(status: SignInStatus.idle));
       case FailureResult(:final failure):
         _analytics.log(
           AnalyticsEventName.authFailed,

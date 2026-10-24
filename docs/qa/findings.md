@@ -14,7 +14,7 @@ regression runs.
 | QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | resolved (SPEC-0010), emulator check pending |
 | QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | resolved (SPEC-0016), device P3 pending |
 | QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | resolved (SPEC-0013, verified 2026-10-04); device R2 pending |
-| QA-008 | high | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | confirmed-runtime; deferred (native Google Sign-In) |
+| QA-008 | high | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | resolved (SPEC-0030), device D1 pending |
 | QA-009 | medium | bug | client | Cold start while offline may crash on `SupabaseErrorTranslator` late init | not-reproduced |
 | QA-010 | medium | ux | client/paywall | Paywall error and loading states have no close button | resolved (SPEC-0015), emulator check pending |
 | QA-011 | medium | bug | client/auth | Dev and prod flavors share the `assettuner://` OAuth callback scheme | confirmed-code |
@@ -239,7 +239,8 @@ regression runs.
 ## QA-008: Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds
 - **Severity:** high (raised 2026-10-04)
 - **Type:** ux
-- **Status:** confirmed-runtime (emulator).
+- **Status:** Resolved in SPEC-0030 (2026-10-25), device D1 pending. Coming back to the app without a session cancels the sign-in after a 3-second grace period; the browser opens as a Custom Tab. A late callback still signs in through the session stream.
+- **Originally:** confirmed-runtime (emulator).
   - Google sign-in opens in **full Chrome**, not a Custom Tab, so Android back navigates Chrome history and does not return to the app.
   - Each attempt leaves another Chrome tab open.
   - After switching back to the app, every button is disabled and the Sign in button shows a spinner. Tapping Google again does nothing.

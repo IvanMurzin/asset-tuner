@@ -7,4 +7,7 @@ abstract class SupabaseModule {
 
   @Named('oauthSignInTimeout')
   Duration get oAuthSignInTimeout => const Duration(seconds: 90);
+
+  @Named('oauthResumeGrace')
+  Duration get oAuthResumeGrace => const Duration(seconds: 3);
 }

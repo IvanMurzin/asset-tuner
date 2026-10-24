@@ -31,3 +31,4 @@
 | SPEC-0027 | improvement | Resolved | P3 | Contact Developer Cubit | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0027-contact-developer-cubit.md) |
 | SPEC-0028 | improvement | Resolved | P3 | Sign-Up Result Entity | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0028-sign-up-result-entity.md) |
 | SPEC-0029 | bug | Resolved | P0 | Paywall Verify Without AssetsCubit | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0029-paywall-verify-without-assets-cubit.md) |
+| SPEC-0030 | bug | Resolved | P1 | Cancel OAuth On Return | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0030-cancel-oauth-on-return.md) |

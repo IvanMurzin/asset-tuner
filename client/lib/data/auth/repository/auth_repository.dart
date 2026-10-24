@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/logger/logger.dart';
 import 'package:asset_tuner/core/supabase/supabase_failure_mapper.dart';
+import 'package:asset_tuner/core/utils/app_lifecycle_signal.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/data/auth/data_source/i_auth_data_source.dart';
@@ -13,6 +14,7 @@ import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/sign_up_result_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
+import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 @LazySingleton(as: IAuthRepository)
@@ -20,10 +22,20 @@ class AuthRepository implements IAuthRepository {
   AuthRepository(
     this._dataSource, {
     @Named('oauthSignInTimeout') Duration oAuthSignInTimeout = const Duration(seconds: 90),
-  }) : _oAuthSignInTimeout = oAuthSignInTimeout;
+    @Named('oauthResumeGrace') Duration oAuthResumeGrace = const Duration(seconds: 3),
+    AppLifecycleSignal? lifecycleSignal,
+  }) : _oAuthSignInTimeout = oAuthSignInTimeout,
+       _oAuthResumeGrace = oAuthResumeGrace,
+       _lifecycleSignal = lifecycleSignal;
 
   final IAuthDataSource _dataSource;
   final Duration _oAuthSignInTimeout;
+
+  /// How long to wait for the OAuth callback after the app comes back from the browser. Without
+  /// a session by then the user cancelled (QA-008); a late callback still signs in through
+  /// [watchSession].
+  final Duration _oAuthResumeGrace;
+  final AppLifecycleSignal? _lifecycleSignal;
   AuthSessionEntity? _cachedSession;
 
   @override
@@ -75,7 +87,9 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
     StreamSubscription<AuthState>? authSubscription;
+    StreamSubscription<AppLifecycleState>? lifecycleSubscription;
     Timer? timeoutTimer;
+    Timer? resumeGraceTimer;
     final signedInCompleter = Completer<AuthSessionEntity>();
     try {
       if (provider == AuthProvider.email) {
@@ -111,9 +125,23 @@ class AuthRepository implements IAuthRepository {
         }
       });
       await _dataSource.signInWithOAuth(provider);
+      lifecycleSubscription = _lifecycleSignal?.changes.listen((state) {
+        resumeGraceTimer?.cancel();
+        if (state != AppLifecycleState.resumed) {
+          return;
+        }
+        resumeGraceTimer = Timer(_oAuthResumeGrace, () {
+          if (!signedInCompleter.isCompleted) {
+            signedInCompleter.completeError(const _OAuthCancelled());
+          }
+        });
+      });
       final entity = await signedInCompleter.future;
       logger.i('AuthRepository.signInWithOAuth success: $provider');
       return Success(entity);
+    } on _OAuthCancelled {
+      logger.i('AuthRepository.signInWithOAuth cancelled: $provider');
+      return const FailureResult(Failure(code: oAuthCancelledCode, message: 'OAuth cancelled'));
     } on TimeoutException catch (error) {
       logger.e('AuthRepository.signInWithOAuth timed out', error: error);
       return const FailureResult(Failure(code: 'timeout', message: 'OAuth sign-in timed out'));
@@ -124,6 +152,8 @@ class AuthRepository implements IAuthRepository {
       );
     } finally {
       timeoutTimer?.cancel();
+      resumeGraceTimer?.cancel();
+      await lifecycleSubscription?.cancel();
       await authSubscription?.cancel();
     }
   }
@@ -219,4 +249,8 @@ class AuthRepository implements IAuthRepository {
   Future<List<AuthProvider>> getAvailableProviders() {
     return Future.value(const [AuthProvider.email, AuthProvider.google, AuthProvider.apple]);
   }
+}
+
+class _OAuthCancelled implements Exception {
+  const _OAuthCancelled();
 }

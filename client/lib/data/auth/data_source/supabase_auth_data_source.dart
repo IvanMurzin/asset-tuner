@@ -49,6 +49,8 @@ class SupabaseAuthDataSource implements IAuthDataSource {
     return _client.auth.signInWithOAuth(
       supaProvider,
       redirectTo: AppConfig.instance.oauthRedirectUri,
+      // A Custom Tab returns to the app on back, so cancelling is detected on resume (QA-008).
+      authScreenLaunchMode: LaunchMode.inAppBrowserView,
       queryParams: oauthQueryParams(provider),
     );
   }

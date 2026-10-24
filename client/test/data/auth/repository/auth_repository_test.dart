@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:asset_tuner/core/utils/app_lifecycle_signal.dart';
+import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
+import 'package:flutter/widgets.dart' show AppLifecycleState;
+
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/data/auth/data_source/i_auth_data_source.dart';
 import 'package:asset_tuner/data/auth/dto/auth_session_dto.dart';
@@ -121,6 +125,61 @@ void main() {
 
       expect(result, isA<FailureResult<AuthSessionEntity>>());
       expect((result as FailureResult<AuthSessionEntity>).failure.code, 'timeout');
+    });
+
+    group('returning from the browser (QA-008)', () {
+      late StreamController<AppLifecycleState> lifecycle;
+      late AuthRepository repository;
+
+      setUp(() {
+        lifecycle = StreamController<AppLifecycleState>.broadcast(sync: true);
+        repository = AuthRepository(
+          dataSource,
+          oAuthResumeGrace: const Duration(milliseconds: 20),
+          lifecycleSignal: AppLifecycleSignal.fromController(lifecycle),
+        );
+      });
+
+      tearDown(() => lifecycle.close());
+
+      test('cancels when the app resumes without a session', () async {
+        final future = repository.signInWithOAuth(AuthProvider.google);
+        await Future<void>.delayed(Duration.zero);
+        lifecycle.add(AppLifecycleState.resumed);
+
+        final result = await future;
+
+        expect((result as FailureResult<AuthSessionEntity>).failure.code, oAuthCancelledCode);
+      });
+
+      test('a callback within the grace period still signs in', () async {
+        final future = repository.signInWithOAuth(AuthProvider.google);
+        await Future<void>.delayed(Duration.zero);
+        lifecycle.add(AppLifecycleState.resumed);
+        dataSource.authStateController.add(
+          AuthState(AuthChangeEvent.signedIn, _session(userId: 'u-1', email: 'u@example.com')),
+        );
+
+        expect(await future, isA<Success<AuthSessionEntity>>());
+      });
+
+      test('leaving the app again stops the grace timer', () async {
+        var done = false;
+        final future = repository
+            .signInWithOAuth(AuthProvider.google)
+            .whenComplete(() => done = true);
+        await Future<void>.delayed(Duration.zero);
+        lifecycle
+          ..add(AppLifecycleState.resumed)
+          ..add(AppLifecycleState.paused);
+        await Future<void>.delayed(const Duration(milliseconds: 60));
+        expect(done, isFalse);
+
+        dataSource.authStateController.add(
+          AuthState(AuthChangeEvent.signedIn, _session(userId: 'u-1', email: 'u@example.com')),
+        );
+        expect(await future, isA<Success<AuthSessionEntity>>());
+      });
     });
   });
 }
