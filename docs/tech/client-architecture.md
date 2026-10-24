@@ -39,9 +39,11 @@ presentation/<feature>/{page,widget,bloc}
 
 Full-stack features (have `domain/`, `data/`, and `presentation/` folders): `account`, `analytics`, `asset`, `auth`, `balance`, `profile`, `rate`, `subaccount`.
 
-Presentation-only areas (UI-only, no `domain/` or `data/` layer; they compose other features' use cases): `home`, `onboarding`, `overview`, `paywall`, `settings`, `user`. Do not introduce a synthetic domain layer for these.
+Presentation-only areas (UI-only, no `domain/` or `data/` layer; they compose other features' use cases): `home`, `onboarding`, `overview`, `paywall`, `settings`. Do not introduce a synthetic domain layer for these.
 
-Shared cross-feature data helpers (for example `data/account_asset/`) are allowed when they only compose existing feature data sources; they must not introduce a new domain layer.
+Shared cross-feature data helpers are allowed when they only compose existing feature data sources; they must not introduce a new domain layer. None exist today.
+
+Known deviation: `ContactDeveloperPage` calls `IProfileRepository` directly instead of going through a Cubit and a use case.
 
 ## Code Generation
 Run codegen after changing Freezed models, JSON DTOs, injectable annotations, or localization:

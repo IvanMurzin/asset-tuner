@@ -91,5 +91,5 @@ supabase functions deploy revenuecat_webhook --no-verify-jwt
 
 ## Ranking
 Top fiat assets are defined in `supabase/functions/_shared/fiat_top100.ts` and seed data.
-Top crypto assets are seeded from `supabase/seeds/crypto_top100_snapshot.tsv`.
+Top crypto assets are seeded inline in `supabase/seed.sql` (`supabase/seeds/crypto_top100_snapshot.tsv` is a reference snapshot and is not loaded).
 `rates_sync` refreshes provider metadata, rates, and ranks where supported.

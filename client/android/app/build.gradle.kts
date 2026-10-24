@@ -8,7 +8,7 @@ plugins {
 }
 
 // Firebase плагины применяются только для prod-флавора:
-// google-services.json есть только под `developer.ivanmurzin.assettuner` (см. src/prod/).
+// google-services.json есть только под `developer.ivanmurzin.assettuner` (лежит в android/app/).
 // Dev-сборки идут без Firebase, инициализация в Dart обёрнута в try/catch.
 val isProdTaskRequested = gradle.startParameter.taskNames.any {
     it.contains("Prod", ignoreCase = false)

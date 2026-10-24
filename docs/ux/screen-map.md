@@ -3,13 +3,15 @@
 The app uses `go_router` and the route constants in `client/lib/core/routing/app_routes.dart`.
 
 ## Public Flow
+Public routes are `AppRoutes.publicLocations`.
+
 | Route | Screen | Purpose |
 |---|---|---|
-| `/sign-in` | Sign in | Email/password and configured OAuth sign-in. |
+| `/splash` | Splash | Startup while the session and profile resolve. |
+| `/onboarding/carousel` | Onboarding carousel | First-run product introduction; leads to Sign up. |
 | `/sign-up` | Sign up | Email/password registration. |
+| `/sign-in` | Sign in | Email/password and configured OAuth sign-in. |
 | `/otp` | OTP | Email verification flow. |
-| `/onboarding/carousel` | Onboarding carousel | First-run product introduction. |
-| `/ds` | Design system preview | Internal DS component preview. |
 
 ## Authenticated Shell
 The authenticated app uses `StatefulShellRoute.indexedStack`.
@@ -33,9 +35,17 @@ The authenticated app uses `StatefulShellRoute.indexedStack`.
 ## Profile Routes
 | Route | Purpose |
 |---|---|
-| `/profile/base-currency` | Base asset selection. |
+| `/profile/base-currency` | Base asset selection (from Profile). |
 | `/profile/subscription` | Manage subscription entry point. |
 | `/profile/archived-accounts` | Archived account list. |
 | `/profile/archived-accounts/:accountId` | Archived account detail. |
 | `/profile/contact-developer` | Support message form. |
-| `/paywall` | RevenueCat paywall wrapper. |
+
+## Top-Level Pushed Routes
+Pushed over the shell; they require authentication.
+
+| Route | Purpose |
+|---|---|
+| `/paywall` | Custom Pro paywall built on RevenueCat offerings (`PaywallArgs.reason` sets the copy). |
+| `/base-currency` | Base asset selection pushed from Overview. |
+| `/ds` | Internal design system preview. |

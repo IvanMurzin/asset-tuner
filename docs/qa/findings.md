@@ -34,7 +34,7 @@ regression runs.
 | QA-025 | low | security | backend | Unmapped DB errors return raw Postgres message, details, and hint | resolved (SPEC-0020, verified 2026-10-24) |
 | QA-026 | low | improvement | billing | 5-minute subscription sync cooldown delays renewal and expiry in the UI | confirmed-code |
 | QA-027 | low | improvement | client | Currency picker is capped at 100 assets per kind, with no pagination | confirmed-code |
-| QA-028 | low | docs | docs | UX and architecture docs disagree with the current app | confirmed-code |
+| QA-028 | low | docs | docs | UX and architecture docs disagree with the current app | resolved (SPEC-0025, 2026-10-24) |
 | QA-029 | info | improvement | backend | Free-plan downgrade keeps accounts and subaccounts above free limits | confirmed-code |
 | QA-030 | info | improvement | backend | New profile has a null base asset; the client fills in USD | resolved (SPEC-0021, verified 2026-10-24) |
 | QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; deferred (codes → ARB refactor) |
@@ -498,7 +498,9 @@ regression runs.
 ## QA-028: UX and architecture docs disagree with the current app
 - **Severity:** low
 - **Type:** docs
-- **Status:** confirmed-code
+- **Status:** Resolved in SPEC-0025 (2026-10-24). All listed docs synced with the code; the
+  `ContactDeveloperPage` → repository call is recorded as a known deviation in the architecture doc.
+- **Originally:** confirmed-code
 - **Details:**
   - `docs/ux/screen-map.md`:
     - `/ds` is listed as public, but it requires auth;
