@@ -92,6 +92,11 @@ Deno.test('rates_sync: rejects missing or wrong scheduler secret', async () => {
   assertEquals(wrong.status, 403);
 });
 
+Deno.test('rates_sync: only POST is accepted', async () => {
+  const res = await rawFetch(`${functionsBase}/rates_sync`, { method: 'GET' });
+  assertEquals(res.status, 404);
+});
+
 Deno.test('security: api_* RPCs are not callable through PostgREST with the publishable key', async () => {
   await withUsers(1, async (u) => {
     // Uses the QA user's own id: proves exposure without touching anyone else's data.

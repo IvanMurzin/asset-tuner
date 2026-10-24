@@ -31,7 +31,7 @@ regression runs.
 | QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | confirmed-runtime |
 | QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | confirmed-runtime |
 | QA-024 | low | bug | backend | Analytics divides by zero when the base asset rate is `0` | resolved (SPEC-0019, verified 2026-10-24) |
-| QA-025 | low | security | backend | Unmapped DB errors return raw Postgres message, details, and hint | confirmed-code |
+| QA-025 | low | security | backend | Unmapped DB errors return raw Postgres message, details, and hint | resolved (SPEC-0020, verified 2026-10-24) |
 | QA-026 | low | improvement | billing | 5-minute subscription sync cooldown delays renewal and expiry in the UI | confirmed-code |
 | QA-027 | low | improvement | client | Currency picker is capped at 100 assets per kind, with no pagination | confirmed-code |
 | QA-028 | low | docs | docs | UX and architecture docs disagree with the current app | confirmed-code |
@@ -457,7 +457,11 @@ regression runs.
 ## QA-025: Unmapped DB errors return raw Postgres message, details, and hint
 - **Severity:** low
 - **Type:** security
-- **Status:** confirmed-code
+- **Status:** Resolved in SPEC-0020 (verified 2026-10-24 on prod). `fromError` answers anything but a
+  client `ApiHttpError` with a generic "Internal error" and logs the details; secrets use a
+  constant-time `secretsEqual`; `rates_sync` is POST-only. Full `qa/run.sh` green (37/37), a real
+  `rates_sync` run returned 200. CORS `*` kept on purpose (Bearer auth, no cookies).
+- **Originally:** confirmed-code
 - **Area:** `backend/supabase/functions/_shared/responses.ts:66-76`
 - **Other items in the same area:**
   - Webhook and scheduler secrets are compared with `!==`, not in constant time.

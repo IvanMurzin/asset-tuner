@@ -60,28 +60,27 @@ export function fail(
   );
 }
 
+/**
+ * Maps a thrown value to a response. Deliberate client errors (`ApiHttpError` below 500) are
+ * returned as raised. Anything else is logged here with its details and answered with a generic
+ * message, so database messages, details and hints never reach clients.
+ */
 export function fromError(error: unknown): Response {
-  if (error instanceof ApiHttpError) {
+  if (error instanceof ApiHttpError && error.status < 500) {
     return fail(error.status, error.code, error.message, error.details);
   }
 
-  if (typeof error === 'object' && error !== null) {
-    const maybeMessage = (error as { message?: unknown }).message;
-    if (typeof maybeMessage === 'string' && maybeMessage.trim().length > 0) {
-      const code = (error as { code?: unknown }).code;
-      const details = (error as { details?: unknown }).details;
-      const hint = (error as { hint?: unknown }).hint;
-      return fail(500, 'INTERNAL_ERROR', maybeMessage, {
-        ...(code === undefined ? {} : { code }),
-        ...(details === undefined ? {} : { details }),
-        ...(hint === undefined ? {} : { hint }),
-      });
-    }
+  console.error(JSON.stringify({ op: 'internal_error', error: describeError(error) }));
+  if (error instanceof ApiHttpError) {
+    return fail(error.status, error.code, 'Internal error');
   }
+  return fail(500, 'INTERNAL_ERROR', 'Internal error');
+}
 
-  if (error instanceof Error) {
-    return fail(500, 'INTERNAL_ERROR', error.message);
+function describeError(error: unknown): Record<string, unknown> {
+  if (typeof error !== 'object' || error === null) {
+    return { value: String(error) };
   }
-
-  return fail(500, 'INTERNAL_ERROR', 'Unexpected internal error');
+  const { message, code, details, hint } = error as Record<string, unknown>;
+  return { message, code, details, hint };
 }

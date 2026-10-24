@@ -1,4 +1,5 @@
 import { handleCors } from '../_shared/cors.ts';
+import { secretsEqual } from '../_shared/secrets.ts';
 import { getAdminClient } from '../_shared/db.ts';
 import { optionalEnv, requiredEnv } from '../_shared/env.ts';
 import { numberToAtomic, USD_PRICE_DECIMALS } from '../_shared/money.ts';
@@ -34,11 +35,11 @@ function chunk<T>(rows: T[], size: number): T[][] {
   return out;
 }
 
-function ensureSchedulerSecret(req: Request): void {
+async function ensureSchedulerSecret(req: Request): Promise<void> {
   const expected = requiredEnv('SCHEDULER_SECRET');
   const provided = req.headers.get('x-scheduler-secret');
 
-  if (!provided || provided !== expected) {
+  if (!provided || !(await secretsEqual(provided, expected))) {
     throw new ApiHttpError(403, 'FORBIDDEN', 'Invalid scheduler secret');
   }
 }
@@ -307,7 +308,10 @@ Deno.serve(async (req) => {
   }
 
   try {
-    ensureSchedulerSecret(req);
+    if (req.method.toUpperCase() !== 'POST') {
+      throw new ApiHttpError(404, 'NOT_FOUND', 'Route not found');
+    }
+    await ensureSchedulerSecret(req);
 
     const summary = await upsertAssetsAndRates();
 

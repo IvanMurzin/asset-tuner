@@ -1,4 +1,5 @@
 import { handleCors } from '../_shared/cors.ts';
+import { secretsEqual } from '../_shared/secrets.ts';
 import { getAdminClient } from '../_shared/db.ts';
 import { requiredEnv } from '../_shared/env.ts';
 import {
@@ -32,13 +33,13 @@ export function transferAppUserIds(event: RevenueCatEvent): string[] {
   return [...new Set(ids)];
 }
 
-function requireWebhookSecret(req: Request): void {
+async function requireWebhookSecret(req: Request): Promise<void> {
   const expected = requiredEnv('REVENUECAT_WEBHOOK_SECRET');
   const authHeader = req.headers.get('authorization') ?? req.headers.get('Authorization');
   const match = authHeader?.match(/^Bearer\s+(.+)$/i);
   const provided = match?.[1]?.trim();
 
-  if (!provided || provided !== expected) {
+  if (!provided || !(await secretsEqual(provided, expected))) {
     throw new ApiHttpError(403, 'FORBIDDEN', 'Invalid RevenueCat webhook secret');
   }
 }
@@ -104,7 +105,7 @@ if (import.meta.main) {
         throw new ApiHttpError(404, 'NOT_FOUND', 'Route not found');
       }
 
-      requireWebhookSecret(req);
+      await requireWebhookSecret(req);
 
       const rawBody = await req.json().catch(() => {
         throw new ApiHttpError(400, 'VALIDATION_ERROR', 'Invalid JSON payload');
