@@ -1,3 +1,4 @@
+import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
@@ -8,6 +9,8 @@ import 'package:asset_tuner/domain/profile/entity/entitlements_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
+import 'package:asset_tuner/domain/profile/usecase/send_contact_developer_message_usecase.dart';
+import 'package:asset_tuner/presentation/profile/bloc/contact_developer_cubit.dart';
 import 'package:asset_tuner/presentation/profile/page/contact_developer_page.dart';
 import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:flutter/material.dart';
@@ -29,14 +32,23 @@ void main() {
         ),
       );
       repository = _FakeProfileRepository();
+      if (getIt.isRegistered<ContactDeveloperCubit>()) {
+        getIt.unregister<ContactDeveloperCubit>();
+      }
+      getIt.registerFactory<ContactDeveloperCubit>(
+        () => ContactDeveloperCubit(SendContactDeveloperMessageUseCase(repository)),
+      );
     });
 
     tearDown(() async {
       await sessionCubit.close();
+      if (getIt.isRegistered<ContactDeveloperCubit>()) {
+        getIt.unregister<ContactDeveloperCubit>();
+      }
     });
 
     testWidgets('prefills readonly email field', (tester) async {
-      await _pumpPage(tester, sessionCubit: sessionCubit, repository: repository);
+      await _pumpPage(tester, sessionCubit: sessionCubit);
       await tester.pumpAndSettle();
 
       final emailField = tester.widget<DSTextField>(find.byType(DSTextField).first);
@@ -53,7 +65,7 @@ void main() {
         const FailureResult<void>(Failure(code: 'network', message: 'Temporary network issue')),
       );
 
-      await _pumpPage(tester, sessionCubit: sessionCubit, repository: repository);
+      await _pumpPage(tester, sessionCubit: sessionCubit);
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(EditableText).last, 'Need help with sync');
@@ -71,20 +83,14 @@ void main() {
   });
 }
 
-Future<void> _pumpPage(
-  WidgetTester tester, {
-  required AuthCubit sessionCubit,
-  required _FakeProfileRepository repository,
-}) async {
+Future<void> _pumpPage(WidgetTester tester, {required AuthCubit sessionCubit}) async {
   final router = GoRouter(
     initialLocation: AppRoutes.contactDeveloper,
     routes: [
       GoRoute(
         path: AppRoutes.contactDeveloper,
-        builder: (context, state) => BlocProvider<AuthCubit>.value(
-          value: sessionCubit,
-          child: ContactDeveloperPage(repository: repository),
-        ),
+        builder: (context, state) =>
+            BlocProvider<AuthCubit>.value(value: sessionCubit, child: const ContactDeveloperPage()),
       ),
       GoRoute(path: AppRoutes.signIn, builder: (context, state) => const Text('Sign In Stub')),
     ],

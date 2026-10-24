@@ -28,3 +28,4 @@
 | SPEC-0024 | improvement | Resolved | P3 | UX Polish From Emulator Pass | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0024-ux-polish-from-emulator-pass.md) |
 | SPEC-0025 | docs | Resolved | P3 | Docs Sync With App | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0025-docs-sync-with-app.md) |
 | SPEC-0026 | tooling | Resolved | P3 | Pin Android JDK 21 | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0026-pin-android-jdk-21.md) |
+| SPEC-0027 | improvement | Resolved | P3 | Contact Developer Cubit | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0027-contact-developer-cubit.md) |

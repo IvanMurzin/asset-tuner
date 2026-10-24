@@ -43,8 +43,6 @@ Presentation-only areas (UI-only, no `domain/` or `data/` layer; they compose ot
 
 Shared cross-feature data helpers are allowed when they only compose existing feature data sources; they must not introduce a new domain layer. None exist today.
 
-Known deviation: `ContactDeveloperPage` calls `IProfileRepository` directly instead of going through a Cubit and a use case.
-
 ## Code Generation
 Run codegen after changing Freezed models, JSON DTOs, injectable annotations, or localization:
 
