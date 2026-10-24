@@ -249,6 +249,24 @@ abstract class AppLocalizations {
   /// **'Forgot password?'**
   String get forgotPassword;
 
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset your password'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Write to {email} from the address you signed up with, and we\'ll help you reset your password.'**
+  String forgotPasswordBody(String email);
+
+  /// No description provided for @forgotPasswordWrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Write email'**
+  String get forgotPasswordWrite;
+
   /// No description provided for @signInWith.
   ///
   /// In en, this message translates to:

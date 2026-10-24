@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:asset_tuner/core/config/app_config.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core/routing/app_routes.dart';
 import 'package:asset_tuner/core_ui/components/ds_app_bar.dart';
 import 'package:asset_tuner/core_ui/components/ds_button.dart';
+import 'package:asset_tuner/core_ui/components/ds_dialog.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
@@ -89,6 +92,18 @@ class SignInPage extends StatelessWidget {
                       fullWidth: true,
                       onPressed: isLoading ? null : context.read<SignInCubit>().signIn,
                     ),
+                    if (AppConfig.instance.supportEmail.isNotEmpty) ...[
+                      SizedBox(height: spacing.s8),
+                      TextButton(
+                        onPressed: isLoading
+                            ? null
+                            : () => _showForgotPassword(context, AppConfig.instance.supportEmail),
+                        child: Text(
+                          l10n.forgotPassword,
+                          style: typography.body.copyWith(color: context.dsColors.primary),
+                        ),
+                      ),
+                    ],
                     SizedBox(height: spacing.s16),
                     TextButton(
                       onPressed: isLoading ? null : () => context.go(AppRoutes.signUp),
@@ -120,4 +135,29 @@ class SignInPage extends StatelessWidget {
       _ => null,
     };
   }
+}
+
+/// There is no reset email yet (no SMTP), so the user writes to support instead (QA-014).
+Future<void> _showForgotPassword(BuildContext context, String email) {
+  final l10n = AppLocalizations.of(context)!;
+  return showDialog<void>(
+    context: context,
+    builder: (dialogContext) => DSDialog(
+      title: l10n.forgotPasswordTitle,
+      content: SelectableText(l10n.forgotPasswordBody(email)),
+      secondaryLabel: l10n.cancel,
+      onSecondary: () => Navigator.of(dialogContext).pop(),
+      primaryLabel: l10n.forgotPasswordWrite,
+      onPrimary: () {
+        Navigator.of(dialogContext).pop();
+        launchUrl(
+          Uri(
+            scheme: 'mailto',
+            path: email,
+            query: 'subject=${Uri.encodeComponent(l10n.forgotPasswordTitle)}',
+          ),
+        ).catchError((Object _) => false);
+      },
+    ),
+  );
 }

@@ -11,5 +11,6 @@
   "TERMS_OF_USE_URL": "https://assettuner.app/terms",
   "PRIVACY_POLICY_URL": "https://assettuner.app/privacy",
   "LOG_API_RESPONSES": true,
-  "ANALYTICS_ENABLED": false
+  "ANALYTICS_ENABLED": false,
+  "SUPPORT_EMAIL": "ivanmurzin.developer@gmail.com"
 }

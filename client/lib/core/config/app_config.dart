@@ -26,6 +26,7 @@ final class AppConfig {
     required this.privacyPolicyUrl,
     required this.logApiResponses,
     required this.analyticsEnabled,
+    this.supportEmail = '',
   });
 
   static AppConfig? _instance;
@@ -60,6 +61,9 @@ final class AppConfig {
   final String privacyPolicyUrl;
   final bool logApiResponses;
   final bool analyticsEnabled;
+
+  /// Optional. When set, Sign in offers "Forgot password?" as an email to support (QA-014).
+  final String supportEmail;
 
   bool get isProdRelease => flavor == AppFlavor.prod && kReleaseMode;
 
@@ -100,6 +104,7 @@ final class AppConfig {
       privacyPolicyUrl: stringValues['PRIVACY_POLICY_URL']!,
       logApiResponses: logApiResponses,
       analyticsEnabled: analyticsEnabled,
+      supportEmail: const String.fromEnvironment('SUPPORT_EMAIL').trim(),
     );
   }
 

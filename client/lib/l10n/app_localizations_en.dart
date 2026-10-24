@@ -91,6 +91,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot password?';
 
   @override
+  String get forgotPasswordTitle => 'Reset your password';
+
+  @override
+  String forgotPasswordBody(String email) {
+    return 'Write to $email from the address you signed up with, and we\'ll help you reset your password.';
+  }
+
+  @override
+  String get forgotPasswordWrite => 'Write email';
+
+  @override
   String get signInWith => 'Or continue with';
 
   @override

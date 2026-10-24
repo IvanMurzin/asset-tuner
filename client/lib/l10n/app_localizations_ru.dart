@@ -92,6 +92,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get forgotPassword => 'Забыли пароль?';
 
   @override
+  String get forgotPasswordTitle => 'Сброс пароля';
+
+  @override
+  String forgotPasswordBody(String email) {
+    return 'Напишите на $email с адреса, на который зарегистрирован аккаунт, — поможем сбросить пароль.';
+  }
+
+  @override
+  String get forgotPasswordWrite => 'Написать';
+
+  @override
   String get signInWith => 'Или продолжить с';
 
   @override

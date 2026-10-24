@@ -40,6 +40,16 @@
   },
   "changeEmail": "Change email",
   "forgotPassword": "Forgot password?",
+  "forgotPasswordTitle": "Reset your password",
+  "forgotPasswordBody": "Write to {email} from the address you signed up with, and we'll help you reset your password.",
+  "forgotPasswordWrite": "Write email",
+  "@forgotPasswordBody": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "signInWith": "Or continue with",
   "continueWithGoogle": "Continue with Google",
   "continueWithApple": "Continue with Apple",
