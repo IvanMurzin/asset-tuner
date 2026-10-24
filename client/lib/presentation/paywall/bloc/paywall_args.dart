@@ -1,10 +1,9 @@
 enum PaywallReason { onboarding, accountsLimit, subaccountsLimit, baseCurrency, manageSubscription }
 
 class PaywallArgs {
-  const PaywallArgs({required this.reason, this.requestedBaseCurrencyCode});
+  const PaywallArgs({required this.reason});
 
   final PaywallReason reason;
-  final String? requestedBaseCurrencyCode;
 }
 
 enum PaywallPlanOption { monthly, annual }

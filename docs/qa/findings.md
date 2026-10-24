@@ -27,7 +27,7 @@ regression runs.
 | QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | resolved (SPEC-0014, verified 2026-10-04) |
 | QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | resolved (SPEC-0018, verified 2026-10-24) |
 | QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | resolved (SPEC-0012, verified 2026-10-04) |
-| QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | confirmed-code |
+| QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | resolved (SPEC-0022), emulator check pending |
 | QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | confirmed-runtime |
 | QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | confirmed-runtime |
 | QA-024 | low | bug | backend | Analytics divides by zero when the base asset rate is `0` | resolved (SPEC-0019, verified 2026-10-24) |
@@ -413,7 +413,10 @@ regression runs.
 ## QA-021: Requested base currency is not applied after purchase from the base-currency flow
 - **Severity:** low
 - **Type:** bug
-- **Status:** confirmed-code. It is already `BL-0001` in `docs/backlog.md`.
+- **Status:** Resolved in SPEC-0022 (2026-10-24), emulator check pending (E10). The settings page
+  applies the requested currency once the paywall closes with currencies unlocked; covered by
+  `base_currency_settings_page_test.dart`.
+- **Originally:** confirmed-code. It is already `BL-0001` in `docs/backlog.md`.
 - **Area:** `client/lib/presentation/settings/page/base_currency_settings_page.dart:189`,
   `client/lib/presentation/paywall/bloc/paywall_args.dart:7`
 - **Actual:** `requestedBaseCurrencyCode` is passed to the paywall and never read. After buying,

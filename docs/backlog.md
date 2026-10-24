@@ -5,12 +5,15 @@ Promote an item to a full spec (`docs/specs/active/`) when it is scheduled for i
 
 | ID | Type | Area | Summary | Notes |
 |----|------|------|---------|-------|
-| BL-0001 | bug/feature | paywall / base currency | After a base-currency-triggered purchase, the requested currency is not auto-applied | Details below |
+| BL-0001 | bug/feature | paywall / base currency | After a base-currency-triggered purchase, the requested currency is not auto-applied | Resolved in SPEC-0022 |
 | BL-0002 | improvement | billing / backend | Webhook and refresh grant Pro from Test Store / sandbox events | Details below |
 
 ---
 
 ## BL-0001 — Auto-apply requested base currency after paywall purchase
+
+**Status:** resolved in SPEC-0022 (2026-10-24): the settings page applies the code after the
+paywall closes with currencies unlocked; `requestedBaseCurrencyCode` was removed.
 
 **Type:** bug / unfinished feature — **Priority:** low (not release-blocking)
 

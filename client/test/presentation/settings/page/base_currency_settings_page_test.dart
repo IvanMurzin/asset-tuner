@@ -129,6 +129,88 @@ void main() {
 
       expect(openedArgs?.reason, PaywallReason.baseCurrency);
     });
+
+    group('locked currency from the picker (QA-021)', () {
+      late _TestProfileCubit freeProfile;
+
+      setUp(() {
+        freeProfile = _TestProfileCubit(
+          ProfileState(
+            status: ProfileStatus.ready,
+            profile: _profile(baseCode: 'USD', plan: Plan.free, fiatLimit: 5),
+          ),
+        );
+        assetsCubit.emit(
+          assetsCubit.state.copyWith(
+            assets: [
+              ...assetsCubit.state.assets,
+              _asset(
+                id: 'fiat-cad',
+                kind: AssetKind.fiat,
+                code: 'CAD',
+                name: 'Canadian Dollar',
+                isLocked: true,
+              ),
+            ],
+          ),
+        );
+      });
+
+      tearDown(() => freeProfile.close());
+
+      /// A stand-in paywall: "buy" unlocks every currency, "close" leaves the plan as is.
+      Widget fakePaywall(BuildContext context) => Scaffold(
+        body: Column(
+          children: [
+            TextButton(
+              onPressed: () {
+                freeProfile.emit(
+                  ProfileState(
+                    status: ProfileStatus.ready,
+                    profile: _profile(baseCode: 'USD'),
+                  ),
+                );
+                context.pop();
+              },
+              child: const Text('fake-buy'),
+            ),
+            TextButton(onPressed: () => context.pop(), child: const Text('fake-close')),
+          ],
+        ),
+      );
+
+      Future<void> pickLockedCad(WidgetTester tester) async {
+        await _pumpPage(
+          tester,
+          sessionCubit: sessionCubit,
+          profileCubit: freeProfile,
+          assetsCubit: assetsCubit,
+          paywallBuilder: fakePaywall,
+        );
+        await tester.tap(find.byType(AssetCurrencyBadge));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Canadian Dollar'));
+        await tester.pumpAndSettle();
+      }
+
+      testWidgets('buying Pro applies the requested currency', (tester) async {
+        await pickLockedCad(tester);
+        await tester.tap(find.text('fake-buy'));
+        await tester.pumpAndSettle();
+
+        expect(freeProfile.updatedBaseCurrencies, ['CAD']);
+        expect(find.text('CAD'), findsOneWidget);
+      });
+
+      testWidgets('closing the paywall changes nothing', (tester) async {
+        await pickLockedCad(tester);
+        await tester.tap(find.text('fake-close'));
+        await tester.pumpAndSettle();
+
+        expect(freeProfile.updatedBaseCurrencies, isEmpty);
+        expect(find.text('USD'), findsOneWidget);
+      });
+    });
   });
 }
 
@@ -138,6 +220,7 @@ Future<void> _pumpPage(
   required ProfileCubit profileCubit,
   required AssetsCubit assetsCubit,
   ValueChanged<PaywallArgs?>? onPaywallOpened,
+  WidgetBuilder? paywallBuilder,
 }) async {
   final router = GoRouter(
     initialLocation: AppRoutes.baseCurrencySettings,
@@ -158,7 +241,7 @@ Future<void> _pumpPage(
         path: AppRoutes.paywall,
         builder: (context, state) {
           onPaywallOpened?.call(state.extra as PaywallArgs?);
-          return const SizedBox.shrink();
+          return paywallBuilder?.call(context) ?? const SizedBox.shrink();
         },
       ),
     ],
@@ -200,8 +283,10 @@ class _TestProfileCubit extends Cubit<ProfileState> implements ProfileCubit {
   @override
   Future<void> refresh({bool silent = false, bool forceRefresh = false}) async {}
 
+  final updatedBaseCurrencies = <String>[];
+
   @override
-  Future<void> updateBaseCurrency(String code) async {}
+  Future<void> updateBaseCurrency(String code) async => updatedBaseCurrencies.add(code);
 
   @override
   Future<void> syncSubscription({
@@ -236,6 +321,7 @@ AssetEntity _asset({
   required AssetKind kind,
   required String code,
   required String name,
+  bool isLocked = false,
 }) {
   return AssetEntity(
     id: id,
@@ -247,6 +333,6 @@ AssetEntity _asset({
     rank: 1,
     decimals: 2,
     isActive: true,
-    isLocked: false,
+    isLocked: isLocked,
   );
 }

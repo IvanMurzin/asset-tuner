@@ -115,7 +115,7 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                                 setState(() => _selectedCode = asset.code.toUpperCase());
                                 return;
                               }
-                              _openBaseCurrencyPaywall(context, asset.code);
+                              _unlockAndApply(context, asset.code.toUpperCase());
                             },
                           ),
                         ),
@@ -175,7 +175,9 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
     );
   }
 
-  void _openBaseCurrencyPaywall(BuildContext context, String code) {
+  /// Opens the paywall for a locked currency. If currencies are unlocked when it closes (the user
+  /// bought Pro), the requested [code] is applied right away (QA-021).
+  Future<void> _unlockAndApply(BuildContext context, String code) async {
     getIt<AppAnalytics>().log(
       AnalyticsEventName.lockedFeatureTapped,
       parameters: {
@@ -184,9 +186,18 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
         AnalyticsParams.currency: code,
       },
     );
-    context.push(
+    await context.push(
       AppRoutes.paywall,
-      extra: PaywallArgs(reason: PaywallReason.baseCurrency, requestedBaseCurrencyCode: code),
+      extra: const PaywallArgs(reason: PaywallReason.baseCurrency),
     );
+    if (!context.mounted) {
+      return;
+    }
+    final profileCubit = context.read<ProfileCubit>();
+    if (!(profileCubit.state.profile?.entitlements.anyBaseCurrency ?? false)) {
+      return;
+    }
+    setState(() => _selectedCode = code);
+    await profileCubit.updateBaseCurrency(code);
   }
 }

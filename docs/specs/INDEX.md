@@ -23,3 +23,4 @@
 | SPEC-0019 | bug | Resolved | P3 | Analytics Non-Positive Base Rate | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0019-analytics-nonpositive-base-rate.md) |
 | SPEC-0020 | bug | Resolved | P2 | Hide Internal Errors And Harden Secrets | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0020-hide-internal-errors-and-harden-secrets.md) |
 | SPEC-0021 | improvement | Resolved | P3 | Profile Default Base Asset USD | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0021-profile-default-base-asset-usd.md) |
+| SPEC-0022 | bug | Resolved | P3 | Apply Requested Base Currency After Purchase | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0022-apply-requested-base-currency-after-purchase.md) |
