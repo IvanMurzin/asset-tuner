@@ -23,7 +23,7 @@ regression runs.
 | QA-014 | medium | improvement | client/auth | No "forgot password" flow | confirmed-code |
 | QA-015 | low | bug | client | Negative amounts cannot be typed on most Android keyboards | resolved (SPEC-0034), device X1 pending |
 | QA-016 | low | bug | backend | Unchanged-balance check compares text (`0100` vs `100`) | resolved (SPEC-0011, verified 2026-10-04) |
-| QA-017 | low | bug | backend | Plan limits can be exceeded with parallel requests | not-reproduced |
+| QA-017 | low | bug | backend | Plan limits can be exceeded with parallel requests | resolved (SPEC-0035, verified 2026-10-25) |
 | QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | resolved (SPEC-0014, verified 2026-10-04) |
 | QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | resolved (SPEC-0018, verified 2026-10-24) |
 | QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | resolved (SPEC-0012, verified 2026-10-04) |
@@ -47,6 +47,7 @@ regression runs.
 | QA-038 | medium | bug | client/analytics | Breakdown shares add up to 200% when a balance is negative | resolved (SPEC-0033), emulator check pending |
 | QA-039 | low | bug | client | Large amounts lose precision on display (Decimal → double) | resolved (SPEC-0033) |
 | QA-040 | low | bug | client | Unhandled async error when both asset list requests fail | resolved (SPEC-0034) |
+| QA-041 | low | privacy | backend | Account deletion keeps the user's support messages (name, email, text) | resolved (SPEC-0035, verified 2026-10-25) |
 
 ---
 
@@ -376,7 +377,8 @@ regression runs.
 ## QA-017: Plan limits can be exceeded with parallel requests
 - **Severity:** low
 - **Type:** bug
-- **Status:** not-reproduced. Four parallel creates at 4/5 accounts stayed within the limit. This is still possible in theory; keep it low.
+- **Status:** Resolved in SPEC-0035 (verified 2026-10-25 on prod). Create functions take a per-user advisory lock; covered by parallel-create API tests.
+- **Originally:** not-reproduced. Four parallel creates at 4/5 accounts stayed within the limit. This is still possible in theory; keep it low.
 - **Area:** `20260221120003:36-39`, `20260221120000:52-55`, `20260217213006:38-47`
 - **Actual:** the count and the insert are not serialized, so concurrent creates can exceed 5
   accounts, 15 subaccounts or 5 messages per hour.
@@ -693,3 +695,14 @@ regression runs.
 - **Actual:** the crypto request's error is never observed when the fiat request fails first, so it
   is reported as an unhandled exception (a non-fatal in Crashlytics).
 - **Suggested fix:** `Future.wait` both requests.
+
+## QA-041: Account deletion keeps the user's support messages (name, email, text)
+- **Severity:** low
+- **Type:** privacy
+- **Status:** Resolved in SPEC-0035 (verified 2026-10-25 on prod). The foreign key cascades;
+  `support_delete.test.ts` checks it.
+- **Originally:** confirmed-runtime (regression 2026-10-24)
+- **Area:** `public.support_messages`
+- **Actual:** the row stays with `user_id` set to null, while the app says data is permanently
+  deleted.
+- **Suggested fix:** `on delete cascade`.

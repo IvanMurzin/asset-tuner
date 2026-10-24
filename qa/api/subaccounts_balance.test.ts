@@ -203,3 +203,26 @@ Deno.test('balance: account totals reflect subaccounts (archived excluded)', asy
     assertEquals(analyticsTotal, live, `analytics=${analyticsTotal} live=${live}`);
   });
 });
+
+Deno.test('subaccounts: parallel creates cannot exceed the free limit (QA-017)', async () => {
+  await withUsers(1, async (u) => {
+    const usd = await assetByCode(u, 'fiat', 'USD');
+    const account = await createAccount(u);
+    await createSubaccount(u, account.id, usd, '1');
+    const results = await Promise.all(
+      Array.from({ length: 20 }, (_, i) =>
+        api(u.token, 'POST', '/subaccounts/create', {
+          accountId: account.id,
+          assetId: usd.id,
+          name: `P${i}`,
+          initialAmountAtomic: '1',
+          initialAmountDecimals: usd.decimals,
+        })),
+    );
+    const rows = await dbSelect('subaccounts', `user_id=eq.${u.id}&select=id`);
+    assert(
+      rows.length <= 15,
+      `race: ${rows.length} subaccounts on free (statuses ${results.map((r) => r.status)})`,
+    );
+  });
+});

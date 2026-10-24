@@ -41,6 +41,11 @@ Deno.test('delete_my_account: requires confirm and removes the user and data', a
     const usd = await assetByCode(u, 'fiat', 'USD');
     const account = await createAccount(u);
     await createSubaccount(u, account.id, usd, '1');
+    const message = await api<{ id: string }>(u.token, 'POST', '/contact_developer', {
+      name: 'QA',
+      description: 'QA regression message, safe to ignore',
+    });
+    assertEquals(message.status, 200, JSON.stringify(message.raw));
 
     const res = await api(u.token, 'POST', '/delete_my_account', { confirm: true });
     assertEquals(res.status, 200, JSON.stringify(res.raw));
@@ -50,9 +55,10 @@ Deno.test('delete_my_account: requires confirm and removes the user and data', a
 
     const profiles = await dbSelect('profiles', `user_id=eq.${u.id}&select=user_id`);
     const accounts = await dbSelect('accounts', `user_id=eq.${u.id}&select=id`);
+    const messages = await dbSelect('support_messages', `id=eq.${message.data.id}&select=id`);
     assertEquals(
-      { profiles: profiles.length, accounts: accounts.length },
-      { profiles: 0, accounts: 0 },
+      { profiles: profiles.length, accounts: accounts.length, messages: messages.length },
+      { profiles: 0, accounts: 0, messages: 0 },
       'user data survives account deletion (soft delete)',
     );
   }, 'delete');

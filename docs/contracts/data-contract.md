@@ -110,7 +110,7 @@ Unique: `(kind, code)`.
 | Field | Type | Notes |
 |---|---|---|
 | `id` | `uuid` | Primary key. |
-| `user_id` | `uuid` | Nullable, references `auth.users(id)`, set null on delete. |
+| `user_id` | `uuid` | Nullable, references `auth.users(id)`, cascade on delete: messages are removed with the account. |
 | `email` | `text` | Nullable. |
 | `subject` | `text` | Non-empty. |
 | `message` | `text` | Non-empty. |
