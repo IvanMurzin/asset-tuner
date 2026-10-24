@@ -12,7 +12,6 @@ import 'package:asset_tuner/domain/auth/usecase/watch_session_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/entitlements_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/domain/profile/repository/i_profile_repository.dart';
-import 'package:asset_tuner/domain/profile/usecase/ensure_profile_ready_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/refresh_subscription_usecase.dart';
@@ -34,10 +33,7 @@ void main() {
       revenueCatService = _FakeRevenueCatService();
       cubit = ProfileCubit(
         WatchSessionUseCase(authRepository),
-        EnsureProfileReadyUseCase(
-          GetProfileUseCase(profileRepository),
-          UpdateBaseCurrencyUseCase(profileRepository),
-        ),
+        GetProfileUseCase(profileRepository),
         UpdateBaseCurrencyUseCase(profileRepository),
         RefreshSubscriptionUseCase(profileRepository),
         revenueCatService,

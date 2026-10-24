@@ -13,7 +13,7 @@ Enforced by `validate_amount_atomic` (CHECK constraints, RPCs) and the API schem
 |---|---|---|
 | `user_id` | `uuid` | Primary key, references `auth.users(id)`, cascade delete. |
 | `plan` | `text` | `free` or `pro`, default `free`. |
-| `base_asset_id` | `uuid` | Nullable, references `assets(id)`, set null on delete. |
+| `base_asset_id` | `uuid` | Nullable, references `assets(id)`, set null on delete. Defaults to USD (`default_base_asset_id()`). |
 | `revenuecat_app_user_id` | `text` | Nullable. |
 | `created_at` | `timestamptz` | Server timestamp. |
 | `updated_at` | `timestamptz` | Server timestamp. |

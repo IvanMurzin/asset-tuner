@@ -22,3 +22,4 @@
 | SPEC-0018 | bug | Resolved | P3 | History Keyset Cursor | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0018-history-keyset-cursor.md) |
 | SPEC-0019 | bug | Resolved | P3 | Analytics Non-Positive Base Rate | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0019-analytics-nonpositive-base-rate.md) |
 | SPEC-0020 | bug | Resolved | P2 | Hide Internal Errors And Harden Secrets | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0020-hide-internal-errors-and-harden-secrets.md) |
+| SPEC-0021 | improvement | Resolved | P3 | Profile Default Base Asset USD | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0021-profile-default-base-asset-usd.md) |

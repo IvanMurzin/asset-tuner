@@ -36,7 +36,7 @@ regression runs.
 | QA-027 | low | improvement | client | Currency picker is capped at 100 assets per kind, with no pagination | confirmed-code |
 | QA-028 | low | docs | docs | UX and architecture docs disagree with the current app | confirmed-code |
 | QA-029 | info | improvement | backend | Free-plan downgrade keeps accounts and subaccounts above free limits | confirmed-code |
-| QA-030 | info | improvement | backend | New profile has a null base asset; the client fills in USD | confirmed-runtime |
+| QA-030 | info | improvement | backend | New profile has a null base asset; the client fills in USD | resolved (SPEC-0021, verified 2026-10-24) |
 | QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; deferred (codes → ARB refactor) |
 | QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | confirmed-runtime |
 | QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | confirmed-runtime |
@@ -532,7 +532,9 @@ regression runs.
 ## QA-030: New profile has a null base asset; the client fills in USD
 - **Severity:** info
 - **Type:** improvement
-- **Status:** confirmed-runtime (`qa/api/auth_profile.test.ts`)
+- **Status:** Resolved in SPEC-0021 (verified 2026-10-24 on prod). `profiles.base_asset_id`
+  defaults to USD; `EnsureProfileReadyUseCase` removed. `/me` for a new user returns USD.
+- **Originally:** confirmed-runtime (`qa/api/auth_profile.test.ts`)
 - **Area:** `handle_auth_user_created` and `client/lib/domain/profile/usecase/ensure_profile_ready_usecase.dart`
 - **Actual:** the profile trigger creates `base_asset_id = null`. The client then sets USD on first
   launch, which costs one extra request. If the client fails in between, the user runs with a null

@@ -9,7 +9,7 @@ import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/usecase/watch_session_usecase.dart';
 import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
-import 'package:asset_tuner/domain/profile/usecase/ensure_profile_ready_usecase.dart';
+import 'package:asset_tuner/domain/profile/usecase/get_profile_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/update_base_currency_usecase.dart';
 import 'package:asset_tuner/domain/profile/usecase/refresh_subscription_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +24,7 @@ part 'profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit(
     this._watchSession,
-    this._ensureProfileReady,
+    this._getProfile,
     this._updateBaseCurrency,
     this._refreshSubscription,
     this._revenueCatService,
@@ -35,7 +35,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   static const Duration _subscriptionSyncTimeout = Duration(seconds: 30);
 
   final WatchSessionUseCase _watchSession;
-  final EnsureProfileReadyUseCase _ensureProfileReady;
+  final GetProfileUseCase _getProfile;
   final UpdateBaseCurrencyUseCase _updateBaseCurrency;
   final RefreshSubscriptionUseCase _refreshSubscription;
   final RevenueCatService _revenueCatService;
@@ -109,7 +109,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         );
       }
 
-      final result = await _ensureProfileReady();
+      final result = await _getProfile();
       if (isClosed) {
         return;
       }

@@ -34,8 +34,8 @@ Deno.test('profile: /me for a new user is free with free limits', async () => {
     assertEquals(res.data.limits.max_subaccounts, 15);
     assertEquals(res.data.limits.fiat_limit, 5);
     assertEquals(res.data.limits.crypto_limit, 5);
-    // Backend leaves base asset empty; the client's EnsureProfileReadyUseCase sets USD.
-    assertEquals(res.data.profile.base_asset_id, null);
+    // New profiles start with USD as the base asset (column default).
+    assertEquals(res.data.baseAsset?.code, 'USD');
   });
 });
 
