@@ -30,7 +30,7 @@ regression runs.
 | QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | confirmed-code |
 | QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | confirmed-runtime |
 | QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | confirmed-runtime |
-| QA-024 | low | bug | backend | Analytics divides by zero when the base asset rate is `0` | confirmed-code |
+| QA-024 | low | bug | backend | Analytics divides by zero when the base asset rate is `0` | resolved (SPEC-0019, verified 2026-10-24) |
 | QA-025 | low | security | backend | Unmapped DB errors return raw Postgres message, details, and hint | confirmed-code |
 | QA-026 | low | improvement | billing | 5-minute subscription sync cooldown delays renewal and expiry in the UI | confirmed-code |
 | QA-027 | low | improvement | client | Currency picker is capped at 100 assets per kind, with no pagination | confirmed-code |
@@ -446,7 +446,9 @@ regression runs.
 ## QA-024: Analytics divides by zero when the base asset rate is `0`
 - **Severity:** low
 - **Type:** bug
-- **Status:** confirmed-code. It only happens if a zero rate reaches the database; rates_sync
+- **Status:** Resolved in SPEC-0019 (applied 2026-10-24 on prod). A base price of 0 or below is
+  treated as missing (null values) instead of being used as a divisor.
+- **Originally:** confirmed-code. It only happens if a zero rate reaches the database; rates_sync
   skips rates of 0 or below.
 - **Area:** `backend/supabase/migrations/20260421183000_api_analytics_summary.sql:55-62`, `:118`, `:193`
 - **Suggested fix:** treat a base price of 0 or below like null, as `api_list_accounts` already
