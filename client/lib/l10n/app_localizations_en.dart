@@ -124,6 +124,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationPasswordRule => 'Use at least 6 characters with letters and numbers.';
 
   @override
+  String get validationConfirmPasswordRequired => 'Confirm your password.';
+
+  @override
   String get validationPasswordMismatch => 'Passwords do not match.';
 
   @override
@@ -742,6 +745,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get paywallStoreUnavailableBody =>
       'Purchases aren\'t available on this device. Make sure you\'re signed in to your store account (Google Play or App Store) and try again.';
+
+  @override
+  String get paywallClose => 'Close';
 
   @override
   String get paywallRestore => 'Restore';

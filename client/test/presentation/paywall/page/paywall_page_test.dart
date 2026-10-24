@@ -164,6 +164,7 @@ void main() {
 
       expect(find.text('profile failed'), findsOneWidget);
       expect(find.text('Restore'), findsNothing);
+      expect(find.bySemanticsLabel('Close'), findsOneWidget);
       await tester.tap(find.byIcon(Icons.close_rounded));
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));

@@ -2,7 +2,7 @@ part of 'sign_up_cubit.dart';
 
 enum SignUpStatus { idle, loading, otpSent }
 
-enum SignUpFieldError { invalidEmail, weakPassword, mismatch }
+enum SignUpFieldError { invalidEmail, weakPassword, confirmRequired, mismatch }
 
 enum SignUpBannerType { success, failure }
 

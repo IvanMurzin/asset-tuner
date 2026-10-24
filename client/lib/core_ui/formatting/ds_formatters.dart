@@ -30,9 +30,15 @@ class DSFormatters {
     );
   }
 
-  /// Returns "amount currency" (e.g. "1 234.56 USD").
+  /// Returns "amount currency" with at least two fraction digits (e.g. "1 234.50 USD"; an asset
+  /// quantity with a larger [maximumFractionDigits] keeps its precision: "0.0125 BTC").
   String formatMoney(Decimal amount, String currency, {int maximumFractionDigits = 2}) {
-    return '${formatDecimalFromDecimal(amount, maximumFractionDigits: maximumFractionDigits)} $currency';
+    final formatted = formatDecimalFromDecimal(
+      amount,
+      minimumFractionDigits: maximumFractionDigits < 2 ? maximumFractionDigits : 2,
+      maximumFractionDigits: maximumFractionDigits,
+    );
+    return '$formatted $currency';
   }
 
   String formatDate(DateTime value) {

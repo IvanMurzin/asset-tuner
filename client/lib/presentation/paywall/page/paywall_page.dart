@@ -144,6 +144,7 @@ class _PaywallViewState extends State<_PaywallView> {
         ),
       ],
       child: PaywallScaffold(
+        closeLabel: l10n.paywallClose,
         restoreLabel: l10n.paywallRestore,
         isBusy: paywall.isBusy,
         onClose: () => cubit.dismiss(logAnalytics: false),

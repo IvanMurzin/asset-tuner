@@ -6,9 +6,9 @@ class DSHistoryEntryCard extends StatelessWidget {
     super.key,
     required this.dateText,
     this.subtitleText,
-    required this.deltaText,
+    this.deltaText,
     required this.deltaColor,
-    required this.baseLineText,
+    this.baseLineText,
     this.trailingTitle,
     this.trailingPrimaryText,
     this.trailingSecondaryText,
@@ -17,9 +17,13 @@ class DSHistoryEntryCard extends StatelessWidget {
 
   final String dateText;
   final String? subtitleText;
-  final String deltaText;
+
+  /// Null hides the change line (e.g. the first entry has nothing to compare with).
+  final String? deltaText;
   final Color deltaColor;
-  final String baseLineText;
+
+  /// Null hides the converted change line.
+  final String? baseLineText;
   final String? trailingTitle;
   final String? trailingPrimaryText;
   final String? trailingSecondaryText;
@@ -59,17 +63,19 @@ class DSHistoryEntryCard extends StatelessWidget {
                     style: typography.caption.copyWith(color: colors.textSecondary),
                   ),
                 ],
-                if (!showDeltaOnTrailing) ...[
+                if (!showDeltaOnTrailing && deltaText != null) ...[
                   SizedBox(height: spacing.s4),
                   Text(
-                    deltaText,
+                    deltaText!,
                     style: typography.body.copyWith(color: deltaColor, fontWeight: FontWeight.w700),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                ],
+                if (!showDeltaOnTrailing && baseLineText != null) ...[
                   const SizedBox(height: 2),
                   Text(
-                    baseLineText,
+                    baseLineText!,
                     style: typography.caption.copyWith(color: deltaColor),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -84,17 +90,23 @@ class DSHistoryEntryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 if (showDeltaOnTrailing) ...[
-                  Text(
-                    deltaText,
-                    textAlign: TextAlign.right,
-                    style: typography.body.copyWith(color: deltaColor, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    baseLineText,
-                    textAlign: TextAlign.right,
-                    style: typography.caption.copyWith(color: deltaColor),
-                  ),
+                  if (deltaText != null)
+                    Text(
+                      deltaText!,
+                      textAlign: TextAlign.right,
+                      style: typography.body.copyWith(
+                        color: deltaColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  if (baseLineText != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      baseLineText!,
+                      textAlign: TextAlign.right,
+                      style: typography.caption.copyWith(color: deltaColor),
+                    ),
+                  ],
                 ] else if (trailingTitle != null) ...[
                   Text(
                     trailingTitle!,

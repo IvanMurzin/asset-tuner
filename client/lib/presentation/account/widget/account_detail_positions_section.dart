@@ -166,12 +166,15 @@ class _PositionCard extends StatelessWidget {
                   textAlign: TextAlign.right,
                   style: typography.h3.copyWith(fontWeight: FontWeight.w700),
                 ),
-                SizedBox(height: spacing.s4),
-                Text(
-                  originalText,
-                  textAlign: TextAlign.right,
-                  style: typography.body.copyWith(color: colors.textSecondary),
-                ),
+                // An asset held in the base currency has nothing to convert.
+                if (item.assetCode.toUpperCase() != baseCurrency.toUpperCase()) ...[
+                  SizedBox(height: spacing.s4),
+                  Text(
+                    originalText,
+                    textAlign: TextAlign.right,
+                    style: typography.body.copyWith(color: colors.textSecondary),
+                  ),
+                ],
               ],
             ),
           ],

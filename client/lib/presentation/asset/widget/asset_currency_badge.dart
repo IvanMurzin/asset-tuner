@@ -76,7 +76,7 @@ class AssetCurrencyBadge extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(radius.r8),
-            onTap: enabled ? () => _openSheet(context) : null,
+            onTap: enabled ? () => openPicker(context) : null,
             child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 36),
               child: Padding(
@@ -124,7 +124,9 @@ class AssetCurrencyBadge extends StatelessWidget {
     );
   }
 
-  Future<void> _openSheet(BuildContext context) async {
+  /// Opens the currency picker with this badge's configuration; lets a surrounding card act as a
+  /// larger tap target for the same picker.
+  Future<void> openPicker(BuildContext context) async {
     final assetsCubit = context.read<AssetsCubit>();
     final result = await showGeneralDialog<_AssetSelectionResult>(
       context: context,

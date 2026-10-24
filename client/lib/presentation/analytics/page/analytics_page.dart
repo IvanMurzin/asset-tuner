@@ -260,10 +260,11 @@ class _BreakdownCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Text(
-              '$originalText ${item.assetCode}',
-              style: typography.caption.copyWith(color: colors.textSecondary),
-            ),
+            if (item.assetCode.toUpperCase() != currency.toUpperCase())
+              Text(
+                '$originalText ${item.assetCode}',
+                style: typography.caption.copyWith(color: colors.textSecondary),
+              ),
           ],
         ),
         SizedBox(height: spacing.s4),

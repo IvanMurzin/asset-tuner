@@ -125,6 +125,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get validationPasswordRule => 'Используйте минимум 6 символов, буквы и цифры.';
 
   @override
+  String get validationConfirmPasswordRequired => 'Повторите пароль.';
+
+  @override
   String get validationPasswordMismatch => 'Пароли не совпадают.';
 
   @override
@@ -747,6 +750,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get paywallStoreUnavailableBody =>
       'Покупки на этом устройстве недоступны. Убедитесь, что вы вошли в аккаунт магазина (Google Play или App Store), и попробуйте снова.';
+
+  @override
+  String get paywallClose => 'Закрыть';
 
   @override
   String get paywallRestore => 'Восстановить';

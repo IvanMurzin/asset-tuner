@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class PaywallScaffold extends StatelessWidget {
   const PaywallScaffold({
     super.key,
+    required this.closeLabel,
     required this.restoreLabel,
     required this.isBusy,
     required this.onClose,
@@ -13,6 +14,7 @@ class PaywallScaffold extends StatelessWidget {
     required this.body,
   });
 
+  final String closeLabel;
   final String restoreLabel;
   final bool isBusy;
   final VoidCallback onClose;
@@ -33,6 +35,7 @@ class PaywallScaffold extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               PaywallHeader(
+                closeLabel: closeLabel,
                 restoreLabel: restoreLabel,
                 isBusy: isBusy,
                 onClose: onClose,

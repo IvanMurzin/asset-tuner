@@ -121,15 +121,21 @@ class _HistoryEntryCard extends StatelessWidget {
     final snapshotBase = convertedSnapshot == null
         ? l10n.unpriced
         : context.dsFormatters.formatMoney(convertedSnapshot, baseCurrency);
+    // An asset held in the base currency has nothing to convert.
+    final showBase = code.toUpperCase() != baseCurrency.toUpperCase();
+    // The first entry has nothing to compare with, so it has no change lines.
+    final hasChange = diff != null;
     return DSHistoryEntryCard(
       dateText: context.dsFormatters.formatDateTime(entry.entryDate),
-      subtitleText: l10n.balanceEntryImpliedDeltaLabel,
-      deltaText: _assetDeltaText(context, diff, code, l10n),
+      subtitleText: hasChange ? l10n.balanceEntryImpliedDeltaLabel : null,
+      deltaText: hasChange ? _assetDeltaText(context, diff, code) : null,
       deltaColor: deltaColor,
-      baseLineText: _baseDeltaText(context, convertedDiff, baseCurrency),
+      baseLineText: hasChange && showBase && convertedDiff != null
+          ? _baseDeltaText(context, convertedDiff, baseCurrency)
+          : null,
       trailingTitle: l10n.balanceEntrySnapshot,
       trailingPrimaryText: snapshotAsset,
-      trailingSecondaryText: snapshotBase,
+      trailingSecondaryText: showBase ? snapshotBase : null,
     );
   }
 
@@ -143,20 +149,14 @@ class _HistoryEntryCard extends StatelessWidget {
     return divideToDecimal(converted, current);
   }
 
-  String _assetDeltaText(BuildContext context, Decimal? diff, String code, AppLocalizations l10n) {
-    if (diff == null) {
-      return '-';
-    }
+  String _assetDeltaText(BuildContext context, Decimal diff, String code) {
     final trimmed = (assetCode ?? '').trim();
     return trimmed.isEmpty
         ? _signed(context, diff, digits: 8)
         : '${_signed(context, diff, digits: 8)} $code';
   }
 
-  String _baseDeltaText(BuildContext context, Decimal? diff, String baseCurrency) {
-    if (diff == null) {
-      return '-';
-    }
+  String _baseDeltaText(BuildContext context, Decimal diff, String baseCurrency) {
     return '${_signed(context, diff, digits: 2)} $baseCurrency';
   }
 

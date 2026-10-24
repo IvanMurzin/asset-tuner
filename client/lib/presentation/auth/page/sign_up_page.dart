@@ -172,6 +172,7 @@ class SignUpPage extends StatelessWidget {
 
   String? _confirmErrorText(AppLocalizations l10n, SignUpFieldError? error) {
     return switch (error) {
+      SignUpFieldError.confirmRequired => l10n.validationConfirmPasswordRequired,
       SignUpFieldError.mismatch => l10n.validationPasswordMismatch,
       _ => null,
     };

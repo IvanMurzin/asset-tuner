@@ -8,11 +8,15 @@ class DSBaseCurrencyValueCard extends StatelessWidget {
     required this.title,
     required this.caption,
     this.trailing,
+    this.onTap,
   });
 
   final String title;
   final String caption;
   final Widget? trailing;
+
+  /// Makes the whole card tappable (e.g. opens the same picker as [trailing]).
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,7 @@ class DSBaseCurrencyValueCard extends StatelessWidget {
     final spacing = context.dsSpacing;
     final typography = context.dsTypography;
 
-    return DSCard(
+    final card = DSCard(
       padding: EdgeInsets.all(spacing.s12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,6 +52,17 @@ class DSBaseCurrencyValueCard extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+    if (onTap == null) {
+      return card;
+    }
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(context.dsRadius.r12),
+        onTap: onTap,
+        child: card,
       ),
     );
   }

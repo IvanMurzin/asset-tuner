@@ -7,7 +7,7 @@ void showDSSnackBar(
   BuildContext context, {
   required DSSnackBarVariant variant,
   required String message,
-  Duration duration = const Duration(seconds: 4),
+  Duration? duration,
 }) {
   final colors = context.dsColors;
   final spacing = context.dsSpacing;
@@ -42,7 +42,12 @@ void showDSSnackBar(
       behavior: SnackBarBehavior.floating,
       margin: EdgeInsets.fromLTRB(spacing.s16, spacing.s8, spacing.s16, spacing.s24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius.r12)),
-      duration: duration,
+      // Errors stay longer: they usually need reading, not a glance.
+      duration:
+          duration ??
+          (variant == DSSnackBarVariant.error
+              ? const Duration(seconds: 6)
+              : const Duration(seconds: 4)),
     ),
   );
 }

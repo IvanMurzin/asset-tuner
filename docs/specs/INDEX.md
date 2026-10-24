@@ -25,3 +25,4 @@
 | SPEC-0021 | improvement | Resolved | P3 | Profile Default Base Asset USD | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0021-profile-default-base-asset-usd.md) |
 | SPEC-0022 | bug | Resolved | P3 | Apply Requested Base Currency After Purchase | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0022-apply-requested-base-currency-after-purchase.md) |
 | SPEC-0023 | bug | Resolved | P3 | Paywall Store Unavailable | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0023-paywall-store-unavailable.md) |
+| SPEC-0024 | improvement | Resolved | P3 | UX Polish From Emulator Pass | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0024-ux-polish-from-emulator-pass.md) |

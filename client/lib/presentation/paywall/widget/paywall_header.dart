@@ -4,12 +4,14 @@ import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 class PaywallHeader extends StatelessWidget {
   const PaywallHeader({
     super.key,
+    required this.closeLabel,
     required this.restoreLabel,
     this.onClose,
     this.onRestore,
     this.isBusy = false,
   });
 
+  final String closeLabel;
   final String restoreLabel;
   final VoidCallback? onClose;
 
@@ -25,7 +27,7 @@ class PaywallHeader extends StatelessWidget {
 
     return Row(
       children: [
-        _CloseAction(isBusy: isBusy, onTap: onClose),
+        _CloseAction(label: closeLabel, isBusy: isBusy, onTap: onClose),
         const Spacer(),
         if (onRestore != null)
           TextButton(
@@ -49,8 +51,9 @@ class PaywallHeader extends StatelessWidget {
 }
 
 class _CloseAction extends StatelessWidget {
-  const _CloseAction({required this.isBusy, required this.onTap});
+  const _CloseAction({required this.label, required this.isBusy, required this.onTap});
 
+  final String label;
   final bool isBusy;
   final VoidCallback? onTap;
 
@@ -61,21 +64,27 @@ class _CloseAction extends StatelessWidget {
 
     final isEnabled = !isBusy && onTap != null;
 
-    return InkResponse(
-      radius: 20,
-      onTap: isEnabled ? onTap : null,
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(radius.r12),
-          border: Border.all(color: colors.border),
-        ),
-        alignment: Alignment.center,
-        child: Icon(
-          Icons.close_rounded,
-          color: isEnabled ? colors.textSecondary : colors.textTertiary,
+    return Semantics(
+      button: true,
+      enabled: isEnabled,
+      label: label,
+      excludeSemantics: true,
+      child: InkResponse(
+        radius: 20,
+        onTap: isEnabled ? onTap : null,
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(radius.r12),
+            border: Border.all(color: colors.border),
+          ),
+          alignment: Alignment.center,
+          child: Icon(
+            Icons.close_rounded,
+            color: isEnabled ? colors.textSecondary : colors.textTertiary,
+          ),
         ),
       ),
     );

@@ -315,6 +315,12 @@ abstract class AppLocalizations {
   /// **'Use at least 6 characters with letters and numbers.'**
   String get validationPasswordRule;
 
+  /// No description provided for @validationConfirmPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your password.'**
+  String get validationConfirmPasswordRequired;
+
   /// No description provided for @validationPasswordMismatch.
   ///
   /// In en, this message translates to:
@@ -1508,6 +1514,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Purchases aren\'t available on this device. Make sure you\'re signed in to your store account (Google Play or App Store) and try again.'**
   String get paywallStoreUnavailableBody;
+
+  /// No description provided for @paywallClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get paywallClose;
 
   /// No description provided for @paywallRestore.
   ///

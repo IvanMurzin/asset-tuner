@@ -38,7 +38,7 @@ regression runs.
 | QA-029 | info | improvement | backend | Free-plan downgrade keeps accounts and subaccounts above free limits | confirmed-code |
 | QA-030 | info | improvement | backend | New profile has a null base asset; the client fills in USD | resolved (SPEC-0021, verified 2026-10-24) |
 | QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; deferred (codes → ARB refactor) |
-| QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | confirmed-runtime |
+| QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | resolved (SPEC-0024), emulator check pending |
 | QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | resolved (SPEC-0023), emulator check pending |
 | QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | confirmed-runtime |
 
@@ -582,7 +582,9 @@ regression runs.
 ## QA-033: Small UX and accessibility polish from the emulator pass
 - **Severity:** low
 - **Type:** ux
-- **Status:** confirmed-runtime
+- **Status:** Resolved in SPEC-0024 (2026-10-24), emulator check pending. All nine items addressed
+  in the shared DS components or their single call sites; covered by unit and widget tests.
+- **Originally:** confirmed-runtime
 - **Items:**
   1. The paywall close (X) button has no accessibility label, so it is empty in the semantics tree.
   2. Sign up submitted empty shows errors for email and password but not for Confirm password.

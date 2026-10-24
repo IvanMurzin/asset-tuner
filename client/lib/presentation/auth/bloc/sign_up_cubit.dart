@@ -177,14 +177,18 @@ class SignUpCubit extends Cubit<SignUpState> {
     final email = state.email.trim();
     final emailValid = AuthFormValidators.isValidEmail(email);
     final passwordValid = AuthFormValidators.isValidPassword(state.password);
-    final confirmValid = state.password == state.confirmPassword;
+    final confirmError = state.confirmPassword.isEmpty
+        ? SignUpFieldError.confirmRequired
+        : state.password != state.confirmPassword
+        ? SignUpFieldError.mismatch
+        : null;
 
-    if (!emailValid || !passwordValid || !confirmValid) {
+    if (!emailValid || !passwordValid || confirmError != null) {
       emit(
         state.copyWith(
           emailError: emailValid ? null : SignUpFieldError.invalidEmail,
           passwordError: passwordValid ? null : SignUpFieldError.weakPassword,
-          confirmPasswordError: confirmValid ? null : SignUpFieldError.mismatch,
+          confirmPasswordError: confirmError,
         ),
       );
       return false;

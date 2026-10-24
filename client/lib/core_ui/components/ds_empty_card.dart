@@ -22,6 +22,23 @@ class DSEmptyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = context.dsRadius;
+
+    // The whole card is one action: a tap anywhere and a screen reader both reach [onAction].
+    return Semantics(
+      button: true,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(radius.r16),
+          onTap: onAction,
+          child: _content(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _content(BuildContext context) {
     final colors = context.dsColors;
     final spacing = context.dsSpacing;
     final typography = context.dsTypography;

@@ -66,6 +66,40 @@ void main() {
       expect(cubit.state.bannerType, isNull);
       await cubit.close();
     });
+
+    test('empty submit flags every field, confirm password included (QA-033)', () async {
+      final cubit = SignUpCubit.testing(
+        signUpUseCase,
+        oAuthUseCase,
+        providersUseCase,
+        analytics,
+        isOtpEnabled: false,
+      );
+
+      await cubit.submit();
+
+      expect(cubit.state.emailError, SignUpFieldError.invalidEmail);
+      expect(cubit.state.passwordError, SignUpFieldError.weakPassword);
+      expect(cubit.state.confirmPasswordError, SignUpFieldError.confirmRequired);
+      await cubit.close();
+    });
+
+    test('a different confirmation is a mismatch', () async {
+      final cubit = SignUpCubit.testing(
+        signUpUseCase,
+        oAuthUseCase,
+        providersUseCase,
+        analytics,
+        isOtpEnabled: false,
+      );
+      cubit.updatePassword('Password123!');
+      cubit.updateConfirmPassword('Password124!');
+
+      await cubit.submit();
+
+      expect(cubit.state.confirmPasswordError, SignUpFieldError.mismatch);
+      await cubit.close();
+    });
   });
 }
 

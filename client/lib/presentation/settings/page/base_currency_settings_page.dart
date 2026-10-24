@@ -81,6 +81,29 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                 );
               }
 
+              final badge = AssetCurrencyBadge(
+                currencyType: CurrencyType.fiat,
+                selectedSlug: (_selectedCode ?? profile.baseCurrency).toUpperCase(),
+                sheetTitleText: l10n.baseCurrencySettingsPickerTitle,
+                placeholderText: l10n.subaccountCurrencyLabel,
+                searchHintText: l10n.baseCurrencySettingsSearchHint,
+                fiatTabText: l10n.assetKindFiat,
+                cryptoTabText: l10n.assetKindCrypto,
+                emptyResultsTitle: l10n.currencyPickerNoResultsTitle,
+                emptyResultsMessage: l10n.currencyPickerNoResultsBody,
+                enabled: !profileState.isUpdatingBaseCurrency,
+                onSelected: (asset) {
+                  setState(() => _selectedCode = asset.code.toUpperCase());
+                },
+                onLocked: (asset) {
+                  if (profile.entitlements.anyBaseCurrency) {
+                    setState(() => _selectedCode = asset.code.toUpperCase());
+                    return;
+                  }
+                  _unlockAndApply(context, asset.code.toUpperCase());
+                },
+              );
+
               return Scaffold(
                 appBar: DSAppBar(title: l10n.baseCurrencySettingsTitle),
                 body: SafeArea(
@@ -96,28 +119,10 @@ class _BaseCurrencySettingsPageState extends State<BaseCurrencySettingsPage> {
                         DSBaseCurrencyValueCard(
                           title: l10n.baseCurrencySettingsCurrentTitle,
                           caption: l10n.baseCurrencySettingsCurrentBody,
-                          trailing: AssetCurrencyBadge(
-                            currencyType: CurrencyType.fiat,
-                            selectedSlug: (_selectedCode ?? profile.baseCurrency).toUpperCase(),
-                            sheetTitleText: l10n.baseCurrencySettingsPickerTitle,
-                            placeholderText: l10n.subaccountCurrencyLabel,
-                            searchHintText: l10n.baseCurrencySettingsSearchHint,
-                            fiatTabText: l10n.assetKindFiat,
-                            cryptoTabText: l10n.assetKindCrypto,
-                            emptyResultsTitle: l10n.currencyPickerNoResultsTitle,
-                            emptyResultsMessage: l10n.currencyPickerNoResultsBody,
-                            enabled: !profileState.isUpdatingBaseCurrency,
-                            onSelected: (asset) {
-                              setState(() => _selectedCode = asset.code.toUpperCase());
-                            },
-                            onLocked: (asset) {
-                              if (profile.entitlements.anyBaseCurrency) {
-                                setState(() => _selectedCode = asset.code.toUpperCase());
-                                return;
-                              }
-                              _unlockAndApply(context, asset.code.toUpperCase());
-                            },
-                          ),
+                          trailing: badge,
+                          onTap: profileState.isUpdatingBaseCurrency
+                              ? null
+                              : () => badge.openPicker(context),
                         ),
                         SizedBox(height: spacing.s24),
                         const BaseCurrencyHowSection(),

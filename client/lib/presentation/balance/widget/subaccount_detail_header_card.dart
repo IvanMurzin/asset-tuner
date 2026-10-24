@@ -98,8 +98,11 @@ class SubaccountDetailHeaderCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(assetText, style: typography.h2.copyWith(fontWeight: FontWeight.w700)),
-          SizedBox(height: spacing.s4),
-          Text(convertedText, style: typography.body.copyWith(color: colors.textSecondary)),
+          // An asset held in the base currency has nothing to convert.
+          if (assetCode?.toUpperCase() != baseCurrency.toUpperCase()) ...[
+            SizedBox(height: spacing.s4),
+            Text(convertedText, style: typography.body.copyWith(color: colors.textSecondary)),
+          ],
           SizedBox(height: spacing.s8),
           Text(
             ratesAsOf == null
