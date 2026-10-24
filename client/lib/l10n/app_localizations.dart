@@ -1497,6 +1497,30 @@ abstract class AppLocalizations {
   /// **'Couldn\'t verify subscription; try again.'**
   String get paywallEntitlementsError;
 
+  /// No description provided for @paywallReasonUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the complete app with Pro.'**
+  String get paywallReasonUpgrade;
+
+  /// No description provided for @paywallReasonSubaccountCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro unlocks every currency for subaccounts.'**
+  String get paywallReasonSubaccountCurrency;
+
+  /// No description provided for @paywallPurchaseError.
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase didn\'t go through. Try again.'**
+  String get paywallPurchaseError;
+
+  /// No description provided for @paywallRestoreError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t restore purchases. Try again.'**
+  String get paywallRestoreError;
+
   /// No description provided for @paywallPaymentPending.
   ///
   /// In en, this message translates to:

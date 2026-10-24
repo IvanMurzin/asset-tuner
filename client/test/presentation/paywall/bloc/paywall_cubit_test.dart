@@ -121,12 +121,19 @@ void main() {
       expect(cubit.state.failureCode, isNull);
     });
 
-    test('other store errors → ready with the store message', () async {
+    test('other store errors → ready with our own copy, not the store text (QA-032)', () async {
       await purchaseFailingWith(PurchasesErrorCode.storeProblemError);
 
       expect(cubit.state.status, PaywallStatus.ready);
       expect(cubit.state.failureCode, 'paywall_purchase');
-      expect(cubit.state.failureMessage, 'store says no');
+      expect(cubit.state.failureMessage, isNull);
+    });
+
+    test('network errors → ready with the network code', () async {
+      await purchaseFailingWith(PurchasesErrorCode.networkError);
+
+      expect(cubit.state.status, PaywallStatus.ready);
+      expect(cubit.state.failureCode, 'network');
     });
   });
 }

@@ -27,6 +27,8 @@ class PaywallCubit extends Cubit<PaywallState> {
     PaywallReason.subaccountsLimit => 'subaccounts_limit',
     PaywallReason.baseCurrency => 'base_currency',
     PaywallReason.manageSubscription => 'manage_subscription',
+    PaywallReason.upgrade => 'upgrade',
+    PaywallReason.subaccountCurrency => 'subaccount_currency',
   };
 
   String get _placement => switch (_args.reason) {
@@ -131,11 +133,12 @@ class PaywallCubit extends Cubit<PaywallState> {
       _emitIfActive(switch (code) {
         PurchasesErrorCode.paymentPendingError => state.copyWith(status: PaywallStatus.pending),
         PurchasesErrorCode.purchaseCancelledError => state.copyWith(status: PaywallStatus.ready),
-        _ => state.copyWith(
+        // Store messages are English SDK text, so the page shows its own copy (QA-032).
+        PurchasesErrorCode.networkError => state.copyWith(
           status: PaywallStatus.ready,
-          failureCode: 'paywall_purchase',
-          failureMessage: error.message,
+          failureCode: 'network',
         ),
+        _ => state.copyWith(status: PaywallStatus.ready, failureCode: 'paywall_purchase'),
       });
     } catch (_) {
       _analytics.log(

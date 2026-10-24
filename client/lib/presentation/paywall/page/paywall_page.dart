@@ -78,6 +78,9 @@ class _PaywallViewState extends State<_PaywallView> {
     final l10n = AppLocalizations.of(context)!;
     final message = switch (state.failureCode) {
       'paywall_sync_not_pro' => l10n.paywallEntitlementsError,
+      'paywall_purchase' => l10n.paywallPurchaseError,
+      'paywall_restore' => l10n.paywallRestoreError,
+      'network' => l10n.errorNetwork,
       _ => state.failureMessage ?? l10n.errorGeneric,
     };
     logger.e('Paywall error: ${state.failureCode}');
@@ -91,6 +94,8 @@ class _PaywallViewState extends State<_PaywallView> {
       PaywallReason.subaccountsLimit => l10n.paywallReasonSubaccounts,
       PaywallReason.baseCurrency => l10n.paywallReasonBaseCurrency,
       PaywallReason.manageSubscription => l10n.paywallReasonManageSubscription,
+      PaywallReason.upgrade => l10n.paywallReasonUpgrade,
+      PaywallReason.subaccountCurrency => l10n.paywallReasonSubaccountCurrency,
     };
   }
 

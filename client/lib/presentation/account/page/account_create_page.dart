@@ -88,8 +88,11 @@ class _AccountCreatePageState extends State<AccountCreatePage> {
             },
           ),
           BlocListener<AccountCreateCubit, AccountCreateState>(
+            // Limit failures open the paywall instead (QA-023).
             listenWhen: (prev, curr) =>
-                prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+                prev.failureMessage != curr.failureMessage &&
+                curr.failureMessage != null &&
+                !(curr.failureCode?.startsWith('limit_') ?? false),
             listener: (context, state) {
               logger.e('Account create failed: ${state.failureCode}');
               showDSSnackBar(

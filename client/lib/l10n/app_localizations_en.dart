@@ -736,6 +736,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallEntitlementsError => 'Couldn\'t verify subscription; try again.';
 
   @override
+  String get paywallReasonUpgrade => 'Unlock the complete app with Pro.';
+
+  @override
+  String get paywallReasonSubaccountCurrency => 'Pro unlocks every currency for subaccounts.';
+
+  @override
+  String get paywallPurchaseError => 'The purchase didn\'t go through. Try again.';
+
+  @override
+  String get paywallRestoreError => 'Couldn\'t restore purchases. Try again.';
+
+  @override
   String get paywallPaymentPending =>
       'Payment is processing. Pro will turn on automatically once it completes.';
 

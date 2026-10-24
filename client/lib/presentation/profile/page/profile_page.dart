@@ -15,6 +15,7 @@ import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
+import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/profile/bloc/profile_cubit.dart';
 import 'package:asset_tuner/presentation/profile/widget/profile_header_card.dart';
 import 'package:asset_tuner/presentation/profile/widget/profile_language_selector.dart';
@@ -144,7 +145,10 @@ class ProfilePage extends StatelessWidget {
                                     AnalyticsParams.placement: 'profile_header',
                                   },
                                 );
-                                await context.push(AppRoutes.paywall);
+                                await context.push(
+                                  AppRoutes.paywall,
+                                  extra: const PaywallArgs(reason: PaywallReason.upgrade),
+                                );
                               }
                               if (context.mounted) {
                                 await context.read<ProfileCubit>().syncSubscription(

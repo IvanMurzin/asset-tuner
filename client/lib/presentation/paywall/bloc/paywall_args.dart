@@ -1,4 +1,12 @@
-enum PaywallReason { onboarding, accountsLimit, subaccountsLimit, baseCurrency, manageSubscription }
+enum PaywallReason {
+  onboarding,
+  accountsLimit,
+  subaccountsLimit,
+  baseCurrency,
+  manageSubscription,
+  upgrade,
+  subaccountCurrency,
+}
 
 class PaywallArgs {
   const PaywallArgs({required this.reason});

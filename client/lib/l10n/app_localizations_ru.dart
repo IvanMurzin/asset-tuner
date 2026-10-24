@@ -741,6 +741,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallEntitlementsError => 'Не удалось проверить подписку. Попробуйте снова.';
 
   @override
+  String get paywallReasonUpgrade => 'Откройте все возможности приложения с Pro.';
+
+  @override
+  String get paywallReasonSubaccountCurrency => 'Pro открывает все валюты для позиций.';
+
+  @override
+  String get paywallPurchaseError => 'Покупка не прошла. Попробуйте ещё раз.';
+
+  @override
+  String get paywallRestoreError => 'Не удалось восстановить покупки. Попробуйте ещё раз.';
+
+  @override
   String get paywallPaymentPending =>
       'Платёж обрабатывается. Pro включится автоматически, как только он пройдёт.';
 

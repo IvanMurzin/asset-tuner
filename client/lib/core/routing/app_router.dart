@@ -351,7 +351,7 @@ GoRouter buildAppRouter({
         pageBuilder: (context, state) {
           final args = state.extra is PaywallArgs
               ? state.extra as PaywallArgs
-              : const PaywallArgs(reason: PaywallReason.baseCurrency);
+              : const PaywallArgs(reason: PaywallReason.upgrade);
           return slideTransition(context, state, PaywallPage(args: args));
         },
       ),

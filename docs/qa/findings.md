@@ -28,8 +28,8 @@ regression runs.
 | QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | resolved (SPEC-0018, verified 2026-10-24) |
 | QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | resolved (SPEC-0012, verified 2026-10-04) |
 | QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | resolved (SPEC-0022), emulator check pending |
-| QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | confirmed-runtime |
-| QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | confirmed-runtime |
+| QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | resolved (SPEC-0032), emulator check pending |
+| QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | resolved (SPEC-0032), emulator check pending |
 | QA-024 | low | bug | backend | Analytics divides by zero when the base asset rate is `0` | resolved (SPEC-0019, verified 2026-10-24) |
 | QA-025 | low | security | backend | Unmapped DB errors return raw Postgres message, details, and hint | resolved (SPEC-0020, verified 2026-10-24) |
 | QA-026 | low | improvement | billing | 5-minute subscription sync cooldown delays renewal and expiry in the UI | confirmed-code |
@@ -37,7 +37,7 @@ regression runs.
 | QA-028 | low | docs | docs | UX and architecture docs disagree with the current app | resolved (SPEC-0025, 2026-10-24) |
 | QA-029 | info | improvement | backend | Free-plan downgrade keeps accounts and subaccounts above free limits | accepted as designed (2026-10-24) |
 | QA-030 | info | improvement | backend | New profile has a null base asset; the client fills in USD | resolved (SPEC-0021, verified 2026-10-24) |
-| QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; deferred (codes → ARB refactor) |
+| QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; paywall part resolved (SPEC-0032), rest deferred (codes → ARB refactor) |
 | QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | resolved (SPEC-0024), emulator check pending |
 | QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | resolved (SPEC-0023), emulator check pending |
 | QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | resolved (SPEC-0026, verified 2026-10-24) |
@@ -430,7 +430,8 @@ regression runs.
 ## QA-022: Paywall opens without args are logged as `baseCurrency`
 - **Severity:** low
 - **Type:** bug
-- **Status:** confirmed-code
+- **Status:** Resolved in SPEC-0032 (2026-10-25), emulator check pending (E24). Profile and the router default use `PaywallReason.upgrade`; a locked currency on Add subaccount uses `subaccountCurrency`.
+- **Originally:** confirmed-code
 - **Area:** `client/lib/core/routing/app_router.dart:352-354`;
   callers `profile_page.dart:147` and `add_subaccount_page.dart:202`
 - **Actual:**
@@ -442,7 +443,8 @@ regression runs.
 ## QA-023: Hitting a limit shows the paywall and an error snackbar at the same time
 - **Severity:** low
 - **Type:** ux
-- **Status:** confirmed-runtime. At 15/15 subaccounts the paywall opened and, underneath it, a snackbar "Free plan position limit reached" (English copy, wording "position"). After buying, the form was lost because of QA-003.
+- **Status:** Resolved in SPEC-0032 (2026-10-25), emulator check pending (E7, E23). Limit codes open only the paywall; the English copy says "subaccount".
+- **Originally:** confirmed-runtime. At 15/15 subaccounts the paywall opened and, underneath it, a snackbar "Free plan position limit reached" (English copy, wording "position"). After buying, the form was lost because of QA-003.
 - **Area:** `account_create_page.dart:57-67`, `add_subaccount_page.dart:89-99`
 - **Expected:** the paywall alone. After a purchase, the original action retries or the form stays
   filled.

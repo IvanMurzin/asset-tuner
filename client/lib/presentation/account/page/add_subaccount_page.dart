@@ -127,8 +127,11 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
             },
           ),
           BlocListener<SubaccountCreateCubit, SubaccountCreateState>(
+            // Limit failures open the paywall instead (QA-023).
             listenWhen: (prev, curr) =>
-                prev.failureMessage != curr.failureMessage && curr.failureMessage != null,
+                prev.failureMessage != curr.failureMessage &&
+                curr.failureMessage != null &&
+                !(curr.failureCode?.startsWith('limit_') ?? false),
             listener: (context, state) {
               logger.e('Subaccount create failed: ${state.failureCode}');
               showDSSnackBar(
@@ -199,7 +202,10 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                               AnalyticsParams.placement: 'add_subaccount',
                             },
                           );
-                          context.push(AppRoutes.paywall);
+                          context.push(
+                            AppRoutes.paywall,
+                            extra: const PaywallArgs(reason: PaywallReason.subaccountCurrency),
+                          );
                         },
                       ),
                       onChanged: (_) {

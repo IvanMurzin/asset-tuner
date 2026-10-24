@@ -33,3 +33,4 @@
 | SPEC-0029 | bug | Resolved | P0 | Paywall Verify Without AssetsCubit | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0029-paywall-verify-without-assets-cubit.md) |
 | SPEC-0030 | bug | Resolved | P1 | Cancel OAuth On Return | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0030-cancel-oauth-on-return.md) |
 | SPEC-0031 | bug | Resolved | P1 | Remove Ad Services Permissions | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0031-remove-ad-services-permissions.md) |
+| SPEC-0032 | bug | Resolved | P2 | Paywall Reasons And Copy | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0032-paywall-reasons-and-copy.md) |
