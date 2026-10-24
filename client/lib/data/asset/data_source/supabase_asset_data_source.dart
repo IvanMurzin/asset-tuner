@@ -45,8 +45,8 @@ class SupabaseAssetDataSource {
       query: {'kind': 'crypto', 'limit': 100},
       method: HttpMethod.get,
     );
-    final fiat = await fiatFuture;
-    final crypto = await cryptoFuture;
+    // Both futures are observed, so a second failure is not an unhandled async error.
+    final [fiat, crypto] = await Future.wait([fiatFuture, cryptoFuture]);
 
     return [...fiat, ...crypto].map(AssetDto.fromJson).toList(growable: false);
   }

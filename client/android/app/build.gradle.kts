@@ -106,7 +106,8 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             resValue("string", "app_name", "Asset Tuner (dev)")
-            manifestPlaceholders["deepLinkScheme"] = "assettuner"
+            // Own scheme so an OAuth callback never opens the prod app (QA-011).
+            manifestPlaceholders["deepLinkScheme"] = "assettuner-dev"
             // Dev release сборки подписываются debug-ключом — production keystore не требуется.
             signingConfig = if (useProjectDebugKeystore) {
                 signingConfigs.getByName("debugProject")

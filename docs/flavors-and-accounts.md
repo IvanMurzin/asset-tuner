@@ -3,10 +3,13 @@
 ## Bundle IDs
 | Flavor | Android applicationId | iOS bundle identifier | Deep link scheme | Release signing |
 |---|---|---|---|---|
-| `dev` | `developer.ivanmurzin.assettuner.dev` | `developer.ivanmurzin.assettuner.dev` | `assettuner` | debug keystore |
+| `dev` | `developer.ivanmurzin.assettuner.dev` | `developer.ivanmurzin.assettuner.dev` | `assettuner-dev` | debug keystore |
 | `prod` | `developer.ivanmurzin.assettuner` | `developer.ivanmurzin.assettuner` | `assettuner` | release keystore from `client/android/key.properties` |
 
 Both app variants can be installed on one device because their bundle IDs differ.
+Each flavor has its own deep link scheme, so an OAuth callback opens the app that started it.
+Supabase Auth must list both `assettuner://login-callback/` and
+`assettuner-dev://login-callback/` as redirect URLs.
 
 ## Current Account Setup
 - Supabase: the project referenced by `SUPABASE_URL` in `.config.prod.json` is production.

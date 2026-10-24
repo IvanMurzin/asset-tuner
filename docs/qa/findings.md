@@ -15,13 +15,13 @@ regression runs.
 | QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | resolved (SPEC-0016), device P3 pending |
 | QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | resolved (SPEC-0013, verified 2026-10-04); device R2 pending |
 | QA-008 | high | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | resolved (SPEC-0030), device D1 pending |
-| QA-009 | medium | bug | client | Cold start while offline may crash on `SupabaseErrorTranslator` late init | not-reproduced |
+| QA-009 | medium | bug | client | Cold start while offline may crash on `SupabaseErrorTranslator` late init | resolved (SPEC-0034) |
 | QA-010 | medium | ux | client/paywall | Paywall error and loading states have no close button | resolved (SPEC-0015), emulator check pending |
-| QA-011 | medium | bug | client/auth | Dev and prod flavors share the `assettuner://` OAuth callback scheme | confirmed-code |
-| QA-012 | medium | ux | client/auth | Apple sign-in button is shown on Android | confirmed-code |
+| QA-011 | medium | bug | client/auth | Dev and prod flavors share the `assettuner://` OAuth callback scheme | resolved (SPEC-0034), device D2 pending |
+| QA-012 | medium | ux | client/auth | Apple sign-in button is shown on Android | resolved (SPEC-0034) |
 | QA-013 | medium | bug | client | Offline and network errors are not recognized; no HTTP timeouts | resolved (SPEC-0017), emulator E12 pending |
 | QA-014 | medium | improvement | client/auth | No "forgot password" flow | confirmed-code |
-| QA-015 | low | bug | client | Negative amounts cannot be typed on most Android keyboards | not-reproduced |
+| QA-015 | low | bug | client | Negative amounts cannot be typed on most Android keyboards | resolved (SPEC-0034), device X1 pending |
 | QA-016 | low | bug | backend | Unchanged-balance check compares text (`0100` vs `100`) | resolved (SPEC-0011, verified 2026-10-04) |
 | QA-017 | low | bug | backend | Plan limits can be exceeded with parallel requests | not-reproduced |
 | QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | resolved (SPEC-0014, verified 2026-10-04) |
@@ -46,6 +46,7 @@ regression runs.
 | QA-037 | medium | bug | client/analytics | Offline Analytics skeleton never ends; false "No analytics yet"; Main needs two retries | resolved (SPEC-0033), emulator check pending |
 | QA-038 | medium | bug | client/analytics | Breakdown shares add up to 200% when a balance is negative | resolved (SPEC-0033), emulator check pending |
 | QA-039 | low | bug | client | Large amounts lose precision on display (Decimal → double) | resolved (SPEC-0033) |
+| QA-040 | low | bug | client | Unhandled async error when both asset list requests fail | resolved (SPEC-0034) |
 
 ---
 
@@ -265,7 +266,8 @@ regression runs.
 ## QA-009: Cold start while offline may crash on `SupabaseErrorTranslator` late init
 - **Severity:** medium
 - **Type:** bug
-- **Status:** not-reproduced. An offline cold start while signed in shows an inline error with Retry and no crash. The `static late` field is still fragile; keep it low.
+- **Status:** Resolved in SPEC-0034 (2026-10-25). The translator starts with the English map, so nothing is `late`.
+- **Originally:** not-reproduced. An offline cold start while signed in shows an inline error with Retry and no crash. The `static late` field is still fragile; keep it low.
 - **Area:** `client/lib/core/supabase/supabase_error_translator.dart:30`
 - **Repro:** sign in, kill the app, turn on airplane mode, launch.
 - **Expected:** an error state with Retry.
@@ -291,7 +293,8 @@ regression runs.
 ## QA-011: Dev and prod flavors share the `assettuner://` OAuth callback scheme
 - **Severity:** medium
 - **Type:** bug
-- **Status:** confirmed-code. The device check is case D2 in `docs/qa/cases/device.md`.
+- **Status:** Resolved in SPEC-0034 (2026-10-25), device D2 pending. Dev uses `assettuner-dev://`; both callbacks are in the Supabase Auth redirect list.
+- **Originally:** confirmed-code. The device check is case D2 in `docs/qa/cases/device.md`.
 - **Area:** `client/android/app/build.gradle.kts:109`, `:120`
 - **Repro:** install both dev and prod, then sign in with Google in either one.
 - **Expected:** the callback returns to the app that started the sign-in.
@@ -304,7 +307,8 @@ regression runs.
 ## QA-012: Apple sign-in button is shown on Android
 - **Severity:** medium
 - **Type:** ux
-- **Status:** confirmed-code. Whether the web flow works is to-verify on a device.
+- **Status:** Resolved in SPEC-0034 (2026-10-25). Apple is offered on iOS only.
+- **Originally:** confirmed-code. Whether the web flow works is to-verify on a device.
 - **Area:** `client/lib/data/auth/repository/auth_repository.dart:220`
 - **Expected:** Apple is shown on Android only when the Supabase Apple web OAuth is configured and
   tested.
@@ -349,7 +353,8 @@ regression runs.
 ## QA-015: Negative amounts cannot be typed on most Android keyboards
 - **Severity:** low
 - **Type:** bug
-- **Status:** not-reproduced on Gboard. The numeric layout shows `-`, and `-1234,56` was typed and saved. It may still differ on the Samsung keyboard; check on a device (case X1 in `docs/qa/cases/device.md`).
+- **Status:** Resolved in SPEC-0034 (2026-10-25), device X1 pending. The decimal field requests a signed numeric keyboard.
+- **Originally:** not-reproduced on Gboard. The numeric layout shows `-`, and `-1234,56` was typed and saved. It may still differ on the Samsung keyboard; check on a device (case X1 in `docs/qa/cases/device.md`).
 - **Area:** `client/lib/core_ui/components/ds_decimal_field.dart:38`
 - **Expected:** negative balances (debts, credit cards) can be entered. The backend accepts them.
 - **Actual:** `numberWithOptions(decimal: true)` without `signed: true` hides `-` on Gboard.
@@ -678,3 +683,13 @@ regression runs.
 - **Actual:** 123456789012345678901234.12 is stored exactly but shown as
   123,456,789,012,345,676,800,000.00.
 - **Suggested fix:** format directly from `Decimal`.
+
+## QA-040: Unhandled async error when both asset list requests fail
+- **Severity:** low
+- **Type:** bug
+- **Status:** Resolved in SPEC-0034 (2026-10-25).
+- **Originally:** confirmed-runtime (regression 2026-10-24, offline cold start logcat)
+- **Area:** `client/lib/data/asset/data_source/supabase_asset_data_source.dart`
+- **Actual:** the crypto request's error is never observed when the fiat request fails first, so it
+  is reported as an unhandled exception (a non-fatal in Crashlytics).
+- **Suggested fix:** `Future.wait` both requests.

@@ -14,6 +14,7 @@ import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/sign_up_result_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -247,7 +248,13 @@ class AuthRepository implements IAuthRepository {
 
   @override
   Future<List<AuthProvider>> getAvailableProviders() {
-    return Future.value(const [AuthProvider.email, AuthProvider.google, AuthProvider.apple]);
+    // Apple sign-in on Android is a web flow nobody configured or tested; offer it on iOS only
+    // (QA-012).
+    return Future.value([
+      AuthProvider.email,
+      AuthProvider.google,
+      if (defaultTargetPlatform == TargetPlatform.iOS) AuthProvider.apple,
+    ]);
   }
 }
 

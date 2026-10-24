@@ -35,3 +35,4 @@
 | SPEC-0031 | bug | Resolved | P1 | Remove Ad Services Permissions | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0031-remove-ad-services-permissions.md) |
 | SPEC-0032 | bug | Resolved | P2 | Paywall Reasons And Copy | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0032-paywall-reasons-and-copy.md) |
 | SPEC-0033 | bug | Resolved | P2 | Analytics Correctness And Offline States | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0033-analytics-correctness-and-offline.md) |
+| SPEC-0034 | bug | Resolved | P2 | Auth And Client Hardening | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0034-auth-and-client-hardening.md) |

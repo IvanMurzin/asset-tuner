@@ -27,8 +27,9 @@ extension SupportedLanguageExtension on SupportedLanguage {
 
 class SupabaseErrorTranslator {
   static SupportedLanguage _currentLanguage = SupportedLanguage.en;
-  static late Map<String, dynamic> _translations;
   static const _fallbackTranslations = supabaseErrorLocalizationEn;
+  // Usable before `setLanguage` runs, e.g. an offline cold start (QA-009).
+  static Map<String, dynamic> _translations = _fallbackTranslations;
 
   static void setLanguage(SupportedLanguage language) {
     _currentLanguage = language;

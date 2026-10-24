@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:asset_tuner/core/utils/app_lifecycle_signal.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
+import 'package:flutter/foundation.dart' show TargetPlatform, debugDefaultTargetPlatformOverride;
 import 'package:flutter/widgets.dart' show AppLifecycleState;
 
 import 'package:asset_tuner/core/types/result.dart';
@@ -80,6 +81,19 @@ void main() {
       expect(result, const Success<void>(null));
       expect(dataSource.lastResendEmail, 'user@example.com');
       expect(dataSource.resendSignUpOtpCalls, 1);
+    });
+  });
+
+  group('AuthRepository.getAvailableProviders', () {
+    test('offers Apple on iOS only (QA-012)', () async {
+      final repository = AuthRepository(_FakeAuthDataSource());
+
+      expect(await repository.getAvailableProviders(), isNot(contains(AuthProvider.apple)));
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      expect(await repository.getAvailableProviders(), contains(AuthProvider.apple));
+      debugDefaultTargetPlatformOverride = null;
     });
   });
 
