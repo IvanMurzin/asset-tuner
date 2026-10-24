@@ -48,8 +48,12 @@
 ## Monetization
 - Plans are `free` and `pro`.
 - Backend plan limits define account, subaccount, fiat, and crypto access caps.
-- RevenueCat SDK handles client purchase UI.
+- The client shows a custom paywall built on RevenueCat offerings; RevenueCat UI is used only for
+  the Customer Center.
 - RevenueCat refresh and webhook flows update backend plan state.
+- When Pro ends, nothing is deleted or archived: accounts and subaccounts above the free limits stay
+  and their balances can still be updated, but no new ones can be created. A base currency outside
+  the free set is reset to USD. (Decision recorded for QA-029.)
 
 ## Support
 - The Contact Developer flow writes support messages through `api/contact_developer`.

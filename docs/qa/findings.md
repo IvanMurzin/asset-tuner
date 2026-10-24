@@ -35,7 +35,7 @@ regression runs.
 | QA-026 | low | improvement | billing | 5-minute subscription sync cooldown delays renewal and expiry in the UI | confirmed-code |
 | QA-027 | low | improvement | client | Currency picker is capped at 100 assets per kind, with no pagination | confirmed-code |
 | QA-028 | low | docs | docs | UX and architecture docs disagree with the current app | resolved (SPEC-0025, 2026-10-24) |
-| QA-029 | info | improvement | backend | Free-plan downgrade keeps accounts and subaccounts above free limits | confirmed-code |
+| QA-029 | info | improvement | backend | Free-plan downgrade keeps accounts and subaccounts above free limits | accepted as designed (2026-10-24) |
 | QA-030 | info | improvement | backend | New profile has a null base asset; the client fills in USD | resolved (SPEC-0021, verified 2026-10-24) |
 | QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; deferred (codes → ARB refactor) |
 | QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | resolved (SPEC-0024), emulator check pending |
@@ -533,6 +533,8 @@ regression runs.
   - They cannot create new items.
 - **Suggested fix:** a product decision. Probably keep the current behavior (no data loss), but
   document it and show a "Pro expired" banner.
+- **Decision (2026-10-24):** keep the current behavior (no data loss); documented in
+  `docs/product/capabilities.md` under Monetization. No banner for now.
 
 ## QA-030: New profile has a null base asset; the client fills in USD
 - **Severity:** info
