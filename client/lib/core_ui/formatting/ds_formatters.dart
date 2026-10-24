@@ -18,16 +18,34 @@ class DSFormatters {
     return formatter.format(value);
   }
 
+  /// Formats [value] exactly: a double would lose digits past ~15 significant ones (R-08).
   String formatDecimalFromDecimal(
     Decimal value, {
     int? minimumFractionDigits,
     int? maximumFractionDigits,
   }) {
-    return formatDecimal(
-      value.toDouble(),
-      minimumFractionDigits: minimumFractionDigits,
-      maximumFractionDigits: maximumFractionDigits,
-    );
+    final symbols = NumberFormat.decimalPattern(locale.toLanguageTag()).symbols;
+    final minDigits = minimumFractionDigits ?? 0;
+    final maxDigits = maximumFractionDigits ?? 3;
+    final rounded = value.round(scale: maxDigits);
+    final digits = rounded.abs().toStringAsFixed(maxDigits);
+    final dot = digits.indexOf('.');
+    final integer = dot == -1 ? digits : digits.substring(0, dot);
+    var fraction = dot == -1 ? '' : digits.substring(dot + 1);
+    while (fraction.length > minDigits && fraction.endsWith('0')) {
+      fraction = fraction.substring(0, fraction.length - 1);
+    }
+
+    final grouped = StringBuffer();
+    for (var i = 0; i < integer.length; i++) {
+      if (i > 0 && (integer.length - i) % 3 == 0) {
+        grouped.write(symbols.GROUP_SEP);
+      }
+      grouped.write(integer[i]);
+    }
+    final sign = rounded < Decimal.zero ? symbols.MINUS_SIGN : '';
+    final tail = fraction.isEmpty ? '' : '${symbols.DECIMAL_SEP}$fraction';
+    return '$sign$grouped$tail';
   }
 
   /// Returns "amount currency" with at least two fraction digits (e.g. "1 234.50 USD"; an asset

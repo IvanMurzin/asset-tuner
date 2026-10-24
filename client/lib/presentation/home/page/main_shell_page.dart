@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:asset_tuner/core/di/get_it.dart';
 import 'package:asset_tuner/core_ui/theme/ds_theme.dart';
-import 'package:asset_tuner/domain/account/entity/account_entity.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
 import 'package:asset_tuner/presentation/account/bloc/accounts_cubit.dart';
@@ -28,17 +27,28 @@ class MainShellPage extends StatelessWidget {
     final accountsState = context.read<AccountsCubit>().state;
     final assetsState = context.read<AssetsCubit>().state;
 
-    if (!sessionState.isAuthenticated || !profileState.isReady) {
+    if (!sessionState.isAuthenticated) {
+      return;
+    }
+    final analyticsCubit = context.read<AnalyticsCubit>();
+    // A failed source is an error, not "no analytics yet" (N-02).
+    if (profileState.status == ProfileStatus.error && !profileState.isReady) {
+      analyticsCubit.onSourceFailed(profileState.failureMessage);
+      return;
+    }
+    if (accountsState.status == AccountsStatus.error) {
+      analyticsCubit.onSourceFailed(accountsState.failureMessage);
+      return;
+    }
+    if (!profileState.isReady || accountsState.status != AccountsStatus.ready) {
       return;
     }
 
-    final accounts = accountsState.status == AccountsStatus.ready
-        ? accountsState.accounts
-        : <AccountEntity>[];
+    final accounts = accountsState.accounts;
     final assets = assetsState.status == AssetsStatus.ready ? assetsState.assets : <AssetEntity>[];
     final snapshot = assetsState.snapshot;
 
-    context.read<AnalyticsCubit>().onSourceDataReady(
+    analyticsCubit.onSourceDataReady(
       profileState.profile!,
       snapshot,
       assets,

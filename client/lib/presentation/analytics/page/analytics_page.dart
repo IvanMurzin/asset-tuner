@@ -322,27 +322,36 @@ class _AnalyticsPieChart extends StatelessWidget {
     }
     final total = breakdown.fold<double>(
       0,
-      (sum, item) => sum + double.parse(item.value.toString()),
+      (sum, item) => item.value > Decimal.zero ? sum + double.parse(item.value.toString()) : sum,
     );
     if (total <= 0) {
       return const SizedBox.shrink();
     }
-    final sections = breakdown.asMap().entries.map((entry) {
-      final i = entry.key;
-      final item = entry.value;
-      final value = double.parse(item.value.toString());
-      final color = _colorAt(i);
-      final share = total == 0 ? 0 : value / total;
-      final showTitle = share >= _minLabelShare;
-      return PieChartSectionData(
-        value: value,
-        color: color,
-        title: showTitle ? item.assetCode : '',
-        showTitle: showTitle,
-        radius: 48,
-        titleStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textPrimary),
-      );
-    }).toList();
+    final sections = breakdown
+        .asMap()
+        .entries
+        .where((entry) => entry.value.value > Decimal.zero)
+        .map((entry) {
+          final i = entry.key;
+          final item = entry.value;
+          final value = double.parse(item.value.toString());
+          final color = _colorAt(i);
+          final share = total == 0 ? 0 : value / total;
+          final showTitle = share >= _minLabelShare;
+          return PieChartSectionData(
+            value: value,
+            color: color,
+            title: showTitle ? item.assetCode : '',
+            showTitle: showTitle,
+            radius: 48,
+            titleStyle: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: colors.textPrimary,
+            ),
+          );
+        })
+        .toList();
 
     return SizedBox(
       height: 220,

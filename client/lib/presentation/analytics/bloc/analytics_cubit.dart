@@ -59,6 +59,22 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     );
   }
 
+  /// A source (profile or accounts) failed to load. Data already on screen stays; otherwise the
+  /// page shows an error with Retry instead of an endless skeleton.
+  void onSourceFailed(String? message) {
+    if (state.status == AnalyticsStatus.ready && _lastSourceFingerprint != null) {
+      return;
+    }
+    _lastSourceFingerprint = null;
+    emit(
+      state.copyWith(
+        status: AnalyticsStatus.error,
+        failureCode: 'source_unavailable',
+        failureMessage: message,
+      ),
+    );
+  }
+
   void invalidateCache() {
     _lastSourceFingerprint = null;
   }
@@ -178,7 +194,11 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
   List<AnalyticsBreakdownItem> _toBreakdown(List<AnalyticsBreakdownEntity> items) {
     final filtered = items.where((item) => item.value != Decimal.zero).toList(growable: false);
-    final total = filtered.fold<Decimal>(Decimal.zero, (sum, item) => sum + item.value);
+    // Shares are of what the user holds: negative balances (debts) get no share, so the
+    // positive shares always add up to 100 (R-06).
+    final total = filtered
+        .where((item) => item.value > Decimal.zero)
+        .fold<Decimal>(Decimal.zero, (sum, item) => sum + item.value);
 
     final breakdown =
         filtered
@@ -186,7 +206,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
               (item) => AnalyticsBreakdownItem(
                 assetCode: item.assetCode,
                 value: item.value,
-                percent: total == Decimal.zero
+                percent: total == Decimal.zero || item.value <= Decimal.zero
                     ? Decimal.zero
                     : divideToDecimal(item.value * Decimal.fromInt(100), total),
                 originalAmount: item.originalAmount,

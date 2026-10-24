@@ -170,8 +170,76 @@ void main() {
 
       await cubit.close();
     });
+
+    test('negative balances get no share; positive shares add up to 100 (R-06)', () async {
+      AnalyticsBreakdownEntity item(String code, int value) => AnalyticsBreakdownEntity(
+        assetCode: code,
+        value: Decimal.fromInt(value),
+        originalAmount: Decimal.fromInt(value),
+      );
+      final cubit = AnalyticsCubit(
+        GetAnalyticsSummaryUseCase(
+          _FakeAnalyticsRepository(
+            summary: AnalyticsSummaryEntity(
+              baseCurrency: 'USD',
+              asOf: DateTime.utc(2026, 4, 21),
+              breakdown: [item('USD', -1000), item('BTC', 300), item('CAD', 100)],
+              updates: [],
+            ),
+          ),
+        ),
+      );
+
+      await cubit.onSourceDataReady(_profile, null, const [], [_account]);
+
+      final percents = {for (final b in cubit.state.breakdown) b.assetCode: b.percent};
+      expect(percents['BTC'], Decimal.fromInt(75));
+      expect(percents['CAD'], Decimal.fromInt(25));
+      expect(percents['USD'], Decimal.zero);
+      await cubit.close();
+    });
+
+    test('a failed source shows an error instead of a skeleton (N-02)', () async {
+      final cubit = AnalyticsCubit(
+        GetAnalyticsSummaryUseCase(
+          _FakeAnalyticsRepository(
+            summary: AnalyticsSummaryEntity(
+              baseCurrency: 'USD',
+              asOf: DateTime.utc(2026, 4, 21),
+              breakdown: [],
+              updates: [],
+            ),
+          ),
+        ),
+      );
+
+      cubit.onSourceFailed('offline');
+      expect(cubit.state.status, AnalyticsStatus.error);
+      expect(cubit.state.failureMessage, 'offline');
+
+      await cubit.onSourceDataReady(_profile, null, const [], [_account]);
+      expect(cubit.state.status, AnalyticsStatus.ready);
+
+      cubit.onSourceFailed('offline');
+      expect(cubit.state.status, AnalyticsStatus.ready, reason: 'loaded data stays on screen');
+      await cubit.close();
+    });
   });
 }
+
+final _profile = ProfileEntity(
+  plan: Plan.free,
+  entitlements: const EntitlementsEntity(plan: Plan.free),
+);
+
+final _account = AccountEntity(
+  id: 'acc-1',
+  name: 'Wallet',
+  type: AccountType.wallet,
+  archived: false,
+  createdAt: DateTime.utc(2026, 1, 1),
+  updatedAt: DateTime.utc(2026, 1, 1),
+);
 
 class _FakeAnalyticsRepository implements IAnalyticsRepository {
   _FakeAnalyticsRepository({required this.summary});

@@ -43,6 +43,9 @@ regression runs.
 | QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | resolved (SPEC-0026, verified 2026-10-24) |
 | QA-035 | blocker | bug | client/paywall | Paywall hangs on verifying after every successful purchase or restore | resolved (SPEC-0029), emulator check pending |
 | QA-036 | medium | compliance | client/android | Prod manifest requests Ad Services ad ID and attribution permissions | resolved (SPEC-0031, verified 2026-10-25) |
+| QA-037 | medium | bug | client/analytics | Offline Analytics skeleton never ends; false "No analytics yet"; Main needs two retries | resolved (SPEC-0033), emulator check pending |
+| QA-038 | medium | bug | client/analytics | Breakdown shares add up to 200% when a balance is negative | resolved (SPEC-0033), emulator check pending |
+| QA-039 | low | bug | client | Large amounts lose precision on display (Decimal → double) | resolved (SPEC-0033) |
 
 ---
 
@@ -644,3 +647,34 @@ regression runs.
 - **Actual:** Firebase measurement adds `ACCESS_ADSERVICES_AD_ID` and
   `ACCESS_ADSERVICES_ATTRIBUTION`; Play expects the Data safety form to declare advertising ID use.
 - **Suggested fix:** remove both with `tools:node="remove"`.
+
+## QA-037: Offline Analytics skeleton never ends; false "No analytics yet"; Main needs two retries
+- **Severity:** medium
+- **Type:** bug
+- **Status:** Resolved in SPEC-0033 (2026-10-25), emulator check pending (E12).
+- **Originally:** confirmed-runtime (regression 2026-10-24, both agents)
+- **Area:** `client/lib/presentation/home/page/main_shell_page.dart`, `overview_page.dart`
+- **Actual:** after an offline cold start Analytics shows a skeleton for 50+ seconds with no retry;
+  after recovering, a user with data sees "No analytics yet" because accounts are fed as `[]`.
+  Main's Retry fixes the profile, then a second Retry is needed for accounts.
+- **Suggested fix:** show an error with Retry when a source failed; one Retry reloads everything.
+
+## QA-038: Breakdown shares add up to 200% when a balance is negative
+- **Severity:** medium
+- **Type:** bug
+- **Status:** Resolved in SPEC-0033 (2026-10-25), emulator check pending (E11).
+- **Originally:** confirmed-runtime (regression 2026-10-24)
+- **Area:** `client/lib/presentation/analytics/bloc/analytics_cubit.dart`
+- **Actual:** a negative USD balance next to BTC and CAD showed 0 / 100 / 100: shares were divided
+  by the signed net total and clamped to 0–100.
+- **Suggested fix:** compute shares over positive values; debts get no share.
+
+## QA-039: Large amounts lose precision on display (Decimal → double)
+- **Severity:** low
+- **Type:** bug
+- **Status:** Resolved in SPEC-0033 (2026-10-25). Formatting is exact; covered by formatter tests.
+- **Originally:** confirmed-runtime (regression 2026-10-24)
+- **Area:** `client/lib/core_ui/formatting/ds_formatters.dart`
+- **Actual:** 123456789012345678901234.12 is stored exactly but shown as
+  123,456,789,012,345,676,800,000.00.
+- **Suggested fix:** format directly from `Decimal`.

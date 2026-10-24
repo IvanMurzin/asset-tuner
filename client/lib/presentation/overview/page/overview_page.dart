@@ -49,7 +49,12 @@ class OverviewPage extends StatelessWidget {
               title: l10n.genericErrorTitle,
               message: profileState.failureMessage ?? l10n.errorGeneric,
               actionLabel: l10n.retryAction,
-              onAction: () => context.read<ProfileCubit>().refresh(),
+              // Accounts and assets usually failed with the profile, so one retry reloads all (N-03).
+              onAction: () => Future.wait([
+                context.read<ProfileCubit>().refresh(),
+                context.read<AccountsCubit>().load(),
+                context.read<AssetsCubit>().refresh(),
+              ]),
             ),
           );
         }

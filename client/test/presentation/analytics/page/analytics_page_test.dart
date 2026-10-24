@@ -175,6 +175,9 @@ class _TestAnalyticsCubit extends Cubit<AnalyticsState> implements AnalyticsCubi
   void invalidateCache() {}
 
   @override
+  void onSourceFailed(String? message) {}
+
+  @override
   Future<void> onSourceDataReady(
     ProfileEntity profile,
     RatesSnapshotEntity? rates,

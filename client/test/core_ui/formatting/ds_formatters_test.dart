@@ -21,4 +21,22 @@ void main() {
       '1.50 BTC',
     );
   });
+
+  test('large amounts keep every digit (R-08)', () {
+    expect(
+      formatters.formatMoney(Decimal.parse('123456789012345678901234.12'), 'USD'),
+      '123,456,789,012,345,678,901,234.12 USD',
+    );
+  });
+
+  test('negative amounts, rounding and grouping', () {
+    expect(formatters.formatMoney(Decimal.parse('-1234.565'), 'USD'), '-1,234.57 USD');
+    expect(formatters.formatDecimalFromDecimal(Decimal.parse('0.0004')), '0');
+    expect(formatters.formatDecimalFromDecimal(Decimal.parse('-0.0004')), '0');
+  });
+
+  test('uses locale separators', () {
+    const ru = DSFormatters(Locale('ru'));
+    expect(ru.formatMoney(Decimal.parse('1234567.5'), 'RUB'), '1\u00a0234\u00a0567,50 RUB');
+  });
 }
