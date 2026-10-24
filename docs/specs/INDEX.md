@@ -19,3 +19,4 @@
 | SPEC-0015 | bug | Resolved | P2 | Paywall Close In Every State | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0015-paywall-close-in-every-state.md) |
 | SPEC-0016 | bug | Resolved | P2 | Paywall Pending Purchase | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0016-paywall-pending-purchase.md) |
 | SPEC-0017 | bug | Resolved | P2 | Recognize Network Errors And Timeouts | claude | 2026-10-04 | 2026-10-04 | [resolved](resolved/SPEC-0017-recognize-network-errors-and-timeouts.md) |
+| SPEC-0018 | bug | Resolved | P3 | History Keyset Cursor | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0018-history-keyset-cursor.md) |

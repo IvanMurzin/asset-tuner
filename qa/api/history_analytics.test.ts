@@ -1,5 +1,5 @@
 import { assert, assertEquals } from 'jsr:@std/assert@1';
-import { api } from '../lib/client.ts';
+import { api, dbUpdate } from '../lib/client.ts';
 import { withUsers } from '../lib/users.ts';
 import { assetByCode, createAccount, createSubaccount, setBalance } from '../lib/fixtures.ts';
 
@@ -56,6 +56,38 @@ type Summary = {
   breakdown: Array<{ asset_code: string; value_atomic: string; value_decimals: number }>;
   updates: Array<{ asset_code: string; diff_atomic: string }>;
 };
+
+Deno.test('history: entries sharing a timestamp at a page boundary are not skipped', async () => {
+  await withUsers(1, async (u) => {
+    const account = await createAccount(u);
+    const usd = await assetByCode(u, 'fiat', 'USD');
+    const sub = await createSubaccount(u, account.id, usd, '1');
+    for (let i = 2; i <= 6; i++) {
+      assertEquals((await setBalance(u, sub, `${i}`)).status, 200);
+    }
+    // Same microsecond timestamp for every entry: only the id can order them.
+    await dbUpdate('balance_entries', `subaccount_id=eq.${sub.id}`, {
+      created_at: '2026-01-01T00:00:00.123456Z',
+    });
+
+    const ids: string[] = [];
+    let cursor: string | null = null;
+    for (let page = 0; page < 10; page++) {
+      const q: string = `/subaccounts/history?subaccountId=${sub.id}&limit=2` +
+        (cursor ? `&cursor=${encodeURIComponent(cursor)}` : '');
+      const res = await api<HistoryItem[]>(u.token, 'GET', q);
+      assertEquals(res.status, 200, JSON.stringify(res.raw));
+      ids.push(...res.data.map((i) => i.id));
+      cursor = (res.meta?.nextCursor as string | null) ?? null;
+      if (!cursor) break;
+    }
+    assertEquals(ids.length, 6, `got ${ids.length} of 6`);
+    assertEquals(new Set(ids).size, 6, 'duplicates across pages');
+
+    const bad = await api(u.token, 'GET', `/subaccounts/history?subaccountId=${sub.id}&cursor=nope`);
+    assertEquals(bad.status, 400);
+  });
+});
 
 Deno.test('analytics: empty user, USD base default', async () => {
   await withUsers(1, async (u) => {

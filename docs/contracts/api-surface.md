@@ -134,7 +134,7 @@ Query:
 | Field | Type | Notes |
 |---|---|---|
 | `subaccountId` | UUID | Required. |
-| `cursor` | ISO timestamp | Optional. |
+| `cursor` | string | Optional. Opaque; pass `meta.nextCursor` from the previous page as-is. |
 | `limit` | integer | Optional, max 200. |
 
 Response `meta.nextCursor` contains the next cursor or `null`.

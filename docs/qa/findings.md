@@ -25,7 +25,7 @@ regression runs.
 | QA-016 | low | bug | backend | Unchanged-balance check compares text (`0100` vs `100`) | resolved (SPEC-0011, verified 2026-10-04) |
 | QA-017 | low | bug | backend | Plan limits can be exceeded with parallel requests | not-reproduced |
 | QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | resolved (SPEC-0014, verified 2026-10-04) |
-| QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | confirmed-code |
+| QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | resolved (SPEC-0018, verified 2026-10-24) |
 | QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | resolved (SPEC-0012, verified 2026-10-04) |
 | QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | confirmed-code |
 | QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | confirmed-runtime |
@@ -386,7 +386,9 @@ regression runs.
 ## QA-019: History cursor loses microseconds and ignores ties
 - **Severity:** low
 - **Type:** bug
-- **Status:** confirmed-code
+- **Status:** Resolved in SPEC-0018 (verified 2026-10-24 on prod). Opaque keyset cursor
+  `<created_at>|<id>` with a row comparison; QA test with identical timestamps passes.
+- **Originally:** confirmed-code
 - **Area:** `backend/supabase/functions/api/index.ts:400-404`, `20260218131000:46`
 - **Actual:**
   - The cursor passes through JS `Date`, which keeps milliseconds only.

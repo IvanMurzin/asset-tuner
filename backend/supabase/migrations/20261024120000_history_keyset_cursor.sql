@@ -1,0 +1,124 @@
+-- QA-019 / SPEC-0018: keyset cursor (created_at at full precision + id) instead of a
+-- millisecond timestamp, so entries sharing a timestamp at a page boundary are not skipped.
+drop function if exists public.api_subaccount_history(uuid, uuid, timestamptz, int);
+
+CREATE OR REPLACE FUNCTION public.api_subaccount_history(p_user_id uuid, p_subaccount_id uuid, p_cursor text DEFAULT NULL::text, p_limit integer DEFAULT 50)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
+declare
+  v_limit int := coalesce(p_limit, 50);
+
+  v_items jsonb;
+
+  v_next_cursor text;
+
+  v_cursor_ts timestamptz;
+
+  v_cursor_id uuid;
+
+begin
+  if v_limit < 1 or v_limit > 200 then
+    raise exception 'VALIDATION_ERROR: limit must be in range 1..200';
+  end if;
+
+  -- Cursor = "<created_at, full precision>|<id>" of the last returned entry; opaque to clients.
+  if p_cursor is not null then
+    begin
+      v_cursor_ts := split_part(p_cursor, '|', 1)::timestamptz;
+      v_cursor_id := nullif(split_part(p_cursor, '|', 2), '')::uuid;
+    exception when others then
+      raise exception 'VALIDATION_ERROR: invalid cursor';
+    end;
+    if v_cursor_id is null then
+      raise exception 'VALIDATION_ERROR: invalid cursor';
+    end if;
+  end if;
+
+  perform 1
+  from public.subaccounts s
+  where s.id = p_subaccount_id
+    and s.user_id = p_user_id;
+
+  if not found then
+    raise exception 'NOT_FOUND: subaccount not found';
+  end if;
+
+  with raw as (
+    select
+      b.id,
+      b.user_id,
+      b.subaccount_id,
+      b.amount_atomic,
+      b.amount_decimals,
+      b.note,
+      b.created_at,
+      public.atomic_to_numeric(b.amount_atomic, b.amount_decimals) as snapshot_amount
+    from public.balance_entries b
+    where b.user_id = p_user_id
+      and b.subaccount_id = p_subaccount_id
+      and (p_cursor is null or (b.created_at, b.id) < (v_cursor_ts, v_cursor_id))
+    order by b.created_at desc, b.id desc
+    limit (v_limit + 1)
+  ),
+  calc as (
+    select
+      r.id,
+      r.user_id,
+      r.subaccount_id,
+      r.amount_atomic,
+      r.amount_decimals,
+      r.note,
+      r.created_at,
+      r.snapshot_amount - lead(r.snapshot_amount) over (order by r.created_at desc, r.id desc) as diff_amount,
+      row_number() over (order by r.created_at desc, r.id desc) as rn
+    from raw r
+  ),
+  page as (
+    select *
+    from calc
+    where rn <= v_limit
+  ),
+  last_row as (
+    select (to_jsonb(p.created_at) #>> '{}') || '|' || p.id::text as cursor
+    from page p
+    where p.rn = v_limit
+  ),
+  raw_cnt as (
+    select count(*) as cnt
+    from raw
+  )
+  select
+    coalesce(
+      jsonb_agg(
+        jsonb_build_object(
+          'id', p.id,
+          'user_id', p.user_id,
+          'subaccount_id', p.subaccount_id,
+          'amount_atomic', p.amount_atomic,
+          'amount_decimals', p.amount_decimals,
+          'note', p.note,
+          'created_at', p.created_at,
+          'diff_amount', p.diff_amount
+        )
+        order by p.created_at desc, p.id desc
+      ),
+      '[]'::jsonb
+    ),
+    case when (select cnt from raw_cnt) > v_limit then (select cursor from last_row) else null end
+  into v_items, v_next_cursor
+  from page p;
+
+  return jsonb_build_object(
+    'items', coalesce(v_items, '[]'::jsonb),
+    'nextCursor', v_next_cursor
+  );
+end;
+
+$function$;
+
+revoke all on function public.api_subaccount_history(uuid, uuid, text, int)
+  from public, anon, authenticated;
+grant execute on function public.api_subaccount_history(uuid, uuid, text, int) to service_role;

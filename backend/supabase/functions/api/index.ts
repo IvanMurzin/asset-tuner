@@ -394,22 +394,15 @@ async function handleSubaccountHistory(req: Request, userId: string): Promise<Re
     throw new ApiHttpError(400, 'VALIDATION_ERROR', 'subaccountId must be a UUID');
   }
 
-  const cursorRaw = url.searchParams.get('cursor');
-  let cursorIso: string | null = null;
-  if (cursorRaw) {
-    const date = new Date(cursorRaw);
-    if (Number.isNaN(date.getTime())) {
-      throw new ApiHttpError(400, 'VALIDATION_ERROR', 'Invalid cursor');
-    }
-    cursorIso = date.toISOString();
-  }
+  // Opaque keyset cursor from the previous page; parsed and validated by api_subaccount_history.
+  const cursor = url.searchParams.get('cursor') || null;
 
   const limit = parsePositiveInt(url.searchParams.get('limit'), 50, 200);
 
   const data = await rpc<SubaccountHistoryPayload>('api_subaccount_history', {
     p_user_id: userId,
     p_subaccount_id: subaccountId,
-    p_cursor: cursorIso,
+    p_cursor: cursor,
     p_limit: limit,
   });
 
