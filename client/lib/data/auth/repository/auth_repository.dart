@@ -11,7 +11,7 @@ import 'package:asset_tuner/data/auth/dto/auth_session_dto.dart';
 import 'package:asset_tuner/data/auth/mapper/auth_session_mapper.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
-import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
+import 'package:asset_tuner/domain/auth/entity/sign_up_result_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -175,18 +175,18 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
+  Future<Result<SignUpResultEntity>> signUpWithPassword(String email, String password) async {
     try {
       await _dataSource.signUpWithPassword(email, password);
-      if (!AppConfig.instance.isOtpEnabled) {
-        final hasSession = _dataSource.currentSession() != null;
-        if (!hasSession) {
-          await _dataSource.signInWithPassword(email, password);
-        }
-        _syncCachedSession(_dataSource.currentSession());
-      }
       logger.i('AuthRepository.signUpWithPassword success');
-      return Success(OtpVerificationEntity(email: email));
+      if (AppConfig.instance.isOtpEnabled) {
+        return Success(SignUpResultEntity.otpRequired(email: email));
+      }
+      if (_dataSource.currentSession() == null) {
+        await _dataSource.signInWithPassword(email, password);
+      }
+      _syncCachedSession(_dataSource.currentSession());
+      return const Success(SignUpResultEntity.signedIn());
     } catch (error) {
       logger.e('AuthRepository.signUpWithPassword failed', error: error);
       return FailureResult(

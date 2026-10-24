@@ -3,7 +3,7 @@ import 'package:asset_tuner/core/types/failure.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
-import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
+import 'package:asset_tuner/domain/auth/entity/sign_up_result_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_auth_providers_usecase.dart';
 import 'package:asset_tuner/domain/auth/usecase/oauth_sign_in_usecase.dart';
@@ -27,14 +27,9 @@ void main() {
       analytics = AppAnalytics();
     });
 
-    test('emits OTP navigation when OTP is enabled', () async {
-      final cubit = SignUpCubit.testing(
-        signUpUseCase,
-        oAuthUseCase,
-        providersUseCase,
-        analytics,
-        isOtpEnabled: true,
-      );
+    test('emits OTP navigation when the sign-up needs a code', () async {
+      repository.signUpResult = (email) => SignUpResultEntity.otpRequired(email: email);
+      final cubit = SignUpCubit(signUpUseCase, oAuthUseCase, providersUseCase, analytics);
       cubit.updateEmail('user@example.com');
       cubit.updatePassword('Password123!');
       cubit.updateConfirmPassword('Password123!');
@@ -47,14 +42,9 @@ void main() {
       await cubit.close();
     });
 
-    test('skips OTP navigation when OTP is disabled', () async {
-      final cubit = SignUpCubit.testing(
-        signUpUseCase,
-        oAuthUseCase,
-        providersUseCase,
-        analytics,
-        isOtpEnabled: false,
-      );
+    test('skips OTP navigation when the user is signed in right away', () async {
+      repository.signUpResult = (_) => const SignUpResultEntity.signedIn();
+      final cubit = SignUpCubit(signUpUseCase, oAuthUseCase, providersUseCase, analytics);
       cubit.updateEmail('user@example.com');
       cubit.updatePassword('Password123!');
       cubit.updateConfirmPassword('Password123!');
@@ -68,13 +58,7 @@ void main() {
     });
 
     test('empty submit flags every field, confirm password included (QA-033)', () async {
-      final cubit = SignUpCubit.testing(
-        signUpUseCase,
-        oAuthUseCase,
-        providersUseCase,
-        analytics,
-        isOtpEnabled: false,
-      );
+      final cubit = SignUpCubit(signUpUseCase, oAuthUseCase, providersUseCase, analytics);
 
       await cubit.submit();
 
@@ -85,13 +69,7 @@ void main() {
     });
 
     test('a different confirmation is a mismatch', () async {
-      final cubit = SignUpCubit.testing(
-        signUpUseCase,
-        oAuthUseCase,
-        providersUseCase,
-        analytics,
-        isOtpEnabled: false,
-      );
+      final cubit = SignUpCubit(signUpUseCase, oAuthUseCase, providersUseCase, analytics);
       cubit.updatePassword('Password123!');
       cubit.updateConfirmPassword('Password124!');
 
@@ -104,9 +82,12 @@ void main() {
 }
 
 class _FakeAuthRepository implements IAuthRepository {
+  SignUpResultEntity Function(String email) signUpResult = (email) =>
+      SignUpResultEntity.otpRequired(email: email);
+
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
-    return Success(OtpVerificationEntity(email: email));
+  Future<Result<SignUpResultEntity>> signUpWithPassword(String email, String password) async {
+    return Success(signUpResult(email));
   }
 
   @override

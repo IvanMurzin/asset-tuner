@@ -4,7 +4,7 @@ import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/asset/entity/asset_entity.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_session_entity.dart';
-import 'package:asset_tuner/domain/auth/entity/otp_verification_entity.dart';
+import 'package:asset_tuner/domain/auth/entity/sign_up_result_entity.dart';
 import 'package:asset_tuner/domain/auth/repository/i_auth_repository.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_cached_session_usecase.dart';
 import 'package:asset_tuner/domain/subaccount/entity/subaccount_entity.dart';
@@ -111,7 +111,7 @@ class _FakeAuthRepository implements IAuthRepository {
       const Success(null);
 
   @override
-  Future<Result<OtpVerificationEntity>> signUpWithPassword(String email, String password) async {
+  Future<Result<SignUpResultEntity>> signUpWithPassword(String email, String password) async {
     throw UnimplementedError();
   }
 

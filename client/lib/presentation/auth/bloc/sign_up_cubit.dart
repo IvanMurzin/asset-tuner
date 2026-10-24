@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:asset_tuner/core/analytics/app_analytics.dart';
-import 'package:asset_tuner/core/config/app_config.dart';
+import 'package:asset_tuner/domain/auth/entity/sign_up_result_entity.dart';
 import 'package:asset_tuner/core/types/result.dart';
 import 'package:asset_tuner/domain/auth/entity/auth_provider.dart';
 import 'package:asset_tuner/domain/auth/usecase/get_auth_providers_usecase.dart';
@@ -20,19 +20,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     this._oAuthSignInUseCase,
     this._getAuthProvidersUseCase,
     this._analytics,
-  ) : _isOtpEnabledOverride = null,
-      super(const SignUpState()) {
-    _loadProviders();
-  }
-
-  SignUpCubit.testing(
-    this._signUpWithPasswordUseCase,
-    this._oAuthSignInUseCase,
-    this._getAuthProvidersUseCase,
-    this._analytics, {
-    required bool isOtpEnabled,
-  }) : _isOtpEnabledOverride = isOtpEnabled,
-       super(const SignUpState()) {
+  ) : super(const SignUpState()) {
     _loadProviders();
   }
 
@@ -40,9 +28,6 @@ class SignUpCubit extends Cubit<SignUpState> {
   final OAuthSignInUseCase _oAuthSignInUseCase;
   final GetAuthProvidersUseCase _getAuthProvidersUseCase;
   final AppAnalytics _analytics;
-  final bool? _isOtpEnabledOverride;
-
-  bool get _isOtpEnabled => _isOtpEnabledOverride ?? AppConfig.instance.isOtpEnabled;
 
   void updateEmail(String value) {
     emit(state.copyWith(email: value, emailError: null, bannerFailureCode: null, bannerType: null));
@@ -110,28 +95,23 @@ class SignUpCubit extends Cubit<SignUpState> {
           parameters: {
             AnalyticsParams.provider: 'email',
             AnalyticsParams.mode: 'signup',
-            'otp_required': _isOtpEnabled,
+            'otp_required': value is SignUpOtpRequired,
           },
         );
-        if (_isOtpEnabled) {
-          emit(
-            state.copyWith(
-              status: SignUpStatus.otpSent,
-              otpEmail: value.email,
-              bannerEmail: value.email,
-              bannerType: SignUpBannerType.success,
-            ),
-          );
-          return;
-        }
-        emit(
-          state.copyWith(
+        emit(switch (value) {
+          SignUpOtpRequired(:final email) => state.copyWith(
+            status: SignUpStatus.otpSent,
+            otpEmail: email,
+            bannerEmail: email,
+            bannerType: SignUpBannerType.success,
+          ),
+          SignUpSignedIn() => state.copyWith(
             status: SignUpStatus.idle,
             otpEmail: null,
             bannerEmail: null,
             bannerType: null,
           ),
-        );
+        });
     }
   }
 
