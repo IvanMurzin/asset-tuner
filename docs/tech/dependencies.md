@@ -29,3 +29,11 @@ Core dependencies:
 - Prefer existing dependencies.
 - Add a dependency only when a spec requires it and the standard library/local stack is insufficient.
 - Document new runtime dependencies in this file and update setup instructions when needed.
+
+## Android Toolchain
+- Gradle 8.14.3 (AGP 8.11.1, Kotlin 2.2.20) runs on JDK 21; it does not run on Java 25+.
+- `client/android/gradle/gradle-daemon-jvm.properties` (`toolchainVersion=21`) makes the Gradle
+  daemon use an installed JDK 21 even when `JAVA_HOME` points elsewhere.
+- `.sdkmanrc` (`java=21.0.9-tem`) pins the shell JDK for SDKMAN users (`sdk env`).
+- Flutter builds use `flutter config --jdk-dir <JDK 21>`.
+- Upgrading to Gradle 9.1+ with a matching AGP is a post-release task.

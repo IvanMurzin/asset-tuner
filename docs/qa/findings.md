@@ -40,7 +40,7 @@ regression runs.
 | QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; deferred (codes → ARB refactor) |
 | QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | resolved (SPEC-0024), emulator check pending |
 | QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | resolved (SPEC-0023), emulator check pending |
-| QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | confirmed-runtime |
+| QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | resolved (SPEC-0026, verified 2026-10-24) |
 
 ---
 
@@ -551,7 +551,10 @@ regression runs.
 ## QA-031: Android toolchain cannot build on Java 25
 - **Severity:** low
 - **Type:** improvement
-- **Status:** confirmed-runtime
+- **Status:** Resolved in SPEC-0026 (verified 2026-10-24). Gradle daemon JVM criteria pin JDK 21
+  (`./gradlew help` with `JAVA_HOME` on Java 25 ran the daemon on 21.0.9-tem); `.sdkmanrc` added; dev
+  debug APK builds. Gradle 9 upgrade stays post-release.
+- **Originally:** confirmed-runtime
 - **Area:** `client/android/gradle/wrapper/gradle-wrapper.properties` (Gradle 8.14.3), `client/android/settings.gradle.kts` (AGP 8.11.1, Kotlin 2.2.20)
 - **Actual:**
   - Gradle 8.14 runs only on Java 24 or older.
