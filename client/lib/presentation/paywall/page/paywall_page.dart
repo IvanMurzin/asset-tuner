@@ -5,7 +5,6 @@ import 'package:asset_tuner/core/utils/external_url_launcher.dart';
 import 'package:asset_tuner/core_ui/components/ds_inline_error.dart';
 import 'package:asset_tuner/core_ui/components/ds_snackbar.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
-import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_body.dart';
@@ -55,19 +54,23 @@ class _PaywallViewState extends State<_PaywallView> {
     });
   }
 
+  /// `/paywall` is a top-level route, so only app-level cubits are readable here. Assets are
+  /// refreshed by the main shell when the profile changes (N-01).
   Future<void> _verifyPro(BuildContext context) async {
     final paywallCubit = context.read<PaywallCubit>();
     final profileCubit = context.read<ProfileCubit>();
-    final assetsCubit = context.read<AssetsCubit>();
-    await profileCubit.syncSubscription(silent: false, force: true, placement: 'paywall_purchase');
-    final isPro = profileCubit.state.isPro;
-    if (isPro) {
-      try {
-        await assetsCubit.refresh(silent: true, forceRefresh: true);
-      } catch (_) {}
-    }
-    if (!paywallCubit.isClosed) {
-      paywallCubit.onVerified(isPro: isPro);
+    try {
+      await profileCubit.syncSubscription(
+        silent: false,
+        force: true,
+        placement: 'paywall_purchase',
+      );
+    } catch (error) {
+      logger.e('Paywall verify sync failed', error: error);
+    } finally {
+      if (!paywallCubit.isClosed) {
+        paywallCubit.onVerified(isPro: profileCubit.state.isPro);
+      }
     }
   }
 

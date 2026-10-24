@@ -30,3 +30,4 @@
 | SPEC-0026 | tooling | Resolved | P3 | Pin Android JDK 21 | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0026-pin-android-jdk-21.md) |
 | SPEC-0027 | improvement | Resolved | P3 | Contact Developer Cubit | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0027-contact-developer-cubit.md) |
 | SPEC-0028 | improvement | Resolved | P3 | Sign-Up Result Entity | claude | 2026-10-24 | 2026-10-24 | [resolved](resolved/SPEC-0028-sign-up-result-entity.md) |
+| SPEC-0029 | bug | Resolved | P0 | Paywall Verify Without AssetsCubit | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0029-paywall-verify-without-assets-cubit.md) |

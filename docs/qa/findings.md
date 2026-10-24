@@ -41,6 +41,7 @@ regression runs.
 | QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | resolved (SPEC-0024), emulator check pending |
 | QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | resolved (SPEC-0023), emulator check pending |
 | QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | resolved (SPEC-0026, verified 2026-10-24) |
+| QA-035 | blocker | bug | client/paywall | Paywall hangs on verifying after every successful purchase or restore | resolved (SPEC-0029), emulator check pending |
 
 ---
 
@@ -617,3 +618,15 @@ regression runs.
   - Nothing tells the user why, or what to do (sign in to Google Play, update the Play Store).
   - The first-auth paywall is silently skipped, which is fine.
 - **Suggested fix:** when offerings fail with `PurchaseNotAllowedError` or `BILLING_UNAVAILABLE`, show an inline message such as "Purchases are unavailable on this device. Make sure you are signed in to Google Play." together with Retry.
+
+## QA-035: Paywall hangs on verifying after every successful purchase or restore
+- **Severity:** blocker
+- **Type:** bug
+- **Status:** Resolved in SPEC-0029 (2026-10-25), emulator check pending (E8, E10, E23–E25).
+- **Originally:** confirmed-runtime (regression 2026-10-24, found independently by both agents)
+- **Area:** `client/lib/presentation/paywall/page/paywall_page.dart`
+- **Actual:** after a valid Test Store purchase or Restore the paywall keeps a spinner, Close and
+  Restore stay disabled, only Android back exits, and the app shows Free until a pull to refresh.
+  Logcat: `ProviderNotFoundError` for `AssetsCubit`: `/paywall` is a top-level route and
+  `AssetsCubit` lives only in the main shell. Page tests provided it, so they missed it.
+- **Suggested fix:** do not read `AssetsCubit` from the paywall; always call `onVerified`.

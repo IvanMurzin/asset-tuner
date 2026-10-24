@@ -9,7 +9,6 @@ import 'package:asset_tuner/domain/profile/entity/entitlements_entity.dart';
 import 'package:asset_tuner/domain/profile/entity/plan.dart';
 import 'package:asset_tuner/domain/profile/entity/profile_entity.dart';
 import 'package:asset_tuner/l10n/app_localizations.dart';
-import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/auth/bloc/auth_cubit.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_args.dart';
 import 'package:asset_tuner/presentation/paywall/bloc/paywall_cubit.dart';
@@ -29,7 +28,6 @@ void main() {
   group('PaywallPage', () {
     late _TestAuthCubit authCubit;
     late _TestProfileCubit profileCubit;
-    late _TestAssetsCubit assetsCubit;
 
     setUp(() {
       if (getIt.isRegistered<AppAnalytics>()) {
@@ -56,13 +54,11 @@ void main() {
         ),
       );
       profileCubit = _TestProfileCubit(const ProfileState(status: ProfileStatus.loading));
-      assetsCubit = _TestAssetsCubit(const AssetsState(status: AssetsStatus.ready));
     });
 
     tearDown(() async {
       await authCubit.close();
       await profileCubit.close();
-      await assetsCubit.close();
       if (getIt.isRegistered<AppAnalytics>()) {
         getIt.unregister<AppAnalytics>();
       }
@@ -105,7 +101,6 @@ void main() {
           providers: [
             BlocProvider<AuthCubit>.value(value: authCubit),
             BlocProvider<ProfileCubit>.value(value: profileCubit),
-            BlocProvider<AssetsCubit>.value(value: assetsCubit),
           ],
           child: MaterialApp.router(
             theme: lightTheme,
@@ -199,7 +194,6 @@ void main() {
             providers: [
               BlocProvider<AuthCubit>.value(value: authCubit),
               BlocProvider<ProfileCubit>.value(value: profileCubit),
-              BlocProvider<AssetsCubit>.value(value: assetsCubit),
             ],
             child: const PaywallPage(args: PaywallArgs(reason: PaywallReason.onboarding)),
           ),
@@ -258,6 +252,32 @@ void main() {
 
       expectBackOnForm();
     });
+
+    testWidgets('verification failure leaves the paywall usable (N-01)', (tester) async {
+      getIt.unregister<RevenueCatService>();
+      getIt.registerLazySingleton<RevenueCatService>(_RestoreSucceedsRevenueCatService.new);
+      profileCubit
+        ..syncError = Exception('sync failed')
+        ..emit(
+          const ProfileState(
+            status: ProfileStatus.ready,
+            profile: ProfileEntity(
+              userId: 'u-1',
+              plan: Plan.free,
+              entitlements: EntitlementsEntity(),
+            ),
+          ),
+        );
+
+      await pumpPaywallOverForm(tester);
+
+      await tester.tap(find.text('Restore'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.byType(PaywallPage), findsOneWidget);
+      expect(find.text("Couldn't verify subscription; try again."), findsOneWidget);
+    });
   });
 }
 
@@ -311,6 +331,8 @@ class _TestAuthCubit extends Cubit<AuthState> implements AuthCubit {
 class _TestProfileCubit extends Cubit<ProfileState> implements ProfileCubit {
   _TestProfileCubit(super.initialState);
 
+  Object? syncError;
+
   @override
   Future<void> bootstrap() async {}
 
@@ -323,6 +345,10 @@ class _TestProfileCubit extends Cubit<ProfileState> implements ProfileCubit {
     bool force = false,
     String placement = 'auto',
   }) async {
+    final error = syncError;
+    if (error != null) {
+      throw error;
+    }
     final profile = state.profile;
     if (profile != null) {
       emit(state.copyWith(profile: profile.copyWith(plan: Plan.pro)));
@@ -331,14 +357,4 @@ class _TestProfileCubit extends Cubit<ProfileState> implements ProfileCubit {
 
   @override
   Future<void> updateBaseCurrency(String code) async {}
-}
-
-class _TestAssetsCubit extends Cubit<AssetsState> implements AssetsCubit {
-  _TestAssetsCubit(super.initialState);
-
-  @override
-  Future<void> load() async {}
-
-  @override
-  Future<void> refresh({bool silent = false, bool forceRefresh = false}) async {}
 }
