@@ -42,6 +42,7 @@ regression runs.
 | QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | resolved (SPEC-0023), emulator check pending |
 | QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | resolved (SPEC-0026, verified 2026-10-24) |
 | QA-035 | blocker | bug | client/paywall | Paywall hangs on verifying after every successful purchase or restore | resolved (SPEC-0029), emulator check pending |
+| QA-036 | medium | compliance | client/android | Prod manifest requests Ad Services ad ID and attribution permissions | resolved (SPEC-0031, verified 2026-10-25) |
 
 ---
 
@@ -631,3 +632,13 @@ regression runs.
   Logcat: `ProviderNotFoundError` for `AssetsCubit`: `/paywall` is a top-level route and
   `AssetsCubit` lives only in the main shell. Page tests provided it, so they missed it.
 - **Suggested fix:** do not read `AssetsCubit` from the paywall; always call `onVerified`.
+
+## QA-036: Prod manifest requests Ad Services ad ID and attribution permissions
+- **Severity:** medium
+- **Type:** compliance
+- **Status:** Resolved in SPEC-0031 (verified 2026-10-25 on the merged prod manifest).
+- **Originally:** confirmed-code (regression 2026-10-24, static release review)
+- **Area:** `client/android/app/src/main/AndroidManifest.xml`
+- **Actual:** Firebase measurement adds `ACCESS_ADSERVICES_AD_ID` and
+  `ACCESS_ADSERVICES_ATTRIBUTION`; Play expects the Data safety form to declare advertising ID use.
+- **Suggested fix:** remove both with `tools:node="remove"`.
