@@ -48,6 +48,7 @@ regression runs.
 | QA-039 | low | bug | client | Large amounts lose precision on display (Decimal → double) | resolved (SPEC-0033) |
 | QA-040 | low | bug | client | Unhandled async error when both asset list requests fail | resolved (SPEC-0034) |
 | QA-041 | low | privacy | backend | Account deletion keeps the user's support messages (name, email, text) | resolved (SPEC-0035, verified 2026-10-25) |
+| QA-042 | low | ux | client/l10n | Copy nits: "1 subaccounts", "position" in English, "Наличные в наличии", silent empty rename | resolved (SPEC-0036), emulator check pending |
 
 ---
 
@@ -706,3 +707,14 @@ regression runs.
 - **Actual:** the row stays with `user_id` set to null, while the app says data is permanently
   deleted.
 - **Suggested fix:** `on delete cascade`.
+
+## QA-042: Copy nits: "1 subaccounts", "position" in English, "Наличные в наличии", silent empty rename
+- **Severity:** low
+- **Type:** ux
+- **Status:** Resolved in SPEC-0036 (2026-10-25), emulator check pending (E15, E21).
+- **Originally:** confirmed-runtime (regression 2026-10-24)
+- **Area:** `client/lib/l10n/`, `subaccount_detail_page.dart`, `add_subaccount_page.dart`
+- **Actual:** no plural on account cards; English "position" in the base-currency help; a
+  tautological Russian cash description; subaccount forms labelled "Account name"; an empty rename
+  closes the sheet with no message.
+- **Suggested fix:** one copy pass.

@@ -428,6 +428,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsNameRequired => 'Name is required';
 
   @override
+  String get subaccountNameLabel => 'Subaccount name';
+
+  @override
   String get accountsTypeLabel => 'Type';
 
   @override
@@ -540,7 +543,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetKindCrypto => 'Crypto';
 
   @override
-  String get subaccountsCountLabel => 'subaccounts';
+  String subaccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count subaccounts',
+      one: '1 subaccount',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get subaccountCreateTitle => 'Add subaccount';
@@ -1132,7 +1143,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get baseCurrencyHowRatesBody => 'We always use fresh exchange rates for every currency.';
 
   @override
-  String get baseCurrencyHowConvertTitle => 'Each position is converted';
+  String get baseCurrencyHowConvertTitle => 'Each subaccount is converted';
 
   @override
   String get baseCurrencyHowConvertBody =>

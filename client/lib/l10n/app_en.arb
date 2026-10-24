@@ -172,6 +172,7 @@
   "accountsNameLabel": "Account name",
   "accountsNameHint": "e.g., Cash USD",
   "accountsNameRequired": "Name is required",
+  "subaccountNameLabel": "Subaccount name",
   "accountsTypeLabel": "Type",
   "accountsTypeBank": "Bank",
   "accountsTypeCryptoWallet": "Crypto wallet",
@@ -209,7 +210,14 @@
   "assetAlreadyAddedLabel": "Added",
   "assetKindFiat": "Fiat",
   "assetKindCrypto": "Crypto",
-  "subaccountsCountLabel": "subaccounts",
+  "subaccountsCount": "{count, plural, =1{1 subaccount} other{{count} subaccounts}}",
+  "@subaccountsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "subaccountCreateTitle": "Add subaccount",
   "subaccountCreateCta": "Add subaccount",
   "subaccountCurrencyLabel": "Currency",
@@ -439,7 +447,7 @@
   "baseCurrencyHowTitle": "How it works",
   "baseCurrencyHowRatesTitle": "Rates updated every hour",
   "baseCurrencyHowRatesBody": "We always use fresh exchange rates for every currency.",
-  "baseCurrencyHowConvertTitle": "Each position is converted",
+  "baseCurrencyHowConvertTitle": "Each subaccount is converted",
   "baseCurrencyHowConvertBody": "Every holding is converted to your base currency at the current rate.",
   "baseCurrencyHowSumTitle": "Totals are summed",
   "baseCurrencyHowSumBody": "Converted values add up to your overall portfolio total.",

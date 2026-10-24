@@ -161,7 +161,7 @@ class _AddSubaccountPageState extends State<AddSubaccountPage> {
                   ),
                   children: [
                     DSTextField(
-                      label: l10n.accountsNameLabel,
+                      label: l10n.subaccountNameLabel,
                       hintText: _nameHint(l10n, formContext.copyProfile),
                       controller: _nameController,
                       errorText: createState.nameError == SubaccountCreateFieldError.required

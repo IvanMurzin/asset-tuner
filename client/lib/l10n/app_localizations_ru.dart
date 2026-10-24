@@ -432,6 +432,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountsNameRequired => 'Название обязательно';
 
   @override
+  String get subaccountNameLabel => 'Название позиции';
+
+  @override
   String get accountsTypeLabel => 'Тип';
 
   @override
@@ -459,7 +462,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get accountsTypeExchangeDescription => 'Биржевой или торговый аккаунт';
 
   @override
-  String get accountsTypeCashDescription => 'Наличные в наличии';
+  String get accountsTypeCashDescription => 'Наличные деньги';
 
   @override
   String get accountsTypeOtherDescription => 'Другие активы или произвольный тип';
@@ -544,7 +547,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get assetKindCrypto => 'Крипто';
 
   @override
-  String get subaccountsCountLabel => 'позиций';
+  String subaccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count позиции',
+      many: '$count позиций',
+      few: '$count позиции',
+      one: '$count позиция',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get subaccountCreateTitle => 'Добавить позицию';

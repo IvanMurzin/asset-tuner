@@ -897,6 +897,12 @@ abstract class AppLocalizations {
   /// **'Name is required'**
   String get accountsNameRequired;
 
+  /// No description provided for @subaccountNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Subaccount name'**
+  String get subaccountNameLabel;
+
   /// No description provided for @accountsTypeLabel.
   ///
   /// In en, this message translates to:
@@ -1119,11 +1125,11 @@ abstract class AppLocalizations {
   /// **'Crypto'**
   String get assetKindCrypto;
 
-  /// No description provided for @subaccountsCountLabel.
+  /// No description provided for @subaccountsCount.
   ///
   /// In en, this message translates to:
-  /// **'subaccounts'**
-  String get subaccountsCountLabel;
+  /// **'{count, plural, =1{1 subaccount} other{{count} subaccounts}}'**
+  String subaccountsCount(int count);
 
   /// No description provided for @subaccountCreateTitle.
   ///
@@ -2262,7 +2268,7 @@ abstract class AppLocalizations {
   /// No description provided for @baseCurrencyHowConvertTitle.
   ///
   /// In en, this message translates to:
-  /// **'Each position is converted'**
+  /// **'Each subaccount is converted'**
   String get baseCurrencyHowConvertTitle;
 
   /// No description provided for @baseCurrencyHowConvertBody.

@@ -37,3 +37,4 @@
 | SPEC-0033 | bug | Resolved | P2 | Analytics Correctness And Offline States | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0033-analytics-correctness-and-offline.md) |
 | SPEC-0034 | bug | Resolved | P2 | Auth And Client Hardening | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0034-auth-and-client-hardening.md) |
 | SPEC-0035 | bug | Resolved | P2 | Plan Limit Lock And Support Cascade | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0035-plan-limit-lock-and-support-cascade.md) |
+| SPEC-0036 | improvement | Resolved | P3 | Copy Pass | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0036-copy-pass.md) |

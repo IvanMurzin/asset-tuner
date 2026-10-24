@@ -35,8 +35,7 @@ class OverviewAccountCard extends StatelessWidget {
     final totalText = showBalance
         ? context.dsFormatters.formatMoney(item.total, baseCurrency)
         : '—';
-    final subaccountsText =
-        subtitleOverride ?? '${item.subaccountsCount} ${l10n.subaccountsCountLabel}';
+    final subaccountsText = subtitleOverride ?? l10n.subaccountsCount(item.subaccountsCount);
 
     return InkWell(
       borderRadius: BorderRadius.circular(context.dsRadius.r16),

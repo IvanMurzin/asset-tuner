@@ -384,6 +384,7 @@ class _RenameSubaccountBottomSheet extends StatefulWidget {
 }
 
 class _RenameSubaccountBottomSheetState extends State<_RenameSubaccountBottomSheet> {
+  bool _showRequired = false;
   late final TextEditingController _controller;
 
   @override
@@ -417,7 +418,14 @@ class _RenameSubaccountBottomSheetState extends State<_RenameSubaccountBottomShe
         children: [
           Text(widget.l10n.subaccountRenameCta, style: typography.h3),
           SizedBox(height: spacing.s12),
-          DSTextField(label: widget.l10n.accountsNameLabel, controller: _controller),
+          DSTextField(
+            label: widget.l10n.subaccountNameLabel,
+            controller: _controller,
+            errorText: _showRequired ? widget.l10n.accountsNameRequired : null,
+            onChanged: (_) {
+              if (_showRequired) setState(() => _showRequired = false);
+            },
+          ),
           SizedBox(height: spacing.s16),
           Row(
             children: [
@@ -432,7 +440,14 @@ class _RenameSubaccountBottomSheetState extends State<_RenameSubaccountBottomShe
               Expanded(
                 child: DSButton(
                   label: widget.l10n.save,
-                  onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
+                  onPressed: () {
+                    final name = _controller.text.trim();
+                    if (name.isEmpty) {
+                      setState(() => _showRequired = true);
+                      return;
+                    }
+                    Navigator.of(context).pop(name);
+                  },
                 ),
               ),
             ],
