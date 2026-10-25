@@ -9,9 +9,9 @@ regression runs.
 |---|---|---|---|---|---|
 | QA-001 | blocker | security | backend | Four `api_*` SECURITY DEFINER RPCs are executable by `anon`/`authenticated` | resolved (SPEC-0006, verified 2026-09-24) |
 | QA-002 | blocker | bug | backend | `delete_my_account` soft-deletes the auth user, so user data is never removed | resolved (SPEC-0007, verified 2026-09-24) |
-| QA-003 | high | bug | billing/client | Paywall can pop twice after a successful purchase or restore | resolved (SPEC-0009), emulator check pending |
+| QA-003 | high | bug | billing/client | Paywall can pop twice after a successful purchase or restore | resolved (SPEC-0009 + SPEC-0029, verified 2026-10-25 on emulator); device P1/P4 pending |
 | QA-004 | high | bug | billing | Sandbox purchases grant Pro in the shared production database | mitigated (SPEC-0008, verified 2026-10-04); rest in BL-0002 |
-| QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | resolved (SPEC-0010), emulator check pending |
+| QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | resolved (SPEC-0010, verified 2026-10-24 on emulator) |
 | QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | resolved (SPEC-0016), device P3 pending |
 | QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | resolved (SPEC-0013, verified 2026-10-04); device R2 pending |
 | QA-008 | high | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | resolved (SPEC-0030), device D1 pending |
@@ -19,7 +19,7 @@ regression runs.
 | QA-010 | medium | ux | client/paywall | Paywall error and loading states have no close button | resolved (SPEC-0015), emulator check pending |
 | QA-011 | medium | bug | client/auth | Dev and prod flavors share the `assettuner://` OAuth callback scheme | resolved (SPEC-0034), device D2 pending |
 | QA-012 | medium | ux | client/auth | Apple sign-in button is shown on Android | resolved (SPEC-0034) |
-| QA-013 | medium | bug | client | Offline and network errors are not recognized; no HTTP timeouts | resolved (SPEC-0017), emulator E12 pending |
+| QA-013 | medium | bug | client | Offline and network errors are not recognized; no HTTP timeouts | resolved (SPEC-0017, verified 2026-10-25 on emulator) |
 | QA-014 | medium | improvement | client/auth | No "forgot password" flow | mitigated (SPEC-0037); real reset needs SMTP |
 | QA-015 | low | bug | client | Negative amounts cannot be typed on most Android keyboards | resolved (SPEC-0034), device X1 pending |
 | QA-016 | low | bug | backend | Unchanged-balance check compares text (`0100` vs `100`) | resolved (SPEC-0011, verified 2026-10-04) |
@@ -28,8 +28,8 @@ regression runs.
 | QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | resolved (SPEC-0018, verified 2026-10-24) |
 | QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | resolved (SPEC-0012, verified 2026-10-04) |
 | QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | resolved (SPEC-0022 + SPEC-0038), emulator check pending |
-| QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | resolved (SPEC-0032), emulator check pending |
-| QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | resolved (SPEC-0032), emulator check pending |
+| QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | resolved (SPEC-0032, verified 2026-10-25 on emulator) |
+| QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | resolved (SPEC-0032, verified 2026-10-25 on emulator) |
 | QA-024 | low | bug | backend | Analytics divides by zero when the base asset rate is `0` | resolved (SPEC-0019, verified 2026-10-24) |
 | QA-025 | low | security | backend | Unmapped DB errors return raw Postgres message, details, and hint | resolved (SPEC-0020, verified 2026-10-24) |
 | QA-026 | low | improvement | billing | 5-minute subscription sync cooldown delays renewal and expiry in the UI | confirmed-code |
@@ -38,17 +38,17 @@ regression runs.
 | QA-029 | info | improvement | backend | Free-plan downgrade keeps accounts and subaccounts above free limits | accepted as designed (2026-10-24) |
 | QA-030 | info | improvement | backend | New profile has a null base asset; the client fills in USD | resolved (SPEC-0021, verified 2026-10-24) |
 | QA-032 | medium | bug | client/l10n | 29 hardcoded English error messages are shown in the Russian UI | confirmed-runtime; paywall part resolved (SPEC-0032), rest deferred (codes → ARB refactor) |
-| QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | resolved (SPEC-0024), emulator check pending |
-| QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | resolved (SPEC-0023), emulator check pending |
+| QA-033 | low | ux | client | Small UX and accessibility polish from the emulator pass | resolved (SPEC-0024, verified 2026-10-24 on emulator) |
+| QA-034 | low | ux | client/paywall | Paywall gives no explanation when the store is unavailable | resolved (SPEC-0023, verified 2026-10-24 on emulator) |
 | QA-031 | low | improvement | tooling | Android toolchain cannot build on Java 25 (Gradle 8.14.3) | resolved (SPEC-0026, verified 2026-10-24) |
-| QA-035 | blocker | bug | client/paywall | Paywall hangs on verifying after every successful purchase or restore | resolved (SPEC-0029), emulator check pending |
+| QA-035 | blocker | bug | client/paywall | Paywall hangs on verifying after every successful purchase or restore | resolved (SPEC-0029, verified 2026-10-25 on emulator) |
 | QA-036 | medium | compliance | client/android | Prod manifest requests Ad Services ad ID and attribution permissions | resolved (SPEC-0031, verified 2026-10-25) |
-| QA-037 | medium | bug | client/analytics | Offline Analytics skeleton never ends; false "No analytics yet"; Main needs two retries | resolved (SPEC-0033), emulator check pending |
-| QA-038 | medium | bug | client/analytics | Breakdown shares add up to 200% when a balance is negative | resolved (SPEC-0033), emulator check pending |
-| QA-039 | low | bug | client | Large amounts lose precision on display (Decimal → double) | resolved (SPEC-0033) |
+| QA-037 | medium | bug | client/analytics | Offline Analytics skeleton never ends; false "No analytics yet"; Main needs two retries | resolved (SPEC-0033, verified 2026-10-25 on emulator) |
+| QA-038 | medium | bug | client/analytics | Breakdown shares add up to 200% when a balance is negative | resolved (SPEC-0033, verified 2026-10-25 on emulator) |
+| QA-039 | low | bug | client | Large amounts lose precision on display (Decimal → double) | resolved (SPEC-0033, verified 2026-10-25 on emulator) |
 | QA-040 | low | bug | client | Unhandled async error when both asset list requests fail | resolved (SPEC-0034) |
-| QA-041 | low | privacy | backend | Account deletion keeps the user's support messages (name, email, text) | resolved (SPEC-0035, verified 2026-10-25) |
-| QA-042 | low | ux | client/l10n | Copy nits: "1 subaccounts", "position" in English, "Наличные в наличии", silent empty rename | resolved (SPEC-0036), emulator check pending |
+| QA-041 | low | privacy | backend | Account deletion keeps the user's support messages (name, email, text) | resolved (SPEC-0035, verified 2026-10-25 on prod and emulator) |
+| QA-042 | low | ux | client/l10n | Copy nits: "1 subaccounts", "position" in English, "Наличные в наличии", silent empty rename | resolved (SPEC-0036, verified 2026-10-25 on emulator) |
 | QA-043 | low | ux | client | History row breaks when the amount is very long | resolved (SPEC-0038), emulator check pending |
 | QA-044 | blocker | tooling | client/android | Incremental release builds package a stale libapp.so (old Dart code) | resolved (SPEC-0039, verified 2026-10-25) |
 
@@ -126,7 +126,8 @@ regression runs.
 ## QA-003: Paywall can pop twice after a successful purchase or restore
 - **Severity:** high
 - **Type:** bug
-- **Status:** Resolved in SPEC-0009 (2026-10-04), **not yet verified on the emulator** — re-check at
+- **Status:** Verified 2026-10-25 on the emulator after SPEC-0029: after purchase only the paywall pops and the form keeps its input. Device P1 and P4 pending.
+- **Previous status:** Resolved in SPEC-0009 (2026-10-04), **not yet verified on the emulator** — re-check at
   the next regression (Add subaccount at the limit → buy → lands on the form). Paywall logic moved to
   `PaywallCubit`; the page pops only on the single transition into `done`. Covered by
   `paywall_page_test.dart` (Home → Form → Paywall, restore → Form) and `paywall_cubit_test.dart`.
@@ -180,7 +181,8 @@ regression runs.
 ## QA-005: Re-login after a forced 401 sign-out can hang on the sign-in screen
 - **Severity:** high
 - **Type:** bug
-- **Status:** Resolved in SPEC-0010 (2026-10-04), **not yet verified on the emulator** — re-run the
+- **Status:** Verified 2026-10-24 on the emulator: revoke sessions → sign in again → Main in about 5 s.
+- **Previous status:** Resolved in SPEC-0010 (2026-10-04), **not yet verified on the emulator** — re-run the
   repro below at the next regression. A 401 now runs the regular Supabase `signOut` (local scope
   clears the persisted session before the server call) instead of a cubit-only state flip, so the
   session stream emits `null` and a same-user sign-in is no longer filtered by `.distinct()`.
@@ -322,7 +324,8 @@ regression runs.
 ## QA-013: Offline and network errors are not recognized; no HTTP timeouts
 - **Severity:** medium
 - **Type:** bug
-- **Status:** Resolved in SPEC-0017 (2026-10-04), emulator check E12 pending. Transport failures
+- **Status:** Verified 2026-10-24/25 on the emulator: localized offline errors, forms kept, Retry recovers.
+- **Previous status:** Resolved in SPEC-0017 (2026-10-04), emulator check E12 pending. Transport failures
   (`SocketException`, `HandshakeException`, `TimeoutException`, `ClientException`, status-less
   `AuthRetryableFetchException`) map to `network` with a localized "No internet connection"; API
   calls time out after 20 s. Auto-reload after reconnect is not included.
@@ -442,7 +445,8 @@ regression runs.
 ## QA-022: Paywall opens without args are logged as `baseCurrency`
 - **Severity:** low
 - **Type:** bug
-- **Status:** Resolved in SPEC-0032 (2026-10-25), emulator check pending (E24). Profile and the router default use `PaywallReason.upgrade`; a locked currency on Add subaccount uses `subaccountCurrency`.
+- **Status:** Resolved in SPEC-0032 (verified 2026-10-25 on the emulator: Profile → Upgrade and a locked subaccount currency show their own copy).
+- **Previous status:** Resolved in SPEC-0032 (2026-10-25), emulator check pending (E24). Profile and the router default use `PaywallReason.upgrade`; a locked currency on Add subaccount uses `subaccountCurrency`.
 - **Originally:** confirmed-code
 - **Area:** `client/lib/core/routing/app_router.dart:352-354`;
   callers `profile_page.dart:147` and `add_subaccount_page.dart:202`
@@ -455,7 +459,8 @@ regression runs.
 ## QA-023: Hitting a limit shows the paywall and an error snackbar at the same time
 - **Severity:** low
 - **Type:** ux
-- **Status:** Resolved in SPEC-0032 (2026-10-25), emulator check pending (E7, E23). Limit codes open only the paywall; the English copy says "subaccount".
+- **Status:** Resolved in SPEC-0032 (verified 2026-10-25 on the emulator: E7 and E23 open only the paywall, no snackbar).
+- **Previous status:** Resolved in SPEC-0032 (2026-10-25), emulator check pending (E7, E23). Limit codes open only the paywall; the English copy says "subaccount".
 - **Originally:** confirmed-runtime. At 15/15 subaccounts the paywall opened and, underneath it, a snackbar "Free plan position limit reached" (English copy, wording "position"). After buying, the form was lost because of QA-003.
 - **Area:** `account_create_page.dart:57-67`, `add_subaccount_page.dart:89-99`
 - **Expected:** the paywall alone. After a purchase, the original action retries or the form stays
@@ -606,7 +611,8 @@ regression runs.
 ## QA-033: Small UX and accessibility polish from the emulator pass
 - **Severity:** low
 - **Type:** ux
-- **Status:** Resolved in SPEC-0024 (2026-10-24), emulator check pending. All nine items addressed
+- **Status:** Verified 2026-10-24 on the emulator: all nine items checked.
+- **Previous status:** Resolved in SPEC-0024 (2026-10-24), emulator check pending. All nine items addressed
   in the shared DS components or their single call sites; covered by unit and widget tests.
 - **Originally:** confirmed-runtime
 - **Items:**
@@ -624,7 +630,8 @@ regression runs.
 ## QA-034: Paywall gives no explanation when the store is unavailable
 - **Severity:** low
 - **Type:** ux
-- **Status:** Resolved in SPEC-0023 (2026-10-24), emulator check pending (no Play account). Explicit
+- **Status:** Verified 2026-10-24 on the emulator: prod build without a Play account shows "Purchases unavailable" with Try again and Close.
+- **Previous status:** Resolved in SPEC-0023 (2026-10-24), emulator check pending (no Play account). Explicit
   `PaywallOfferings` state; store-unavailable and failed offers render an inline explanation with
   Retry inside the paywall scaffold. Covered by paywall cubit, body and page tests.
 - **Originally:** confirmed-runtime (prod release build on an emulator with no Play account: `BILLING_UNAVAILABLE`)
@@ -638,7 +645,8 @@ regression runs.
 ## QA-035: Paywall hangs on verifying after every successful purchase or restore
 - **Severity:** blocker
 - **Type:** bug
-- **Status:** Resolved in SPEC-0029 (2026-10-25), emulator check pending (E8, E10, E23–E25).
+- **Status:** Resolved in SPEC-0029 (verified 2026-10-25 on the emulator: E8 and E23 close in 2–3 s, Pro without refresh, no ProviderNotFoundError; E25 free restore shows the verification error).
+- **Previous status:** Resolved in SPEC-0029 (2026-10-25), emulator check pending (E8, E10, E23–E25).
 - **Originally:** confirmed-runtime (regression 2026-10-24, found independently by both agents)
 - **Area:** `client/lib/presentation/paywall/page/paywall_page.dart`
 - **Actual:** after a valid Test Store purchase or Restore the paywall keeps a spinner, Close and
@@ -660,7 +668,8 @@ regression runs.
 ## QA-037: Offline Analytics skeleton never ends; false "No analytics yet"; Main needs two retries
 - **Severity:** medium
 - **Type:** bug
-- **Status:** Resolved in SPEC-0033 (2026-10-25), emulator check pending (E12).
+- **Status:** Resolved in SPEC-0033 (verified 2026-10-25 on the emulator: offline Analytics shows an error with Retry within 2 s; one Retry on Main restores profile and accounts; no false empty state).
+- **Previous status:** Resolved in SPEC-0033 (2026-10-25), emulator check pending (E12).
 - **Originally:** confirmed-runtime (regression 2026-10-24, both agents)
 - **Area:** `client/lib/presentation/home/page/main_shell_page.dart`, `overview_page.dart`
 - **Actual:** after an offline cold start Analytics shows a skeleton for 50+ seconds with no retry;
@@ -671,7 +680,8 @@ regression runs.
 ## QA-038: Breakdown shares add up to 200% when a balance is negative
 - **Severity:** medium
 - **Type:** bug
-- **Status:** Resolved in SPEC-0033 (2026-10-25), emulator check pending (E11).
+- **Status:** Resolved in SPEC-0033 (verified 2026-10-25 on the emulator: USD −100, BTC, CAD → shares 36/64/0, no negative pie slice).
+- **Previous status:** Resolved in SPEC-0033 (2026-10-25), emulator check pending (E11).
 - **Originally:** confirmed-runtime (regression 2026-10-24)
 - **Area:** `client/lib/presentation/analytics/bloc/analytics_cubit.dart`
 - **Actual:** a negative USD balance next to BTC and CAD showed 0 / 100 / 100: shares were divided
@@ -681,7 +691,8 @@ regression runs.
 ## QA-039: Large amounts lose precision on display (Decimal → double)
 - **Severity:** low
 - **Type:** bug
-- **Status:** Resolved in SPEC-0033 (2026-10-25). Formatting is exact; covered by formatter tests.
+- **Status:** Resolved in SPEC-0033 (verified 2026-10-25 on the emulator: the 24-digit balance is shown exactly).
+- **Previous status:** Resolved in SPEC-0033 (2026-10-25). Formatting is exact; covered by formatter tests.
 - **Originally:** confirmed-runtime (regression 2026-10-24)
 - **Area:** `client/lib/core_ui/formatting/ds_formatters.dart`
 - **Actual:** 123456789012345678901234.12 is stored exactly but shown as
@@ -701,7 +712,8 @@ regression runs.
 ## QA-041: Account deletion keeps the user's support messages (name, email, text)
 - **Severity:** low
 - **Type:** privacy
-- **Status:** Resolved in SPEC-0035 (verified 2026-10-25 on prod). The foreign key cascades;
+- **Status:** Resolved in SPEC-0035 (verified 2026-10-25 on prod by the API suite and on the emulator: in-app deletion removed the user's support message).
+- **Previous status:** Resolved in SPEC-0035 (verified 2026-10-25 on prod). The foreign key cascades;
   `support_delete.test.ts` checks it.
 - **Originally:** confirmed-runtime (regression 2026-10-24)
 - **Area:** `public.support_messages`
@@ -712,7 +724,8 @@ regression runs.
 ## QA-042: Copy nits: "1 subaccounts", "position" in English, "Наличные в наличии", silent empty rename
 - **Severity:** low
 - **Type:** ux
-- **Status:** Resolved in SPEC-0036 (2026-10-25), emulator check pending (E15, E21).
+- **Status:** Resolved in SPEC-0036 (verified 2026-10-25 on the emulator: en/ru plurals, "Subaccount name", empty rename error, "Наличные деньги").
+- **Previous status:** Resolved in SPEC-0036 (2026-10-25), emulator check pending (E15, E21).
 - **Originally:** confirmed-runtime (regression 2026-10-24)
 - **Area:** `client/lib/l10n/`, `subaccount_detail_page.dart`, `add_subaccount_page.dart`
 - **Actual:** no plural on account cards; English "position" in the base-currency help; a
