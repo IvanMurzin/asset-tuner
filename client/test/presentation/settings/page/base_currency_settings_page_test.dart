@@ -306,13 +306,17 @@ class _TestAssetsCubit extends Cubit<AssetsState> implements AssetsCubit {
   Future<void> refresh({bool silent = false, bool forceRefresh = false}) async {}
 }
 
+/// Mirrors `/me`: both plans have a numeric fiat limit (Pro: 100), as on prod (QA-021).
 ProfileEntity _profile({required String baseCode, Plan plan = Plan.pro, int? fiatLimit}) {
   return ProfileEntity(
     userId: 'user-1',
     baseAssetId: 'asset-$baseCode',
     baseAsset: _asset(id: 'asset-$baseCode', kind: AssetKind.fiat, code: baseCode, name: baseCode),
     plan: plan,
-    entitlements: EntitlementsEntity(fiatLimit: fiatLimit),
+    entitlements: EntitlementsEntity(
+      plan: plan,
+      fiatLimit: fiatLimit ?? (plan == Plan.pro ? 100 : 5),
+    ),
   );
 }
 

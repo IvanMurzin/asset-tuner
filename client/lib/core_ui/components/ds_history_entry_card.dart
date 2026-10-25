@@ -86,49 +86,52 @@ class DSHistoryEntryCard extends StatelessWidget {
           ),
           if (showDeltaOnTrailing || trailingTitle != null || trailingPrimaryText != null) ...[
             SizedBox(width: spacing.s12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (showDeltaOnTrailing) ...[
-                  if (deltaText != null)
-                    Text(
-                      deltaText!,
-                      textAlign: TextAlign.right,
-                      style: typography.body.copyWith(
-                        color: deltaColor,
-                        fontWeight: FontWeight.w700,
+            // Flexible: a very long amount wraps instead of squeezing the date column to nothing.
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (showDeltaOnTrailing) ...[
+                    if (deltaText != null)
+                      Text(
+                        deltaText!,
+                        textAlign: TextAlign.right,
+                        style: typography.body.copyWith(
+                          color: deltaColor,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
+                    if (baseLineText != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        baseLineText!,
+                        textAlign: TextAlign.right,
+                        style: typography.caption.copyWith(color: deltaColor),
+                      ),
+                    ],
+                  ] else if (trailingTitle != null) ...[
+                    Text(
+                      trailingTitle!,
+                      style: typography.caption.copyWith(color: colors.textSecondary),
                     ),
-                  if (baseLineText != null) ...[
+                    SizedBox(height: spacing.s4),
+                  ],
+                  if (trailingPrimaryText != null)
+                    Text(
+                      trailingPrimaryText!,
+                      textAlign: TextAlign.right,
+                      style: typography.h3.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  if (trailingSecondaryText != null) ...[
                     const SizedBox(height: 2),
                     Text(
-                      baseLineText!,
+                      trailingSecondaryText!,
                       textAlign: TextAlign.right,
-                      style: typography.caption.copyWith(color: deltaColor),
+                      style: typography.body.copyWith(color: colors.textSecondary),
                     ),
                   ],
-                ] else if (trailingTitle != null) ...[
-                  Text(
-                    trailingTitle!,
-                    style: typography.caption.copyWith(color: colors.textSecondary),
-                  ),
-                  SizedBox(height: spacing.s4),
                 ],
-                if (trailingPrimaryText != null)
-                  Text(
-                    trailingPrimaryText!,
-                    textAlign: TextAlign.right,
-                    style: typography.h3.copyWith(fontWeight: FontWeight.w700),
-                  ),
-                if (trailingSecondaryText != null) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    trailingSecondaryText!,
-                    textAlign: TextAlign.right,
-                    style: typography.body.copyWith(color: colors.textSecondary),
-                  ),
-                ],
-              ],
+              ),
             ),
           ],
         ],

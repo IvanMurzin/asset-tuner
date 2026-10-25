@@ -15,5 +15,7 @@ abstract class EntitlementsEntity with _$EntitlementsEntity {
     int? cryptoLimit,
   }) = _EntitlementsEntity;
 
-  bool get anyBaseCurrency => fiatLimit == null;
+  /// Pro has a numeric `fiat_limit` (the catalog size), so the plan decides, not a null limit
+  /// (QA-021).
+  bool get anyBaseCurrency => plan == Plan.pro || fiatLimit == null;
 }

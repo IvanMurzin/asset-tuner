@@ -27,7 +27,7 @@ regression runs.
 | QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | resolved (SPEC-0014, verified 2026-10-04) |
 | QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | resolved (SPEC-0018, verified 2026-10-24) |
 | QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | resolved (SPEC-0012, verified 2026-10-04) |
-| QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | resolved (SPEC-0022), emulator check pending |
+| QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | resolved (SPEC-0022 + SPEC-0038), emulator check pending |
 | QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | resolved (SPEC-0032), emulator check pending |
 | QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | resolved (SPEC-0032), emulator check pending |
 | QA-024 | low | bug | backend | Analytics divides by zero when the base asset rate is `0` | resolved (SPEC-0019, verified 2026-10-24) |
@@ -49,6 +49,7 @@ regression runs.
 | QA-040 | low | bug | client | Unhandled async error when both asset list requests fail | resolved (SPEC-0034) |
 | QA-041 | low | privacy | backend | Account deletion keeps the user's support messages (name, email, text) | resolved (SPEC-0035, verified 2026-10-25) |
 | QA-042 | low | ux | client/l10n | Copy nits: "1 subaccounts", "position" in English, "Наличные в наличии", silent empty rename | resolved (SPEC-0036), emulator check pending |
+| QA-043 | low | ux | client | History row breaks when the amount is very long | resolved (SPEC-0038), emulator check pending |
 
 ---
 
@@ -428,9 +429,7 @@ regression runs.
 ## QA-021: Requested base currency is not applied after purchase from the base-currency flow
 - **Severity:** low
 - **Type:** bug
-- **Status:** Resolved in SPEC-0022 (2026-10-24), emulator check pending (E10). The settings page
-  applies the requested currency once the paywall closes with currencies unlocked; covered by
-  `base_currency_settings_page_test.dart`.
+- **Status:** Resolved in SPEC-0038 (2026-10-25), emulator check pending (E10). SPEC-0022's apply step never ran on prod: Pro has `fiat_limit = 100`, and `anyBaseCurrency` only accepted a null limit (found in the 2026-10-25 emulator recheck).
 - **Originally:** confirmed-code. It is already `BL-0001` in `docs/backlog.md`.
 - **Area:** `client/lib/presentation/settings/page/base_currency_settings_page.dart:189`,
   `client/lib/presentation/paywall/bloc/paywall_args.dart:7`
@@ -719,3 +718,13 @@ regression runs.
   tautological Russian cash description; subaccount forms labelled "Account name"; an empty rename
   closes the sheet with no message.
 - **Suggested fix:** one copy pass.
+
+## QA-043: History row breaks when the amount is very long
+- **Severity:** low
+- **Type:** ux
+- **Status:** Resolved in SPEC-0038 (2026-10-25), emulator check pending.
+- **Originally:** confirmed-runtime (emulator recheck 2026-10-25)
+- **Area:** `client/lib/core_ui/components/ds_history_entry_card.dart`
+- **Actual:** with a 24-digit balance, "Implied change" wraps one letter per line and the date is
+  hidden, because the trailing amount takes the whole row width.
+- **Suggested fix:** make the trailing column `Flexible`.
