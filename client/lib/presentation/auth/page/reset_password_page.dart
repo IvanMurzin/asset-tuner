@@ -105,19 +105,37 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
         final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
         final codeStep = state.step != ResetPasswordStep.email;
 
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: DSAppBar(title: l10n.resetPasswordTitle),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(
-                spacing.s24,
-                spacing.s24,
-                spacing.s24,
-                spacing.s24 + keyboardInset,
+        // Opened with `go` (nothing to pop), so back leads to Sign in explicitly.
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop && state.status == ResetPasswordStatus.idle) {
+              context.go(AppRoutes.signIn);
+            }
+          },
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: DSAppBar(
+              title: l10n.resetPasswordTitle,
+              leading: BackButton(
+                onPressed: state.status == ResetPasswordStatus.idle
+                    ? () => context.go(AppRoutes.signIn)
+                    : null,
               ),
-              child: codeStep ? _codeStep(context, l10n, state) : _emailStep(context, l10n, state),
+            ),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s24,
+                  spacing.s24 + keyboardInset,
+                ),
+                child: codeStep
+                    ? _codeStep(context, l10n, state)
+                    : _emailStep(context, l10n, state),
+              ),
             ),
           ),
         );
@@ -134,6 +152,8 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AuthHero(title: l10n.resetPasswordTitle, subtitle: l10n.resetPasswordEmailBody),
+        SizedBox(height: spacing.s24),
+        _Explanation(l10n.resetPasswordEmailBody),
         SizedBox(height: spacing.s24),
         DSTextField(
           label: l10n.emailLabel,
@@ -169,6 +189,8 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AuthHero(title: l10n.resetPasswordTitle, subtitle: l10n.resetPasswordCodeBody(state.email)),
+        SizedBox(height: spacing.s24),
+        _Explanation(l10n.resetPasswordCodeBody(state.email)),
         SizedBox(height: spacing.s24),
         DSOtpInput(
           controller: _codeController,
@@ -228,6 +250,22 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
           child: Text(l10n.changeEmail, style: typography.body.copyWith(color: colors.primary)),
         ),
       ],
+    );
+  }
+}
+
+/// [AuthHero] shows only the logo, so the step's instructions are rendered here.
+class _Explanation extends StatelessWidget {
+  const _Explanation(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: context.dsTypography.body.copyWith(color: context.dsColors.textSecondary),
     );
   }
 }

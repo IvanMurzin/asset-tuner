@@ -61,6 +61,21 @@ void main() {
       expect(ctx.currentLocation, AppRoutes.main);
     });
 
+    testWidgets('reset password stays open when the code signs the user in', (t) async {
+      final ctx = _Ctx(carousel: true, initialLocation: AppRoutes.signIn);
+      await _pump(t, ctx);
+      ctx.auth.resolveUnauthenticated();
+      await t.pumpAndSettle();
+
+      // Sign in opens it with `go`, so no /sign-in stays underneath.
+      ctx.router.go(AppRoutes.resetPassword);
+      await t.pumpAndSettle();
+      ctx.auth.resolveAuthenticated();
+      await t.pumpAndSettle();
+
+      expect(ctx.currentLocation, AppRoutes.resetPassword);
+    });
+
     testWidgets('logout: signing out from /main → automatic /sign-in', (t) async {
       final ctx = _Ctx(carousel: true, initialLocation: AppRoutes.signIn);
       await _pump(t, ctx);
@@ -175,6 +190,7 @@ class _Ctx {
         _StubRoute(AppRoutes.signIn, 'SIGN_IN'),
         _StubRoute(AppRoutes.signUp, 'SIGN_UP'),
         _StubRoute(AppRoutes.otp, 'OTP'),
+        _StubRoute(AppRoutes.resetPassword, 'RESET_PASSWORD'),
         _StubRoute(AppRoutes.onboardingCarousel, 'CAROUSEL'),
         _StubRoute(AppRoutes.splash, 'SPLASH'),
         _StubRoute(AppRoutes.main, 'MAIN'),

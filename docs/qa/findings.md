@@ -20,7 +20,7 @@ regression runs.
 | QA-011 | medium | bug | client/auth | Dev and prod flavors share the `assettuner://` OAuth callback scheme | resolved (SPEC-0034), device D2 pending |
 | QA-012 | medium | ux | client/auth | Apple sign-in button is shown on Android | resolved (SPEC-0034, verified 2026-10-25 on emulator) |
 | QA-013 | medium | bug | client | Offline and network errors are not recognized; no HTTP timeouts | resolved (SPEC-0017, verified 2026-10-25 on emulator) |
-| QA-014 | medium | improvement | client/auth | No "forgot password" flow | resolved (SPEC-0041), emulator check pending |
+| QA-014 | medium | improvement | client/auth | No "forgot password" flow | resolved (SPEC-0041, verified 2026-10-25 on emulator) |
 | QA-015 | low | bug | client | Negative amounts cannot be typed on most Android keyboards | resolved (SPEC-0034), device X1 pending |
 | QA-016 | low | bug | backend | Unchanged-balance check compares text (`0100` vs `100`) | resolved (SPEC-0011, verified 2026-10-04) |
 | QA-017 | low | bug | backend | Plan limits can be exceeded with parallel requests | resolved (SPEC-0035, verified 2026-10-25) |
@@ -352,7 +352,8 @@ regression runs.
 ## QA-014: No "forgot password" flow
 - **Severity:** medium
 - **Type:** improvement
-- **Status:** Resolved in SPEC-0041 (2026-10-25): reset by an emailed 6-digit code through Resend SMTP. The SPEC-0037 support fallback is removed. Emulator check pending.
+- **Status:** Resolved in SPEC-0041 (verified 2026-10-25 on the emulator: the emailed code resets the password, the user lands on Main, and the new password signs in). The SPEC-0037 support fallback is removed.
+- **Previous status:** Resolved in SPEC-0041 (2026-10-25): reset by an emailed 6-digit code through Resend SMTP. The SPEC-0037 support fallback is removed. Emulator check pending.
 - **Previous status:** Mitigated in SPEC-0037 (2026-10-25): Sign in offers "Forgot password?" as an email to support. A real reset flow needs custom SMTP and a reset path in Supabase Auth.
 - **Originally:** confirmed-code
 - **Area:** `client/lib/presentation/auth`

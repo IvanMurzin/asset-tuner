@@ -17,7 +17,10 @@ and the temporary "write to support" fallback (SPEC-0037, SPEC-0040) is removed.
 (`noreply@murzinstudio.com`).
 
 ## Desired Behavior
-- Sign in → "Forgot password?" pushes `/reset-password` with the typed email.
+- Sign in → "Forgot password?" opens `/reset-password` with `go` (not `push`) and the typed email.
+  A `/sign-in` left underneath would be redirected to `/main` by the auth guard as soon as the code
+  signs the user in, closing the page before the password is saved (caught on the emulator,
+  covered by the router integration test). Back and the app-bar back go to Sign in explicitly.
 - Step 1: email → "Send code" (`resetPasswordForEmail`).
 - Step 2: 6-digit code, new password, confirmation → "Set new password"
   (`verifyOTP(type: recovery)` then `updateUser(password)`). Resend with a 60-second cooldown,
@@ -46,6 +49,9 @@ Clean architecture as in `client/CLAUDE.md`; no new dependencies.
 - [x] Cubit tests: validation, step changes, cooldown, failures, change email.
 - [x] Repository tests: request and reset call the data source; `otp_expired` maps to a failure.
 - [x] Guard test: `/reset-password` is not redirected for signed-in or signed-out users.
+- [x] Router integration test: the page stays open when the user becomes authenticated.
+- [x] Emulator 2026-10-25: code from the Resend email → new password → Main; API sign-in with the
+  new password returns 200. Test user deleted.
 - [x] `flutter analyze lib test` and `flutter test` pass.
 - [x] Supabase recovery template uses `{{ .Token }}` (set 2026-10-25).
 

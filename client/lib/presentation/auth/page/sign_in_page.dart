@@ -93,7 +93,9 @@ class SignInPage extends StatelessWidget {
                     TextButton(
                       onPressed: isLoading
                           ? null
-                          : () => context.push(
+                          // `go`, not `push`: a /sign-in left underneath would be redirected to
+                          // /main by the auth guard as soon as the reset code signs the user in.
+                          : () => context.go(
                               AppRoutes.resetPassword,
                               extra: context.read<SignInCubit>().state.email,
                             ),
