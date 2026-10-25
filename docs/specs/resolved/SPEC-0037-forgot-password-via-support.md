@@ -37,5 +37,6 @@ app or selectable address.
 `docs/qa/findings.md` (QA-014).
 
 ## Rollout Notes
-CI builds use the `CONFIG_PROD` / `CONFIG_DEV` secrets: add `SUPPORT_EMAIL` there too, or the link
-stays hidden in CI-built apps.
+CI builds (`client_build.yml`) add `SUPPORT_EMAIL` to the materialized config when the
+`CONFIG_*_JSON` secret lacks it; the address is public, so it is not a secret.
+A real reset flow is deferred: the owner chose not to set up SMTP for now (2026-10-25).
