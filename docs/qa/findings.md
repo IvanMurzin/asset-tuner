@@ -14,11 +14,11 @@ regression runs.
 | QA-005 | high | bug | client/auth | Re-login after a forced 401 sign-out can hang on the sign-in screen | resolved (SPEC-0010, verified 2026-10-24 on emulator) |
 | QA-006 | medium | bug | billing/client | Google Play pending purchases are shown as an error | resolved (SPEC-0016), device P3 pending |
 | QA-007 | medium | bug | billing | `TRANSFER` webhook events are rejected with 400 | resolved (SPEC-0013, verified 2026-10-04); device R2 pending |
-| QA-008 | high | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | resolved (SPEC-0030), device D1 pending |
+| QA-008 | high | ux | client/auth | Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds | resolved (SPEC-0030, verified 2026-10-25 on emulator); device D1 pending |
 | QA-009 | medium | bug | client | Cold start while offline may crash on `SupabaseErrorTranslator` late init | resolved (SPEC-0034) |
 | QA-010 | medium | ux | client/paywall | Paywall error and loading states have no close button | resolved (SPEC-0015), emulator check pending |
 | QA-011 | medium | bug | client/auth | Dev and prod flavors share the `assettuner://` OAuth callback scheme | resolved (SPEC-0034), device D2 pending |
-| QA-012 | medium | ux | client/auth | Apple sign-in button is shown on Android | resolved (SPEC-0034) |
+| QA-012 | medium | ux | client/auth | Apple sign-in button is shown on Android | resolved (SPEC-0034, verified 2026-10-25 on emulator) |
 | QA-013 | medium | bug | client | Offline and network errors are not recognized; no HTTP timeouts | resolved (SPEC-0017, verified 2026-10-25 on emulator) |
 | QA-014 | medium | improvement | client/auth | No "forgot password" flow | mitigated (SPEC-0037); real reset needs SMTP |
 | QA-015 | low | bug | client | Negative amounts cannot be typed on most Android keyboards | resolved (SPEC-0034), device X1 pending |
@@ -27,7 +27,7 @@ regression runs.
 | QA-018 | low | bug | backend | `/assets/list` without `kind` returns only crypto | resolved (SPEC-0014, verified 2026-10-04) |
 | QA-019 | low | bug | backend | History cursor loses microseconds and ignores ties | resolved (SPEC-0018, verified 2026-10-24) |
 | QA-020 | low | bug | backend | Account cached total includes archived subaccounts; live total does not | resolved (SPEC-0012, verified 2026-10-04) |
-| QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | resolved (SPEC-0022 + SPEC-0038), emulator check pending |
+| QA-021 | low | bug | client/paywall | Requested base currency is not applied after buying from the base-currency flow (BL-0001) | resolved (SPEC-0038, verified 2026-10-25 on emulator); device P4 pending |
 | QA-022 | medium | bug | client/paywall | Paywall opened from Profile says "Unlock any base currency" (args default to `baseCurrency`) | resolved (SPEC-0032, verified 2026-10-25 on emulator) |
 | QA-023 | low | ux | client | Hitting a limit shows the paywall and an error snackbar at the same time | resolved (SPEC-0032, verified 2026-10-25 on emulator) |
 | QA-024 | low | bug | backend | Analytics divides by zero when the base asset rate is `0` | resolved (SPEC-0019, verified 2026-10-24) |
@@ -49,8 +49,10 @@ regression runs.
 | QA-040 | low | bug | client | Unhandled async error when both asset list requests fail | resolved (SPEC-0034) |
 | QA-041 | low | privacy | backend | Account deletion keeps the user's support messages (name, email, text) | resolved (SPEC-0035, verified 2026-10-25 on prod and emulator) |
 | QA-042 | low | ux | client/l10n | Copy nits: "1 subaccounts", "position" in English, "Наличные в наличии", silent empty rename | resolved (SPEC-0036, verified 2026-10-25 on emulator) |
-| QA-043 | low | ux | client | History row breaks when the amount is very long | resolved (SPEC-0038), emulator check pending |
+| QA-043 | low | ux | client | History row breaks when the amount is very long | resolved (SPEC-0038, verified 2026-10-25 on emulator) |
 | QA-044 | blocker | tooling | client/android | Incremental release builds package a stale libapp.so (old Dart code) | resolved (SPEC-0039, verified 2026-10-25) |
+| QA-045 | low | ux | client/auth | "Forgot password?" closes silently when no mail app is installed | resolved (SPEC-0040), emulator check pending |
+| QA-046 | low | bug | client | History conversion of very long amounts differs from the header in the last digits | resolved (SPEC-0040) |
 
 ---
 
@@ -250,7 +252,8 @@ regression runs.
 ## QA-008: Cancelling Google OAuth leaves the sign-in screen loading for 90 seconds
 - **Severity:** high (raised 2026-10-04)
 - **Type:** ux
-- **Status:** Resolved in SPEC-0030 (2026-10-25), device D1 pending. Coming back to the app without a session cancels the sign-in after a 3-second grace period; the browser opens as a Custom Tab. A late callback still signs in through the session stream.
+- **Status:** Verified 2026-10-25 on the emulator: back from Google re-enables Sign in in about 3.4 s with no banner. The emulator's Chrome opened a full tab, not a Custom Tab; check on a device (D1).
+- **Previous status:** Resolved in SPEC-0030 (2026-10-25), device D1 pending. Coming back to the app without a session cancels the sign-in after a 3-second grace period; the browser opens as a Custom Tab. A late callback still signs in through the session stream.
 - **Originally:** confirmed-runtime (emulator).
   - Google sign-in opens in **full Chrome**, not a Custom Tab, so Android back navigates Chrome history and does not return to the app.
   - Each attempt leaves another Chrome tab open.
@@ -313,7 +316,8 @@ regression runs.
 ## QA-012: Apple sign-in button is shown on Android
 - **Severity:** medium
 - **Type:** ux
-- **Status:** Resolved in SPEC-0034 (2026-10-25). Apple is offered on iOS only.
+- **Status:** Resolved in SPEC-0034 (verified 2026-10-25 on the emulator, dev and prod: only "Continue with Google").
+- **Previous status:** Resolved in SPEC-0034 (2026-10-25). Apple is offered on iOS only.
 - **Originally:** confirmed-code. Whether the web flow works is to-verify on a device.
 - **Area:** `client/lib/data/auth/repository/auth_repository.dart:220`
 - **Expected:** Apple is shown on Android only when the Supabase Apple web OAuth is configured and
@@ -433,7 +437,8 @@ regression runs.
 ## QA-021: Requested base currency is not applied after purchase from the base-currency flow
 - **Severity:** low
 - **Type:** bug
-- **Status:** Resolved in SPEC-0038 (2026-10-25), emulator check pending (E10). SPEC-0022's apply step never ran on prod: Pro has `fiat_limit = 100`, and `anyBaseCurrency` only accepted a null limit (found in the 2026-10-25 emulator recheck).
+- **Status:** Verified 2026-10-25 on the emulator after SPEC-0038: buying from the CAD paywall applies CAD (DB base = CAD); as Pro, AUD is selected without a paywall. Device P4 row 3 pending.
+- **Previous status:** Resolved in SPEC-0038 (2026-10-25), emulator check pending (E10). SPEC-0022's apply step never ran on prod: Pro has `fiat_limit = 100`, and `anyBaseCurrency` only accepted a null limit (found in the 2026-10-25 emulator recheck).
 - **Originally:** confirmed-code. It is already `BL-0001` in `docs/backlog.md`.
 - **Area:** `client/lib/presentation/settings/page/base_currency_settings_page.dart:189`,
   `client/lib/presentation/paywall/bloc/paywall_args.dart:7`
@@ -736,7 +741,8 @@ regression runs.
 ## QA-043: History row breaks when the amount is very long
 - **Severity:** low
 - **Type:** ux
-- **Status:** Resolved in SPEC-0038 (2026-10-25), emulator check pending.
+- **Status:** Resolved in SPEC-0038 (verified 2026-10-25 on the emulator: date and "Implied change" stay on one line with a 24-digit amount).
+- **Previous status:** Resolved in SPEC-0038 (2026-10-25), emulator check pending.
 - **Originally:** confirmed-runtime (emulator recheck 2026-10-25)
 - **Area:** `client/lib/core_ui/components/ds_history_entry_card.dart`
 - **Actual:** with a 24-digit balance, "Implied change" wraps one letter per line and the date is
@@ -754,3 +760,23 @@ regression runs.
   merge task stays UP-TO-DATE, so the APK/AAB keeps the previous Dart code. A Play upload built
   locally could ship old code.
 - **Suggested fix:** declare the dir as a merge input.
+
+## QA-045: "Forgot password?" closes silently when no mail app is installed
+- **Severity:** low
+- **Type:** ux
+- **Status:** Resolved in SPEC-0040 (2026-10-25): the address is copied and a snackbar says so.
+  Emulator check pending.
+- **Originally:** confirmed-runtime (final emulator check 2026-10-25, Gmail disabled)
+- **Area:** `client/lib/presentation/auth/page/sign_in_page.dart`
+- **Actual:** the dialog pops before `launchUrl`, and a failed launch is ignored.
+- **Suggested fix:** fall back to copying the address.
+
+## QA-046: History conversion of very long amounts differs from the header in the last digits
+- **Severity:** low
+- **Type:** bug
+- **Status:** Resolved in SPEC-0040 (2026-10-25); covered by a conversion test.
+- **Originally:** confirmed-runtime (final emulator check 2026-10-25: 123456789012345678901234.12
+  USD in AUD showed …424,885.23 in the header and …372,801.89 in the history row)
+- **Area:** `client/lib/presentation/balance/widget/subaccount_history_section.dart`
+- **Actual:** a factor rounded to 18 decimals is multiplied back.
+- **Suggested fix:** multiply before dividing.

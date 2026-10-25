@@ -43,6 +43,7 @@
   "forgotPasswordTitle": "Сброс пароля",
   "forgotPasswordBody": "Напишите на {email} с адреса, на который зарегистрирован аккаунт, — поможем сбросить пароль.",
   "forgotPasswordWrite": "Написать",
+  "forgotPasswordAddressCopied": "Почтовое приложение не найдено. Адрес скопирован: {email}",
   "signInWith": "Или продолжить с",
   "continueWithGoogle": "Продолжить с Google",
   "continueWithApple": "Продолжить с Apple",

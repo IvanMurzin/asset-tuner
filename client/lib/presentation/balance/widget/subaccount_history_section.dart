@@ -104,10 +104,15 @@ class _HistoryEntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final factor = _conversionFactor(currentBalance, convertedValue);
-    final convertedSnapshot = factor == null ? null : entry.snapshotAmount * factor;
+    final convertedSnapshot = convertAtCurrentRate(
+      entry.snapshotAmount,
+      currentBalance,
+      convertedValue,
+    );
     final diff = entry.diffAmount;
-    final convertedDiff = factor == null || diff == null ? null : diff * factor;
+    final convertedDiff = diff == null
+        ? null
+        : convertAtCurrentRate(diff, currentBalance, convertedValue);
     final deltaColor = diff == null
         ? context.dsColors.textTertiary
         : (diff.compareTo(Decimal.zero) >= 0 ? context.dsColors.success : context.dsColors.danger);
@@ -139,16 +144,6 @@ class _HistoryEntryCard extends StatelessWidget {
     );
   }
 
-  Decimal? _conversionFactor(Decimal current, Decimal? converted) {
-    if (converted == null) {
-      return null;
-    }
-    if (current == Decimal.zero) {
-      return null;
-    }
-    return divideToDecimal(converted, current);
-  }
-
   String _assetDeltaText(BuildContext context, Decimal diff, String code) {
     final trimmed = (assetCode ?? '').trim();
     return trimmed.isEmpty
@@ -170,4 +165,14 @@ class _HistoryEntryCard extends StatelessWidget {
     }
     return formatted;
   }
+}
+
+/// Converts [amount] at the rate implied by the current balance and its converted value.
+/// Multiplies before dividing so long amounts keep every digit (the old rounded factor did not).
+@visibleForTesting
+Decimal? convertAtCurrentRate(Decimal amount, Decimal current, Decimal? converted) {
+  if (converted == null || current == Decimal.zero) {
+    return null;
+  }
+  return divideToDecimal(amount * converted, current);
 }

@@ -43,6 +43,14 @@
   "forgotPasswordTitle": "Reset your password",
   "forgotPasswordBody": "Write to {email} from the address you signed up with, and we'll help you reset your password.",
   "forgotPasswordWrite": "Write email",
+  "forgotPasswordAddressCopied": "No mail app found. The address is copied: {email}",
+  "@forgotPasswordAddressCopied": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "@forgotPasswordBody": {
     "placeholders": {
       "email": {

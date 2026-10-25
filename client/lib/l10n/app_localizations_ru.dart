@@ -103,6 +103,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get forgotPasswordWrite => 'Написать';
 
   @override
+  String forgotPasswordAddressCopied(String email) {
+    return 'Почтовое приложение не найдено. Адрес скопирован: $email';
+  }
+
+  @override
   String get signInWith => 'Или продолжить с';
 
   @override

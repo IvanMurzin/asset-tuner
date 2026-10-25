@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -148,15 +149,27 @@ Future<void> _showForgotPassword(BuildContext context, String email) {
       secondaryLabel: l10n.cancel,
       onSecondary: () => Navigator.of(dialogContext).pop(),
       primaryLabel: l10n.forgotPasswordWrite,
-      onPrimary: () {
+      onPrimary: () async {
         Navigator.of(dialogContext).pop();
-        launchUrl(
+        final opened = await launchUrl(
           Uri(
             scheme: 'mailto',
             path: email,
             query: 'subject=${Uri.encodeComponent(l10n.forgotPasswordTitle)}',
           ),
         ).catchError((Object _) => false);
+        if (opened) {
+          return;
+        }
+        // No mail app: keep the address with the user instead of closing silently.
+        await Clipboard.setData(ClipboardData(text: email));
+        if (context.mounted) {
+          showDSSnackBar(
+            context,
+            variant: DSSnackBarVariant.info,
+            message: l10n.forgotPasswordAddressCopied(email),
+          );
+        }
       },
     ),
   );

@@ -59,10 +59,7 @@ void main() {
     // The label keeps a usable width instead of wrapping letter by letter (the test font is wide,
     // so two lines are fine).
     final lineHeight = tester.getSize(find.text('Oct 24, 2026')).height;
-    expect(
-      tester.getSize(find.text('Implied change')).height,
-      lessThanOrEqualTo(2 * lineHeight),
-    );
+    expect(tester.getSize(find.text('Implied change')).height, lessThanOrEqualTo(2 * lineHeight));
     expect(tester.takeException(), isNull);
   });
 }

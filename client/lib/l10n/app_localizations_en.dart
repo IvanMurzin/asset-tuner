@@ -102,6 +102,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPasswordWrite => 'Write email';
 
   @override
+  String forgotPasswordAddressCopied(String email) {
+    return 'No mail app found. The address is copied: $email';
+  }
+
+  @override
   String get signInWith => 'Or continue with';
 
   @override

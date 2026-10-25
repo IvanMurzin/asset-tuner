@@ -267,6 +267,12 @@ abstract class AppLocalizations {
   /// **'Write email'**
   String get forgotPasswordWrite;
 
+  /// No description provided for @forgotPasswordAddressCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'No mail app found. The address is copied: {email}'**
+  String forgotPasswordAddressCopied(String email);
+
   /// No description provided for @signInWith.
   ///
   /// In en, this message translates to:
