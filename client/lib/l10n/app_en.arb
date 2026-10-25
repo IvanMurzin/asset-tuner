@@ -40,18 +40,14 @@
   },
   "changeEmail": "Change email",
   "forgotPassword": "Forgot password?",
-  "forgotPasswordTitle": "Reset your password",
-  "forgotPasswordBody": "Write to {email} from the address you signed up with, and we'll help you reset your password.",
-  "forgotPasswordWrite": "Write email",
-  "forgotPasswordAddressCopied": "No mail app found. The address is copied: {email}",
-  "@forgotPasswordAddressCopied": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "@forgotPasswordBody": {
+  "resetPasswordTitle": "Reset password",
+  "resetPasswordEmailBody": "Enter your account email. We'll send you a 6-digit code.",
+  "resetPasswordSendCode": "Send code",
+  "resetPasswordCodeBody": "Enter the code we sent to {email} and choose a new password.",
+  "resetPasswordNewPasswordLabel": "New password",
+  "resetPasswordSubmit": "Set new password",
+  "resetPasswordSuccess": "Password updated. You're signed in.",
+  "@resetPasswordCodeBody": {
     "placeholders": {
       "email": {
         "type": "String"

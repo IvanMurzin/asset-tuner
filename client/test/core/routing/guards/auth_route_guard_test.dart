@@ -71,6 +71,16 @@ void main() {
       expect(guard.redirect(AppRoutes.splash), AppRoutes.main);
     });
 
+    test('reset password is public and stays open once the code signs the user in', () {
+      final signedOut = _StubAuthCubit(const AuthState(status: AuthStatus.unauthenticated));
+      final signedIn = _StubAuthCubit(_authed);
+      addTearDown(signedOut.close);
+      addTearDown(signedIn.close);
+
+      expect(AuthRouteGuard(signedOut).redirect(AppRoutes.resetPassword), isNull);
+      expect(AuthRouteGuard(signedIn).redirect(AppRoutes.resetPassword), isNull);
+    });
+
     test('authenticated on private routes — passes through', () {
       final cubit = _StubAuthCubit(_authed);
       addTearDown(cubit.close);

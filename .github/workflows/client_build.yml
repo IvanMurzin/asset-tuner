@@ -47,8 +47,6 @@ jobs:
           CONFIG_DEV: ${{ secrets.CONFIG_DEV_JSON }}
           CONFIG_PROD: ${{ secrets.CONFIG_PROD_JSON }}
           FLAVOR: ${{ inputs.flavor }}
-          # Public (shown in the app for password help), so it lives here, not in the secret.
-          SUPPORT_EMAIL: ivanmurzin.developer@gmail.com
         run: |
           if [ "$FLAVOR" = "prod" ]; then
             printf '%s' "$CONFIG_PROD" > ../.config.prod.json
@@ -56,13 +54,6 @@ jobs:
             printf '%s' "$CONFIG_DEV" > ../.config.dev.json
           fi
           test -s ../.config.${FLAVOR}.json
-          python3 - "../.config.${FLAVOR}.json" <<'PY'
-          import json, os, sys
-          path = sys.argv[1]
-          config = json.load(open(path))
-          config.setdefault('SUPPORT_EMAIL', os.environ['SUPPORT_EMAIL'])
-          json.dump(config, open(path, 'w'))
-          PY
 
       - name: Materialize release keystore (prod only)
         if: ${{ inputs.flavor == 'prod' && inputs.mode == 'release' }}

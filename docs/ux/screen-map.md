@@ -12,6 +12,7 @@ Public routes are `AppRoutes.publicLocations`.
 | `/sign-up` | Sign up | Email/password registration. |
 | `/sign-in` | Sign in | Email/password and configured OAuth sign-in. |
 | `/otp` | OTP | Email verification flow. |
+| `/reset-password` | Reset password | Email → 6-digit code + new password; signs the user in. |
 
 ## Authenticated Shell
 The authenticated app uses `StatefulShellRoute.indexedStack`.

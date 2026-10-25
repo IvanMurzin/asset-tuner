@@ -91,20 +91,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot password?';
 
   @override
-  String get forgotPasswordTitle => 'Reset your password';
+  String get resetPasswordTitle => 'Reset password';
 
   @override
-  String forgotPasswordBody(String email) {
-    return 'Write to $email from the address you signed up with, and we\'ll help you reset your password.';
+  String get resetPasswordEmailBody => 'Enter your account email. We\'ll send you a 6-digit code.';
+
+  @override
+  String get resetPasswordSendCode => 'Send code';
+
+  @override
+  String resetPasswordCodeBody(String email) {
+    return 'Enter the code we sent to $email and choose a new password.';
   }
 
   @override
-  String get forgotPasswordWrite => 'Write email';
+  String get resetPasswordNewPasswordLabel => 'New password';
 
   @override
-  String forgotPasswordAddressCopied(String email) {
-    return 'No mail app found. The address is copied: $email';
-  }
+  String get resetPasswordSubmit => 'Set new password';
+
+  @override
+  String get resetPasswordSuccess => 'Password updated. You\'re signed in.';
 
   @override
   String get signInWith => 'Or continue with';

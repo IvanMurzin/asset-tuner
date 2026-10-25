@@ -92,20 +92,27 @@ class AppLocalizationsRu extends AppLocalizations {
   String get forgotPassword => 'Забыли пароль?';
 
   @override
-  String get forgotPasswordTitle => 'Сброс пароля';
+  String get resetPasswordTitle => 'Сброс пароля';
 
   @override
-  String forgotPasswordBody(String email) {
-    return 'Напишите на $email с адреса, на который зарегистрирован аккаунт, — поможем сбросить пароль.';
+  String get resetPasswordEmailBody => 'Введите email аккаунта — мы пришлём 6-значный код.';
+
+  @override
+  String get resetPasswordSendCode => 'Отправить код';
+
+  @override
+  String resetPasswordCodeBody(String email) {
+    return 'Введите код, который мы отправили на $email, и придумайте новый пароль.';
   }
 
   @override
-  String get forgotPasswordWrite => 'Написать';
+  String get resetPasswordNewPasswordLabel => 'Новый пароль';
 
   @override
-  String forgotPasswordAddressCopied(String email) {
-    return 'Почтовое приложение не найдено. Адрес скопирован: $email';
-  }
+  String get resetPasswordSubmit => 'Сохранить пароль';
+
+  @override
+  String get resetPasswordSuccess => 'Пароль обновлён, вы вошли в аккаунт.';
 
   @override
   String get signInWith => 'Или продолжить с';

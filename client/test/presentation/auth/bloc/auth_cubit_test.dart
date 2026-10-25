@@ -234,6 +234,16 @@ void main() {
 Future<void> _flush() => Future<void>.delayed(const Duration(milliseconds: 10));
 
 class _FakeAuthRepository implements IAuthRepository {
+  @override
+  Future<Result<void>> requestPasswordReset(String email) async => const Success(null);
+
+  @override
+  Future<Result<void>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async => const Success(null);
+
   final _controller = StreamController<AuthSessionEntity?>.broadcast();
   AuthSessionEntity? _cached;
 

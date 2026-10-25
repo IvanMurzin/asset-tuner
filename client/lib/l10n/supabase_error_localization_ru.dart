@@ -28,7 +28,7 @@ const Map<String, dynamic> supabaseErrorLocalizationRu = {
   'mfa_verification_failed': 'Проверка MFA не удалась',
   'provider_disabled': 'Провайдер отключён',
   'oauth_callback_error': 'Ошибка callback OAuth',
-  'otp_expired': 'Токен истёк или недействителен',
+  'otp_expired': 'Код истёк или неверный',
   'over_email_send_rate_limit': 'Запрос можно отправлять не чаще одного раза в минуту.',
   'anonymous_provider_disabled': 'Анонимный вход отключён',
   'bad_code_verifier': 'Переданный code verifier не совпадает с ожидаемым',

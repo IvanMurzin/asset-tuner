@@ -17,6 +17,7 @@ import 'package:asset_tuner/presentation/account/page/add_subaccount_page.dart';
 import 'package:asset_tuner/presentation/analytics/page/analytics_page.dart';
 import 'package:asset_tuner/presentation/asset/bloc/assets_cubit.dart';
 import 'package:asset_tuner/presentation/auth/page/otp_page.dart';
+import 'package:asset_tuner/presentation/auth/page/reset_password_page.dart';
 import 'package:asset_tuner/presentation/auth/page/sign_in_page.dart';
 import 'package:asset_tuner/presentation/auth/page/sign_up_page.dart';
 import 'package:asset_tuner/presentation/balance/bloc/subaccount_delete_cubit.dart';
@@ -93,6 +94,10 @@ GoRouter buildAppRouter({
       GoRoute(
         path: AppRoutes.otp,
         pageBuilder: (context, state) => slideTransition(context, state, const OtpPage()),
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        pageBuilder: (context, state) => slideTransition(context, state, const ResetPasswordPage()),
       ),
       GoRoute(
         path: AppRoutes.onboardingCarousel,

@@ -88,6 +88,28 @@ class SupabaseAuthDataSource implements IAuthDataSource {
     return AuthSessionDto(userId: user.id, email: user.email ?? '');
   }
 
+  /// Sends the recovery email; its template shows a 6-digit `{{ .Token }}` code.
+  @override
+  Future<void> requestPasswordReset(String email) {
+    return _client.auth.resetPasswordForEmail(email);
+  }
+
+  /// Verifying the recovery code signs the user in; the new password is then set on that session.
+  /// When an earlier attempt already verified the code (the code is single-use) and only the
+  /// password update failed, the existing session for [email] is reused.
+  @override
+  Future<void> resetPasswordWithCode({
+    required String email,
+    required String token,
+    required String newPassword,
+  }) async {
+    final currentEmail = _client.auth.currentUser?.email?.toLowerCase();
+    if (currentEmail != email.toLowerCase()) {
+      await _client.auth.verifyOTP(email: email, token: token, type: OtpType.recovery);
+    }
+    await _client.auth.updateUser(UserAttributes(password: newPassword));
+  }
+
   @override
   Future<void> signOut() {
     return _client.auth.signOut();

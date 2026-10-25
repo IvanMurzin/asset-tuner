@@ -13,6 +13,12 @@ abstract interface class IAuthRepository {
   Future<Result<void>> signInWithPassword(String email, String password);
   Future<Result<SignUpResultEntity>> signUpWithPassword(String email, String password);
   Future<Result<AuthSessionEntity>> verifySignUpOtp(String email, String code);
+  Future<Result<void>> requestPasswordReset(String email);
+  Future<Result<void>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  });
   Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider);
   Future<List<AuthProvider>> getAvailableProviders();
   Future<Result<void>> signOut();

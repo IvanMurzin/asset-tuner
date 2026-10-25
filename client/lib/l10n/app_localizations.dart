@@ -249,29 +249,47 @@ abstract class AppLocalizations {
   /// **'Forgot password?'**
   String get forgotPassword;
 
-  /// No description provided for @forgotPasswordTitle.
+  /// No description provided for @resetPasswordTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reset your password'**
-  String get forgotPasswordTitle;
+  /// **'Reset password'**
+  String get resetPasswordTitle;
 
-  /// No description provided for @forgotPasswordBody.
+  /// No description provided for @resetPasswordEmailBody.
   ///
   /// In en, this message translates to:
-  /// **'Write to {email} from the address you signed up with, and we\'ll help you reset your password.'**
-  String forgotPasswordBody(String email);
+  /// **'Enter your account email. We\'ll send you a 6-digit code.'**
+  String get resetPasswordEmailBody;
 
-  /// No description provided for @forgotPasswordWrite.
+  /// No description provided for @resetPasswordSendCode.
   ///
   /// In en, this message translates to:
-  /// **'Write email'**
-  String get forgotPasswordWrite;
+  /// **'Send code'**
+  String get resetPasswordSendCode;
 
-  /// No description provided for @forgotPasswordAddressCopied.
+  /// No description provided for @resetPasswordCodeBody.
   ///
   /// In en, this message translates to:
-  /// **'No mail app found. The address is copied: {email}'**
-  String forgotPasswordAddressCopied(String email);
+  /// **'Enter the code we sent to {email} and choose a new password.'**
+  String resetPasswordCodeBody(String email);
+
+  /// No description provided for @resetPasswordNewPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get resetPasswordNewPasswordLabel;
+
+  /// No description provided for @resetPasswordSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Set new password'**
+  String get resetPasswordSubmit;
+
+  /// No description provided for @resetPasswordSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated. You\'re signed in.'**
+  String get resetPasswordSuccess;
 
   /// No description provided for @signInWith.
   ///

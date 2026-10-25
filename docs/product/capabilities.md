@@ -4,6 +4,10 @@
 - Supabase Auth owns sessions.
 - The app restores a persisted session on launch.
 - Auth-driven redirects are centralized in `client/lib/core/routing`.
+- Password reset is by an emailed 6-digit code (Sign in → Forgot password? → `/reset-password`):
+  `resetPasswordForEmail`, then `verifyOTP(type: recovery)` and `updateUser(password)`. Success
+  signs the user in. The Supabase recovery email template shows `{{ .Token }}`; emails go through
+  Resend SMTP from `noreply@murzinstudio.com`.
 - A profile row is ensured for authenticated users.
 - Profile fields include `plan`, `base_asset_id`, and optional `revenuecat_app_user_id`.
 

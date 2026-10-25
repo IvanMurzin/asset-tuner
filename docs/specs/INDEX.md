@@ -42,3 +42,4 @@
 | SPEC-0038 | bug | Resolved | P1 | Pro Base Currency And History Layout | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0038-pro-base-currency-and-history-layout.md) |
 | SPEC-0039 | tooling | Resolved | P0 | Fresh libapp In Release Builds | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0039-fresh-libapp-in-release-builds.md) |
 | SPEC-0040 | bug | Resolved | P3 | Mail Fallback And Exact History Conversion | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0040-mail-fallback-and-exact-history-conversion.md) |
+| SPEC-0041 | feature | Resolved | P1 | Password Reset By Code | claude | 2026-10-25 | 2026-10-25 | [resolved](resolved/SPEC-0041-password-reset-by-code.md) |

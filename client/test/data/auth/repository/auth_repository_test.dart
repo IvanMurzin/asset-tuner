@@ -97,6 +97,44 @@ void main() {
     });
   });
 
+  group('AuthRepository password reset', () {
+    test('sends the code and resets with code and new password', () async {
+      final dataSource = _FakeAuthDataSource();
+      final repository = AuthRepository(dataSource);
+
+      expect(await repository.requestPasswordReset('u@example.com'), isA<Success<void>>());
+      expect(dataSource.lastResetEmail, 'u@example.com');
+
+      final result = await repository.resetPassword(
+        email: 'u@example.com',
+        code: '123456',
+        newPassword: 'NewPass1',
+      );
+      expect(result, isA<Success<void>>());
+      expect(dataSource.lastResetWithCode, (
+        email: 'u@example.com',
+        token: '123456',
+        newPassword: 'NewPass1',
+      ));
+      await dataSource.dispose();
+    });
+
+    test('maps an expired code to a localized failure', () async {
+      final dataSource = _FakeAuthDataSource()
+        ..resetError = AuthApiException('Token has expired or is invalid', code: 'otp_expired');
+      final repository = AuthRepository(dataSource);
+
+      final result = await repository.resetPassword(
+        email: 'u@example.com',
+        code: '000000',
+        newPassword: 'NewPass1',
+      );
+
+      expect((result as FailureResult<void>).failure.code, 'otp_expired');
+      await dataSource.dispose();
+    });
+  });
+
   group('AuthRepository.signInWithOAuth', () {
     late _FakeAuthDataSource dataSource;
 
@@ -199,6 +237,28 @@ void main() {
 }
 
 class _FakeAuthDataSource implements IAuthDataSource {
+  String? lastResetEmail;
+  ({String email, String token, String newPassword})? lastResetWithCode;
+  Object? resetError;
+
+  @override
+  Future<void> requestPasswordReset(String email) async {
+    lastResetEmail = email;
+  }
+
+  @override
+  Future<void> resetPasswordWithCode({
+    required String email,
+    required String token,
+    required String newPassword,
+  }) async {
+    final error = resetError;
+    if (error != null) {
+      throw error;
+    }
+    lastResetWithCode = (email: email, token: token, newPassword: newPassword);
+  }
+
   final authStateController = StreamController<AuthState>.broadcast();
 
   AuthSessionDto? currentSessionValue;

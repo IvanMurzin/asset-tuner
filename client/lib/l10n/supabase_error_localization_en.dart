@@ -28,7 +28,7 @@ const Map<String, dynamic> supabaseErrorLocalizationEn = {
   'mfa_verification_failed': 'MFA verification failed',
   'provider_disabled': 'Provider is disabled',
   'oauth_callback_error': 'OAuth callback error',
-  'otp_expired': 'Token has expired or is invalid',
+  'otp_expired': 'The code has expired or is invalid',
   'over_email_send_rate_limit': 'You can only request this once per minute.',
   'anonymous_provider_disabled': 'Anonymous sign-ins are disabled',
   'bad_code_verifier': 'Provided code verifier does not match the expected one',

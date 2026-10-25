@@ -6,6 +6,7 @@
 - **Owner:** claude
 - **Created:** 2026-10-25
 - **Resolved:** 2026-10-25
+- **Superseded by:** SPEC-0041 (password reset by code); the support fallback was removed.
 
 ## Goal
 Mitigate QA-014 until reset emails can be delivered: a user who forgot the password has a visible

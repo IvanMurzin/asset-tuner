@@ -3,6 +3,10 @@ abstract final class AppRoutes {
   static const String signIn = '/sign-in';
   static const String signUp = '/sign-up';
   static const String otp = '/otp';
+
+  /// Public, but deliberately not in [authFlowLocations]: verifying the reset code signs the user
+  /// in before the new password is set, and the page must stay open until that finishes.
+  static const String resetPassword = '/reset-password';
   static const String onboardingCarousel = '/onboarding/carousel';
   static const String splash = '/splash';
 
@@ -14,7 +18,14 @@ abstract final class AppRoutes {
   /// carousel). For anything outside this set, an unauthenticated user is
   /// redirected to [signIn]. Superset of [authFlowLocations] because the
   /// carousel must also be reachable before sign-in.
-  static const Set<String> publicLocations = {signIn, signUp, otp, onboardingCarousel, splash};
+  static const Set<String> publicLocations = {
+    signIn,
+    signUp,
+    otp,
+    resetPassword,
+    onboardingCarousel,
+    splash,
+  };
 
   static const String main = '/main';
   static const String analytics = '/analytics';

@@ -86,6 +86,38 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
+  Future<Result<void>> requestPasswordReset(String email) async {
+    try {
+      await _dataSource.requestPasswordReset(email);
+      logger.i('AuthRepository.requestPasswordReset success');
+      return const Success(null);
+    } catch (error) {
+      logger.e('AuthRepository.requestPasswordReset failed', error: error);
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to send the code'),
+      );
+    }
+  }
+
+  @override
+  Future<Result<void>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    try {
+      await _dataSource.resetPasswordWithCode(email: email, token: code, newPassword: newPassword);
+      logger.i('AuthRepository.resetPassword success');
+      return const Success(null);
+    } catch (error) {
+      logger.e('AuthRepository.resetPassword failed', error: error);
+      return FailureResult(
+        SupabaseFailureMapper.toFailure(error, fallbackMessage: 'Unable to reset the password'),
+      );
+    }
+  }
+
+  @override
   Future<Result<AuthSessionEntity>> signInWithOAuth(AuthProvider provider) async {
     StreamSubscription<AuthState>? authSubscription;
     StreamSubscription<AppLifecycleState>? lifecycleSubscription;
