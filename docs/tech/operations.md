@@ -18,6 +18,11 @@ flutter build apk --flavor prod --release --dart-define-from-file=../.config.pro
 flutter build appbundle --flavor prod --release --dart-define-from-file=../.config.prod.json
 ```
 
+Incremental release builds are safe: `client/android/app/build.gradle.kts` declares Flutter's
+`jniLibs` output as an input of `merge*JniLibFolders` (QA-044). To check a build, look for a
+recent UI string in the bundle, e.g.
+`unzip -p build/app/outputs/bundle/prodRelease/app-prod-release.aab base/lib/arm64-v8a/libapp.so | strings | grep "<new string>"`.
+
 ## Backend Secrets
 Production backend requires:
 

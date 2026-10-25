@@ -142,3 +142,15 @@ android {
 flutter {
     source = "../.."
 }
+
+// The Flutter plugin adds build/intermediates/flutter/<variant>/jniLibs (libapp.so) as a jniLibs
+// source dir after AGP has created the merge task, so the merge only depended on the copy task and
+// kept packaging a stale libapp.so on incremental release builds. Declare the dir as an input.
+tasks.configureEach {
+    val match = Regex("merge(\\w+)JniLibFolders").matchEntire(name) ?: return@configureEach
+    val variant = match.groupValues[1].replaceFirstChar { it.lowercase() }
+    // A file tree, not inputs.dir: debug builds (JIT) never create this dir.
+    inputs.files(fileTree(layout.buildDirectory.dir("intermediates/flutter/$variant/jniLibs")))
+        .withPropertyName("flutterJniLibs")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+}

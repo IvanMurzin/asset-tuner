@@ -50,6 +50,7 @@ regression runs.
 | QA-041 | low | privacy | backend | Account deletion keeps the user's support messages (name, email, text) | resolved (SPEC-0035, verified 2026-10-25) |
 | QA-042 | low | ux | client/l10n | Copy nits: "1 subaccounts", "position" in English, "Наличные в наличии", silent empty rename | resolved (SPEC-0036), emulator check pending |
 | QA-043 | low | ux | client | History row breaks when the amount is very long | resolved (SPEC-0038), emulator check pending |
+| QA-044 | blocker | tooling | client/android | Incremental release builds package a stale libapp.so (old Dart code) | resolved (SPEC-0039, verified 2026-10-25) |
 
 ---
 
@@ -728,3 +729,15 @@ regression runs.
 - **Actual:** with a 24-digit balance, "Implied change" wraps one letter per line and the date is
   hidden, because the trailing amount takes the whole row width.
 - **Suggested fix:** make the trailing column `Flexible`.
+
+## QA-044: Incremental release builds package a stale libapp.so (old Dart code)
+- **Severity:** blocker
+- **Type:** tooling
+- **Status:** Resolved in SPEC-0039 (verified 2026-10-25 with a probe string on APK and AAB).
+- **Originally:** confirmed-runtime (emulator recheck 2026-10-25: the prod APK still showed the Apple
+  button and old copy although the dev build had the fixes)
+- **Area:** `client/android/app/build.gradle.kts`, Gradle `merge*JniLibFolders`
+- **Actual:** the fresh `libapp.so` lands in `intermediates/flutter/<variant>/jniLibs`, but the
+  merge task stays UP-TO-DATE, so the APK/AAB keeps the previous Dart code. A Play upload built
+  locally could ship old code.
+- **Suggested fix:** declare the dir as a merge input.
