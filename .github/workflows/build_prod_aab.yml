@@ -1,0 +1,13 @@
+name: Build prod AAB
+
+# Manual: Actions → "Build prod AAB" → Run workflow.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/android_build.yml
+    with:
+      flavor: prod
+      format: appbundle
+    secrets: inherit

@@ -1,0 +1,13 @@
+name: Build prod APK
+
+# Manual: Actions → "Build prod APK" → Run workflow.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/android_build.yml
+    with:
+      flavor: prod
+      format: apk
+    secrets: inherit

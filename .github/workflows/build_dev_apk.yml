@@ -1,0 +1,13 @@
+name: Build dev APK
+
+# Manual: Actions → "Build dev APK" → Run workflow.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/android_build.yml
+    with:
+      flavor: dev
+      format: apk
+    secrets: inherit

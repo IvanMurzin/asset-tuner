@@ -1,12 +1,21 @@
 name: client-ci
 
+# Only pushes that touch the client: keeps free-plan minutes for real changes.
 on:
   push:
-  pull_request:
+    paths:
+      - "client/**"
+      - ".github/workflows/client_ci.yml"
+
+# A newer push to the same branch makes the running check pointless.
+concurrency:
+  group: client-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  client:
+  check:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: client
@@ -15,22 +24,21 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
+          flutter-version: 3.44.4
           channel: stable
           cache: true
 
       - name: Pub get
         run: flutter pub get
 
+      # Before codegen, so only hand-written files are checked.
+      - name: Format
+        run: |
+          find lib test -name '*.dart' ! -name 'app_localizations*.dart' -print0 \
+            | xargs -0 dart format --output=none --set-exit-if-changed
+
       - name: Codegen
         run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Format (check)
-        run: |
-          find lib test \
-            -name '*.dart' \
-            ! -name '*.g.dart' \
-            ! -name '*.freezed.dart' \
-            -print0 | xargs -0 dart format --output=none --set-exit-if-changed
 
       - name: Analyze
         run: flutter analyze --fatal-infos --fatal-warnings
